@@ -1,0 +1,1005 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { CalendarDays, Check, CheckCircle2, ChevronDown, ClipboardList, CreditCard, Info, LoaderCircle, Mail, MapPin, Minus, Pencil, Phone, Plus, ShieldCheck } from 'lucide-react';
+import { useTranslation } from '../i18n';
+import { calculatePrice, defaultSelection, PricingValidationError, REGULAR_RATES, type BookingSelection, type BookingService, type PriceQuote } from '../src/booking/pricing';
+import { bookingLanguage, bookingLineLabel, bookingText } from '../src/booking/uiCopy';
+import CalculatorNudges from './CalculatorNudges';
+import KrakenServiceIcon from './KrakenServiceIcon';
+import QuoteRecoveryCard from './QuoteRecoveryCard';
+import KrakenJourney, { JourneyEmailPreview, type JourneyPhase } from './KrakenJourney';
+import MovingGuide from './MovingGuide';
+import { journeyCopy } from '../src/booking/journeyCopy';
+import { guidePreferencesFromQuery, type GuidePreferences } from '../src/booking/movingGuide';
+import { createDemoBooking, confirmDemoAppointment, settleDemoPayment, type DemoBooking, type DemoPaymentOutcome } from '../src/booking/demoJourney';
+import { consumeHomeCalculatorRequest, subscribeHomeCalculatorRequests, HOME_CALCULATOR_INTENT_KEY } from '../src/home/calculator';
+import { fieldErrorKey, type FieldErrorKey } from '../src/booking/fieldValidation';
+import { consumeKaiTransfer, registerKaiCalculationPreview, subscribeKaiTransfers, kaiDraftFieldLabel } from '../src/kai/draft';
+import { KAI_FIELDS, type KaiDraft } from '../src/kai/types';
+import { applyKaiBookingTransfer, kaiBookingPreview, type KaiCalculatorState } from '../src/booking/kaiTransfer';
+import './service-calculator.css';
+
+interface ServiceCalculatorPageProps {
+  onNavigate: (page: string) => void;
+  cart?: Array<{ id?: string; type?: string; details?: unknown }>;
+  setCart?: React.Dispatch<React.SetStateAction<any[]>>;
+  preview?: boolean;
+}
+interface Customer {
+  name: string; email: string; phone: string; address: string; postalCode: string; city: string;
+}
+interface RecoveryAccess { id: string; accessToken: string }
+interface BookingConfig {
+  available: boolean; paymentReady: boolean; mode: 'test' | 'live' | 'unconfigured';
+  termsVersion: string; depositPercent?: number;
+}
+interface BookingView {
+  bookingId: string; reference: string; publicToken?: string; status: string;
+  language?: string; demo?: boolean;
+  quote: PriceQuote; quoteRevision: number; canCheckout?: boolean;
+  customer?: Customer; scopeNotes?: string; notes?: string; termsVersion?: string;
+  scheduling: { status: 'requested' | 'held' | 'confirmed' | 'needs_reschedule'; date: string; time: string; endTime?: string; timeZone: string; holdExpiresAt?: string };
+  payment: { status: string; amountPaidCents: number; amountDueNowCents?: number; remainingBalanceCents?: number; depositPercent?: number; checkoutExpiresAt?: string };
+  email?: { request?: 'queued' | 'sending' | 'sent' | 'failed' | 'delivery_unknown'; receipt?: 'queued' | 'sending' | 'sent' | 'failed' | 'delivery_unknown' };
+}
+type ServiceChoice = BookingService | 'deep';
+type WizardStep = 0 | 1 | 2;
+type Text = (key: string, params?: Record<string, string | number>) => string;
+const emptyCustomer: Customer = { name: '', email: '', phone: '', address: '', postalCode: '', city: '' };
+const TERMS_VERSION = '2026-11-24';
+const tokenKey = (id: string) => `kraken.booking.${id}`;
+const recoveryTokenKey = (id: string) => `kraken.recovery.${id}`;
+const safeId = /^[A-Za-z0-9_-]{1,128}$/;
+const safeToken = /^[A-Za-z0-9_-]{20,256}$/;
+
+function localToday(instant = new Date()): string {
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Zurich', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(instant);
+  const part = (type: string) => parts.find(item => item.type === type)?.value || '';
+  return `${part('year')}-${part('month')}-${part('day')}`;
+}
+function randomId(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+function rememberToken(id: string, token: string): void {
+  try { sessionStorage.setItem(tokenKey(id), token); } catch { /* The current in-memory session remains usable. */ }
+}
+function recalledToken(id: string): string {
+  try { return sessionStorage.getItem(tokenKey(id)) || ''; } catch { return ''; }
+}
+function serviceAlias(raw: unknown): ServiceChoice | null {
+  if (typeof raw !== 'string') return null;
+  const aliases: Record<string, ServiceChoice> = {
+    regular: 'regular', 'regular-cleaning': 'regular', 'daily-cleaning': 'regular', unterhaltsreinigung: 'regular',
+    deep: 'deep', 'deep-cleaning': 'deep', grundreinigung: 'deep',
+    endOfTenancy: 'endOfTenancy', 'end-of-tenancy': 'endOfTenancy', umzugsreinigung: 'endOfTenancy',
+    window: 'windows', windows: 'windows', 'window-cleaning': 'windows', fensterreinigung: 'windows',
+    construction: 'construction', 'post-construction': 'construction', baureinigung: 'construction',
+    move: 'moving', moving: 'moving', 'small-move': 'moving', umzug: 'moving',
+  };
+  return aliases[raw.trim()] || null;
+}
+type EntryIntent = { service: ServiceChoice | null; raw: string; source: 'url' | 'storage' | 'cart' | 'none'; cartIndex?: number };
+function initialIntent(cart?: ServiceCalculatorPageProps['cart']): EntryIntent {
+  const fromUrl = new URLSearchParams(window.location.search).get('service') || '';
+  if (fromUrl) return { service: serviceAlias(fromUrl), raw: fromUrl.slice(0, 100), source: 'url' };
+  // Existing service/SEO entry points pass only this non-personal intent. Never import saved customer data.
+  let legacy = '';
+  try { legacy = localStorage.getItem(HOME_CALCULATOR_INTENT_KEY) === 'windows' ? 'windows' : localStorage.getItem('kraken_preselected_service') || ''; } catch { /* Storage may be disabled. */ }
+  if (legacy) return { service: serviceAlias(legacy), raw: legacy.slice(0, 100), source: 'storage' };
+  if (Array.isArray(cart) && cart.length === 1 && typeof cart[0]?.type === 'string') return { service: serviceAlias(cart[0].type), raw: cart[0].type, source: 'cart', cartIndex: 0 };
+  return { service: null, raw: '', source: 'none' };
+}
+function selectionFor(choice: ServiceChoice): BookingSelection {
+  return choice === 'deep' ? { ...defaultSelection('regular'), frequency: 'once', hours: 3 } : defaultSelection(choice);
+}
+function legacySelection(choice: ServiceChoice, item?: NonNullable<ServiceCalculatorPageProps['cart']>[number]): BookingSelection {
+  const base = selectionFor(choice);
+  if (!item?.details || typeof item.details !== 'object' || Array.isArray(item.details)) return base;
+  const old = item.details as Record<string, unknown>;
+  const validCount = (value: unknown) => typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= 1000;
+  if (base.service === 'regular' && ['daily-cleaning', 'deep-cleaning'].includes(item.type || '')) {
+    const frequency = ({ Weekly: 'weekly', 'Bi-Weekly': 'fortnightly', Monthly: 'monthly' } as const)[String(old.frequency) as 'Weekly' | 'Bi-Weekly' | 'Monthly'];
+    return { ...base, frequency: choice === 'deep' ? 'once' : frequency || base.frequency,
+      // Old duration combined estimated base time and some extras. Ask again instead of double billing.
+      hours: Number.NaN,
+      oven: old.oven === true || old.ovenInterior === true,
+      fridge: old.fridge === true || old.fridgeFreezer === true,
+      ironingHours: old.ironing === true && typeof old.ironingHours === 'number' && old.ironingHours >= 0 && old.ironingHours <= 168 && Number.isInteger(old.ironingHours * 4) ? old.ironingHours : 0 };
+  }
+  if (base.service === 'endOfTenancy' && item.type === 'end-of-tenancy') {
+    return { ...base,
+      rooms: typeof old.roomsCount === 'number' && old.roomsCount >= 1 && old.roomsCount <= 100 && Number.isInteger(old.roomsCount * 2) ? old.roomsCount : base.rooms,
+      bathrooms: validCount(old.bathroomsCount) ? Number(old.bathroomsCount) : base.bathrooms,
+      storageRooms: validCount(old.storageCount) ? Number(old.storageCount) : 0,
+      carpetRooms: validCount(old.carpetCount) ? Number(old.carpetCount) : 0,
+      // The old cart had no verified floor area or distinction between blind/balcony types.
+      areaM2: Number.NaN };
+  }
+  if (base.service === 'moving' && typeof old.description === 'string') return { ...base, details: old.description.slice(0, 3000) };
+  return base;
+}
+
+class BookingApiError extends Error {
+  constructor(readonly code: string, readonly status: number) { super(code); }
+}
+async function api<T>(url: string, options: RequestInit = {}): Promise<T> {
+  const controller = new AbortController();
+  const forwardAbort = () => controller.abort();
+  options.signal?.addEventListener('abort', forwardAbort, { once: true });
+  if (options.signal?.aborted) controller.abort();
+  const timeout = window.setTimeout(() => controller.abort(), 20_000);
+  try {
+    const response = await fetch(url, {
+      ...options, credentials: 'same-origin', signal: controller.signal,
+      headers: { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers },
+    });
+    if (!response.headers.get('content-type')?.includes('application/json')) throw new BookingApiError('UNAVAILABLE', response.status);
+    const data = await response.json();
+    if (!response.ok) throw new BookingApiError(typeof data.code === 'string' ? data.code : 'REQUEST_FAILED', response.status);
+    return data as T;
+  } finally {
+    window.clearTimeout(timeout);
+    options.signal?.removeEventListener('abort', forwardAbort);
+  }
+}
+
+function NumberField({ name, label, value, onChange, min = 0, max = 1000, step = 1, hint, invalid, errorMessage, text }: {
+  key?: string; name: string; label: string; value: number; onChange: (value: number) => void;
+  min?: number; max?: number; step?: number; hint?: string; invalid?: boolean; errorMessage?: string; text: Text;
+}) {
+  const id = `kr-calc-${name}`;
+  const change = (direction: -1 | 1) => onChange(Number.isFinite(value) ? Math.round(Math.min(max, Math.max(min, value + direction * step)) * 100) / 100 : min);
+  return <div className="kr-calc-field kr-calc-stepper-field">
+    <label htmlFor={id}>{label}</label>
+    <div className="kr-calc-number-wrap">
+      <button type="button" className="kr-calc-number-button" aria-label={text('decreaseQuantity', { label })} disabled={Number.isFinite(value) && value <= min} onClick={() => change(-1)}><Minus aria-hidden="true" /></button>
+      <input id={id} name={name} type="number" inputMode={step < 1 ? 'decimal' : 'numeric'} required min={min} max={max} step={step}
+        value={Number.isFinite(value) ? value : ''} aria-invalid={invalid || undefined} aria-describedby={[hint ? `${id}-hint` : null, errorMessage ? `${id}-error` : null].filter(Boolean).join(' ') || undefined}
+        onChange={event => onChange(event.target.value === '' ? Number.NaN : Number(event.target.value))} />
+      <button type="button" className="kr-calc-number-button" aria-label={text('increaseQuantity', { label })} disabled={Number.isFinite(value) && value >= max} onClick={() => change(1)}><Plus aria-hidden="true" /></button>
+    </div>
+    {hint && <span className="kr-calc-hint" id={`${id}-hint`}>{hint}</span>}
+    {errorMessage && <span id={`${id}-error`} className="kr-calc-field-error">{errorMessage}</span>}
+  </div>;
+}
+function ToggleField({ name, label, checked, onChange, hint, price }: {
+  key?: string; name: string; label: string; checked: boolean; onChange: (value: boolean) => void; hint?: string; price?: string;
+}) {
+  return <label className={`kr-calc-toggle ${checked ? 'is-selected' : ''}`} htmlFor={`kr-calc-${name}`}>
+    <input id={`kr-calc-${name}`} type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)} />
+    <span><strong>{label}</strong>{hint && <small>{hint}</small>}</span>
+    {price && <b>{price}</b>}
+  </label>;
+}
+
+function PriceSummary({ quote, text, language, money, hasSelection = false }: { quote: PriceQuote | null; text: Text; language: string; money: (cents: number) => string; hasSelection?: boolean }) {
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const manual = Boolean(quote?.manualReviewReasons.length || quote?.totalCents === null);
+  return <>
+    <p className="kr-calc-summary-label">{text(manual ? 'individual' : 'priceLive')}</p>
+    <div className="kr-calc-total" aria-live="polite" aria-atomic="true">
+      <span>{text(manual ? 'manualPrice' : 'currentTotal')}</span>
+      <strong>{manual ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—'}</strong>
+    </div>
+    {!quote && <p className="kr-calc-empty"><ClipboardList aria-hidden="true" />{text(hasSelection ? 'checkRequired' : 'selectToStart')}</p>}
+    {quote && <p className="kr-calc-price-note"><Info aria-hidden="true" />{text(manual ? 'manualPrice' : 'fixedForScope')}</p>}
+    {!!quote?.lines.length && <details className="kr-calc-summary-details" open={breakdownOpen} onToggle={event => setBreakdownOpen(event.currentTarget.open)}><summary>{text(breakdownOpen ? 'hideBreakdown' : 'showBreakdown')}<ChevronDown aria-hidden="true" /></summary><ul className="kr-calc-lines" aria-label={text('selectedExtras')}>
+      {quote.lines.map(line => <li key={line.id}>
+        <span>{bookingLineLabel(language, line)}
+          {line.quantity !== 1 && <small>{line.quantity.toLocaleString(bookingLanguage(language))} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : '×'} · {money(line.unitPriceCents)}</small>}
+        </span><b>{money(line.totalCents)}</b>
+      </li>)}
+    </ul></details>}
+    {quote && !manual && <div className="kr-calc-breakdown">
+      <div><span>{text('subtotal')}</span><b>{money(quote.subtotalCents)}</b></div>
+      <div><span>{text('vat')}</span><b>{money(quote.vatCents)}</b></div>
+    </div>}
+    {quote && !manual && typeof quote.totalCents === 'number' && <section className="kr-calc-vat-card" aria-label={text('vatCardTitle')}>
+      <div className="kr-calc-vat-card-top">
+        <div><h3>{text('vatCardTitle')}</h3><p>{text('vatCardBody')}</p></div>
+        <img src="/calculator-approved/assets/kai-savings.webp" alt="" width="88" height="98" loading="lazy" aria-hidden="true" />
+      </div>
+      <div className="kr-calc-vat-amount" aria-live="polite" aria-atomic="true"><span>{text('vatComparisonLabel')}</span><strong>{money(quote.vatComparisonCents ?? 0)}</strong></div>
+      <p className="kr-calc-vat-condition">{text('vatComparisonCondition')}</p>
+      <details className="kr-calc-vat-calculation">
+        <summary>{text('vatHowCalculated')}<ChevronDown aria-hidden="true" /></summary>
+        <dl>
+          <div><dt>{text('vatKrakenPrice')}</dt><dd>{money(quote.totalCents)}</dd></div>
+          <div><dt>{text('vatHypotheticalTax')}</dt><dd>+ {money(quote.vatComparisonCents ?? 0)}</dd></div>
+          <div><dt>{text('vatHypotheticalTotal')}</dt><dd>{money(quote.totalCents + (quote.vatComparisonCents ?? 0))}</dd></div>
+        </dl>
+        <p>{text('vatComparisonExplanation')}</p>
+      </details>
+    </section>}
+  </>;
+}
+
+export default function ServiceCalculatorPage({ onNavigate, cart, preview = false }: ServiceCalculatorPageProps) {
+  const { language, setLanguage } = useTranslation();
+  const locale = bookingLanguage(language);
+  const journey = journeyCopy(locale);
+  const text: Text = useCallback((key, params) => bookingText(locale, key, params), [locale]);
+  const money = useCallback((cents: number) => new Intl.NumberFormat(locale === 'de' ? 'de-CH' : locale, { style: 'currency', currency: 'CHF', minimumFractionDigits: 2 }).format(cents / 100), [locale]);
+  const [entry] = useState(() => initialIntent(cart));
+  const [choice, setChoice] = useState<ServiceChoice | null>(entry.service);
+  const [selection, setSelection] = useState<BookingSelection | null>(() => entry.service ? legacySelection(entry.service, entry.source === 'cart' ? cart?.[entry.cartIndex ?? 0] : undefined) : null);
+  const [legacyImported, setLegacyImported] = useState(entry.source === 'cart' && Boolean(entry.service));
+  const [unsupportedIntent, setUnsupportedIntent] = useState(Boolean(entry.raw && !entry.service));
+  const intentHandled = useRef(entry.source !== 'none');
+  const legacyCart = Array.isArray(cart) ? cart : [];
+  const [customer, setCustomer] = useState<Customer>({ ...emptyCustomer });
+  const [requestedDate, setRequestedDate] = useState('');
+  const [requestedTime, setRequestedTime] = useState('09:00');
+  const [notes, setNotes] = useState('');
+  const [kaiSummary, setKaiSummary] = useState<KaiDraft | null>(null);
+  const [kaiConflicts, setKaiConflicts] = useState<string[]>([]);
+  const touchedSelection = useRef<Set<string>>(new Set(entry.source === 'cart' && entry.service ? Object.keys(legacySelection(entry.service, cart?.[entry.cartIndex ?? 0])) : []));
+  const interruptedSelections = useRef(new Map<ServiceChoice, { selection: BookingSelection; touched: string[] }>());
+  const [wizardStep, setWizardStep] = useState<WizardStep>(0);
+  const [extrasOpen, setExtrasOpen] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [config, setConfig] = useState<BookingConfig | null>(null);
+  const [configLoading, setConfigLoading] = useState(true);
+  const [configAttempt, setConfigAttempt] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, FieldErrorKey>>({});
+  const [booking, setBooking] = useState<BookingView | null>(null);
+  const [bookingAccess, setBookingAccess] = useState<{ id: string; token: string } | null>(null);
+  const [recoveryAccess, setRecoveryAccess] = useState<RecoveryAccess | null>(null);
+  const [recoveryRestored, setRecoveryRestored] = useState(false);
+  const [recoveryLoading, setRecoveryLoading] = useState(() => !preview && new URLSearchParams(window.location.search).has('draft'));
+  const [returnMissing, setReturnMissing] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState(false);
+  const [payConsent, setPayConsent] = useState(false);
+  const [openingPayment, setOpeningPayment] = useState(false);
+  const [paymentClock, setPaymentClock] = useState(() => Date.now());
+  const [demoEnabled, setDemoEnabled] = useState(false);
+  const [demoOutcome, setDemoOutcome] = useState<DemoPaymentOutcome>('paid');
+  const [journeyPhase, setJourneyPhase] = useState<JourneyPhase | null>(null);
+  const [journeyEmail, setJourneyEmail] = useState<'request' | 'receipt' | null>(null);
+  const [saveOpenSignal, setSaveOpenSignal] = useState(0);
+  const [guidePreferences,setGuidePreferences] = useState<GuidePreferences>(() => guidePreferencesFromQuery(window.location.search));
+  const demoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const verifiedSuccess = useRef('');
+  const verifyingPayment = useRef('');
+  const idempotency = useRef({ fingerprint: '', key: '' });
+  const submittedResult = useRef<HTMLElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const stepPanelRef = useRef<HTMLElement>(null);
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null);
+  const finalConsentRef = useRef<HTMLInputElement>(null);
+  const [today] = useState(localToday);
+
+  useEffect(() => () => { if (demoTimer.current) clearTimeout(demoTimer.current); }, []);
+
+  useEffect(() => {
+    if (entry.source === 'storage') {
+      try { if (localStorage.getItem('kraken_preselected_service') === entry.raw) localStorage.removeItem('kraken_preselected_service'); } catch { /* No new storage is required. */ }
+    }
+  }, [entry]);
+  useEffect(() => {
+    // App may load its existing basket after this lazy route mounts. Do not override an active edit.
+    if (intentHandled.current || choice || bookingAccess || !legacyCart.length) return;
+    intentHandled.current = true;
+    if (legacyCart.length === 1) {
+      const service = serviceAlias(legacyCart[0]?.type || '');
+      if (service) { setChoice(service); setSelection(legacySelection(service, legacyCart[0])); setLegacyImported(true); }
+      else setUnsupportedIntent(true);
+    }
+  }, [cart, choice, bookingAccess]);
+
+  const { quote, priceError } = useMemo(() => {
+    if (!selection) return { quote: null, priceError: null };
+    try { return { quote: calculatePrice(selection), priceError: null }; }
+    catch (cause) { return { quote: null, priceError: cause instanceof PricingValidationError ? cause : new PricingValidationError('invalid_selection', 'selection', '') }; }
+  }, [selection]);
+
+  useEffect(() => {
+    if (preview) return;
+    const url = new URL(window.location.href);
+    const id = url.searchParams.get('draft');
+    const fragment = new URLSearchParams(url.hash.slice(1));
+    let accessToken = fragment.get('resume') || '';
+    if (!id && !accessToken) { setRecoveryLoading(false); return; }
+    if (!accessToken && id && safeId.test(id)) { try { accessToken = sessionStorage.getItem(recoveryTokenKey(id)) || ''; } catch { /* A fresh email link can still be opened. */ } }
+    // Keep the capability in the fragment until its validated response has been consumed.
+    // A network failure or language change must leave the email link retryable.
+    const consumeResume = () => {
+      const current = new URL(window.location.href);
+      const pending = new URLSearchParams(current.hash.slice(1));
+      if (pending.get('resume') !== accessToken) return;
+      pending.delete('resume'); current.hash = pending.toString();
+      window.history.replaceState(window.history.state, '', current.pathname + current.search + current.hash);
+    };
+    if (!id || !safeId.test(id) || !safeToken.test(accessToken)) { setError(text('recoveryLinkUnavailable')); setReturnMissing(true); setRecoveryLoading(false); return; }
+    const controller = new AbortController();
+    setRecoveryLoading(true);
+    void api<{ selection: BookingSelection; language: string; email?: string; guidePreferences?:GuidePreferences; bookingId?: string | null; resumeBooking?: { bookingId: string; publicToken: string; canCheckout: boolean; status: string } | null }>(`/api/recovery/drafts/${encodeURIComponent(id)}`, { signal: controller.signal, headers: { Authorization: `Bearer ${accessToken}` } })
+      .then(draft => {
+        if (controller.signal.aborted) return;
+        const explicitLanguage = new URLSearchParams(window.location.search).get('lang')?.split('-')[0];
+        if (!explicitLanguage || !['de','en','es','fr','it','pt'].includes(explicitLanguage)) setLanguage(bookingLanguage(draft.language));
+        if(draft.guidePreferences) setGuidePreferences(draft.guidePreferences);
+        // A payment reminder must resume its existing booking, never create a duplicate request.
+        if (draft.bookingId || draft.resumeBooking) {
+          const saved = draft.resumeBooking;
+          if (!saved || saved.bookingId !== draft.bookingId || !safeId.test(saved.bookingId) || !safeToken.test(saved.publicToken)) throw new Error('Saved booking unavailable');
+          rememberToken(saved.bookingId, saved.publicToken);
+          consumeResume();
+          setBookingAccess({ id: saved.bookingId, token: saved.publicToken });
+          try { sessionStorage.removeItem(recoveryTokenKey(id)); } catch { /* Optional session state. */ }
+          const current = new URL(window.location.href);
+          current.searchParams.set('booking', saved.bookingId); current.searchParams.delete('draft');
+          window.history.replaceState(window.history.state, '', current.pathname + current.search + current.hash);
+          return;
+        }
+        calculatePrice(draft.selection);
+        const service = draft.selection.service === 'regular' && draft.selection.frequency === 'once' ? 'deep' : serviceAlias(draft.selection.service);
+        if (!service) throw new Error('Unknown saved service');
+        intentHandled.current = true; setChoice(service); setSelection(draft.selection); setWizardStep(0);
+        touchedSelection.current = new Set(Object.keys(draft.selection));
+        if (typeof draft.email === 'string' && draft.email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(draft.email)) setCustomer(value => ({ ...value, email: draft.email! }));
+        try { sessionStorage.setItem(recoveryTokenKey(id), accessToken); } catch { /* Memory remains available. */ }
+        setRecoveryAccess({ id, accessToken }); setRecoveryRestored(true);
+        consumeResume();
+      }).catch(() => { if (!controller.signal.aborted) { try { sessionStorage.removeItem(recoveryTokenKey(id)); } catch { /* Optional session state. */ } setError(text('recoveryLinkUnavailable')); setReturnMissing(true); } })
+      .finally(() => { if (!controller.signal.aborted) setRecoveryLoading(false); });
+    return () => controller.abort();
+    // This capability is intentionally consumed once, then kept only in memory.
+  }, [preview]);
+
+  useEffect(() => {
+    if (preview || !recoveryAccess || !selection || booking || bookingAccess) return;
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      if (document.hidden) return;
+      void api(`/api/recovery/drafts/${encodeURIComponent(recoveryAccess.id)}/activity`, { method: 'POST', signal: controller.signal, headers: { Authorization: `Bearer ${recoveryAccess.accessToken}` }, body: JSON.stringify({ selection, language: locale, guidePreferences }) }).catch(() => { /* A failed heartbeat must not block the quote or pretend it was saved. */ });
+    }, 1200);
+    return () => { window.clearTimeout(timer); controller.abort(); };
+  }, [preview, recoveryAccess, selection, wizardStep, booking, bookingAccess, locale, guidePreferences]);
+  const manualReview = Boolean(quote && (quote.totalCents === null || quote.manualReviewReasons.length));
+  const checkoutExpiry = booking?.payment.checkoutExpiresAt ? Date.parse(booking.payment.checkoutExpiresAt) : Number.NaN;
+  const checkoutHasExpired = booking?.payment.status === 'pending' && Number.isFinite(checkoutExpiry) && checkoutExpiry <= paymentClock;
+
+  useEffect(() => {
+    const now = Date.now();
+    setPaymentClock(now);
+    if (booking?.payment.status !== 'pending' || !Number.isFinite(checkoutExpiry) || checkoutExpiry <= now) return;
+    const timeout = window.setTimeout(() => setPaymentClock(Date.now()), Math.min(checkoutExpiry - now + 50, 2_147_483_647));
+    return () => window.clearTimeout(timeout);
+  }, [booking?.payment.status, checkoutExpiry]);
+
+  useEffect(() => {
+    if (preview) {
+      setConfig({ available: false, paymentReady: false, mode: 'unconfigured', termsVersion: TERMS_VERSION });
+      setConfigLoading(false);
+      return;
+    }
+    const controller = new AbortController();
+    setConfigLoading(true);
+    api<BookingConfig>('/api/booking/config', { signal: controller.signal })
+      .then(value => { if (!controller.signal.aborted) setConfig(value); })
+      .catch(() => { if (!controller.signal.aborted) setConfig({ available: false, paymentReady: false, mode: 'unconfigured', termsVersion: TERMS_VERSION }); })
+      .finally(() => { if (!controller.signal.aborted) setConfigLoading(false); });
+    return () => controller.abort();
+  }, [configAttempt, preview]);
+
+  useEffect(() => {
+    if (preview) return;
+    const url = new URL(window.location.href);
+    const id = url.searchParams.get('booking');
+    const fragment = new URLSearchParams(url.hash.slice(1));
+    const suppliedToken = fragment.get('access') || '';
+    // Remove capability secrets from the visible URL before any API calls.
+    if (fragment.has('access')) {
+      fragment.delete('access');
+      url.hash = fragment.toString();
+      window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
+    }
+    if (!id || !safeId.test(id)) return;
+    const token = suppliedToken && safeToken.test(suppliedToken) ? suppliedToken : recalledToken(id);
+    if (!token || !safeToken.test(token)) { setReturnMissing(true); return; }
+    rememberToken(id, token);
+    setBookingAccess({ id, token });
+  }, [preview]);
+
+  const readStatus = useCallback(async (access: { id: string; token: string }, signal?: AbortSignal) => {
+    if (preview) throw new BookingApiError('PREVIEW_ONLY', 403);
+    const value = await api<BookingView>(`/api/booking/requests/${encodeURIComponent(access.id)}`, { signal, headers: { Authorization: `Bearer ${access.token}` } });
+    if (!signal?.aborted) setBooking(value);
+    return value;
+  }, [preview]);
+
+  useEffect(() => {
+    if (preview || !bookingAccess) return;
+    const controller = new AbortController();
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const started = Date.now();
+    let inFlight = false;
+    setLoadingStatus(true);
+    const refresh = async () => {
+      if (inFlight || controller.signal.aborted) return;
+      if (Date.now() - started > 60_000) { if (interval) clearInterval(interval); return; }
+      inFlight = true;
+      try {
+        const current = await readStatus(bookingAccess, controller.signal);
+        if (['paid', 'test_paid', 'refunded', 'partially_refunded', 'chargeback'].includes(current.payment.status) && interval) clearInterval(interval);
+      } catch {
+        if (!controller.signal.aborted) setError(text('networkError'));
+      } finally {
+        inFlight = false;
+        if (!controller.signal.aborted) setLoadingStatus(false);
+      }
+    };
+    void refresh();
+    interval = setInterval(() => { void refresh(); }, 3000);
+    return () => { controller.abort(); if (interval) clearInterval(interval); };
+  }, [bookingAccess, readStatus, text, preview]);
+
+  useEffect(() => { setPayConsent(false); }, [booking?.quoteRevision, booking?.scheduling.date, booking?.scheduling.time]);
+
+  const chooseService = (service: ServiceChoice) => {
+    if (choice === service) return;
+    intentHandled.current = true; setLegacyImported(false); setUnsupportedIntent(false);
+    if (choice && selection) interruptedSelections.current.set(choice, { selection: { ...selection }, touched: [...touchedSelection.current] });
+    const remembered = interruptedSelections.current.get(service);
+    setChoice(service); setSelection(remembered ? { ...remembered.selection } : selectionFor(service));
+    touchedSelection.current = new Set(remembered?.touched || []);
+    setTermsAccepted(false); setError(''); setFieldErrors({});
+    setExtrasOpen(false);
+  };
+  useEffect(() => {
+    const receive = () => {
+      const request = consumeHomeCalculatorRequest();
+      if (!request || bookingAccess || booking) return;
+      const service = serviceAlias(request.kind === 'windows' ? 'windows' : request.service);
+      if (!service) { setUnsupportedIntent(true); return; }
+      intentHandled.current = true;
+      if (choice !== service) {
+        if (choice && selection) interruptedSelections.current.set(choice, { selection: { ...selection }, touched: [...touchedSelection.current] });
+        const remembered = interruptedSelections.current.get(service);
+        setChoice(service); setSelection(remembered ? { ...remembered.selection } : selectionFor(service));
+        touchedSelection.current = new Set(remembered?.touched || []); setTermsAccepted(false);
+      }
+      setLegacyImported(false); setUnsupportedIntent(false); setError(''); setWizardStep(0);
+    };
+    // An explicit URL selection takes precedence over an old queued service.
+    if (new URLSearchParams(window.location.search).has('service')) consumeHomeCalculatorRequest();
+    else receive();
+    return subscribeHomeCalculatorRequests(receive);
+  }, [bookingAccess, booking, choice]);
+
+  const kaiCurrent = useRef<KaiCalculatorState | null>(null);
+  kaiCurrent.current = { choice, selection, customer, requestedDate, notes, touchedSelection: [...touchedSelection.current] };
+  const kaiReceiver = useRef<() => void>(() => {});
+  kaiReceiver.current = () => {
+    const transfer = consumeKaiTransfer();
+    if (!transfer) return;
+    consumeHomeCalculatorRequest();
+    setKaiSummary(transfer.draft);
+    if (booking || bookingAccess || submitting || openingPayment || recoveryLoading || returnMissing) {
+      setKaiConflicts(['notes']); return; // An existing booking or restoration is never edited by a chat transfer.
+    }
+    let current = kaiCurrent.current!;
+    if (current.choice && current.selection) interruptedSelections.current.set(current.choice, { selection: { ...current.selection }, touched: [...touchedSelection.current] });
+    const desired = serviceAlias(transfer.draft.service === 'end' ? 'endOfTenancy' : transfer.draft.service);
+    const remembered = desired && desired !== current.choice ? interruptedSelections.current.get(desired) : null;
+    if (remembered && desired) current = { ...current, choice: desired, selection: { ...remembered.selection }, touchedSelection: remembered.touched };
+    const applied = applyKaiBookingTransfer(current, transfer.draft, transfer.policy);
+    touchedSelection.current = new Set(applied.touchedSelection || []);
+    intentHandled.current = true;
+    setChoice(applied.choice); setSelection(applied.selection); setCustomer(applied.customer);
+    setRequestedDate(applied.requestedDate); setNotes(applied.notes); setKaiConflicts(applied.conflicts);
+    setWizardStep(0); setLegacyImported(false); setUnsupportedIntent(false); setTermsAccepted(false); setError(''); setFieldErrors({});
+    // Facts and interrupted configurations remain in memory; nothing is written to legacy personal-data storage.
+  };
+  useEffect(() => {
+    kaiReceiver.current();
+    const unsubscribe = subscribeKaiTransfers(() => kaiReceiver.current());
+    const unregister = registerKaiCalculationPreview(draft => {
+      const current = kaiCurrent.current!;
+      const desired = serviceAlias(draft.service === 'end' ? 'endOfTenancy' : draft.service);
+      const remembered = desired && desired !== current.choice ? interruptedSelections.current.get(desired) : null;
+      return kaiBookingPreview(remembered && desired ? { ...current, choice: desired, selection: { ...remembered.selection }, touchedSelection: remembered.touched } : current, draft);
+    });
+    return () => { unsubscribe(); unregister(); };
+  }, []);
+
+  const chooseLegacyItem = (index: number) => {
+    const item = legacyCart[index];
+    const service = serviceAlias(item?.type || '');
+    if (!service) return;
+    intentHandled.current = true; setChoice(service); setSelection(legacySelection(service, item));
+    touchedSelection.current = new Set(Object.keys(legacySelection(service, item)));
+    setLegacyImported(true); setUnsupportedIntent(false); setTermsAccepted(false); setError('');
+    setWizardStep(0);
+  };
+  const updateSelection = (changes: Record<string, unknown>) => {
+    for (const key of Object.keys(changes)) touchedSelection.current.add(key);
+    setSelection(current => current ? { ...current, ...changes } as BookingSelection : current);
+    setTermsAccepted(false); setError('');
+  };
+  const updateCustomer = (key: keyof Customer, value: string) => { setCustomer(current => ({ ...current, [key]: value })); setTermsAccepted(false); setError(''); };
+  const acceptRecoveryAccess = (access: RecoveryAccess) => {
+    if (preview || !safeId.test(access.id) || !safeToken.test(access.accessToken)) return;
+    setRecoveryAccess(access);
+    try { sessionStorage.setItem(recoveryTokenKey(access.id), access.accessToken); } catch { /* No customer details are stored. */ }
+    const url = new URL(window.location.href); url.searchParams.set('draft', access.id);
+    window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
+  };
+
+  function focusStep(fieldId?: string) {
+    window.requestAnimationFrame(() => {
+      const target = (fieldId ? document.getElementById(fieldId) : null) || stepHeadingRef.current;
+      if (!target) return;
+      let ancestor = target.parentElement;
+      while (ancestor) { if (ancestor instanceof HTMLDetailsElement) ancestor.open = true; ancestor = ancestor.parentElement; }
+      target.focus({ preventScroll: true });
+      const scrollTarget = fieldId ? target : stepPanelRef.current || target;
+      scrollTarget.scrollIntoView({ block: fieldId ? 'center' : 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      // Inline errors use the selected site language instead of native browser popovers.
+    });
+  }
+  function stepIssue(step: WizardStep): { step: WizardStep; message: string; fieldId?: string } | null {
+    if (step === 0) {
+      if (!selection || !choice) return { step: 0, message: text('selectToStart') };
+      if (!quote || priceError) return { step: 0, message: text('priceError'), fieldId: priceError?.field ? `kr-calc-${priceError.field}` : undefined };
+      if (selection.service === 'moving' && !selection.details?.trim()) return { step: 0, message: text('checkRequired'), fieldId: 'kr-calc-moving-details' };
+      return null;
+    }
+    if (step === 1) {
+      const values: Array<[keyof Customer, number, number, string]> = [
+        ['address', 3, 180, 'address'], ['postalCode', 4, 4, 'postal'], ['city', 2, 100, 'city'],
+        ['name', 2, 120, 'name'], ['email', 1, 254, 'email'], ['phone', 6, 40, 'phone'],
+      ];
+      for (const [key, min, max, id] of values) {
+        const value = customer[key].trim();
+        if (value.length < min || value.length > max || /[\u0000-\u001f]/.test(value)) return { step: 1, message: text('checkRequired'), fieldId: `kr-calc-${id}` };
+      }
+      if (!/^\d{4}$/.test(customer.postalCode.trim())) return { step: 1, message: text('invalidContact'), fieldId: 'kr-calc-postal' };
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email.trim())) return { step: 1, message: text('invalidContact'), fieldId: 'kr-calc-email' };
+      if (!/^[+\d\s()./-]+$/.test(customer.phone.trim())) return { step: 1, message: text('invalidContact'), fieldId: 'kr-calc-phone' };
+      const day = new Date(`${requestedDate}T12:00:00Z`);
+      const currentTime = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Zurich', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date());
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) || !Number.isFinite(day.getTime()) || day.toISOString().slice(0, 10) !== requestedDate || requestedDate < localToday() || requestedDate > localToday(new Date(Date.now() + 366 * 86400000))) return { step: 1, message: text('invalidDate'), fieldId: 'kr-calc-date' };
+      if (!/^\d{2}:\d{2}$/.test(requestedTime) || requestedTime < '09:00' || requestedTime > '19:00' || Number(requestedTime.slice(3)) % 15 !== 0 || (requestedDate === localToday() && requestedTime <= currentTime)) return { step: 1, message: text('invalidDate'), fieldId: 'kr-calc-time' };
+      if (notes.length > 3000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(notes)) return { step: 1, message: text('checkRequired'), fieldId: 'kr-calc-notes' };
+    }
+    return null;
+  }
+  function reportPanelValidity(): boolean {
+    const controls = stepPanelRef.current?.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea');
+    const invalid: Record<string, FieldErrorKey> = {};
+    for (const control of controls || []) {
+      if (!control.validity.valid) invalid[control.id] = fieldErrorKey(control.id, control.validity.valueMissing);
+    }
+    setFieldErrors(invalid);
+    const first = Object.keys(invalid)[0];
+    if (first) { setError(text('checkRequired')); focusStep(first); return false; }
+    return true;
+  }
+  const fieldAttributes = (id: string) => ({ 'aria-invalid': fieldErrors[id] ? true : undefined, 'aria-describedby': fieldErrors[id] ? `${id}-error` : undefined });
+  const inlineFieldError = (id: string) => fieldErrors[id] ? <span id={`${id}-error`} className="kr-calc-field-error">{text(fieldErrors[id])}</span> : null;
+  function revealIssue(issue: NonNullable<ReturnType<typeof stepIssue>>) {
+    setWizardStep(issue.step); setError(issue.message); setTermsAccepted(false);
+    if (issue.fieldId) setFieldErrors(current => ({ ...current, [issue.fieldId!]: fieldErrorKey(issue.fieldId!, false) }));
+    focusStep(issue.fieldId);
+  }
+  function navigateStep(target: WizardStep) {
+    if (submitting) return;
+    if (target > wizardStep) {
+      if (!reportPanelValidity()) return;
+      for (let index = 0; index < target; index++) {
+        const issue = stepIssue(index as WizardStep);
+        if (issue) { revealIssue(issue); return; }
+      }
+    }
+    setError(''); setWizardStep(target); focusStep();
+  }
+  const nextStep = () => navigateStep(Math.min(2, wizardStep + 1) as WizardStep);
+
+  const submitRequest = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (wizardStep < 2) { nextStep(); return; }
+    for (let index = 0; index < 2; index++) {
+      const issue = stepIssue(index as WizardStep);
+      if (issue) { revealIssue(issue); return; }
+    }
+    if (!termsAccepted) { setError(text('checkRequired')); finalConsentRef.current?.focus(); return; }
+    if (preview && demoEnabled && selection && quote && !submitting) {
+      setError(''); setSubmitting(true); setJourneyPhase('request');
+      const snapshot=createDemoBooking(selection,customer,requestedDate,requestedTime,locale);
+      demoTimer.current=setTimeout(() => {
+        setBooking(snapshot); setSubmitting(false); setJourneyPhase(null);
+        window.requestAnimationFrame(() => submittedResult.current?.focus());
+      },1800);
+      return;
+    }
+    if (preview || !selection || !quote || submitting || !config?.available) return;
+    setError('');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) || requestedDate < localToday() || !/^\d{2}:\d{2}$/.test(requestedTime) || requestedTime < '09:00' || requestedTime > '19:00') {
+      setError(text('invalidDate')); return;
+    }
+    const payload = {
+      selection, customer, requestedDate, requestedTime, notes, language: locale,
+      termsAccepted: true, termsVersion: config.termsVersion || TERMS_VERSION,
+      pricingVersion: quote.pricingVersion, acceptedTotalCents: quote.totalCents,
+      ...(recoveryAccess ? { recovery: recoveryAccess } : {}),
+    };
+    const fingerprint = JSON.stringify(payload);
+    if (fingerprint !== idempotency.current.fingerprint) idempotency.current = { fingerprint, key: randomId() };
+    setSubmitting(true); setJourneyPhase('request');
+    try {
+      const result = await api<BookingView>('/api/booking/requests', {
+        method: 'POST', body: JSON.stringify({ ...payload, idempotencyKey: idempotency.current.key }),
+      });
+      if (!safeId.test(result.bookingId) || !result.publicToken || !safeToken.test(result.publicToken)) throw new BookingApiError('INVALID_RESPONSE', 502);
+      rememberToken(result.bookingId, result.publicToken);
+      setBooking(result); setBookingAccess({ id: result.bookingId, token: result.publicToken });
+      if (recoveryAccess) { try { sessionStorage.removeItem(recoveryTokenKey(recoveryAccess.id)); } catch { /* Optional session state. */ } }
+      setRecoveryAccess(null);
+      const url = new URL(window.location.href);
+      url.searchParams.set('booking', result.bookingId); url.searchParams.delete('payment'); url.searchParams.delete('draft'); url.hash = '';
+      window.history.replaceState(window.history.state, '', url.pathname + url.search);
+      window.requestAnimationFrame(() => submittedResult.current?.focus());
+    } catch (cause) {
+      const fieldByCode: Record<string, string> = { INVALID_NAME: 'name', INVALID_EMAIL: 'email', INVALID_PHONE: 'phone', INVALID_ADDRESS: 'address', INVALID_POSTAL_CODE: 'postal', INVALID_CITY: 'city', INVALID_DATE: 'date', INVALID_TIME: 'time', INVALID_DATE_TIME: 'date', DATE_OUT_OF_RANGE: 'date' };
+      if (cause instanceof BookingApiError && fieldByCode[cause.code]) revealIssue({ step: 1, message: text(cause.code.includes('DATE') || cause.code.includes('TIME') ? 'invalidDate' : 'invalidContact'), fieldId: `kr-calc-${fieldByCode[cause.code]}` });
+      else if (cause instanceof BookingApiError && cause.code === 'PRICE_CHANGED') revealIssue({ step: 0, message: text('priceChanged') });
+      else setError(text(cause instanceof BookingApiError && cause.status === 409 ? 'priceChanged' : 'networkError'));
+    } finally { setSubmitting(false); setJourneyPhase(null); }
+  };
+
+  const refreshStatus = async () => {
+    if (preview || !bookingAccess || loadingStatus) return;
+    setError(''); setLoadingStatus(true);
+    try { await readStatus(bookingAccess); } catch { setError(text('networkError')); }
+    finally { setLoadingStatus(false); }
+  };
+  const startPayment = async () => {
+    if (preview && demoEnabled && booking?.demo && booking.canCheckout && payConsent && !openingPayment) {
+      setError('');setOpeningPayment(true);setJourneyPhase('verification');
+      const snapshot=booking as DemoBooking;
+      demoTimer.current=setTimeout(() => {
+        const result=settleDemoPayment(snapshot,demoOutcome,locale);
+        setBooking(result);setOpeningPayment(false);setPayConsent(false);setJourneyPhase(demoOutcome==='paid'?'success':null);
+        if(demoOutcome==='failed') setError(journey.paymentFailed);
+      },2600);
+      return;
+    }
+    if (preview || !bookingAccess || !booking || !payConsent || !booking.canCheckout || checkoutHasExpired || openingPayment) return;
+    setError(''); setOpeningPayment(true); setJourneyPhase('checkout');
+    try {
+      const result = await api<{ link: string }>(`/api/booking/requests/${encodeURIComponent(bookingAccess.id)}/checkout`, {
+        method: 'POST', headers: { Authorization: `Bearer ${bookingAccess.token}` },
+        body: JSON.stringify({ acceptedQuoteRevision: booking.quoteRevision, termsAccepted: true, termsVersion: booking.termsVersion || config?.termsVersion || TERMS_VERSION, language: locale }),
+      });
+      const paymentUrl = new URL(result.link);
+      if (paymentUrl.protocol !== 'https:') throw new BookingApiError('INVALID_PAYMENT_LINK', 502);
+      window.location.assign(paymentUrl.href);
+    } catch (cause) {
+      await refreshStatus();
+      setPayConsent(false);
+      setError(text(cause instanceof BookingApiError && cause.code === 'CHECKOUT_EXPIRED' ? 'checkoutExpired' : cause instanceof BookingApiError && cause.status === 409 ? 'priceChanged' : 'networkError'));
+      setOpeningPayment(false);
+      setJourneyPhase(null);
+    }
+  };
+  const reset = () => {
+    if (demoTimer.current) clearTimeout(demoTimer.current);
+    setSubmitting(false);setOpeningPayment(false);setJourneyPhase(null);setJourneyEmail(null);
+    verifiedSuccess.current='';verifyingPayment.current='';
+    setBookingAccess(null); setBooking(null); setReturnMissing(false); setChoice(null); setSelection(null);
+    setTermsAccepted(false); setPayConsent(false); setError(''); setCustomer({ ...emptyCustomer });
+    setRequestedDate(''); setRequestedTime('09:00'); setNotes('');
+    setKaiSummary(null); setKaiConflicts([]); touchedSelection.current.clear(); interruptedSelections.current.clear();
+    setWizardStep(0);
+    setRecoveryAccess(null); setRecoveryRestored(false); setRecoveryLoading(false);
+    intentHandled.current = true; setLegacyImported(false); setUnsupportedIntent(false);
+    const url = new URL(window.location.href);
+    for (const key of ['booking', 'payment', 'service', 'draft']) url.searchParams.delete(key);
+    url.hash = ''; window.history.replaceState(window.history.state, '', url.pathname + url.search);
+  };
+
+  const startDemo = () => {
+    if(!preview) return;
+    reset();setDemoEnabled(true);setChoice('endOfTenancy');setSelection(defaultSelection('endOfTenancy'));
+    setCustomer({name:'Demo Kraken',email:'preview@example.com',phone:'+41790000000',address:'Musterstrasse 1',postalCode:'8000',city:'Zürich'});
+    setRequestedDate(localToday(new Date(Date.now()+7*86400000)));setRequestedTime('09:00');
+    setTermsAccepted(false);setDemoOutcome('paid');
+    focusStep();
+  };
+  const confirmDemo = () => {
+    if(!preview || !booking?.demo) return;
+    setBooking(confirmDemoAppointment(booking as DemoBooking));setPayConsent(false);setError('');
+  };
+  const completePendingDemo = () => {
+    if(!preview || !booking?.demo || booking.payment.status!=='pending') return;
+    setBooking(settleDemoPayment(booking as DemoBooking,'paid',locale));setJourneyPhase('success');
+  };
+  const openSaveProgress = () => {
+    if(!selection || !quote) { revealIssue({step:0,message:text('selectToStart')}); return; }
+    setSaveOpenSignal(value=>value+1);
+  };
+
+  const number = (name: string, label = name, min = 0, step = 1, hint?: string, max = 1000) => <NumberField key={name}
+    name={name} label={text(label)} value={Number((selection as unknown as Record<string, unknown>)?.[name])}
+    min={min} max={max} step={step} hint={hint} invalid={priceError?.field === name || Boolean(fieldErrors[`kr-calc-${name}`])} errorMessage={fieldErrors[`kr-calc-${name}`] ? text(fieldErrors[`kr-calc-${name}`]) : undefined} text={text}
+    onChange={value => updateSelection({ [name]: value })} />;
+  const toggle = (name: string, label = name, hint?: string, price?: string) => <ToggleField key={name}
+    name={name} label={text(label)} checked={Boolean((selection as unknown as Record<string, unknown>)?.[name])}
+    hint={hint} price={price} onChange={value => updateSelection({ [name]: value })} />;
+  const extras = (content: React.ReactNode, count: number) => <details className="kr-calc-extras" open={extrasOpen} onToggle={event => setExtrasOpen(event.currentTarget.open)}>
+    <summary><span>{text('extrasOptional')}<em>{text('extrasReassurance')}</em></span><small>{text('extrasCount', { count })}</small><ChevronDown aria-hidden="true" /></summary>
+    <div className="kr-calc-extras-content">{content}</div>
+  </details>;
+
+  function details() {
+    if (!selection) return null;
+    switch (selection.service) {
+      case 'regular': return <>
+        <div className="kr-calc-fields">
+          <div className="kr-calc-field"><label htmlFor="kr-calc-frequency">{text('frequency')}</label>
+            <select id="kr-calc-frequency" value={selection.frequency} onChange={event => {
+              const frequency = event.target.value;
+              updateSelection({ frequency, hours: Math.max(selection.hours || 0, frequency === 'once' ? 3 : 2.5) });
+              setChoice(frequency === 'once' ? 'deep' : 'regular');
+            }}>
+              {(['weekly', 'fortnightly', 'monthly', 'once'] as const).map(value => <option key={value} value={value}>{text(value)} · {money(REGULAR_RATES[value])}/h</option>)}
+            </select>
+          </div>
+          {number('hours', 'hours', selection.frequency === 'once' ? 3 : 2.5, .25, text('minimumRegular', { hours: selection.frequency === 'once' ? 3 : 2.5 }), 168)}
+        </div>
+        <p className="kr-calc-hint">{text('hoursHint')}</p>
+        {extras(<>
+        <div className="kr-calc-toggles">
+          {toggle('materials', 'materials', text('materialsHint'), money(1000))}
+          {toggle('oven', 'oven', undefined, money(3500))}
+          {toggle('fridge', 'fridge', undefined, money(3000))}
+        </div>
+        <div className="kr-calc-fields kr-calc-extra-fields">{number('ironingHours', 'ironing', 0, .25, `${money(4000)}/h`, 168)}</div>
+        </>, [selection.materials, selection.oven, selection.fridge, selection.ironingHours > 0].filter(Boolean).length)}
+      </>;
+      case 'endOfTenancy': return <>
+        <div className="kr-calc-fields">
+          <div className="kr-calc-field"><label htmlFor="kr-calc-mode">{text('billingMode')}</label>
+            <select id="kr-calc-mode" value={selection.mode} onChange={event => updateSelection({ mode: event.target.value })}><option value="fixed">{text('fixed')}</option><option value="hourly">{text('hourly')} · {money(4500)}/h</option></select>
+          </div>
+          <div className="kr-calc-field"><label htmlFor="kr-calc-property-type">{text('propertyType')}</label><select id="kr-calc-property-type" value={selection.propertyType} onChange={event => updateSelection({ propertyType: event.target.value })}><option value="apartment">{text('apartment')}</option><option value="house">{text('house')}</option></select></div>
+          {number('rooms', 'rooms', 1, .5, undefined, 100)}
+          {number('areaM2', 'area', .01, .01, undefined, 10_000)}
+          {selection.mode === 'hourly' && number('hours', 'hours', 3, .25, text('minimumRegular', { hours: 3 }), 168)}
+        </div>
+        {selection.mode === 'fixed' && selection.propertyType === 'apartment' ? <ul className="kr-calc-included-benefits">
+          {['eotBenefitKitchenBath', 'eotBenefitWindowsFloors', 'eotBenefitHandover'].map(key => <li key={key}><CheckCircle2 aria-hidden="true" /><span>{text(key)}</span></li>)}
+        </ul> : <p className="kr-calc-included"><Info aria-hidden="true" />{text(selection.mode === 'hourly' ? 'notice.hourly_no_handover_guarantee' : 'houseHint')}</p>}
+        {extras(<>
+        <div className="kr-calc-fields">
+          {number('bathrooms', 'bathrooms', 0, 1, text('bathroomsHint'))}{number('guestWcs')}
+          {number('slatBlinds')}{number('rollerShutters')}{number('smallBalconies')}{number('largeBalconies')}
+          {number('storageRooms')}{number('garages')}{number('carpetRooms')}
+        </div>
+        <div className="kr-calc-toggles">{toggle('heavySoiling', 'heavySoiling', text('heavyHint'), '+15 %')}</div>
+        </>, [selection.bathrooms > 1, selection.guestWcs > 0, selection.slatBlinds > 0, selection.rollerShutters > 0, selection.smallBalconies > 0, selection.largeBalconies > 0, selection.storageRooms > 0, selection.garages > 0, selection.carpetRooms > 0, selection.heavySoiling].filter(Boolean).length)}
+      </>;
+      case 'construction': return <>
+        <div className="kr-calc-fields">
+          <div className="kr-calc-field"><label htmlFor="kr-calc-mode">{text('billingMode')}</label><select id="kr-calc-mode" value={selection.mode} onChange={event => updateSelection({ mode: event.target.value })}><option value="area">{text('areaMode')}</option><option value="hourly">{text('hourMode')} · {money(4800)}/h</option></select></div>
+          <div className="kr-calc-field"><label htmlFor="kr-calc-level">{text('constructionLevel')}</label><select id="kr-calc-level" value={selection.level} onChange={event => updateSelection({ level: event.target.value })}><option value="light">{text('light')}</option><option value="full">{text('full')}</option></select></div>
+          {number('areaM2', 'area', selection.mode === 'hourly' ? 0 : .01, .01, undefined, 10_000)}
+          {selection.mode === 'hourly' && number('hours', 'hours', 4, .25, text('minimumRegular', { hours: 4 }), 168)}
+        </div>
+        {extras(<>
+        <div className="kr-calc-fields">{number('cementM2', 'cementM2', 0, .01, `${money(350)}/m²`, 10_000)}{number('filmWindows', 'filmWindows', 0, 1, money(800))}{number('slatBlinds', 'slatBlinds', 0, 1, money(1200))}</div>
+        <div className="kr-calc-toggles">{toggle('extraArea', 'extraArea', text('extraAreaHint'))}</div>
+        </>, [selection.cementM2 > 0, selection.filmWindows > 0, selection.slatBlinds > 0, selection.extraArea].filter(Boolean).length)}
+      </>;
+      case 'windows': return <>
+        <p className="kr-calc-included"><CheckCircle2 aria-hidden="true" />{text('windowIncluded')}</p>
+        <div className="kr-calc-fields">{number('standard', 'standard', 0, 1, money(1600))}{number('double', 'double', 0, 1, money(2400))}{number('balconyDoors', 'balconyDoors', 0, 1, money(2800))}{number('roof', 'roof', 0, 1, money(2500))}</div>
+        {extras(<>
+        <div className="kr-calc-fields">{number('slatBlinds', 'slatBlinds', 0, 1, money(1200))}{number('rollerShutters', 'rollerShutters', 0, 1, money(800))}</div>
+        <div className="kr-calc-toggles">{toggle('difficultAccess', 'difficultAccess', undefined, money(3500))}{toggle('winterGarden', 'winterGarden', text('winterGardenHint'))}</div>
+        </>, [selection.slatBlinds > 0, selection.rollerShutters > 0, selection.difficultAccess, selection.winterGarden].filter(Boolean).length)}
+      </>;
+      case 'moving': return <>
+        <p className="kr-calc-included"><KrakenServiceIcon name="moving" size={28} />{text('movingHint')}</p>
+        <div className="kr-calc-field"><label htmlFor="kr-calc-moving-details">{text('movingDetails')}</label><textarea id="kr-calc-moving-details" {...fieldAttributes('kr-calc-moving-details')} rows={6} maxLength={3000} required value={selection.details || ''} onChange={event => updateSelection({ details: event.target.value })} /></div>
+      </>;
+    }
+  }
+
+  const services: ServiceChoice[] = ['regular', 'deep', 'endOfTenancy', 'windows', 'construction', 'moving'];
+  const emailState = booking?.payment.status === 'paid' ? booking?.email?.receipt : booking?.email?.request;
+  const paid = booking?.payment.status === 'paid';
+  const testPaid = booking?.payment.status === 'test_paid';
+  const held = booking?.scheduling.status === 'held';
+  const needsReschedule = booking?.scheduling.status === 'needs_reschedule';
+  const pending = booking?.payment.status === 'pending';
+  const changedPayment = Boolean(booking && ['refunded', 'partially_refunded', 'partially-refunded', 'chargeback', 'disputed', 'reconciliation_required'].includes(booking.payment.status));
+  const dueNow = booking?.payment.amountDueNowCents;
+  const depositPercent = booking?.payment.depositPercent ?? config?.depositPercent ?? 15;
+  const finalTotal = booking?.quote.totalCents;
+  const finalBalance = booking?.payment.remainingBalanceCents;
+  const balanceAfterDeposit = typeof finalTotal === 'number' && typeof dueNow === 'number' ? Math.max(0, finalTotal - dueNow) : null;
+  const stepKeys = ['stepService', 'stepSchedule', 'stepReview'] as const;
+  const stepHintKeys = ['configureHint', 'stepScheduleHint', 'stepReviewHint'] as const;
+  const stepTitleKeys = ['configureTitle', 'planTitle', 'reviewReady'] as const;
+  const nextLabel = ['continueSchedule', 'continueReview'][wizardStep] || 'stepReview';
+  const liveTotal = manualReview ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—';
+  const reviewDate = requestedDate && Number.isFinite(Date.parse(`${requestedDate}T12:00:00Z`)) ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: 'Europe/Zurich' }).format(new Date(`${requestedDate}T12:00:00Z`)) : '—';
+  const focusConsent = () => {
+    finalConsentRef.current?.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    finalConsentRef.current?.focus({ preventScroll: true });
+  };
+
+  useEffect(() => {
+    if(!booking) return;
+    const identity=`${booking.bookingId}:${booking.quoteRevision}`;
+    if(paid && !preview && verifiedSuccess.current!==identity) {
+      verifiedSuccess.current=identity;setJourneyPhase('success');
+    } else if(!preview && pending && verifyingPayment.current!==identity) {
+      verifyingPayment.current=identity;setJourneyPhase('verification');
+    } else if(changedPayment) setJourneyPhase(null);
+  },[booking?.bookingId,booking?.quoteRevision,paid,pending,changedPayment,preview]);
+  useEffect(() => {
+    if(preview || journeyPhase!=='verification') return;
+    const timeout=window.setTimeout(()=>setJourneyPhase(current=>current==='verification'?null:current),25_000);
+    return ()=>window.clearTimeout(timeout);
+  },[journeyPhase,preview]);
+  const guide = (presentation:'card'|'button'='card') => {
+    const service = booking?.quote.service || choice || selection?.service;
+    if (service !== 'moving' && service !== 'endOfTenancy') return null;
+    return <MovingGuide language={locale} preview={preview} service={service} customer={booking?.customer || customer} requestedDate={booking?.scheduling.date || requestedDate} appointmentConfirmed={booking?.scheduling.status==='confirmed'} initialPreferences={guidePreferences} onPreferencesChange={setGuidePreferences} presentation={presentation} />;
+  };
+
+  return <main id="main" className="kr-service-calculator" lang={language}>
+    <div className="kr-calc-shell">
+      <header className="kr-calc-intro">
+        <p className="kr-calc-eyebrow">{text('eyebrow')}</p>
+        <h1>{text('titleStart')} <span>{text('titleAccent')}</span></h1>
+        <p className="kr-calc-lead">{text('intro')}</p>
+        <div className="kr-calc-trust"><span><MapPin aria-hidden="true" />{text('region')}</span><span><ShieldCheck aria-hidden="true" />{text('noVat')}</span><span><Check aria-hidden="true" />{text('personal')}</span></div>
+      </header>
+      {preview && <section className="kr-journey-demo-bar" aria-label={journey.demoActive}><div><strong>{demoEnabled?journey.demoActive:journey.demoStart}</strong><p>{journey.demoNote}</p></div><button type="button" className="kr-calc-secondary" onClick={demoEnabled?()=>{reset();setDemoEnabled(false);}:startDemo}>{demoEnabled?journey.demoStop:journey.demoStart}</button></section>}
+      {kaiSummary && <section className="kr-calc-card kr-calc-kai-transfer" aria-labelledby="kr-calc-kai-title">
+        <h2 id="kr-calc-kai-title">{text('kaiTransferTitle')}</h2><p>{text('kaiTransferHint')}</p>
+        {kaiConflicts.length > 0 && <p className="kr-calc-inline-note" role="status">{text('kaiTransferConflicts')}</p>}
+        <dl>{KAI_FIELDS.filter(field => kaiSummary.fields[field]).map(field => <div key={field}><dt>{kaiDraftFieldLabel(field, locale)}</dt><dd>{kaiSummary.fields[field]}</dd></div>)}</dl>
+      </section>}
+      {recoveryRestored && <p className="kr-calc-inline-note" role="status"><CheckCircle2 aria-hidden="true" />{text('recoveryRestored')}</p>}
+      {recoveryLoading && <div className="kr-calc-loading" role="status"><LoaderCircle className="kr-calc-spin" aria-hidden="true" />{text('working')}</div>}
+      {config?.mode === 'test' && <p className="kr-calc-alert kr-calc-test" role="status">{text('testBanner')}</p>}
+      {returnMissing && <section className="kr-calc-card kr-calc-return-error" role="status"><ShieldCheck aria-hidden="true" /><p>{text('returnMissing')}</p><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a><button type="button" className="kr-calc-secondary" onClick={reset}>{text('newRequest')}</button></section>}
+      {bookingAccess && !booking && <div className="kr-calc-loading" role="status">{loadingStatus ? <><LoaderCircle className="kr-calc-spin" aria-hidden="true" />{text('working')}</> : <button type="button" className="kr-calc-secondary" onClick={() => { void refreshStatus(); }}>{text('refresh')}</button>}</div>}
+      {error && <p className="kr-calc-alert" role="alert">{error}</p>}
+      {!bookingAccess && !booking && !returnMissing && !recoveryLoading && <>
+        {unsupportedIntent && <p className="kr-calc-alert" role="status">{text('unsupportedIntent')}</p>}
+        {wizardStep === 0 && legacyCart.length > 0 && <section className="kr-calc-card" style={{ marginBottom: 24 }} aria-labelledby="kr-calc-legacy-title"><h2 id="kr-calc-legacy-title" className="kr-calc-subtitle" style={{ marginTop: 0 }}>{text('previousBasket', { count: legacyCart.length })}</h2><p className="kr-calc-section-hint" style={{ marginTop: 0 }}>{text('previousBasketHint')}</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>{legacyCart.map((item, index) => { const service = serviceAlias(item?.type || ''); return service ? <button className="kr-calc-secondary" type="button" key={item?.id || index} onClick={() => chooseLegacyItem(index)}>{index + 1}. {text(service)}</button> : item?.type === 'comic-book' ? <button className="kr-calc-secondary" type="button" key={item.id || index} onClick={() => onNavigate('comic-shop')}>{index + 1}. {text('comicShop')}</button> : <span className="kr-calc-inline-note" key={item?.id || index} style={{ margin: 0 }}>{index + 1}. {text('unsupportedBasketItem')}</span>; })}</div>
+          {legacyCart.some(item => !serviceAlias(item?.type || '')) && <p className="kr-calc-price-note">{text('excludedBasketItems')}</p>}
+        </section>}
+        {legacyImported && <p className="kr-calc-inline-note" style={{ marginBottom: 24 }} role="status"><Info aria-hidden="true" />{text('legacyImported')}</p>}
+      </>}
+
+      {booking ? <section ref={submittedResult} tabIndex={-1} className="kr-calc-result" aria-labelledby="kr-calc-result-title">
+        <div className="kr-calc-result-heading">
+          <span className="kr-calc-result-icon">{paid ? <CheckCircle2 aria-hidden="true" /> : held ? <CalendarDays aria-hidden="true" /> : <ClipboardList aria-hidden="true" />}</span>
+          <div><p className="kr-calc-eyebrow">{text('reference')} · {booking.reference || booking.bookingId}</p><h2 id="kr-calc-result-title">{text(testPaid ? 'testTitle' : changedPayment ? 'paymentChangedTitle' : needsReschedule ? 'rescheduleTitle' : paid ? (depositPercent < 100 ? 'depositPaidTitle' : 'paidTitle') : pending ? 'pendingTitle' : held ? 'heldTitle' : 'receivedTitle')}</h2>
+            <p>{text(testPaid ? 'testBody' : changedPayment ? 'inactiveReceipt' : needsReschedule ? 'rescheduleBody' : paid ? 'paidBody' : pending ? 'pendingBody' : held ? 'heldBody' : 'receivedBody')}</p></div>
+        </div>
+        {preview && booking.demo && <section className="kr-journey-demo-booking"><span>{journey.demoNote}</span><div><button type="button" className="kr-calc-secondary" onClick={()=>setJourneyEmail(paid?'receipt':'request')}>{paid?journey.receiptEmail:journey.requestEmail}</button>{booking.scheduling.status==='requested' && <button type="button" className="kr-calc-primary" disabled={booking.quote.totalCents===null || Boolean(booking.quote.manualReviewReasons.length)} onClick={confirmDemo}>{journey.demoConfirm}</button>}{pending && <button type="button" className="kr-calc-primary" onClick={completePendingDemo}>{journey.verifyDemo}</button>}</div>{booking.scheduling.status==='requested' && <p>{booking.quote.totalCents===null?journey.demoManual:journey.demoConfirmHint}</p>}</section>}
+        {checkoutHasExpired && <div className="kr-calc-alert" role="alert"><p style={{ margin: '0 0 12px' }}>{text('checkoutExpired')}</p><a href="tel:+41774505705">+41 77 450 57 05</a><span aria-hidden="true"> · </span><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></div>}
+        <div className="kr-calc-layout kr-calc-booking-layout">
+          <div className="kr-calc-stack">
+            <section className="kr-calc-card">
+              <div className="kr-calc-section-title"><CalendarDays aria-hidden="true" /><h3>{text(needsReschedule ? 'appointmentReschedule' : booking.scheduling.status === 'confirmed' ? 'appointmentConfirmed' : held ? 'appointmentHeld' : 'appointmentRequested')}</h3></div>
+              {!needsReschedule && <div className="kr-calc-appointment"><strong>{booking.scheduling.date ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: 'Europe/Zurich' }).format(new Date(`${booking.scheduling.date}T12:00:00Z`)) : '—'}</strong><span>{booking.scheduling.time || '—'}{booking.scheduling.endTime ? `–${booking.scheduling.endTime}` : ''} · {text('swissTime')}</span></div>}
+              {booking.scopeNotes && <div className="kr-calc-scope-notes"><h4>{text('selectedExtras')}</h4><p>{booking.scopeNotes}</p></div>}
+              {(booking.customer || customer.address) && <div className="kr-calc-address"><MapPin aria-hidden="true" /><div><h4>{text('serviceAddress')}</h4><p>{booking.customer?.address || customer.address}<br />{booking.customer?.postalCode || customer.postalCode} {booking.customer?.city || customer.city}</p></div></div>}
+              {emailState && <p className="kr-calc-email-state" role="status"><Mail aria-hidden="true" />{text(emailState === 'failed' || emailState === 'delivery_unknown' ? 'mailFailed' : paid ? (emailState === 'sent' ? 'receiptSent' : 'receiptQueued') : (emailState === 'sent' ? 'mailSent' : 'mailQueued'))}</p>}
+              {!preview && <button type="button" className="kr-calc-secondary" onClick={() => { void refreshStatus(); }} disabled={loadingStatus}>{loadingStatus && <LoaderCircle className="kr-calc-spin" aria-hidden="true" />}{text('refresh')}</button>}
+            </section>
+            {booking.canCheckout && !checkoutHasExpired && <section className="kr-calc-card kr-calc-payment-card">
+              <div className="kr-calc-section-title"><CreditCard aria-hidden="true" /><h3>{text('paymentSummary')}</h3></div>
+              <dl className="kr-calc-payment-details">
+                <div><dt>{text('total')}</dt><dd>{typeof finalTotal === 'number' ? money(finalTotal) : text('individual')}</dd></div>
+                <div className="kr-calc-due"><dt>{depositPercent < 100 ? text('depositDue', { percent: depositPercent }) : text('fullDue')}</dt><dd>{typeof dueNow === 'number' ? money(dueNow) : '—'}</dd></div>
+                {typeof balanceAfterDeposit === 'number' && <div><dt>{text('remaining')}</dt><dd>{money(balanceAfterDeposit)}</dd></div>}
+              </dl>
+              {preview && booking.demo && <label className="kr-journey-demo-result">{journey.demoResult}<select value={demoOutcome} onChange={event=>setDemoOutcome(event.target.value as DemoPaymentOutcome)} disabled={openingPayment}><option value="paid">{journey.resultPaid}</option><option value="pending">{journey.resultPending}</option><option value="failed">{journey.resultFailed}</option></select></label>}
+              <label className="kr-calc-consent"><input type="checkbox" checked={payConsent} onChange={event => setPayConsent(event.target.checked)} /><span>{preview&&booking.demo?journey.demoConsent:<>{text('payConsent')} <a href={`/terms?lang=${encodeURIComponent(language)}`}>{text('terms')}</a></>}</span></label>
+              <button type="button" className="kr-calc-primary" disabled={!payConsent || openingPayment || typeof dueNow !== 'number' || dueNow <= 0} onClick={() => { void startPayment(); }}>{openingPayment ? <LoaderCircle className="kr-calc-spin" aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}{preview&&booking.demo?journey.demoPay:text(openingPayment ? 'openingPayment' : depositPercent < 100 ? 'payDeposit' : 'pay')}</button>
+            </section>}
+            {paid && <section className="kr-calc-card kr-calc-payment-card"><div className="kr-calc-section-title"><CheckCircle2 aria-hidden="true" /><h3>{text('paidAmount')}</h3></div><strong className="kr-calc-paid-amount">{money(booking.payment.amountPaidCents)}</strong>{typeof finalBalance === 'number' && <p className="kr-calc-balance">{text('remaining')}: <strong>{money(finalBalance)}</strong></p>}</section>}
+            {guide()}
+            <button type="button" className="kr-calc-secondary kr-calc-new-request" onClick={reset}>{text('newRequest')}</button>
+          </div>
+          <aside className="kr-calc-summary kr-calc-card"><h2>{text('summary')}</h2><PriceSummary quote={booking.quote} text={text} language={locale} money={money} /></aside>
+        </div>
+      </section> : !bookingAccess && !returnMissing && !recoveryLoading && <>
+        <form onInputCapture={event => { const id = (event.target as HTMLElement).id; if (fieldErrors[id]) setFieldErrors(current => { const next = { ...current }; delete next[id]; return next; }); }} ref={formRef} className="kr-calc-layout" noValidate onSubmit={submitRequest}>
+          <div className="kr-calc-stack">
+            <section className="kr-calc-step-panel kr-calc-card" ref={stepPanelRef} aria-labelledby="kr-calc-step-title" data-step={wizardStep}>
+              <nav className="kr-calc-stepper" aria-label={text('stepProgress', { current: wizardStep + 1, total: 3 })}>
+                {stepKeys.map((key, index) => <button key={key} type="button" className={`kr-calc-step ${wizardStep === index ? 'is-active' : ''} ${index < wizardStep ? 'is-complete' : ''}`} aria-current={wizardStep === index ? 'step' : undefined} disabled={submitting} onClick={() => navigateStep(index as WizardStep)}>
+                  <span className="kr-calc-step-number">{index < wizardStep ? <Check aria-hidden="true" /> : index + 1}</span><span className="kr-calc-step-copy">{text(key)}</span>
+                </button>)}
+              </nav>
+              <header className="kr-calc-step-header"><p className="kr-calc-step-progress">{text('stepProgress', { current: wizardStep + 1, total: 3 })}</p><div className="kr-calc-section-title">{wizardStep === 1 && <KrakenServiceIcon name="appointment" size={42} />}<h2 id="kr-calc-step-title" ref={stepHeadingRef} tabIndex={-1}>{text(stepTitleKeys[wizardStep])}</h2></div><p className="kr-calc-section-hint">{text(stepHintKeys[wizardStep])}</p></header>
+              {demoEnabled && <p className="kr-journey-sample-note">{journey.demoData}</p>}
+              {wizardStep === 0 && <fieldset className="kr-calc-fields-group" disabled={submitting}><legend className="kr-calc-sr-only">{text('configureTitle')}</legend>
+                <div className="kr-calc-services kr-calc-services-compact" aria-label={text('serviceTitle')}>{services.map(id => <button key={id} type="button" className={`kr-calc-service ${choice === id ? 'is-selected' : ''}`} aria-pressed={choice === id} aria-controls="kr-calc-configuration" onClick={() => chooseService(id)}>
+                  <span className="kr-calc-service-icon"><KrakenServiceIcon name={id} size={48} /></span><span className="kr-calc-service-copy"><strong>{text(id)}</strong></span>{choice === id && <><Check className="kr-calc-selected-mark" aria-hidden="true" /><span className="kr-calc-sr-only">{text('selectedLabel')}</span></>}
+                </button>)}</div>
+                <div id="kr-calc-configuration" className="kr-calc-service-configuration">
+                  {selection ? <>
+                    {details()}
+                    {priceError && <p className="kr-calc-alert" role="alert">{text(['windows_required', 'blinds_exceed_windows', 'cement_area_exceeds_total'].includes(priceError.code) ? `error.${priceError.code}` : 'priceError')}</p>}
+                    {quote?.notices.map(notice => <p className="kr-calc-inline-note" key={notice.code}><Info aria-hidden="true" />{text(`notice.${notice.code}`)}</p>)}
+                    {quote?.manualReviewReasons.map(notice => <p className="kr-calc-inline-note" key={notice.code}><Info aria-hidden="true" />{text(`notice.${notice.code}`)}</p>)}
+                  </> : <p className="kr-calc-service-empty"><ClipboardList aria-hidden="true" /><span>{text('selectToStart')}</span></p>}
+                </div>
+              </fieldset>}
+              {wizardStep === 1 && <>
+                <fieldset className="kr-calc-fields-group" disabled={submitting}><legend className="kr-calc-sr-only">{text('planTitle')}</legend>
+                  <div className="kr-calc-fields">
+                    <div className="kr-calc-field kr-calc-wide"><label htmlFor="kr-calc-address">{text('address')}</label><input id="kr-calc-address" {...fieldAttributes('kr-calc-address')} name="street-address" autoComplete="street-address" required minLength={3} maxLength={180} value={customer.address} onChange={event => updateCustomer('address', event.target.value)} />{inlineFieldError('kr-calc-address')}</div>
+                    <div className="kr-calc-field"><label htmlFor="kr-calc-postal">{text('postalCode')}</label><input id="kr-calc-postal" {...fieldAttributes('kr-calc-postal')} name="postal-code" autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{4}" required maxLength={4} value={customer.postalCode} onChange={event => updateCustomer('postalCode', event.target.value)} />{inlineFieldError('kr-calc-postal')}</div>
+                    <div className="kr-calc-field"><label htmlFor="kr-calc-city">{text('city')}</label><input id="kr-calc-city" {...fieldAttributes('kr-calc-city')} name="address-level2" autoComplete="address-level2" required minLength={2} maxLength={100} value={customer.city} onChange={event => updateCustomer('city', event.target.value)} />{inlineFieldError('kr-calc-city')}</div>
+                    <div className="kr-calc-field"><label htmlFor="kr-calc-date">{text('requestedDate')}</label><input id="kr-calc-date" {...fieldAttributes('kr-calc-date')} name="requestedDate" type="date" required min={today} max={localToday(new Date(Date.now() + 366 * 86400000))} value={requestedDate} onChange={event => { setRequestedDate(event.target.value); setTermsAccepted(false); setError(''); }} />{inlineFieldError('kr-calc-date')}</div>
+                    <div className="kr-calc-field"><label htmlFor="kr-calc-time">{text('requestedTime')}</label><input id="kr-calc-time" {...fieldAttributes('kr-calc-time')} name="requestedTime" type="time" required min="09:00" max="19:00" step={900} value={requestedTime} onChange={event => { setRequestedTime(event.target.value); setTermsAccepted(false); setError(''); }} />{inlineFieldError('kr-calc-time')}</div>
+                  </div><p className="kr-calc-inline-note"><CalendarDays aria-hidden="true" />{text('dateHint')}</p>
+                </fieldset>
+                <fieldset className="kr-calc-fields-group kr-calc-contact-group" disabled={submitting}><legend className="kr-calc-sr-only">{text('contactTitle')}</legend><div className="kr-calc-section-title"><KrakenServiceIcon name="mail" size={38} /><h3>{text('contactTitle')}</h3></div>
+                  <div className="kr-calc-fields">
+                    <div className="kr-calc-field kr-calc-wide"><label htmlFor="kr-calc-name">{text('name')}</label><input id="kr-calc-name" {...fieldAttributes('kr-calc-name')} name="name" autoComplete="name" required minLength={2} maxLength={120} value={customer.name} onChange={event => updateCustomer('name', event.target.value)} />{inlineFieldError('kr-calc-name')}</div>
+                    <div className="kr-calc-field"><label htmlFor="kr-calc-email">{text('email')}</label><input id="kr-calc-email" {...fieldAttributes('kr-calc-email')} name="email" autoComplete="email" type="email" required maxLength={254} value={customer.email} onChange={event => updateCustomer('email', event.target.value)} />{inlineFieldError('kr-calc-email')}</div>
+                    <div className="kr-calc-field"><label htmlFor="kr-calc-phone">{text('phone')}</label><input id="kr-calc-phone" {...fieldAttributes('kr-calc-phone')} name="tel" autoComplete="tel" type="tel" required minLength={6} maxLength={40} value={customer.phone} onChange={event => updateCustomer('phone', event.target.value)} />{inlineFieldError('kr-calc-phone')}</div>
+                    <div className="kr-calc-field kr-calc-wide"><label htmlFor="kr-calc-notes">{text('notes')}</label><textarea id="kr-calc-notes" {...fieldAttributes('kr-calc-notes')} rows={4} maxLength={3000} placeholder={text('notesHint')} value={notes} onChange={event => { setNotes(event.target.value); setTermsAccepted(false); }} /></div>
+                  </div>
+                </fieldset>
+              </>}
+              {wizardStep === 2 && <div className="kr-calc-review-blocks">
+                <article className="kr-calc-review-block"><header><h3><KrakenServiceIcon name={choice || 'regular'} size={36} />{text('summaryService')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('summaryService')}`} onClick={() => navigateStep(0)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header>
+                  <p className="kr-calc-review-service">{choice ? text(choice) : ''}{selection?.service === 'regular' && <span> · {text(selection.frequency)}</span>}</p>
+                  <ul className="kr-calc-review-lines">{quote?.lines.map(line => <li key={line.id}><span>{bookingLineLabel(locale, line)}<small>{line.quantity.toLocaleString(locale)} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : '×'}</small></span><strong>{money(line.totalCents)}</strong></li>)}</ul>
+                  {selection?.service === 'moving' && selection.details && <p className="kr-calc-review-notes">{selection.details}</p>}
+                  {quote?.notices.map(notice => <p key={notice.code} className="kr-calc-hint">{text(`notice.${notice.code}`)}</p>)}
+                  {quote?.manualReviewReasons.map(notice => <p key={notice.code} className="kr-calc-hint">{text(`notice.${notice.code}`)}</p>)}
+                  <p className="kr-calc-hint">{text(manualReview ? 'manualPrice' : 'scopeFixed')}</p>
+                </article>
+                <article className="kr-calc-review-block"><header><h3><MapPin aria-hidden="true" />{text('reviewAppointment')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('reviewAppointment')}`} onClick={() => navigateStep(1)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header><p>{customer.address}<br />{customer.postalCode} {customer.city}</p><p><strong>{reviewDate}</strong><br />{requestedTime} · {text('swissTime')}</p><span className="kr-calc-review-status">{text('appointmentRequested')}</span></article>
+                <article className="kr-calc-review-block"><header><h3><Mail aria-hidden="true" />{text('reviewContact')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('reviewContact')}`} onClick={() => navigateStep(1)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header><p><strong>{customer.name}</strong><br />{customer.email}<br />{customer.phone}</p>{notes.trim() && <p className="kr-calc-review-notes">{notes}</p>}</article>
+              </div>}
+              <footer className="kr-calc-step-actions">
+                <div className="kr-calc-step-actions-context"><button type="button" className="kr-calc-secondary kr-calc-back-button" disabled={submitting} onClick={() => wizardStep>0?navigateStep((wizardStep - 1) as WizardStep):onNavigate('home')}>{wizardStep>0?text('previousStep'):journey.backHome}</button><button type="button" className="kr-calc-text-button kr-calc-save-progress" disabled={submitting || !selection || !quote} onClick={openSaveProgress}><Mail aria-hidden="true"/>{journey.saveProgress}</button></div>
+                {wizardStep < 2 && <button type="button" className="kr-calc-primary kr-calc-footer-next" disabled={submitting || !selection} onClick={nextStep}>{text(wizardStep === 0 ? 'footerContinueSchedule' : 'footerContinueReview')}</button>}
+              </footer>
+            </section>
+          </div>
+          <div className="kr-calc-aside-stack">
+            <aside className="kr-calc-summary kr-calc-card" aria-labelledby="kr-calc-summary-title"><h2 id="kr-calc-summary-title">{text('summary')}</h2>
+              {choice && <div className="kr-calc-summary-selection"><KrakenServiceIcon name={choice || 'regular'} size={36} /><span>{text(choice)}</span></div>}
+              <PriceSummary quote={quote} text={text} language={locale} money={money} hasSelection={Boolean(selection)} />
+              {wizardStep < 2 ? <><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} onClick={nextStep}>{text(nextLabel)}</button><p className="kr-calc-request-note">{text('bookingJourney')}</p></> : <>
+                <label className="kr-calc-consent"><input id="kr-calc-final-consent" ref={finalConsentRef} type="checkbox" required checked={termsAccepted} disabled={submitting} onChange={event => setTermsAccepted(event.target.checked)} /><span>{preview&&demoEnabled?journey.demoConsent:<>{text('termsPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}/terms?lang=${encodeURIComponent(language)}`}>{text('terms')}</a> {text('privacyPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}/gdpr?lang=${encodeURIComponent(language)}`}>{text('privacy')}</a> {text('readSuffix')}</>}</span></label>
+                <button type="submit" className="kr-calc-primary" disabled={(preview?!demoEnabled:!config?.available) || !quote || submitting || !termsAccepted}>{submitting ? <LoaderCircle className="kr-calc-spin" aria-hidden="true" /> : <ClipboardList aria-hidden="true" />}{preview&&demoEnabled?journey.demoSubmit:text(submitting ? 'submitting' : manualReview ? 'manualSubmit' : 'requestSubmit')}</button>
+                <p className="kr-calc-request-note">{preview?journey.demoNote:text('requestNote')}</p>
+                {!preview && (configLoading ? <p className="kr-calc-status-note" role="status">{text('loadingConfig')}</p> : !config?.available && <div className="kr-calc-unavailable" role="status"><p>{text('unavailable')}</p><button type="button" className="kr-calc-text-button" onClick={() => setConfigAttempt(value => value + 1)}>{text('retry')}</button></div>)}
+              </>}
+            </aside>
+            {selection && quote && <QuoteRecoveryCard preview={preview} language={locale} selection={selection} selectedService={choice} email={customer.email} onEmailAccepted={email => updateCustomer('email', email)} onDraftSaved={acceptRecoveryAccess} openSignal={saveOpenSignal} onContinueSaved={()=>focusStep()} guide={guide('button')} guidePreferences={guidePreferences} />}
+            {guide()}
+            <div className="kr-calc-help"><img src="/calculator-approved/assets/kai-help.webp" alt="" width="72" height="88" loading="lazy" aria-hidden="true" /><div><h3>{text('kaiGuide')}</h3><p>{text('kaiGuideHint')}</p><p>{text('helpHours')}</p><a className="kr-calc-contact-link" href={`/kontakt?lang=${encodeURIComponent(locale)}`} target="_blank" rel="noopener noreferrer">{text('contactPage')}<ChevronDown aria-hidden="true" /></a><a href="tel:+41774505705"><Phone aria-hidden="true" />+41 77 450 57 05</a><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></div></div>
+          </div>
+          <div className="kr-calc-mobile-bar"><div className="kr-calc-mobile-price"><span>{text('currentTotal')}</span><strong aria-live="polite">{liveTotal}</strong></div><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} aria-controls={wizardStep === 2 ? 'kr-calc-final-consent' : 'kr-calc-step-title'} onClick={wizardStep === 2 ? focusConsent : nextStep}>{text(wizardStep === 2 ? 'stepReview' : 'nextStep')}</button></div>
+        </form>
+      </>}
+    </div>
+    <KrakenJourney phase={journeyPhase} language={locale} demo={preview} booking={booking} onClose={()=>setJourneyPhase(null)} onEmail={preview?()=>{setJourneyPhase(null);setJourneyEmail('receipt');}:undefined}>{journeyPhase==='success'&&guide('button')}</KrakenJourney>
+    <JourneyEmailPreview open={Boolean(journeyEmail)} kind={journeyEmail||'request'} language={booking?.language||locale} booking={booking} onClose={()=>setJourneyEmail(null)} />
+    {!booking && !bookingAccess && !returnMissing && !recoveryLoading && <CalculatorNudges selected={Boolean(selection)} step={wizardStep} preview={preview} language={locale} />}
+  </main>;
+}

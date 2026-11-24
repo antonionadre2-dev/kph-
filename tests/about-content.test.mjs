@@ -15,7 +15,7 @@ const temporary=mkdtempSync(path.join(cache,'about-test-'));
 let render;
 try {
   const outfile=path.join(temporary,'render.cjs');
-  await build({stdin:{contents:`import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {AboutContent} from './components/about/ApprovedAbout.tsx';import WhyKrakenSection from './components/home/WhyKrakenSection.tsx';import {whyTranslations} from './components/home/whyTranslations.ts';import {homeText} from './components/home/homeTranslations.ts';export const render=language=>({about:renderToStaticMarkup(React.createElement(AboutContent,{language})),why:renderToStaticMarkup(React.createElement(WhyKrakenSection,{t:source=>whyTranslations[language]?.[source]??homeText(language,source)}))});`,resolveDir:root,loader:'tsx'},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',loader:{'.css':'empty'},logLevel:'warning'});
+  await build({stdin:{contents:`import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {AboutContent} from './components/about/ApprovedAbout.tsx';import {ServicesContent} from './components/services/ApprovedServices.tsx';import WhyKrakenSection from './components/home/WhyKrakenSection.tsx';import {whyTranslations} from './components/home/whyTranslations.ts';import {homeText} from './components/home/homeTranslations.ts';export const render=language=>({about:renderToStaticMarkup(React.createElement(AboutContent,{language})),services:renderToStaticMarkup(React.createElement(ServicesContent,{language})),why:renderToStaticMarkup(React.createElement(WhyKrakenSection,{t:source=>whyTranslations[language]?.[source]??homeText(language,source)}))});`,resolveDir:root,loader:'tsx'},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',loader:{'.css':'empty'},logLevel:'warning'});
   render=createRequire(import.meta.url)(outfile).render;
 } finally {rmSync(temporary,{recursive:true,force:true});}
 
@@ -61,4 +61,23 @@ test('Warum preserves the qualified VAT comparison, native disclosures and calcu
   assert.match(why,/href="\/quote"/);assert.match(why,/data-calculator/);
   assert.doesNotMatch(why,/<img|<iframe|8,1 % günstiger|0 % MwSt\.|steuerfrei/);
   assert.ok(Math.abs(8.1/108.1*100-7.49)<0.01);
+});
+
+
+test('native commercial links retain service and language when opened in another tab before hydration',()=>{
+  for(const lang of languages){
+    const {about,services}=render(lang);
+    for(const html of [about,services]){
+      const anchors=[...html.matchAll(/<a\b[^>]*data-service="[^"]+"[^>]*>/g)].map(match=>match[0]);
+      assert.ok(anchors.length>=5);
+      for(const anchor of anchors){
+        const service=/data-service="([^"]+)"/.exec(anchor)[1];
+        const href=/href="([^"]+)"/.exec(anchor)[1].replaceAll('&amp;','&');
+        const url=new URL(href,'https://krakenpfm.ch');
+        assert.equal(url.pathname,'/quote');
+        assert.equal(url.searchParams.get('lang'),lang);
+        assert.equal(url.searchParams.get('service'),service);
+      }
+    }
+  }
 });

@@ -104,7 +104,7 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
   const runtimeHtml = path.join(directory, 'dist/index.html');
   if (!existsSync(runtimeHtml) || digest(runtimeHtml) !== digest(html)) throw new Error('Missing or changed function dist/index.html.');
   for (const language of ['de', 'en', 'es', 'pt', 'it', 'fr']) {
-    for (const kind of ['services', 'about', 'why']) {
+    for (const kind of ['services', 'about', 'why', 'contact']) {
       const name = `${kind}-content-${language}.html`;
       const original = path.join(root, 'dist', name);
       const bundled = path.join(directory, 'dist', name);

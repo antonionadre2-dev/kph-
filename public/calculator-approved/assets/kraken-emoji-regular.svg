@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="pail" x1="35" y1="62" x2="92" y2="114" gradientUnits="userSpaceOnUse"><stop stop-color="#D5FFF0"/><stop offset=".48" stop-color="#8DE3C1"/><stop offset="1" stop-color="#3BAA92"/></linearGradient>
+    <linearGradient id="rim" x1="25" y1="57" x2="94" y2="72" gradientUnits="userSpaceOnUse"><stop stop-color="#2D6893"/><stop offset="1" stop-color="#062D52"/></linearGradient>
+    <linearGradient id="spray" x1="77" y1="34" x2="105" y2="79" gradientUnits="userSpaceOnUse"><stop stop-color="#65BBFF"/><stop offset=".5" stop-color="#2784D9"/><stop offset="1" stop-color="#07528E"/></linearGradient>
+    <linearGradient id="handle" x1="32" y1="37" x2="85" y2="77" gradientUnits="userSpaceOnUse"><stop stop-color="#AAC7D8"/><stop offset=".45" stop-color="#F8FDFF"/><stop offset="1" stop-color="#517C96"/></linearGradient>
+  </defs>
+  <ellipse cx="66" cy="113" rx="43" ry="6" fill="#062D52" opacity=".12"/>
+  <path d="M78 38h19l4 10 5 28c1 7-4 11-11 12l-15-1c-6-1-9-5-8-11l4-27z" fill="#084B7A"/>
+  <path d="M76 36h19l4 11 5 27c1 5-2 9-8 10H81c-5 0-8-4-7-9l3-28z" fill="url(#spray)"/>
+  <path d="M78 48c0-4 1-7 3-9h6c-2 4-2 9-1 15l-1 18c0 3-5 4-7 1z" fill="#C9EAFF" opacity=".48"/>
+  <path d="M77 23h22c3 0 6 2 6 5v7H91l-2 5H77z" fill="#0C365A"/>
+  <path d="M76 22h21c3 0 5 2 5 5v4H88l-3 5h-9z" fill="#E5F4F7"/>
+  <path d="M99 24h11v7h-11z" fill="#6D9BB4"/>
+  <path d="M82 33h7v9h-7z" fill="#0B476E"/>
+  <path d="M86 34c1 8 5 12 9 13" stroke="#0C365A" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M28 67 35 102c1 8 11 13 26 13s26-5 27-13l7-35z" fill="#2C8D7E"/>
+  <path d="M26 64 34 99c2 9 12 13 26 13s25-4 27-13l7-35z" fill="url(#pail)"/>
+  <path d="M35 73 40 97c1 5 5 7 9 8" stroke="#F0FFF7" stroke-width="6" stroke-linecap="round" opacity=".75"/>
+  <ellipse cx="60" cy="65" rx="35" ry="11" fill="url(#rim)"/>
+  <ellipse cx="60" cy="62" rx="35" ry="10" fill="#195174"/>
+  <ellipse cx="60" cy="62" rx="28" ry="6" fill="#062D52"/>
+  <path d="M30 60c1-19 13-30 29-30s29 11 31 30" stroke="#163F5C" stroke-width="7" stroke-linecap="round"/>
+  <path d="M30 58c1-18 13-28 29-28s29 10 31 28" stroke="url(#handle)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M48 29c7-3 15-3 22 0" stroke="#062D52" stroke-width="7" stroke-linecap="round"/>
+  <path d="M48 27c7-2 15-2 22 0" stroke="#3A6F91" stroke-width="3" stroke-linecap="round"/>
+  <path d="M59 80c-4 6-7 10-7 14a7 7 0 0 0 14 0c0-4-3-8-7-14z" fill="#F1FFF9" opacity=".85"/>
+</svg>

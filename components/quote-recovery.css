@@ -1,0 +1,113 @@
+.kr-recovery{min-width:0;color:#143a56;font-family:inherit}
+.kr-recovery *,.kr-recovery-dialog *{box-sizing:border-box}
+.kr-recovery-disclosure{border:1px solid #dce7ef;border-radius:19px;background:linear-gradient(145deg,#fff,#f5faff);box-shadow:0 3px 12px #123b5705}
+.kr-recovery-disclosure>summary{display:flex;align-items:center;gap:10px;min-height:76px;padding:14px 17px;color:#002d5b;font-size:.9375rem;font-weight:750;line-height:1.45;cursor:pointer;list-style:none}
+.kr-recovery-disclosure>summary::-webkit-details-marker{display:none}
+.kr-recovery-disclosure>summary>img{flex:0 0 42px;width:42px;height:42px;object-fit:contain}
+.kr-recovery-disclosure>summary>span:not(.kr-recovery-chevron){flex:1;min-width:0}
+.kr-recovery-chevron{flex:0 0 8px;width:8px;height:8px;border:solid #55758a;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);transition:transform .15s}
+.kr-recovery-disclosure[open] .kr-recovery-chevron{transform:rotate(225deg)}
+.kr-recovery-body{padding:0 17px 17px}
+.kr-recovery-intro{margin:0 0 15px;color:#5d7385;font-size:.875rem;line-height:1.6}
+.kr-recovery-label{display:block;margin:0 0 7px;color:#36566d;font-size:.875rem;font-weight:700}
+.kr-recovery-email{display:block;width:100%;min-width:0;height:49px;padding:10px 12px;border:1px solid #d2e2ec;border-radius:11px;background:#fff;color:#143a56;font:inherit;font-size:1rem;line-height:1.5}
+.kr-recovery-email[aria-invalid=true]{border-color:#b46d4e;background:#fff8f3}
+.kr-recovery-consent{display:flex;align-items:flex-start;gap:10px;margin:14px 0 10px;font-size:.875rem;line-height:1.55;cursor:pointer}
+.kr-recovery-consent input{flex:0 0 20px;width:20px;height:20px;margin:2px 0 0;accent-color:#237c5d;cursor:pointer}
+.kr-recovery-privacy{margin:0 0 14px;color:#607789;font-size:.8125rem;line-height:1.55}
+.kr-recovery-save,.kr-recovery-email-cta{display:block;width:100%;min-height:48px;padding:12px 14px;border:1px solid #002d5b;border-radius:12px;background:#002d5b;color:#fff;font:inherit;font-size:.875rem;font-weight:750;line-height:1.45;text-align:center;cursor:pointer}
+.kr-recovery-save:hover:not(:disabled){background:#06416e}
+.kr-recovery-save:disabled{opacity:.5;cursor:wait}
+.kr-recovery-error{margin:11px 0 0;padding:11px;border:1px solid #efccbb;border-radius:10px;background:#fff8f2;color:#80482c;font-size:.875rem;line-height:1.5}
+.kr-recovery-feedback{margin:13px 0 0;padding:12px;border:1px solid #cce7d9;border-radius:12px;background:#edf9f2;color:#2c6753;font-size:.875rem;line-height:1.5}
+.kr-recovery-feedback strong{font-weight:700}
+.kr-recovery-feedback p{margin:7px 0 0;font-size:.8125rem}
+.kr-recovery-preview-note{margin:12px 0 0;color:#607789;font-size:.75rem;line-height:1.5}
+.kr-recovery-preview-link{display:block;width:fit-content;min-height:40px;margin:4px 0 0 auto;padding:7px 3px;border:0;background:transparent;color:#436c85;font:inherit;font-size:.8125rem;font-weight:650;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.kr-recovery-dialog{position:fixed;inset:0;width:min(720px,calc(100vw - 32px));max-width:720px;max-height:calc(100dvh - 36px);margin:auto;padding:25px;border:1px solid #d5e5ef;border-radius:24px;background:#f5f9fc;color:#143a56;box-shadow:0 24px 90px #00213b45;overflow:auto;overscroll-behavior:contain;font-family:Manrope,Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;color-scheme:light}
+.kr-recovery-dialog::backdrop{background:#052a4b99;backdrop-filter:blur(5px)}
+.kr-recovery-dialog:not([open]){display:none}
+.kr-recovery-dialog :where(button,a,input,[tabindex]):focus-visible,.kr-recovery :where(button,input,summary):focus-visible{outline:3px solid #167bc0;outline-offset:3px}
+.kr-recovery-dialog-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.kr-recovery-eyebrow{margin:0 0 5px;color:#5a7d8c;font-size:.6875rem;font-weight:800;letter-spacing:.11em}
+.kr-recovery-dialog-header h2{margin:0;color:#002d5b;font-size:1.5rem;font-weight:800;line-height:1.3;letter-spacing:-.035em}
+.kr-recovery-close{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;margin:-5px -5px 0 0;border:1px solid #dbe6ed;border-radius:50%;background:white;color:#214c6b;font:inherit;font-size:1.6rem;line-height:1;cursor:pointer}
+.kr-recovery-modal-intro{margin:10px 0 18px;color:#5c7486;font-size:.875rem;line-height:1.6}
+.kr-recovery-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:0 0 18px;padding:5px;border:1px solid #dce7ef;border-radius:14px;background:#eaf2f8}
+.kr-recovery-tabs button{min-width:0;min-height:43px;padding:7px 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:#587288;font:inherit;font-size:.8125rem;font-weight:700;line-height:1.4;cursor:pointer}
+.kr-recovery-tabs button[aria-selected=true]{border-color:#d4e4ef;background:white;color:#002d5b;box-shadow:0 2px 5px #123b5709}
+.kr-recovery-email-panel{min-width:0;outline:none}
+.kr-recovery-envelope{display:grid;gap:5px;margin:0 0 15px;font-size:.8125rem;line-height:1.5}
+.kr-recovery-envelope>div{display:grid;grid-template-columns:58px minmax(0,1fr);gap:10px}
+.kr-recovery-envelope dt{color:#708798}
+.kr-recovery-envelope dd{margin:0;color:#284c67;overflow-wrap:anywhere}
+.kr-recovery-envelope>div:first-child dd{font-weight:700}
+.kr-recovery-email-design{overflow:hidden;border:1px solid #dce7ef;border-radius:17px;background:white;box-shadow:0 4px 14px #002d5b07}
+.kr-recovery-email-brand{display:flex;align-items:center;gap:18px;padding:20px 28px;border-bottom:1px solid #e6edf2;background:white}
+.kr-recovery-logo{position:relative;display:block;flex:0 0 115px;width:115px;height:56px;overflow:hidden}
+.kr-recovery-logo img{position:absolute;display:block;width:115px;height:115px;top:-29px;left:0}
+.kr-recovery-email-brand>span:last-child{padding-left:18px;border-left:1px solid #d7e4ee;color:#234861;font-size:.6875rem;font-weight:750;line-height:1.6}
+.kr-recovery-email-content{padding:25px 28px}
+.kr-recovery-email-content h3{margin:0 0 12px;color:#002d5b;font-size:1.625rem;font-weight:800;line-height:1.25;letter-spacing:-.035em}
+.kr-recovery-email-content>p{margin:12px 0 18px;font-size:.9375rem;line-height:1.7}
+.kr-recovery-email-quote{margin:22px 0;padding:18px;border:1px solid #dce8ef;border-radius:14px;background:#f7fbfe}
+.kr-recovery-email-service{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
+.kr-recovery-email-service>span{font-size:.75rem;color:#658294}
+.kr-recovery-email-service>strong{font-size:1rem;color:#1e4965}
+.kr-recovery-email-lines{list-style:none;margin:0;padding:0 0 13px;border-bottom:1px solid #e0eaf0}
+.kr-recovery-email-lines li{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:5px 0;color:#557389;font-size:.8125rem;line-height:1.5}
+.kr-recovery-email-lines b{flex-shrink:0;color:#315a75;font-weight:600;font-variant-numeric:tabular-nums}
+.kr-recovery-email-total{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;color:#143a56;font-size:.875rem}
+.kr-recovery-email-total strong{color:#002d5b;font-size:1.5rem;font-weight:800;letter-spacing:-.035em;text-align:right;font-variant-numeric:tabular-nums}
+.kr-recovery-email-tax{display:flex;justify-content:space-between;gap:12px;margin-top:8px;color:#5c7788;font-size:.8125rem;line-height:1.5}
+.kr-recovery-email-tax b{flex-shrink:0;font-weight:600}
+.kr-recovery-email-saving{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin-top:15px;padding:13px;border:1px solid #d2eade;border-radius:11px;background:#eaf8f0;color:#3b7360;font-size:.8125rem;line-height:1.5}
+.kr-recovery-email-saving>strong{color:#257555;font-size:1rem;font-weight:800;text-align:right;white-space:nowrap}
+.kr-recovery-email-saving>small{grid-column:1/-1;font-size:.75rem;color:#4b7865;line-height:1.55}
+.kr-recovery-email-content>.kr-recovery-email-appointment{font-size:.8125rem;line-height:1.6;color:#6b8191}
+.kr-recovery-email-cta{min-height:49px;margin:18px 0 22px;border-color:#a9dfc4;background:#b7f2d6;color:#184e43;font-size:.9375rem}
+.kr-recovery-email-cta:hover{background:#a5eacb}
+.kr-recovery-email-content>.kr-recovery-demo-action{padding:10px 12px;border-radius:10px;background:#edf5fc;color:#3b6683;font-size:.8125rem;line-height:1.5}
+.kr-recovery-email-signature{color:#234c68;font-weight:750}
+.kr-recovery-email-footer{padding:19px 28px;background:#062c4d;color:#d1e1eb;font-size:.75rem;line-height:1.65}
+.kr-recovery-email-footer p{margin:0 0 10px}
+.kr-recovery-email-footer p:last-child{margin-bottom:0}
+.kr-recovery-email-unsubscribe{display:inline-block;margin-top:3px;color:#c1eadc;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:600px){.kr-recovery-dialog{width:calc(100vw - 20px);max-height:calc(100dvh - 20px);padding:18px 13px;border-radius:19px}.kr-recovery-dialog-header h2{font-size:1.25rem}.kr-recovery-close{margin:0;width:38px;height:38px;flex-basis:38px}.kr-recovery-tabs button{padding:7px 4px;font-size:.75rem}.kr-recovery-email-brand{gap:12px;padding:15px 17px}.kr-recovery-email-brand>span:last-child{padding-left:12px;font-size:.625rem}.kr-recovery-email-content{padding:20px 17px}.kr-recovery-email-content h3{font-size:1.375rem}.kr-recovery-email-quote{padding:12px}.kr-recovery-email-total{align-items:flex-start;flex-direction:column;gap:4px}.kr-recovery-email-total strong{text-align:left}.kr-recovery-email-lines li{gap:9px;font-size:.75rem}.kr-recovery-email-saving{padding:10px;grid-template-columns:1fr}.kr-recovery-email-saving>strong{text-align:left}.kr-recovery-email-tax{flex-wrap:wrap}.kr-recovery-email-footer{padding:18px 17px}.kr-recovery-envelope>div{grid-template-columns:48px minmax(0,1fr);gap:7px}}
+@media(prefers-reduced-motion:reduce){.kr-recovery-chevron{transition:none}.kr-recovery-dialog::backdrop{backdrop-filter:none}}
+
+/* Saved-plan identity stays optional; its demo never creates an account. */
+.kr-recovery-language{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;margin:0 0 17px;padding:9px 11px;border:1px solid #dce8ef;border-radius:10px;background:#fff;color:#526f82;font-size:.875rem;line-height:1.5}
+.kr-recovery-language strong{padding:2px 9px;border-radius:6px;background:#edf6fc;color:#174e70;font-size:.875rem;font-weight:750}
+.kr-recovery-account-option{margin:17px 0;padding:15px 0;border-top:1px solid #dce7ef;border-bottom:1px solid #dce7ef}
+.kr-recovery-account-option>.kr-recovery-consent{margin:11px 0 7px;color:#244d66;font-weight:650}
+.kr-recovery-account-option>p:not(.kr-space-badge){margin:0 0 0 30px;color:#607789;font-size:.875rem;line-height:1.6}
+.kr-space-badge{display:inline-flex;align-items:center;max-width:100%;margin:0 0 8px;padding:5px 9px;border:1px solid #cfe5df;border-radius:7px;background:#ecf7f2;color:#2a6653;font-size:.875rem;font-weight:700;line-height:1.4;letter-spacing:0}
+.kr-recovery-account-open{display:block;width:100%;min-height:48px;margin:12px 0 0;padding:12px 14px;border:1px solid #a6d9c3;border-radius:12px;background:#c2efdc;color:#174f43;font:inherit;font-size:.875rem;font-weight:750;line-height:1.5;text-align:center;cursor:pointer}
+.kr-recovery-account-open:hover{background:#b2e9d0}
+.kr-space-dialog{width:min(680px,calc(100vw - 32px));max-width:680px;background:linear-gradient(160deg,#f3f9fd 0%,#fff 52%)}
+.kr-space-identity{display:flex;align-items:center;gap:17px;margin:22px 0;padding:16px;border:1px solid #dbe9f1;border-radius:17px;background:#eaf5fc}
+.kr-space-identity>img{flex:0 0 64px;width:64px;height:78px;object-fit:contain}
+.kr-space-identity>div{min-width:0}
+.kr-space-identity>div>span{display:block;color:#557287;font-size:.875rem}
+.kr-space-identity strong{display:block;color:#143f5d;font-size:1rem;font-weight:750;overflow-wrap:anywhere}
+.kr-space-identity p{margin:6px 0 0;color:#59778b;font-size:.875rem;line-height:1.5}
+.kr-space-identity b{color:#174c6c;font-weight:700}
+.kr-space-plan{padding:20px;border:1px solid #dce7ef;border-radius:17px;background:#fff;box-shadow:0 4px 15px #123b5705}
+.kr-space-plan>header{display:flex;align-items:center;gap:13px;margin-bottom:17px}
+.kr-space-plan>header>img{flex:0 0 50px;width:50px;height:50px;object-fit:contain}
+.kr-space-plan>header>div{min-width:0}
+.kr-space-plan>header p{margin:0 0 3px;color:#668295;font-size:.875rem;line-height:1.5}
+.kr-space-plan h3{margin:0;color:#173e59;font-size:1.125rem;font-weight:800;line-height:1.4;letter-spacing:-.025em}
+.kr-space-scope{margin:14px 0 0;color:#6a8192;font-size:.875rem;line-height:1.6}
+.kr-space-guide{margin:20px 0;padding:18px;border:1px solid #cfe7dd;border-radius:16px;background:#f0faf5}
+.kr-space-guide>h3{margin:0;color:#1f5d4b;font-size:1.0625rem;line-height:1.4;letter-spacing:-.02em}
+.kr-space-guide>p{margin:6px 0 13px;color:#4c7866;font-size:.875rem;line-height:1.6}
+.kr-space-disclaimer{margin:18px 0 20px;color:#617c8e;font-size:.875rem;line-height:1.6}
+.kr-space-actions{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;padding-top:18px;border-top:1px solid #dce8ef}
+.kr-space-back{min-height:48px;padding:12px 19px;border:1px solid #cfdee8;border-radius:12px;background:#fff;color:#315e7c;font:inherit;font-size:.875rem;font-weight:700;line-height:1.5;cursor:pointer}
+.kr-space-back:hover{background:#edf5fa}
+/* Secondary email information remains legible on small screens. */
+.kr-recovery-privacy,.kr-recovery-feedback p,.kr-recovery-preview-note,.kr-recovery-preview-link,.kr-recovery-eyebrow,.kr-recovery-tabs button,.kr-recovery-envelope,.kr-recovery-email-brand>span:last-child,.kr-recovery-email-service>span,.kr-recovery-email-lines li,.kr-recovery-email-tax,.kr-recovery-email-saving,.kr-recovery-email-saving>small,.kr-recovery-email-content>.kr-recovery-email-appointment,.kr-recovery-email-content>.kr-recovery-demo-action,.kr-recovery-email-footer{font-size:.875rem}
+.kr-recovery-envelope>div{grid-template-columns:minmax(58px,auto) minmax(0,1fr)}
+@media(max-width:600px){.kr-space-dialog{width:calc(100vw - 20px)}.kr-space-identity{gap:12px;padding:13px}.kr-space-plan{padding:16px 13px}.kr-space-guide{padding:16px 13px}.kr-space-actions{grid-template-columns:minmax(0,1fr)}.kr-space-actions>.kr-recovery-save{grid-row:1}.kr-recovery-email-brand{flex-wrap:wrap}.kr-recovery-tabs button{overflow-wrap:anywhere}.kr-recovery-envelope>div{grid-template-columns:1fr;gap:1px}.kr-recovery-envelope>div+div{margin-top:6px}}

@@ -5,7 +5,7 @@ import TransitLoadingVisual, { TransitLoadingVehicle } from './TransitLoadingVis
 import './transit-section.css';
 
 /** The approved two-view Transit story; the owner’s four interior dimensions stay accessible HTML. */
-export default function TransitSection({ t }: { t: (source: string, params?: Record<string, string | number>) => string }) {
+export default function TransitSection({ t, quoteHref = '/quote?service=moving' }: { t: (source: string, params?: Record<string, string | number>) => string; quoteHref?: string }) {
   const root = useRef<HTMLElement>(null);
   const lightId = 'transit-light-' + useId().replace(/:/g, '');
   useEffect(() => root.current ? initTransitLighting(root.current) : undefined, []);
@@ -39,7 +39,7 @@ export default function TransitSection({ t }: { t: (source: string, params?: Rec
           <div className="move-features" aria-label={t("Ihr Umzug mit Kraken")}><div><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving" /></svg><span>{t("Unser Transit")}</span></div><div><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#team" /></svg><span>{t("Unser Team")}</span></div><div><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#time" /></svg><span>{t("Ihr Termin")}</span></div><div><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#distance" /></svg><span>{t("Ihre Strecke")}</span></div></div>
           <p className="moving-detail">{t("Vom Abholort bis zum Ziel: Beschreiben Sie Ihren Umzug Schritt für Schritt im Rechner.")}</p>
         </div>
-        <div className="moving-planner calculator-planner"><div><strong>{t("Was zieht mit um?")}</strong><p>{t("Erzählen Sie uns im Rechner von Ihrem Umzug.")}</p></div><a className="button button-mint" href="/quote" data-service="moving" data-calculator="">{t("Umzug berechnen")}</a></div>
+        <div className="moving-planner calculator-planner"><div><strong>{t("Was zieht mit um?")}</strong><p>{t("Erzählen Sie uns im Rechner von Ihrem Umzug.")}</p></div><a className="button button-mint" href={quoteHref} data-service="moving" data-calculator="">{t("Umzug berechnen")}</a></div>
         <p className="moving-caption">{t("Fahrzeugdarstellung illustrativ. Der konkrete Einsatz wird persönlich abgestimmt.")}</p>
       </div>
       </div>
@@ -97,7 +97,7 @@ export default function TransitSection({ t }: { t: (source: string, params?: Rec
           <div className="van-fit-card">
             <div className="van-fit-icon" aria-hidden="true"><svg className="icon" viewBox="0 0 24 24"><path d="m4 16 12-12 5 5L9 21Zm5-5 3 3m0-6 3 3m0-6 3 3" /></svg></div>
             <div><h3>{t("Passt Ihr Möbelstück?")}</h3><p>{t("Die Innenmasse geben Ihnen eine erste Orientierung. Teilen Sie uns die Masse Ihrer Möbel mit – wir berücksichtigen zusätzlich die Türöffnungen und die passende Ladungssicherung.")}</p></div>
-            <a className="button button-mint" data-service="moving" href="/quote" data-calculator="">{t("Umzug im Rechner planen")}</a>
+            <a className="button button-mint" data-service="moving" href={quoteHref} data-calculator="">{t("Umzug im Rechner planen")}</a>
           </div>
           <p className="van-capacity-note">{t("Die gezeigte Beladung ist ein Beispiel. Was mitkommt und wie viele Fahrten nötig sind, planen wir anhand Ihrer Möbel, der Zugänge und der Ladungssicherung.")}</p>
         </div>

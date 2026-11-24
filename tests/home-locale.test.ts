@@ -29,6 +29,16 @@ test('language choice preserves unrelated query and hash, and removes a stale hl
   assert.equal(url.hash, '#leistungen');
 });
 
+test('booking and recovery context stays on its route during navigation', () => {
+  const source = 'https://krakenpfm.ch/quote?lang=es&booking=b1&draft=d1&guide=1&payment=success&utm_source=test#resume=opaque';
+  const next = new URL(localizedNavigationUrl('/kontakt', source, 'es'), 'https://krakenpfm.ch');
+  for (const key of ['booking', 'draft', 'guide', 'payment']) assert.equal(next.searchParams.has(key), false);
+  assert.equal(next.searchParams.get('utm_source'), 'test');
+  assert.equal(next.searchParams.get('lang'), 'es');
+  assert.equal(next.hash, '');
+  assert.match(languageSelectionUrl(source, 'fr'), /#resume=opaque$/);
+});
+
 test('calculator navigation carries the active locale even without storage and merges target queries once', () => {
   for (const language of ['de', 'en', 'fr', 'it', 'es', 'pt'] as const) {
     const route = localizedNavigationUrl('/quote', 'https://krakenpfm.ch/?lang=de-CH#leistungen', language);

@@ -9,6 +9,8 @@ import { whyTranslations } from './whyTranslations';
 import { initApprovedHome } from './app';
 import { initApartmentScene } from './scene';
 import { initTransit } from './van';
+import { initServicePreview } from './service-idle';
+import './service-idle.css';
 import './approved-home.css';
 import './responsive-fixes.css';
 import './home-language.css';
@@ -23,6 +25,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
   translationRef.current = t;
   const localeRef = useRef('de-CH');
   localeRef.current = homeLanguages.find(item => item.code === homeLanguage)?.locale || 'de-CH';
+  const quoteHref = '/quote?lang=' + encodeURIComponent(language);
   const rootRef = useRef<HTMLDivElement>(null);
   const navigateRef = useRef(onNavigate);
   navigateRef.current = onNavigate;
@@ -36,6 +39,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
       initApprovedHome(root, (service: HomeService | null) => openHomeCalculator(service, (path) => navigateRef.current(path)), translate),
       initApartmentScene(root, { t: translate, getLocale: () => localeRef.current }),
       initTransit(root, translate),
+      initServicePreview(root, { getLanguage: () => localeRef.current }),
     ];
     let hashFrame = 0;
     // App resolves its route before the illustration mounts. Honour inbound
@@ -175,7 +179,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
         <p className="service-hint" id="serviceHint" aria-live="polite">{t("Was dürfen wir Ihnen abnehmen? Wählen Sie Ihren Service.")}</p>
         <div className="booking-form calculator-entry">
           <div className="calculator-entry-copy"><strong>{t("Ihr Auftrag. Einfach geplant.")}</strong><span>{t("Die passenden Angaben machen Sie direkt im Rechner.")}</span></div>
-          <a className="button button-mint booking-submit" href="/quote" data-calculator="">{t("Zum Service-Rechner")}</a>
+          <a className="button button-mint booking-submit" href={quoteHref} data-calculator="">{t("Zum Service-Rechner")}</a>
           <span className="booking-divider" aria-hidden="true"></span>
           <button className="button button-kai" type="button" data-open-kai=""><svg className="icon" aria-hidden="true"><use href="#i-message"></use></svg>{t("Mit Kai starten")}</button>
         </div>
@@ -185,20 +189,21 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
 
     <section className="services-section section container" id="leistungen" aria-labelledby="services-title">
       <div className="section-heading"><div><p className="eyebrow">{t("So viel Hilfe, wie Sie brauchen")}</p><h2 id="services-title">{t("Was dürfen wir Ihnen")}<br />{t("abnehmen?")}</h2></div><p>{t("Ein einzelnes Fenster, die ganze Wohnung oder Ihr nächster Umzug. Wir schauen gemeinsam, was für Sie passt.")}</p></div>
+      <div className="service-preview-controls" id="servicePreviewControls" data-service-preview-control="" hidden={true}><span id="servicePreviewStatus"></span><button type="button" id="servicePreviewToggle" aria-label="" title=""><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path className="service-preview-pause" d="M8 5v14M16 5v14" /><path className="service-preview-play" d="m9 5 10 7-10 7Z" /></svg></button></div>
       <div className="service-cards">
-        <article className="service-card home-card"><div className="card-art atlas-panel panel-window" role="img" aria-label={t("Illustration eines sonnigen Fensters mit Reinigungsmitteln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Mehr Zeit für Ihr Zuhause")}</span><h3>{t("Ein Zuhause zum")}<br />{t("Durchatmen.")}</h3><p>{t("Klare Fenster. Frische Räume.")}<br />{t("Ein gutes Gefühl beim Heimkommen.")}</p><div className="card-service-links"><a data-service="windows" href="/quote" data-calculator="">{t("Fenster")}</a><a data-service="regular" href="/quote" data-calculator="">{t("Regelmässig")}</a><a data-service="deep" href="/quote" data-calculator="">{t("Grundreinigung")}</a></div></div></article>
-        <article className="service-card end-card"><div className="card-art atlas-panel panel-apartment" role="img" aria-label={t("Illustration einer leeren Wohnung mit Schlüsseln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Ein Kapitel endet. Ein neues beginnt.")}</span><h3>{t("Bereit für die")}<br />{t("Wohnungsabgabe.")}</h3><p>{t("Wir kümmern uns um die Reinigung.")}<br />{t("Sie um das Ankommen.")}</p><a className="button button-mint" data-service="end" href="/quote" data-calculator="">{t("Umzugsreinigung berechnen")}</a></div></article>
+        <article className="service-card home-card"><div className="card-art atlas-panel panel-window" role="img" aria-label={t("Illustration eines sonnigen Fensters mit Reinigungsmitteln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Mehr Zeit für Ihr Zuhause")}</span><h3>{t("Ein Zuhause zum")}<br />{t("Durchatmen.")}</h3><p>{t("Klare Fenster. Frische Räume.")}<br />{t("Ein gutes Gefühl beim Heimkommen.")}</p><div className="card-service-links"><a data-service="windows" href={quoteHref + '&service=windows'} data-calculator="">{t("Fenster")}</a><a data-service="regular" href={quoteHref + '&service=regular'} data-calculator="">{t("Regelmässig")}</a><a data-service="deep" href={quoteHref + '&service=deep'} data-calculator="">{t("Grundreinigung")}</a></div></div></article>
+        <article className="service-card end-card"><div className="card-art atlas-panel panel-apartment" role="img" aria-label={t("Illustration einer leeren Wohnung mit Schlüsseln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Ein Kapitel endet. Ein neues beginnt.")}</span><h3>{t("Bereit für die")}<br />{t("Wohnungsabgabe.")}</h3><p>{t("Wir kümmern uns um die Reinigung.")}<br />{t("Sie um das Ankommen.")}</p><a className="button button-mint" data-service="end" href={quoteHref + '&service=end'} data-calculator="">{t("Umzugsreinigung berechnen")}</a></div></article>
       </div>
       <div className="service-note"><svg className="icon" aria-hidden="true"><use href="#i-check"></use></svg><p>{t("Einmalig oder regelmässig: Wir vereinbaren den Umfang passend zu Ihrer Wohnung und Ihrem Alltag.")}</p></div>
     </section>
 
-    <TransitSection t={t} />
+    <TransitSection t={t} quoteHref={quoteHref + '&service=moving'} />
 
-    <WhyKrakenSection t={t} />
+    <WhyKrakenSection t={t} quoteHref={quoteHref} />
 
     <section className="faq-section section container" aria-labelledby="faq-title"><div className="faq-intro"><p className="eyebrow">{t("Gut zu wissen")}</p><h2 id="faq-title">{t("Noch eine")}<br />{t("Frage?")}</h2><p>{t("Wir sind auch persönlich für Sie da.")}</p><a href="mailto:kai@krakenpfm.ch" className="text-link">kai@krakenpfm.ch</a></div><div className="faq-list">
       <details><summary>{t("Übernehmen Sie auch kleine Aufträge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen mit 1–4 Zimmern und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.")}</p></details>
-      <details><summary>{t("Wie plane ich meinen Auftrag?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.")}{' '}<a href="/quote" data-calculator="">{t("Zum Service-Rechner")}</a></p></details>
+      <details><summary>{t("Wie plane ich meinen Auftrag?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.")}{' '}<a href={quoteHref} data-calculator="">{t("Zum Service-Rechner")}</a></p></details>
       <details><summary>{t("Wird Mehrwertsteuer verrechnet?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Es wird keine Mehrwertsteuer verrechnet. Die Angaben zu Ihrem Auftrag erhalten Sie im Rechner und in Ihrer persönlichen Bestätigung.")}</p></details>
       <details><summary>{t("In welchen Regionen ist Kraken tätig?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir unterstützen Privathaushalte in Zürich, Schaffhausen und Winterthur. Geben Sie Ihre Postleitzahl an, damit wir Ihren Auftrag und die Anfahrt gemeinsam prüfen können.")}</p></details>
       <details><summary>{t("Welches Fahrzeug nutzen Sie für kleine Umzüge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir nutzen einen Ford Transit. Teilen Sie uns mit, welche Möbel und Kartons transportiert werden sollen und wie die Zugänge aussehen. So können wir Fahrzeug, Helfer und benötigte Fahrten passend abstimmen.")}</p></details>

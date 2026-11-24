@@ -35,7 +35,8 @@ const FloatingCTA = lazyWithRetry(() => import('./FloatingCTA'));
 const CookieConsent = lazyWithRetry(() => import('./CookieConsent'));
 
 // Lazy imports for subpages to reduce initial bundle size and enable route-based code splitting
-const ConsultationPage = lazyWithRetry(() => import('./ConsultationPage'));
+const CalculatorRoute = lazyWithRetry(() => import('./calculator/CalculatorRoute'));
+const CustomerAccessRoute = lazyWithRetry(() => import('./calculator/CustomerAccessRoute'));
 const SeoServiceCityPage = lazyWithRetry(() => import('./SeoServiceCityPage'));
 const AboutPage = lazyWithRetry(() => import('./about/ApprovedAbout'));
 const ComicPage = lazyWithRetry(() => import('./ComicPage'));
@@ -142,6 +143,8 @@ function changeLocation(target: string, language: SiteLanguage, replace = false)
 const PATH_TO_PAGE_MAP: Record<string, string> = {
   '/': 'home',
   '/quote': 'consultation',
+  '/quote-demo': 'calculator-demo',
+  '/customer-access': 'customer-access',
   '/about': 'about',
   '/ueber-kraken': 'about',
   '/services': 'services-page',
@@ -174,6 +177,8 @@ const PATH_TO_PAGE_MAP: Record<string, string> = {
 const PAGE_TO_PATH_MAP: Record<string, string> = {
   'home': '/',
   'consultation': '/quote',
+  'calculator-demo': '/quote-demo',
+  'customer-access': '/customer-access',
   'about': '/about',
   'services-page': '/services',
   'approved-services': '/leistungen',
@@ -457,7 +462,11 @@ const App: React.FC = () => {
             case 'register':
               return <RegisterPage onNavigate={handleNavigate} />;
             case 'consultation':
-              return <ConsultationPage onNavigate={handleNavigate} cart={cart} setCart={setCart} />;
+              return <CalculatorRoute onNavigate={handleNavigate} cart={cart} />;
+            case 'calculator-demo':
+              return <CalculatorRoute onNavigate={handleNavigate} preview />;
+            case 'customer-access':
+              return <CustomerAccessRoute onNavigate={handleNavigate} />;
             case 'gdpr':
               return <GDPRPage />;
             case 'hse':
@@ -575,7 +584,7 @@ const App: React.FC = () => {
 };
 
   const isReviewPage = page === 'review-invite';
-  const isApprovedHome = page === 'home' || page === 'approved-services' || page === 'about';
+  const isApprovedHome = ['home', 'approved-services', 'about', 'kontakt', 'consultation', 'calculator-demo', 'customer-access'].includes(page);
 
   return (
     <div className="bg-slate-50 text-gray-800 relative">

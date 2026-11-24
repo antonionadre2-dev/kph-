@@ -1,576 +1,163 @@
-import React, { useState, FormEvent } from 'react';
-import { motion } from 'motion/react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Map, TrainFront, Waves, Truck, Plus, Minus, LocateFixed, Play, Pause, MapPin, Images, Expand, Clock3, Phone, House, Building2, Search, CornerDownLeft, CarFront, Calculator, X } from 'lucide-react';
 import { useTranslation } from '../i18n';
-import { MapPinIcon, PhoneIcon, MailIcon, ClockIcon, CheckIcon } from './icons';
-import emailjs from '@emailjs/browser';
-import { db } from './firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { sendLead } from './leadWebhook';
+import ApprovedHeader from './home/ApprovedHeader';
+import ContactMessageForm from './contact/ContactMessageForm';
+import { openHomeCalculator } from '../src/home/calculator';
+import { contactText } from './contact/contactTranslations';
+import { loadContactConfig, searchContactAddresses, calculateContactRoute } from './contact/contact-api';
+import { mountKrakenContact, type KrakenD3, type KrakenContactController, type KrakenMapData } from './contact/contact-controller.js';
+import './home/approved-home.css';
+import './home/responsive-fixes.css';
+import './home/home-language.css';
+import './home/device-fixes.css';
+import './contact/contact.css';
+import './contact/integration.css';
 
-const SERVICE_ID = 'service_aiv15bc';
-const TEMPLATE_ID = 'template_aktj7t9';
-const PUBLIC_KEY = 'sH5K84ChHyssJrarm';
-
-interface KontaktPageProps {
-  onNavigate: (page: string) => void;
+const contactIcons = { map: Map, 'train-front': TrainFront, waves: Waves, truck: Truck, plus: Plus, minus: Minus, 'locate-fixed': LocateFixed, play: Play, pause: Pause, 'map-pin': MapPin, images: Images, expand: Expand, 'clock-3': Clock3, phone: Phone, house: House, 'building-2': Building2, search: Search, 'corner-down-left': CornerDownLeft, 'car-front': CarFront, calculator: Calculator, x: X };
+function ContactIcon({name, ...props}: {name: keyof typeof contactIcons; className?: string; hidden?: boolean; 'aria-hidden'?: boolean | 'true' | 'false'}) {
+  const Icon = contactIcons[name];
+  return <Icon size={18} aria-hidden="true" {...props} />;
 }
 
-const kontaktTranslations: Record<string, {
-  thankYouTitle: string;
-  successDesc: string;
-  backToHome: string;
-  heroBadge: string;
-  heroTitle: string;
-  heroDesc: string;
-  contactInfoTitle: string;
-  contactInfoDesc: string;
-  labelAddress: string;
-  labelPhone: string;
-  labelEmail: string;
-  labelHours: string;
-  valHoursDays: string;
-  valHoursTime: string;
-  locationTitle: string;
-  locationDesc: string;
-  formTitle: string;
-  labelName: string;
-  placeholderName: string;
-  labelEmailForm: string;
-  placeholderEmail: string;
-  labelSubject: string;
-  placeholderSubject: string;
-  labelMessage: string;
-  placeholderMessage: string;
-  btnSending: string;
-  btnSend: string;
-  validationRequiredError: string;
-  sendFailedError: string;
-  defaultInterest: string;
-}> = {
-  de: {
-    thankYouTitle: "Vielen Dank!",
-    successDesc: "Ihre Nachricht wurde erfolgreich gesendet. Unser Team wird sich so schnell wie möglich bei Ihnen melden.",
-    backToHome: "Zur Startseite",
-    heroBadge: "KONTAKTIEREN SIE UNS",
-    heroTitle: "Kontakt",
-    heroDesc: "Haben Sie Fragen zu unseren Dienstleistungen oder möchten Sie ein individuelles Angebot erhalten? Wir sind gerne für Sie da.",
-    contactInfoTitle: "Kontaktinformationen",
-    contactInfoDesc: "Besuchen Sie uns, rufen Sie uns an oder schreiben Sie uns eine E-Mail. Wir freuen uns auf Sie.",
-    labelAddress: "Adresse",
-    labelPhone: "Telefon",
-    labelEmail: "E-Mail",
-    labelHours: "Öffnungszeiten",
-    valHoursDays: "Montag – Freitag",
-    valHoursTime: "08:00 – 18:00 Uhr",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Wir bedienen Privat- und Geschäftskunden in den Regionen Schaffhausen, Zürich, Winterthur und Umgebung mit erstklassigen Reinigungs- und Facility-Services.",
-    formTitle: "Senden Sie uns eine Nachricht",
-    labelName: "Name",
-    placeholderName: "Ihr Name",
-    labelEmailForm: "E-Mail-Adresse",
-    placeholderEmail: "ihre.email@beispiel.ch",
-    labelSubject: "Betreff",
-    placeholderSubject: "Worum geht es?",
-    labelMessage: "Ihre Nachricht",
-    placeholderMessage: "Wie können wir Ihnen helfen?",
-    btnSending: "Wird gesendet...",
-    btnSend: "Nachricht senden",
-    validationRequiredError: "Bitte füllen Sie alle erforderlichen Felder aus.",
-    sendFailedError: "Senden fehlgeschlagen. Bitte kontaktieren Sie uns direkt unter kai@krakenpfm.ch.",
-    defaultInterest: "Allgemeine Kontaktanfrage"
-  },
-  en: {
-    thankYouTitle: "Thank You!",
-    successDesc: "Your message has been sent successfully. Our team will get back to you as soon as possible.",
-    backToHome: "Back to Home",
-    heroBadge: "CONTACT US",
-    heroTitle: "Contact",
-    heroDesc: "Do you have questions about our services or would you like to receive a tailored quote? We are happy to help you.",
-    contactInfoTitle: "Contact Information",
-    contactInfoDesc: "Visit us, call us or send us an email. We look forward to hearing from you.",
-    labelAddress: "Address",
-    labelPhone: "Phone",
-    labelEmail: "Email",
-    labelHours: "Opening Hours",
-    valHoursDays: "Monday – Friday",
-    valHoursTime: "08:00 – 18:00",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "We serve private and commercial clients across Schaffhausen, Zurich, Winterthur and surrounding areas with top-tier cleaning and facility services.",
-    formTitle: "Send Us a Message",
-    labelName: "Name",
-    placeholderName: "Your Name",
-    labelEmailForm: "Email Address",
-    placeholderEmail: "your.email@example.ch",
-    labelSubject: "Subject",
-    placeholderSubject: "What is it regarding?",
-    labelMessage: "Your Message",
-    placeholderMessage: "How can we help you?",
-    btnSending: "Sending...",
-    btnSend: "Send Message",
-    validationRequiredError: "Please fill out all required fields.",
-    sendFailedError: "Submission failed. Please contact us directly at kai@krakenpfm.ch.",
-    defaultInterest: "General Contact Inquiry"
-  },
-  es: {
-    thankYouTitle: "¡Muchas Gracias!",
-    successDesc: "Su mensaje ha sido enviado con éxito. Nuestro equipo se ponerá en contacto con usted lo antes posible.",
-    backToHome: "Volver al Inicio",
-    heroBadge: "CONTÁCTENOS",
-    heroTitle: "Contacto",
-    heroDesc: "¿Tiene preguntas sobre nuestros servicios o desea recibir un presupuesto personalizado? Con gusto le atenderemos.",
-    contactInfoTitle: "Información de Contacto",
-    contactInfoDesc: "Visítenos, llámenos o envíenos un correo electrónico. Estaremos encantados de atenderle.",
-    labelAddress: "Dirección",
-    labelPhone: "Teléfono",
-    labelEmail: "E-Mail",
-    labelHours: "Horario de Atención",
-    valHoursDays: "Lunes – Viernes",
-    valHoursTime: "08:00 – 18:00 hrs",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Atendemos a clientes particulares y comerciales en las regiones de Schaffhausen, Zúrich, Winterthur y alrededores con servicios de limpieza y gestión de instalaciones de primera calidad.",
-    formTitle: "Envíenos un Mensaje",
-    labelName: "Nombre",
-    placeholderName: "Su Nombre",
-    labelEmailForm: "Correo Electrónico",
-    placeholderEmail: "su.correo@ejemplo.ch",
-    labelSubject: "Asunto",
-    placeholderSubject: "¿De qué se trata?",
-    labelMessage: "Su Mensaje",
-    placeholderMessage: "¿Cómo podemos ayudarle?",
-    btnSending: "Enviando...",
-    btnSend: "Enviar Mensaje",
-    validationRequiredError: "Por favor, complete todos los campos obligatorios.",
-    sendFailedError: "Error al enviar. Por favor contáctenos directamente en kai@krakenpfm.ch.",
-    defaultInterest: "Consulta General de Contacto"
-  },
-  fr: {
-    thankYouTitle: "Merci Beaucoup !",
-    successDesc: "Votre message a été envoyé avec succès. Notre équipe vous contactera dans les plus brefs délais.",
-    backToHome: "Retour à l'Accueil",
-    heroBadge: "CONTACTEZ-NOUS",
-    heroTitle: "Contact",
-    heroDesc: "Vous avez des questions sur nos services ou vous souhaitez recibir un devis personnalisé ? Nous sommes à votre disposition.",
-    contactInfoTitle: "Coordonnées de Contact",
-    contactInfoDesc: "Rendez-nous visite, appelez-nous ou envoyez-nous un e-mail. Au plaisir d'échanger avec vous.",
-    labelAddress: "Adresse",
-    labelPhone: "Téléphone",
-    labelEmail: "E-mail",
-    labelHours: "Heures d'ouverture",
-    valHoursDays: "Lundi – Vendredi",
-    valHoursTime: "08:00 – 18:00",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Nous servons les clients privés et professionnels dans les régions de Schaffhouse, Zurich, Winterthour et environs avec des services de nettoyage et de facility management haut de gamme.",
-    formTitle: "Envoyez-nous un Message",
-    labelName: "Nom",
-    placeholderName: "Votre Nom",
-    labelEmailForm: "Adresse E-mail",
-    placeholderEmail: "votre.email@exemple.ch",
-    labelSubject: "Sujet",
-    placeholderSubject: "De quoi s'agit-il ?",
-    labelMessage: "Votre Message",
-    placeholderMessage: "Comment pouvons-nous vous aider ?",
-    btnSending: "Envoi en cours...",
-    btnSend: "Envoyer le Message",
-    validationRequiredError: "Veuillez remplir tous les champs obligatoires.",
-    sendFailedError: "Échec de l'envoi. Veuillez nous contacter directement à kai@krakenpfm.ch.",
-    defaultInterest: "Demande de contact générale"
-  },
-  it: {
-    thankYouTitle: "Grazie Mille!",
-    successDesc: "Il tuo messaggio è stato inviato con successo. Il nostro team ti contatterà al più presto.",
-    backToHome: "Torna alla Home",
-    heroBadge: "CONTATTACI",
-    heroTitle: "Contatti",
-    heroDesc: "Hai domande sui nostri servizi o desideri recibir un preventivo personalizzato? Siamo a tua completa disposizione.",
-    contactInfoTitle: "Informazioni di Contatto",
-    contactInfoDesc: "Vienici a trovare, chiamaci o inviaci un'e-mail. Saremo lieti di risponderti.",
-    labelAddress: "Indirizzo",
-    labelPhone: "Telefono",
-    labelEmail: "E-mail",
-    labelHours: "Orari di Apertura",
-    valHoursDays: "Lunedì – Venerdì",
-    valHoursTime: "08:00 – 18:00",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Serviamo clienti privati e commerciali nelle regioni di Sciaffusa, Zurigo, Winterthur e dintorni con servizi di pulizia e gestione strutture di prim'ordine.",
-    formTitle: "Inviaci un Messaggio",
-    labelName: "Nome",
-    placeholderName: "Il tuo Nome",
-    labelEmailForm: "Indirizzo E-mail",
-    placeholderEmail: "tua.email@esempio.ch",
-    labelSubject: "Oggetto",
-    placeholderSubject: "Di cosa si tratta?",
-    labelMessage: "Il tuo Messaggio",
-    placeholderMessage: "Come possiamo aiutarti?",
-    btnSending: "Invio in corso...",
-    btnSend: "Invia Messaggio",
-    validationRequiredError: "Si prega di compilare tutti i campi obbligatori.",
-    sendFailedError: "Invio fallito. Contattaci direttamente a kai@krakenpfm.ch.",
-    defaultInterest: "Richiesta di contatto generale"
-  },
-  pt: {
-    thankYouTitle: "Muito Obrigado!",
-    successDesc: "A sua mensagem foi enviada com sucesso. A nossa equipa entrará em contacto consigo o mais brevemente possível.",
-    backToHome: "Voltar ao Início",
-    heroBadge: "CONTACTE-NOS",
-    heroTitle: "Contacto",
-    heroDesc: "Tem dúvidas sobre os nossos serviços ou pretende receber um orçamento personalizado? Estamos à sua disposição.",
-    contactInfoTitle: "Informações de Contacto",
-    contactInfoDesc: "Visite-nos, ligue-nos ou envie-nos um e-mail. Teremos todo o gosto em atendê-lo.",
-    labelAddress: "Endereço",
-    labelPhone: "Telefone",
-    labelEmail: "E-mail",
-    labelHours: "Horário de Funcionamento",
-    valHoursDays: "Segunda-feira – Sexta-feira",
-    valHoursTime: "08:00 – 18:00",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Servimos clientes particulares e comerciais nas regiões de Schaffhausen, Zurique, Winterthur e arredores com serviços de limpeza e gestão de instalações de excelência.",
-    formTitle: "Envie-nos uma Mensagem",
-    labelName: "Nome",
-    placeholderName: "O seu Nome",
-    labelEmailForm: "Endereço de E-mail",
-    placeholderEmail: "seu.email@exemplo.ch",
-    labelSubject: "Assunto",
-    placeholderSubject: "Qual é o assunto?",
-    labelMessage: "A sua Mensagem",
-    placeholderMessage: "Como podemos ajudá-lo?",
-    btnSending: "A enviar...",
-    btnSend: "Enviar Mensagem",
-    validationRequiredError: "Por favor, preencha todos os campos obrigatórios.",
-    sendFailedError: "Falha ao enviar. Por favor contacte-nos directamente através de kai@krakenpfm.ch.",
-    defaultInterest: "Consulta Geral de Contacto"
-  }
-};
-
-const KontaktPage: React.FC<KontaktPageProps> = ({ onNavigate }) => {
-  const { language } = useTranslation();
-  const d = kontaktTranslations[language] || kontaktTranslations['de'];
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+type ContactWindow = Window & { d3?: KrakenD3 };
+let d3Request: Promise<KrakenD3> | undefined;
+function loadD3(): Promise<KrakenD3> {
+  const existing = (window as ContactWindow).d3;
+  if (existing?.select && existing?.zoom) return Promise.resolve(existing);
+  if (d3Request) return d3Request;
+  d3Request = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = '/kraken-contact/vendor/d3-7.9.0.min.js';
+    script.async = true;
+    script.dataset.krakenContactVendor = 'true';
+    const clean = () => { clearTimeout(timeout); script.onload = null; script.onerror = null; };
+    const fail = () => { clean(); script.remove(); d3Request = undefined; reject(new Error('Contact map dependency unavailable.')); };
+    const timeout = setTimeout(fail, 20000);
+    script.onload = () => {
+      const d3 = (window as ContactWindow).d3;
+      if (!d3?.select || !d3?.zoom) { fail(); return; }
+      clean(); resolve(d3);
+    };
+    script.onerror = fail;
+    document.head.append(script);
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  return d3Request;
+}
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
-      setError(d.validationRequiredError);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // 1. Save contact message to Firestore (non-blocking if it fails)
-      try {
-        await addDoc(collection(db, 'contact_messages'), {
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject || '',
-          message: formData.message,
-          language: language || 'de',
-          status: 'new',
-          createdAt: serverTimestamp()
-        });
-      } catch (fsErr) {
-        console.warn('Firestore contact_messages save failed:', fsErr);
-      }
-
-      // 2. Send lead to Make Webhook
-      const webhookPromise = sendLead({
-        ...formData,
-        source: 'CONTACT_FORM'
-      });
-
-      // 3. Send notification via EmailJS
-      const emailPromise = emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          phone_number: 'N/A',
-          services_interest: formData.subject || d.defaultInterest,
-          message: formData.message,
-          property_address: 'N/A'
-        },
-        PUBLIC_KEY
-      );
-
-      await Promise.all([webhookPromise, emailPromise]);
-      setIsSubmitted(true);
-      window.scrollTo(0, 0);
-    } catch (err) {
-      console.error('Submission failed', err);
-      setError(d.sendFailedError);
-    } finally {
-      setIsLoading(false);
-    }
+/** Native DOM shared by client navigation and initial server HTML. */
+export function ContactContent({language, onNavigate = () => {}}: {language: string; onNavigate?: (path:string) => void}) {
+  const rootRef = useRef<HTMLElement>(null);
+  const [loadState,setLoadState] = useState<'loading'|'ready'|'error'>('loading');
+  const [attempt,setAttempt] = useState(0);
+  const t = (source:string) => contactText(language,source);
+  const calculatorUrl = `/quote?lang=${encodeURIComponent(language)}`;
+  const handleQuote = (event:React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault(); openHomeCalculator(null,onNavigate);
   };
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    let cancelled = false;
+    let controller:KrakenContactController|undefined;
+    const abort = new AbortController();
+    setLoadState('loading');
+    const controls = [...root.querySelectorAll<HTMLButtonElement>('button')];
+    controls.forEach(button => { button.disabled = true; });
+    void Promise.all([
+      loadD3(),
+      loadContactConfig(abort.signal),
+      fetch('/kraken-contact/data/contact-map-data.json', {signal:abort.signal, credentials:'same-origin', headers:{Accept:'application/json'}}).then(response => {
+        if (!response.ok) throw new Error('Contact map data unavailable.');
+        return response.json() as Promise<KrakenMapData>;
+      }),
+    ]).then(([d3,config,data]) => {
+      if (cancelled) return;
+      controls.forEach(button => { button.disabled = false; });
+      controller = mountKrakenContact(root,{d3,data,assets:{logo:'/kraken-contact/assets/logo-kraken-azul.webp',exterior:'/kraken-contact/assets/contact-exterior.webp',interior:'/kraken-contact/assets/contact-interior.webp'},live:true,routingAvailable:config.routing.available,search:(query,signal)=>searchContactAddresses(query,language,signal),route:calculateContactRoute,t:source=>contactText(language,source),locale:language==='de' || language==='de-CH'?'de-CH':language});
+      setLoadState('ready');
+    }).catch(error => {
+      if (cancelled || abort.signal.aborted) return;
+      controller?.destroy();
+      root.querySelector<HTMLElement>('.kr-result')?.setAttribute('hidden','');
+      controls.forEach(button => { button.disabled = true; });
+      setLoadState('error');
+      console.error('Contact map could not initialize.',error);
+    });
+    return () => {cancelled=true;abort.abort();controller?.destroy();};
+  },[language,calculatorUrl,attempt]);
+  return <main id="main" className="contact-page-main">
+    <div className="contact-map-status" role="status" aria-live="polite">
+      {loadState==='loading'?t('Karte wird geladen …'):loadState==='error'?<>{t('Die interaktive Karte konnte nicht geladen werden. Telefon, E-Mail und Rechner stehen Ihnen weiterhin zur Verfügung.')} <button type="button" onClick={()=>setAttempt(value=>value+1)}>{t('Erneut versuchen')}</button></>:null}
+    </div>
+    <div data-kraken-contact-status={loadState} aria-busy={loadState==='loading'}>
+<section ref={rootRef} id="kraken-contact-real" lang={language} aria-labelledby="kr-heading">
+  <header className="kr-intro">
+    <div><p className="kr-overline">{t('KONTAKT · SCHAFFHAUSEN')}</p><h1 id="kr-heading">{t('Näher dran.')}<br /><span>{t('Persönlich für Sie da.')}</span></h1></div>
+    <p>{t('Ihr Zuhause. Ihr nächster Schritt.')}<br />{t('Wir machen es Ihnen einfach.')}</p>
+  </header>
+  <div className="kr-layout">
+    <div className="kr-map" aria-label={t('Interaktive Karte für Adressen in der Schweiz')}>
+      <svg className="kr-geography" role="img" aria-label={t('Strassenkarte für die Schweiz')}></svg>
+      <div className="kr-map-heading"><span className="kr-map-title"><ContactIcon name="map" aria-hidden="true" /> {t('Schweiz · Ihre Route')}</span><span className="kr-prototype">{t('Routenplanung')}</span></div>
+      <p className="kr-basemap-status" role="status" aria-live="polite" hidden />
+      <div className="kr-map-help">{t('Karte ziehen · + / − zum Zoomen')}</div>
+      <button className="kr-office-marker cursor-interaction" type="button" aria-label={t('Kraken Standort und Bürokonzept ansehen')}>
+        <span className="kr-marker-photo kr-photo-scene" data-scene="exterior"><img className="kr-scene-image" src="/kraken-contact/assets/contact-exterior.webp" decoding="async" data-photo-source="exterior" alt={t('Fotorealistisches Konzept einer Kraken-Geschäftsstelle')} /><span className="kr-photo-sign"><img className="kr-original-logo" src="/kraken-contact/assets/logo-kraken-azul.webp" decoding="async" alt="" /></span></span>
+        <span className="kr-marker-caption"><img className="kr-original-logo" src="/kraken-contact/assets/logo-kraken-azul.webp" decoding="async" alt={t('Kraken')} /><small>{t('Standort Schaffhausen')}</small></span><span className="kr-marker-point"></span>
+      </button>
+      <div className="kr-destination-markers">
+        <button className="kr-place-marker cursor-interaction" type="button" data-place="0" aria-label={t('Route zum Bahnhof Schaffhausen')}><span><ContactIcon name="train-front" aria-hidden="true" /></span><b>{t('Bahnhof')}</b></button>
+        <button className="kr-place-marker cursor-interaction" type="button" data-place="1" aria-label={t('Route zum Bahnhof Neuhausen')}><span><ContactIcon name="train-front" aria-hidden="true" /></span><b>{t('Neuhausen')}</b></button>
+        <button className="kr-place-marker cursor-interaction" type="button" data-place="2" aria-label={t('Route zum Rheinfall')}><span><ContactIcon name="waves" aria-hidden="true" /></span><b>{t('Rheinfall')}</b></button>
+      </div>
+      <button className="kr-selected-marker" type="button" hidden aria-label={t('Ihre gewählte Adresse')}><ContactIcon name="map-pin" /><span /></button>
+      <div className="kr-travel-marker" hidden aria-hidden="true"><ContactIcon name="truck" aria-hidden="true" /></div>
+      <div className="kr-zoom-controls" aria-label={t('Kartensteuerung')}><button className="cursor-interaction" type="button" data-map-action="in" aria-label={t('Karte vergrössern')}><ContactIcon name="plus" aria-hidden="true" /></button><button className="cursor-interaction" type="button" data-map-action="out" aria-label={t('Karte verkleinern')}><ContactIcon name="minus" aria-hidden="true" /></button><button className="cursor-interaction" type="button" data-map-action="reset" aria-label={t('Gesamte Route zentrieren')}><ContactIcon name="locate-fixed" aria-hidden="true" /></button></div>
+      <div className="kr-map-bottom"><button className="kr-route-player cursor-interaction" type="button" aria-label={t('Route abspielen')}><ContactIcon name="play" className="kr-play-icon" aria-hidden="true" /><ContactIcon name="pause" className="kr-pause-icon" hidden aria-hidden="true" /><span>{t('Route ansehen')}</span></button><span className="kr-attribution">© swisstopo · © OpenStreetMap contributors / openrouteservice</span></div>
+    </div>
+    <aside className="kr-contact" aria-label={t('Kraken Kontakt und Anfahrt')}>
+      <div className="kr-contact-top"><span className="kr-logo-lockup"><img className="kr-original-logo" src="/kraken-contact/assets/logo-kraken-azul.webp" decoding="async" alt={t('Kraken')} /><span>Properties & Facilities Management</span></span><span className="kr-contact-location"><ContactIcon name="map-pin" aria-hidden="true" /></span></div>
+      <button className="kr-gallery-cover kr-photo-scene cursor-interaction" data-scene="exterior" type="button" aria-label={t('Bilder der Bürogestaltung vergrössern')}><img className="kr-scene-image" src="/kraken-contact/assets/contact-exterior.webp" decoding="async" data-photo-source="exterior" alt={t('Fassade als fotorealistischer Gestaltungsentwurf')} /><span className="kr-photo-sign"><img className="kr-original-logo" src="/kraken-contact/assets/logo-kraken-azul.webp" decoding="async" alt="" /></span><span className="kr-gallery-cover-label"><ContactIcon name="images" aria-hidden="true" /> {t('2 Ansichten')}</span><span className="kr-expand"><ContactIcon name="expand" aria-hidden="true" /></span></button>
+      <p className="kr-concept-note">{t('Konzeptbilder · keine Fotos des Standorts')}</p>
+      <div className="kr-contact-body">
+        <div className="kr-address"><ContactIcon name="map-pin" aria-hidden="true" /><p>Seewadelstrasse 3<br /><strong>8203 Schaffhausen</strong></p></div>
+        <div className="kr-hours"><ContactIcon name="clock-3" aria-hidden="true" /><span>{t('Kontaktzeiten')}: {t('Mo–So')} <strong>09:00–19:00</strong><small>Europe/Zurich</small></span></div>
+        <a className="kr-phone cursor-interaction" href="tel:+41774505705"><ContactIcon name="phone" aria-hidden="true" /> +41 77 450 57 05</a>
+        <a className="kr-email cursor-interaction" href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a>
+        <p className="kr-example-mode">{t('Ihre Adresse. Unsere Anfahrt.')}</p><p className="kr-mode-note">{t('Route und Fahrzeit ab unserem Standort in Schaffhausen.')}</p><div className="kr-line"></div>
+        <h3>{t('Wie finden wir zueinander?')}</h3>
+        <div className="kr-direction" aria-label={t('Fahrtrichtung')}><button className="cursor-interaction" type="button" data-direction="outbound" aria-pressed="true"><ContactIcon name="house" aria-hidden="true" /> {t('Zu Ihnen')}</button><button className="cursor-interaction" type="button" data-direction="inbound" aria-pressed="false"><ContactIcon name="building-2" aria-hidden="true" /> {t('Zu Kraken')}</button></div>
+        <label className="kr-input-label" htmlFor="kr-address-input">{t('Adresse oder Postleitzahl in der Schweiz')}</label>
+        <div className="kr-search" role="search"><ContactIcon name="search" aria-hidden="true" /><input disabled={loadState !== 'ready'} id="kr-address-input" type="text" placeholder={t('Strasse, Hausnummer, PLZ oder Ort')} defaultValue="" autoComplete="off" spellCheck={false} aria-describedby="kr-example-note" /><button className="cursor-interaction" type="button" aria-label={t('Adresse suchen')}><ContactIcon name="corner-down-left" aria-hidden="true" /></button></div>
+        <p className="kr-search-status" role="status" aria-live="polite" />
+        <p className="kr-precision-note" hidden>{t('Bei einer Postleitzahl wird bis zur Ortsmitte gerechnet. Für einen genauen Zielpunkt geben Sie die vollständige Adresse ein.')}</p>
+        <div className="kr-suggestions" aria-label={t('Passende Adressen')} hidden></div>
+        <div className="kr-example-options" id="kr-example-note"><span>{t('Beispiele')}</span><button className="cursor-interaction" type="button" data-example="0">{t('Bahnhof')}</button><button className="cursor-interaction" type="button" data-example="1">{t('Bahnhof Neuhausen')}</button><button className="cursor-interaction" type="button" data-example="2">{t('Rheinfall')}</button></div>
+        <p className="kr-address-error" role="alert" hidden></p>
+        <div hidden className="kr-result" aria-live="polite" aria-atomic="true"><div className="kr-result-metrics"><strong className="kr-distance">— <small>{t('km')}</small></strong><span className="kr-duration">—</span><ContactIcon name="car-front" aria-hidden="true" /></div><p className="kr-result-direction">—</p><p className="kr-result-note">{t('Geschätzte Fahrzeit · ohne Live-Verkehr')}</p></div>
+        <a className="kr-quote cursor-interaction" href={calculatorUrl} onClick={handleQuote}><ContactIcon name="calculator" aria-hidden="true" /> {t('Offerte berechnen')}</a>
+      </div>
+    </aside>
+    <section role="dialog" aria-modal="true" tabIndex={-1} aria-labelledby="kr-gallery-title" className="kr-gallery-panel" aria-label={t('Bildergalerie: Kraken Bürokonzept')} hidden>
+      <div className="kr-gallery-header"><div><p>{t('RAUM FÜR PERSÖNLICHEN SERVICE')}</p><h3 id="kr-gallery-title">{t('Ein neuer Blick auf Kraken.')}</h3></div><button className="kr-gallery-close cursor-interaction" type="button" aria-label={t('Bildergalerie schliessen')}><ContactIcon name="x" aria-hidden="true" /></button></div>
+      <div className="kr-gallery-stage kr-photo-scene" data-scene="exterior"><img className="kr-scene-image" src="/kraken-contact/assets/contact-exterior.webp" decoding="async" alt={t('Fotorealistischer Gestaltungsentwurf der Kraken-Fassade')} /><span className="kr-photo-sign"><img className="kr-original-logo" src="/kraken-contact/assets/logo-kraken-azul.webp" decoding="async" alt={t('Originales Kraken-Logo')} /></span></div>
+      <div className="kr-gallery-nav"><button className="cursor-interaction" type="button" data-gallery="exterior" aria-pressed="true">{t('Fassade')}</button><button className="cursor-interaction" type="button" data-gallery="interior" aria-pressed="false">{t('Empfang')}</button><span>{t('Konzeptbilder · keine Fotos des Standorts')}</span></div>
+    </section>
+  </div>
+  <footer className="kr-footer"><span>{t('Persönlich erreichbar. Einfach geplant.')}</span><p>{t('Zürich')} <b>·</b> {t('Schaffhausen')} <b>·</b> {t('Winterthur')}</p></footer>
+</section>
 
-  if (isSubmitted) {
-    return (
-      <main className="bg-slate-50 min-h-screen pt-32 pb-20 px-6 flex items-center justify-center">
-        <div className="max-w-xl w-full bg-white p-10 md:p-14 rounded-[2.5rem] shadow-xl text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-            <CheckIcon className="w-10 h-10 text-green-600" />
-          </div>
-          <h1 className="text-3xl font-black text-[#002D5B] mb-4 uppercase tracking-tight">{d.thankYouTitle}</h1>
-          <p className="text-gray-600 font-medium mb-8">
-            {d.successDesc}
-          </p>
-          <button
-            onClick={() => onNavigate('home')}
-            className="bg-[#002D5B] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#00254A] transition-all cursor-pointer shadow-lg"
-          >
-            {d.backToHome}
-          </button>
-        </div>
-      </main>
-    );
-  }
+    </div>
+    <ContactMessageForm onNavigate={onNavigate} language={language} />
+  </main>;
+}
 
-  return (
-    <main className="bg-white selection:bg-blue-500/30 text-[#020617]">
-      {/* --- HERO SECTION --- */}
-      <section data-header-theme="dark" className="relative md:min-h-[40vh] flex items-center pt-32 pb-24 md:py-32 overflow-hidden bg-[#001A3D]">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[#001A3D] opacity-90" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#001A3D] via-[#002D5B]/30 to-[#001A3D]" />
-        </div>
-
-        <div className="container mx-auto px-6 relative z-10 text-center">
-          <div className="max-w-3xl mx-auto">
-            <motion.p 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-blue-400 font-black text-xs uppercase tracking-[0.4em] mb-4"
-            >
-              {d.heroBadge}
-            </motion.p>
-            <motion.h1 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl md:text-6xl font-black text-white leading-tight mb-4 tracking-tighter"
-            >
-              {d.heroTitle}
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-white/70 text-lg font-medium max-w-2xl mx-auto"
-            >
-              {d.heroDesc}
-            </motion.p>
-          </div>
-        </div>
-      </section>
-
-      {/* --- CONTENT SECTION --- */}
-      <section className="py-20 bg-slate-50">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
-            {/* CONTACT INFORMATION COLUMN */}
-            <div className="lg:col-span-5 space-y-8">
-              <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm border border-slate-100 space-y-8">
-                <div>
-                  <h2 className="text-2xl font-extrabold text-[#002D5B] tracking-tight mb-6">
-                    {d.contactInfoTitle}
-                  </h2>
-                  <p className="text-gray-500 text-sm font-medium">
-                    {d.contactInfoDesc}
-                  </p>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Address */}
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
-                      <MapPinIcon className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider mb-1">{d.labelAddress}</h4>
-                      <p className="text-slate-800 font-bold text-base leading-relaxed">
-                        Seewadelstrasse 3<br />
-                        8203 Schaffhausen
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Phone */}
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
-                      <PhoneIcon className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider mb-1">{d.labelPhone}</h4>
-                      <p className="text-slate-800 font-bold text-base">
-                        <a href="tel:+41774505705" className="hover:text-blue-600 transition-colors">
-                          +41 77 450 57 05
-                        </a>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Email */}
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
-                      <MailIcon className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider mb-1">{d.labelEmail}</h4>
-                      <p className="text-slate-800 font-bold text-base">
-                        <a href="mailto:kai@krakenpfm.ch" className="hover:text-blue-600 transition-colors">
-                          kai@krakenpfm.ch
-                        </a>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Opening Hours */}
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
-                      <ClockIcon className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider mb-1">{d.labelHours}</h4>
-                      <p className="text-slate-800 font-bold text-base leading-relaxed">
-                        {d.valHoursDays}<br />
-                        {d.valHoursTime}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Map/Location Card */}
-              <div className="bg-[#002D5B] text-white p-8 md:p-10 rounded-[2rem] shadow-lg relative overflow-hidden">
-                <div className="relative z-10 space-y-4">
-                  <h3 className="text-xl font-extrabold tracking-tight">{d.locationTitle}</h3>
-                  <p className="text-white/80 text-sm leading-relaxed font-medium">
-                    {d.locationDesc}
-                  </p>
-                </div>
-                {/* Background Pattern */}
-                <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none">
-                  <svg className="w-48 h-48" viewBox="0 0 100 100" fill="none">
-                    <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* CONTACT FORM COLUMN */}
-            <div className="lg:col-span-7">
-              <div className="bg-white p-8 md:p-12 rounded-[2rem] shadow-sm border border-slate-100">
-                <h2 className="text-2xl font-extrabold text-[#002D5B] tracking-tight mb-8">
-                  {d.formTitle}
-                </h2>
-
-                {error && (
-                  <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 text-sm font-semibold rounded-2xl">
-                    {error}
-                  </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Name */}
-                    <div className="space-y-2">
-                      <label htmlFor="name" className="block text-xs font-black uppercase text-slate-400 tracking-wider">
-                        {d.labelName} <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder={d.placeholderName}
-                        className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-slate-800 font-medium placeholder-slate-400"
-                      />
-                    </div>
-
-                    {/* Email */}
-                    <div className="space-y-2">
-                      <label htmlFor="email" className="block text-xs font-black uppercase text-slate-400 tracking-wider">
-                        {d.labelEmailForm} <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder={d.placeholderEmail}
-                        className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-slate-800 font-medium placeholder-slate-400"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Subject */}
-                  <div className="space-y-2">
-                    <label htmlFor="subject" className="block text-xs font-black uppercase text-slate-400 tracking-wider">
-                      {d.labelSubject}
-                    </label>
-                    <input
-                      type="text"
-                      id="subject"
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      placeholder={d.placeholderSubject}
-                      className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-slate-800 font-medium placeholder-slate-400"
-                    />
-                  </div>
-
-                  {/* Message */}
-                  <div className="space-y-2">
-                    <label htmlFor="message" className="block text-xs font-black uppercase text-slate-400 tracking-wider">
-                      {d.labelMessage} <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      id="message"
-                      required
-                      rows={6}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder={d.placeholderMessage}
-                      className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-slate-800 font-medium placeholder-slate-400 resize-none"
-                    />
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-[#002D5B] text-white py-4 rounded-xl font-bold hover:bg-[#00254A] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        {d.btnSending}
-                      </>
-                    ) : (
-                      d.btnSend
-                    )}
-                  </button>
-                </form>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-};
-
-export default KontaktPage;
+export default function KontaktPage({onNavigate}: {onNavigate:(path:string)=>void}) {
+  const {language} = useTranslation();
+  return <div className="kraken-home kraken-contact-page" lang={language}>
+    <ApprovedHeader onNavigate={onNavigate} page="contact" />
+    <ContactContent language={language} onNavigate={onNavigate} />
+  </div>;
+}

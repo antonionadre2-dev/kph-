@@ -1,8 +1,6 @@
 import express from "express";
 import cors from "cors";
-import axios from "axios";
 import dotenv from "dotenv";
-import crypto from "crypto";
 import path from "path";
 import compression from "compression";
 import fs from "fs";
@@ -11,6 +9,8 @@ import { MUNICIPALITIES } from "./src/data/locations.ts";
 import { createHomeWeatherHandler } from "./server/homeWeather.ts";
 import { normalizeSiteLanguage } from "./src/locale.ts";
 import { createKaiAssistantHandler } from "./server/kaiAssistant.ts";
+import { createContactRoutingHandlers } from "./src/contact/routing-server.ts";
+import { createBookingHandlers } from "./server/booking.ts";
 // No need to define currentDirname or use import.meta.url as they are unused and cause a parse-time SyntaxError in bundled CommonJS on startup.
 
 dotenv.config();
@@ -29,15 +29,34 @@ async function configureApplication() {
 
   app.use((req, res, next) => {
     const hostname = req.hostname?.toLowerCase();
-    if (hostname !== "krakenpfm.ch" && hostname !== "www.krakenpfm.ch") {
+    if ((hostname !== "krakenpfm.ch" && hostname !== "www.krakenpfm.ch") || ['/quote-demo', '/customer-access'].includes(req.path)) {
       res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    }
+    if (['/quote', '/quote-demo', '/customer-access'].includes(req.path)) {
+      res.setHeader('Referrer-Policy', 'no-referrer');
+      res.setHeader('Cache-Control', 'private, no-store');
     }
     next();
   });
 
   app.use(compression());
   app.use(cors());
+  const booking = createBookingHandlers();
+  app.post('/api/booking/payrexx/webhook', express.raw({ type: 'application/json', limit: '32kb' }), booking.webhook);
+  app.post('/api/booking/email/webhook', express.raw({ type: 'application/json', limit: '32kb' }), booking.emailWebhook);
+  app.use('/api/contact', express.json({ limit: '4kb' }), ((error, _req, res, _next) => {
+    // Contact accepts only a short query or one coordinate; parser errors must
+    // stay in the same JSON error contract and never echo customer input.
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.status(400).json({ error: { code: 'invalid_request' } });
+  }) as express.ErrorRequestHandler);
+  app.use(['/api/booking', '/api/recovery', '/api/customer'], express.json({ limit: '32kb' }), ((error, _req, res, _next) => {
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.status(400).json({ code: 'INVALID_REQUEST' });
+  }) as express.ErrorRequestHandler);
   app.use(express.json());
+  app.use(booking.middleware);
 
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
@@ -45,6 +64,10 @@ async function configureApplication() {
 
   app.get("/api/weather/zurich", createHomeWeatherHandler());
   app.post("/api/kai/assist", createKaiAssistantHandler());
+  const contactRouting = createContactRoutingHandlers();
+  app.get("/api/contact/config", contactRouting.config);
+  app.post("/api/contact/geocode", contactRouting.geocode);
+  app.post("/api/contact/route", contactRouting.route);
 
   app.get("/api/download-zip", (req, res) => {
     const zipPath = path.join(process.cwd(), "public", "sitio-web-completo.zip");
@@ -55,120 +78,12 @@ async function configureApplication() {
     }
   });
 
-  // ====================================================================
-  // PAYREXX PAYMENT GATEWAY
-  // Creates a Payrexx Gateway via REST API and returns the payment link.
-  // Auth: requests are signed with an HMAC-SHA256 over the URL-encoded
-  // body using your Payrexx API secret (base64-encoded). The instance
-  // name is your Payrexx subdomain (e.g. "krakenpfm").
-  // ====================================================================
-  const handlePayrexxGateway = async (req: express.Request, res: express.Response) => {
-    const {
-      amount,
-      currency = "CHF",
-      title = "Kraken PFM Service",
-      description = "",
-      clientName = "",
-      email = "",
-    } = req.body || {};
-
-    const PAYREXX_INSTANCE = process.env.PAYREXX_INSTANCE;
-    const PAYREXX_API_SECRET = process.env.PAYREXX_API_SECRET;
-
-    // Guard: configuration missing
-    if (!PAYREXX_INSTANCE || !PAYREXX_API_SECRET) {
-      console.error("[Payrexx] Missing PAYREXX_INSTANCE or PAYREXX_API_SECRET environment variable.");
-      return res.status(500).json({
-        success: false,
-        error: "Payment gateway is not configured. Please set PAYREXX_INSTANCE and PAYREXX_API_SECRET.",
-      });
-    }
-
-    // Guard: validate amount (Payrexx expects the amount in cents / smallest unit)
-    const amountNumber = Number(amount);
-    if (!amountNumber || isNaN(amountNumber) || amountNumber <= 0) {
-      return res.status(400).json({ success: false, error: "Invalid or missing amount." });
-    }
-    const amountInCents = Math.round(amountNumber * 100);
-
-    try {
-      const appUrl = process.env.APP_URL || (req.headers.origin as string) || "https://krakenpfm.ch";
-
-      // Helper to build a query string format exactly matching PHP's http_build_query
-      const buildPayrexxQuery = (obj: Record<string, string>, spaceChar: string) => {
-        return Object.entries(obj)
-          .map(([key, val]) => {
-            const encodedKey = encodeURIComponent(key).replace(/%20/g, spaceChar);
-            const encodedVal = encodeURIComponent(val).replace(/%20/g, spaceChar);
-            return `${encodedKey}=${encodedVal}`;
-          })
-          .join("&");
-      };
-
-      // Build the request payload fields
-      const baseParams: Record<string, string> = {
-        amount: String(amountInCents),
-        currency,
-        purpose: description || title,
-        successRedirectUrl: appUrl + "/quote?payment=success",
-        failedRedirectUrl: appUrl + "/quote?payment=failed",
-        cancelRedirectUrl: appUrl + "/quote?payment=cancelled",
-      };
-
-      if (clientName) {
-        const parts = clientName.trim().split(" ");
-        baseParams["fields[forename][value]"] = parts[0] || "";
-        baseParams["fields[surname][value]"] = parts.slice(1).join(" ") || "";
-      }
-      if (email) {
-        baseParams["fields[email][value]"] = email;
-      }
-
-      // Compute the HMAC-SHA256 signature over the data string where spaces are encoded as '+'
-      const signableStr = buildPayrexxQuery(baseParams, "+");
-      const signature = crypto
-        .createHmac("sha256", PAYREXX_API_SECRET)
-        .update(signableStr)
-        .digest("base64");
-
-      // Build the final POST payload where spaces are encoded as '%20'
-      const postPayload = `${buildPayrexxQuery(baseParams, "%20")}&ApiSignature=${encodeURIComponent(signature)}`;
-
-      const endpoint =
-        "https://api.payrexx.com/v1.0/Gateway/?instance=" + encodeURIComponent(PAYREXX_INSTANCE);
-
-      const response = await axios.post(endpoint, postPayload, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        },
-      });
-
-      const data = response.data;
-      if (data && data.status === "success" && Array.isArray(data.data) && data.data[0]) {
-        const gateway = data.data[0];
-        return res.json({
-          success: true,
-          link: gateway.link,
-          id: gateway.id,
-        });
-      }
-
-      console.error("[Payrexx] Unexpected response:", JSON.stringify(data));
-      return res.status(502).json({
-        success: false,
-        error: "Payrexx did not return a valid gateway.",
-      });
-    } catch (err: any) {
-    console.error('Payrexx gateway creation failed:', err && err.message);
-    res.status(500).json({
-      error: 'Failed to create the Payrexx payment gateway.',
-    });
-    }
-  };
-
-  // API Route to create a Payrexx Payment Gateway and retrieve the payment link
-  app.post("/api/payrexx/create-gateway", handlePayrexxGateway);
+  // Retired service checkout accepted a browser-supplied amount and cannot
+  // authorize a payment. Bookings now own prices, references and verification.
+  app.post('/api/payrexx/create-gateway', (_req, res) => {
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.status(410).json({ code: 'BOOKING_CHECKOUT_REQUIRED' });
+  });
 
   const FALLBACK_LANGS: Record<string, Record<string, string>> = {
     de: {
@@ -550,10 +465,10 @@ async function configureApplication() {
           res.status(404);
         }
 
-        if (isProd && ['/leistungen', '/about'].includes(req.path.replace(/\/$/, ''))) {
+        if (isProd && ['/leistungen', '/about', '/kontakt'].includes(req.path.replace(/\/$/, ''))) {
           html = html.replace(/<link rel="preload" as="image" href="\/home-approved\/assets\/hero-room-day-v4\.webp"[^>]*>/, '');
           const servicesLocale = (normalizeSiteLanguage(detectedLang) || 'de').slice(0, 2);
-          const contentKind = req.path.replace(/\/$/, '') === '/about' ? 'about' : 'services';
+          const contentKind = ({ '/leistungen': 'services', '/about': 'about', '/kontakt': 'contact' } as const)[req.path.replace(/\/$/, '')];
           const contentPath = path.join(distPath, `${contentKind}-content-${servicesLocale}.html`);
           const content = fs.readFileSync(contentPath, 'utf8');
           // Keep the stylesheet outside React's mount, which replaces this body.

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="top" x1="29" y1="48" x2="88" y2="86" gradientUnits="userSpaceOnUse"><stop stop-color="#DFFFF2"/><stop offset=".55" stop-color="#A0EACB"/><stop offset="1" stop-color="#62C6AB"/></linearGradient>
+    <linearGradient id="face" x1="32" y1="75" x2="73" y2="111" gradientUnits="userSpaceOnUse"><stop stop-color="#69CDB5"/><stop offset="1" stop-color="#2D9687"/></linearGradient>
+    <linearGradient id="blue" x1="26" y1="81" x2="99" y2="107" gradientUnits="userSpaceOnUse"><stop stop-color="#3A8DCF"/><stop offset="1" stop-color="#07395E"/></linearGradient>
+    <linearGradient id="sparkle" x1="76" y1="14" x2="107" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#9EDBFF"/><stop offset=".52" stop-color="#3D9CE7"/><stop offset="1" stop-color="#0C548E"/></linearGradient>
+  </defs>
+  <ellipse cx="64" cy="111" rx="44" ry="7" fill="#062D52" opacity=".12"/>
+  <path d="m23 69 18-15c4-3 10-4 15-2l46 20c5 2 7 6 7 10v12c0 3-2 6-5 8l-17 10c-4 3-10 3-15 1L29 94c-5-2-8-5-8-10V75z" fill="url(#blue)"/>
+  <path d="m23 67 20-17c3-3 9-4 14-2l45 20c4 2 7 5 7 9v11c0 3-2 5-5 7l-18 11c-4 3-10 3-14 1L29 88c-5-2-8-5-8-10V73z" fill="url(#face)"/>
+  <path d="m23 67 20-17c3-3 9-4 14-2l45 20c7 3 8 9 2 13l-19 12c-4 2-9 3-13 1L28 76c-6-3-8-6-5-9z" fill="url(#top)"/>
+  <path d="m30 68 18-14c2-2 6-2 9-1l41 18" stroke="#EEFFF7" stroke-width="4" stroke-linecap="round" opacity=".85"/>
+  <path d="M82 96v8M37 79v7M49 84v7M62 89v6" stroke="#64C8AF" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+  <ellipse cx="48" cy="65" rx="4" ry="2.3" fill="#66BEA6" opacity=".55"/>
+  <ellipse cx="66" cy="72" rx="5" ry="2.5" fill="#66BEA6" opacity=".55"/>
+  <ellipse cx="84" cy="79" rx="4" ry="2.3" fill="#66BEA6" opacity=".55"/>
+  <ellipse cx="48" cy="63.5" rx="3" ry="1.4" fill="#EEFFF6"/>
+  <ellipse cx="66" cy="70.5" rx="4" ry="1.5" fill="#EEFFF6"/>
+  <path d="M88 15c4 12 7 15 20 19-13 4-16 7-20 20-4-13-7-16-20-20 13-4 16-7 20-19z" fill="#0D5A91" opacity=".2" transform="translate(1 3)"/>
+  <path d="M88 13c4 12 7 15 20 19-13 4-16 7-20 20-4-13-7-16-20-20 13-4 16-7 20-19z" fill="url(#sparkle)"/>
+  <path d="M88 18c-3 9-6 12-14 14 8 1 12 4 14 12" stroke="#C5EDFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 19c2 7 4 9 11 11-7 2-9 4-11 11-2-7-4-9-11-11 7-2 9-4 11-11z" fill="#A1E8CF"/>
+  <circle cx="59" cy="39" r="4" fill="#DFF8FF" stroke="#79B9D7" stroke-width="1.5"/>
+</svg>

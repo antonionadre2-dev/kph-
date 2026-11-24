@@ -1,0 +1,117 @@
+{
+  "sourcePackage": "kraken-codex-todo-ligero-2026-11-24.zip",
+  "sourceZipSha256": "87ab56bc3a0dfbff6a8a77891e28f31f8363fb7cde0e312bdedf98eea46fbd1c",
+  "sourceInventoryFilesVerified": 150,
+  "mapOverride": "Preserve existing Contact map. No contact map code or resources from this package integrated.",
+  "pricingVersion": "kraken-private-2026-11-24-proposal-v2",
+  "assets": [
+    {
+      "path": "public/calculator-approved/assets/kai-help.webp",
+      "bytes": 186852,
+      "sha256": "bbc09a60ef76a3182a441a0e809e32a0546e2b3e3033a3f398d6eda478827e9f",
+      "source": [
+        "web/assets/kai-help.webp"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kai-savings.webp",
+      "bytes": 183492,
+      "sha256": "f43f10be23049f484faf30bbb14f0160da4bffb320b10f126af4e9e21ec4686e",
+      "source": [
+        "web/assets/kai-savings.webp"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kai.webp",
+      "bytes": 151698,
+      "sha256": "865a8003c20f966534aaf2a195a674d39bfce8d5dc88e10dec643b6c6ccbb128",
+      "source": [
+        "web/assets/kai.webp"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kraken-emoji-appointment.svg",
+      "bytes": 1968,
+      "sha256": "7ac9d80fe55500d1bcc692ab49897f8efe9f5c68875c3a921c84b95a4e88c887",
+      "source": [
+        "web/assets/kraken-emoji-appointment.svg"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kraken-emoji-construction.svg",
+      "bytes": 2366,
+      "sha256": "89d3f90e669c310de820dc6ab2df9171ad66968c072b673e0d7276a041f3d88a",
+      "source": [
+        "web/assets/kraken-emoji-construction.svg"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kraken-emoji-deep.svg",
+      "bytes": 2506,
+      "sha256": "496921f29ac8496aab4d4fb47a8c4cebce4e6176422da87f3c8e4578ae8af5f7",
+      "source": [
+        "web/assets/kraken-emoji-deep.svg"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kraken-emoji-end-of-tenancy.svg",
+      "bytes": 2365,
+      "sha256": "b8663242fefaeb7113966d343b7763c832b33221cda43e4b21d51b07bde5b92f",
+      "source": [
+        "web/assets/kraken-emoji-end-of-tenancy.svg"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kraken-emoji-mail.svg",
+      "bytes": 2024,
+      "sha256": "90c556e58e014563dc730499aafc6bd90a6b539d4dd334de3fb13e977a946f70",
+      "source": [
+        "web/assets/kraken-emoji-mail.svg"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kraken-emoji-moving.svg",
+      "bytes": 2542,
+      "sha256": "98861e590c5fda01fb0b5b919c2c708f644b45eab116277f1840fdf9753a76c5",
+      "source": [
+        "web/assets/kraken-emoji-moving.svg"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kraken-emoji-regular.svg",
+      "bytes": 2569,
+      "sha256": "9c295d40f2aaa1865dad1b88702a5551816edb365a54e36f10bd6e31818baae7",
+      "source": [
+        "web/assets/kraken-emoji-regular.svg"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/kraken-emoji-windows.svg",
+      "bytes": 2313,
+      "sha256": "ddc022be4a0ef0fb3680602349270c06f9614f5c86a0a6d65e139d0c55d30eb6",
+      "source": [
+        "web/assets/kraken-emoji-windows.svg"
+      ],
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/calculator-approved/assets/logo.webp",
+      "bytes": 59822,
+      "sha256": "8821afc66d10704dfa5adc9c1ed28aa1fb15d92e6dfe293a0d85cddf0fe21a68",
+      "source": [
+        "web/assets/logo.webp"
+      ],
+      "identicalToSuppliedPackage": true
+    }
+  ]
+}

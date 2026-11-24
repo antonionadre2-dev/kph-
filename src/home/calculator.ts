@@ -1,4 +1,4 @@
-/** Homepage hand-off only. Prices and requests remain in ConsultationPage. */
+/** Homepage hand-off only. Prices and requests belong to the service calculator. */
 export type HomeService = 'windows' | 'end' | 'regular' | 'deep' | 'moving';
 export const CALCULATOR_ROUTE = '/quote';
 export const CALCULATOR_SERVICE_STORAGE_KEY = 'kraken_preselected_service';
@@ -44,7 +44,7 @@ export function openHomeCalculator(service: HomeService | null | undefined, onNa
     if (pendingRequest?.kind === 'service') storage?.setItem(CALCULATOR_SERVICE_STORAGE_KEY, pendingRequest.service);
     else if (pendingRequest?.kind === 'windows') storage?.setItem(HOME_CALCULATOR_INTENT_KEY, 'windows');
   } catch { /* The same-page hand-off also works in memory when storage is blocked. */ }
-  onNavigate(CALCULATOR_ROUTE);
+  onNavigate(request && service ? `${CALCULATOR_ROUTE}?service=${encodeURIComponent(service)}` : CALCULATOR_ROUTE);
   // Navigation/mount and Kai's earlier transfer notification can consume the intent first.
   // A remaining mounted consumer reads the intent once; null is deliberately a no-op.
   if (request && target) queueMicrotask(() => target.dispatchEvent(new Event(HOME_CALCULATOR_REQUEST_EVENT)));

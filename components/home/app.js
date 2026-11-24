@@ -13,10 +13,21 @@ export function initApprovedHome(homeRoot, openCalculator, t = source => source)
     moving: { name: 'Kleiner Umzug', hint: 'Möbel, Kartons, ein neuer Anfang. Planen wir Ihren kleinen Umzug.', hotspot: 'moving' }
   };
   let service = null;
+  function refreshCalculatorLinks() {
+    $$('a[data-calculator]').forEach(link => {
+      const url = new URL(link.getAttribute('href'), window.location.origin);
+      url.searchParams.set('lang', homeRoot.lang || 'de-CH');
+      const selected = link.dataset.service || service;
+      if (selected) url.searchParams.set('service', selected);
+      else url.searchParams.delete('service');
+      link.setAttribute('href', url.pathname + url.search + url.hash);
+    });
+  }
   function chooseService(key, announce = true) {
     if (!services[key]) return;
     const changed = service !== key;
     service = key;
+    refreshCalculatorLinks();
     $$('.service-option').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.service === key)));
     $('#serviceHint').textContent = t(services[key].hint);
     $$('.scene-hotspot').forEach(hotspot => {
@@ -45,6 +56,7 @@ export function initApprovedHome(homeRoot, openCalculator, t = source => source)
     });
     if (service) chooseService(service, false);
     else $('#serviceHint').textContent = t('Was dürfen wir Ihnen abnehmen? Wählen Sie Ihren Service.');
+    refreshCalculatorLinks();
   }
   scope.on(homeRoot, 'kraken:languagechange', refreshLanguage);
   refreshLanguage();

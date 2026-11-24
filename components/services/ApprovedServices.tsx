@@ -156,7 +156,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
               <p>{t("Einzelne Fenster oder die ganze Wohnung: Wir helfen Ihnen, wieder freie Sicht zu bekommen. Unsere Fensterreinigung für Privathaushalte richtet sich auch an kleine Aufträge. Glasflächen, Rahmen und Fensterbänke stimmen wir auf Ihren Bedarf ab. Welche Innen- und Aussenseiten gereinigt werden können, klären wir anhand der Zugänglichkeit.")}</p>
               <ul className="service-scope"><li>{t("Einzelne Fenster oder mehrere Räume")}</li><li>{t("Glas, Rahmen und Fensterbänke nach Absprache")}</li><li>{t("Umfang und Erreichbarkeit vorab klären")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Anzahl, Grösse und Zugänglichkeit der Fenster.")}</p>
-              <a className="button button-navy" data-service="windows" data-calculator="" href={quoteHref}>{t("Fensterreinigung berechnen")}</a>
+              <a className="button button-navy" data-service="windows" data-calculator="" href={quoteHref + '&service=windows'}>{t("Fensterreinigung berechnen")}</a>
             </div>
           </details>
           <details className="service-detail" name="kraken-services" id="umzugsreinigung" data-service-detail="end" open={openService === "end"} onToggle={event => toggleService("end", event.currentTarget.open)}>
@@ -166,7 +166,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
               <p>{t("Der Auszug steht an? Wir übernehmen die Endreinigung Ihrer Wohnung mit 1–4 Zimmern und besprechen, was für die Wohnungsabgabe gereinigt werden soll. Küche, Bad, Böden und weitere Bereiche planen wir nach dem vereinbarten Umfang. Anforderungen Ihrer Verwaltung und besondere Verschmutzungen können Sie bei der Anfrage angeben.")}</p>
               <ul className="service-scope"><li>{t("Endreinigung für private Mietwohnungen")}</li><li>{t("Küche, Bad und Wohnräume nach Vereinbarung")}</li><li>{t("Anforderungen zur Wohnungsabgabe berücksichtigen")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Zimmerzahl, Zustand und gewünschter Reinigungstermin.")}</p>
-              <a className="button button-navy" data-service="end" data-calculator="" href={quoteHref}>{t("Umzugsreinigung berechnen")}</a>
+              <a className="button button-navy" data-service="end" data-calculator="" href={quoteHref + '&service=end'}>{t("Umzugsreinigung berechnen")}</a>
             </div>
           </details>
           <details className="service-detail" name="kraken-services" id="regelmaessige-reinigung" data-service-detail="regular" open={openService === "regular"} onToggle={event => toggleService("regular", event.currentTarget.open)}>
@@ -176,7 +176,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
               <p>{t("Ein gepflegtes Zuhause, auch wenn der Alltag voll ist. Unsere regelmässige Wohnungsreinigung entlastet Sie bei wiederkehrenden Aufgaben. Wir besprechen Ihre Prioritäten, die Räume und den gewünschten Rhythmus. Ob Küche, Bad, Böden oder Oberflächen: Sie bestimmen mit, welche Arbeiten Ihnen im Haushalt am meisten helfen.")}</p>
               <ul className="service-scope"><li>{t("Haushaltsreinigung für Wohnungen mit 1–4 Zimmern")}</li><li>{t("Aufgaben und Reinigungsrhythmus nach Absprache")}</li><li>{t("Unterstützung passend zu Ihrem Alltag")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Wohnungsgrösse, gewünschte Häufigkeit und Prioritäten.")}</p>
-              <a className="button button-navy" data-service="regular" data-calculator="" href={quoteHref}>{t("Regelmässige Reinigung berechnen")}</a>
+              <a className="button button-navy" data-service="regular" data-calculator="" href={quoteHref + '&service=regular'}>{t("Regelmässige Reinigung berechnen")}</a>
             </div>
           </details>
           <details className="service-detail" name="kraken-services" id="grundreinigung" data-service-detail="deep" open={openService === "deep"} onToggle={event => toggleService("deep", event.currentTarget.open)}>
@@ -186,7 +186,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
               <p>{t("Manchmal braucht Ihr Zuhause mehr Aufmerksamkeit als bei der üblichen Reinigung. Mit einer Grundreinigung gehen wir die vereinbarten Bereiche intensiver an – etwa Küche, Bad oder häufig genutzte Oberflächen. Für einen Frühlingsputz, eine einmalige Auffrischung oder gezielte Unterstützung: Beschreiben Sie uns, was gründlicher gereinigt werden soll.")}</p>
               <ul className="service-scope"><li>{t("Intensivreinigung einzelner Bereiche oder der Wohnung")}</li><li>{t("Schwerpunkte und Verschmutzungen vorab besprechen")}</li><li>{t("Einmalige Hilfe passend zu Ihrem Bedarf")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Betroffene Räume, Zustand und gewünschte Schwerpunkte.")}</p>
-              <a className="button button-navy" data-service="deep" data-calculator="" href={quoteHref}>{t("Grundreinigung berechnen")}</a>
+              <a className="button button-navy" data-service="deep" data-calculator="" href={quoteHref + '&service=deep'}>{t("Grundreinigung berechnen")}</a>
             </div>
           </details>
           <details className="service-detail" name="kraken-services" id="kleine-umzuege" data-service-detail="moving" open={openService === "moving"} onToggle={event => toggleService("moving", event.currentTarget.open)}>
@@ -206,7 +206,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
                 <p>{t("Die Türöffnungen und die Form Ihrer Möbel berücksichtigen wir bei der Planung.")}</p>
               </section>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Start und Ziel, Möbel, Stockwerke, Lift und Parkmöglichkeiten.")}</p>
-              <a className="button button-navy" data-service="moving" data-calculator="" href={quoteHref}>{t("Kleinen Umzug berechnen")}</a>
+              <a className="button button-navy" data-service="moving" data-calculator="" href={quoteHref + '&service=moving'}>{t("Kleinen Umzug berechnen")}</a>
             </div>
           </details>
         </div>
@@ -228,7 +228,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
     <section className="faq-section section container" id="fragen" aria-labelledby="faq-title"><div className="faq-intro"><p className="eyebrow">{t("Vor Ihrem Auftrag")}</p><h2 id="faq-title">{t("Gut zu wissen.")}</h2><p>{t("Wir sind auch persönlich für Sie da.")}</p><a href="mailto:kai@krakenpfm.ch" className="text-link">{t("kai@krakenpfm.ch")}</a></div><div className="faq-list">
       <details><summary>{t("Übernehmen Sie auch kleine Aufträge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen mit 1–4 Zimmern und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.")}</p></details>
       <details><summary>{t("Welche Reinigung passt zu meiner Wohnung?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Die regelmässige Wohnungsreinigung unterstützt Sie bei wiederkehrenden Aufgaben. Eine Grundreinigung ist für Bereiche gedacht, die einmalig intensivere Aufmerksamkeit brauchen. Die Umzugsreinigung bereitet Ihre Wohnung auf die Abgabe vor. Fensterreinigung können Sie auch als eigenen Auftrag anfragen. Den gewünschten Umfang stimmen wir anhand Ihrer Angaben ab.")}</p></details>
-      <details><summary>{t("Welche Angaben brauche ich für einen kleinen Umzug?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Hilfreich sind Start und Ziel, eine Liste der Möbel und Kartons sowie Angaben zu Stockwerken, Lift und Parkmöglichkeiten. Arbeitsaufwand, Strecke und Zugänge fliessen in die Planung ein. Den verfügbaren Platz im Ford Transit und die benötigten Fahrten klären wir anhand Ihrer Angaben.")}{" "}<a href={quoteHref} data-service="moving" data-calculator="">{t("Kleinen Umzug berechnen")}</a></p></details>
+      <details><summary>{t("Welche Angaben brauche ich für einen kleinen Umzug?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Hilfreich sind Start und Ziel, eine Liste der Möbel und Kartons sowie Angaben zu Stockwerken, Lift und Parkmöglichkeiten. Arbeitsaufwand, Strecke und Zugänge fliessen in die Planung ein. Den verfügbaren Platz im Ford Transit und die benötigten Fahrten klären wir anhand Ihrer Angaben.")}{" "}<a href={quoteHref + '&service=moving'} data-service="moving" data-calculator="">{t("Kleinen Umzug berechnen")}</a></p></details>
       <details><summary>{t("Wie plane ich meinen Auftrag?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.")}{" "}<a href={quoteHref} data-calculator="">{t("Zum Service-Rechner")}</a></p></details>
       <details><summary>{t("Wird Mehrwertsteuer verrechnet?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Es wird keine Mehrwertsteuer verrechnet. Die Angaben zu Ihrem Auftrag erhalten Sie im Rechner und in Ihrer persönlichen Bestätigung.")}</p></details>
       <details><summary>{t("In welchen Regionen ist Kraken tätig?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir unterstützen Privathaushalte in Zürich, Schaffhausen und Winterthur. Geben Sie Ihre Postleitzahl an, damit wir Ihren Auftrag und die Anfahrt gemeinsam prüfen können.")}</p></details>

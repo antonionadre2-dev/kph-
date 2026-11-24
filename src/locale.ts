@@ -42,7 +42,9 @@ export function localizedNavigationUrl(target: string, currentHref: string, lang
   if (destination.origin !== current.origin) throw new Error('Expected a same-origin navigation route.');
   const explicit = languageFromSearch(destination.search);
   const targetKeys = new Set(destination.searchParams.keys());
+  const bookingKeys = new Set(['booking', 'draft', 'guide', 'payment']);
   for (const [key, value] of current.searchParams) {
+    if (destination.pathname !== current.pathname && bookingKeys.has(key)) continue;
     if (!targetKeys.has(key)) destination.searchParams.append(key, value);
   }
   destination.searchParams.delete('hl');

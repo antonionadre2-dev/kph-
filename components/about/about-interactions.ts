@@ -165,6 +165,9 @@ export function initAboutInteractions(root: HTMLElement, t: AboutTranslator): ()
         description!.textContent = t(aboutHelpServices[key].description);
         calculator!.textContent = t(aboutHelpServices[key].button);
         calculator!.dataset.service = key;
+        const href = new URL(calculator!.getAttribute('href') || '/quote', window.location.href);
+        href.searchParams.set('service', key);
+        calculator!.setAttribute('href', href.pathname + href.search + href.hash);
       }
       async function imageReady(image: HTMLImageElement) {
         image.loading = 'eager';

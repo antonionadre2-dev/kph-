@@ -32,11 +32,13 @@ test('the approved homepage localizes metadata while keeping the public canonica
   assert.equal(getMetadataForPath('/', 'de-CH').title, HOME_METADATA.title);
 });
 
-test('calculator and informational routes retain their existing localized metadata', () => {
+test('calculator metadata follows the integrated design and informational routes retain their canonicals', () => {
   const quote = getMetadataForPath('/quote?lang=es', 'es');
-  assert.equal(quote.title, 'Presupuesto instantáneo y consulta | Kraken Properties and Facilities Management');
+  assert.equal(quote.title, 'Prepara tu presupuesto. · Kraken PFM');
   assert.equal(quote.canonical, 'https://krakenpfm.ch/quote');
   assert.equal(quote.pageType, 'consultation');
+  assert.equal(getMetadataForPath('/quote-demo', 'es').canonical, quote.canonical);
+  assert.equal(getMetadataForPath('/quote-demo', 'es').pageType, 'calculator-demo');
   const about = getMetadataForPath('/about', 'en');
   assert.equal(about.title, 'About Kraken & Kai · Personal help for your home');
   assert.equal(about.canonical, 'https://krakenpfm.ch/about');

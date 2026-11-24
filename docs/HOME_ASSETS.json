@@ -201,8 +201,8 @@
   "components": [
     {
       "file": "components/home/ApprovedHome.tsx",
-      "bytes": 25856,
-      "sha256": "79c84efadbe6bdb923fa50fa55a9bb6e1cf11e8076c2e238d3673d1f57b4fdf4"
+      "bytes": 26677,
+      "sha256": "338307a82e982190cb4b5071bac928b42ecca7b2fae02d853be8231fd8668caf"
     },
     {
       "file": "components/home/HomeLanguageSelector.tsx",
@@ -211,13 +211,13 @@
     },
     {
       "file": "components/home/ApprovedHeader.tsx",
-      "bytes": 3200,
-      "sha256": "cac03b162f3db16fbb608090838b9f6f308a583f785b2b886bacd05406118d8f"
+      "bytes": 3297,
+      "sha256": "e76b0262b430a3626659f5f1e472bb6626387599c7b2e916086e4eb9daa75059"
     },
     {
       "file": "components/home/TransitSection.tsx",
-      "bytes": 12174,
-      "sha256": "9fee2702bb2a84eea17331e53c196a4e35ac4448c3ef804d01d9d200aa1a62d4"
+      "bytes": 12237,
+      "sha256": "67572553333faebfd6a1bddbbe58368fe8256058cc3181f9da122e200ff7f551"
     }
   ],
   "globalAssistant": {
@@ -255,8 +255,8 @@
       },
       {
         "file": "src/kai/draft.ts",
-        "bytes": 15687,
-        "sha256": "7f64e96a9e5da756d327e748b4726e3b963d5131e08832987460d49b65686531"
+        "bytes": 15759,
+        "sha256": "04a4ed7918011d39176422d80ec73cbd26752fce746e70e7d2301dc987aee7ea"
       }
     ]
   },
@@ -276,8 +276,8 @@
       },
       {
         "file": "components/Footer.tsx",
-        "bytes": 7099,
-        "sha256": "888320482f2c9928195b00e2e7a5279b3094484812afb040c162510f739ca300"
+        "bytes": 7171,
+        "sha256": "f62292529b97b9b7436a288eb82600c58a2c157bccedab74673717e3ba628388"
       }
     ]
   },
@@ -309,8 +309,8 @@
     "files": [
       {
         "file": "components/services/ApprovedServices.tsx",
-        "bytes": 32498,
-        "sha256": "114b56d18838ca47c14e2a0a919d7e718a170cf8a22f6f19faec8fa5ef97bf8a"
+        "bytes": 32615,
+        "sha256": "7157e1f49b4628e80c36ad70b22bb47589495e1b864af76ff2de75ce9028b6fe"
       },
       {
         "file": "components/services/services.css",
@@ -324,13 +324,13 @@
       },
       {
         "file": "components/home/ApprovedHeader.tsx",
-        "bytes": 3200,
-        "sha256": "cac03b162f3db16fbb608090838b9f6f308a583f785b2b886bacd05406118d8f"
+        "bytes": 3297,
+        "sha256": "e76b0262b430a3626659f5f1e472bb6626387599c7b2e916086e4eb9daa75059"
       },
       {
         "file": "components/home/TransitSection.tsx",
-        "bytes": 12174,
-        "sha256": "9fee2702bb2a84eea17331e53c196a4e35ac4448c3ef804d01d9d200aa1a62d4"
+        "bytes": 12237,
+        "sha256": "67572553333faebfd6a1bddbbe58368fe8256058cc3181f9da122e200ff7f551"
       },
       {
         "file": "components/home/transit-section.css",
@@ -344,8 +344,8 @@
       },
       {
         "file": "components/home/app.js",
-        "bytes": 3036,
-        "sha256": "27ec6672eff1b282ab91ce52b1f2af25d828733726e8ec857e8891e458be4df4"
+        "bytes": 3570,
+        "sha256": "9c64f3239b41d9096fd42f8ee78a3ccb5a73071a2d324b6e9b419faef6cd9815"
       },
       {
         "file": "components/home/homeTranslations.ts",
@@ -354,8 +354,8 @@
       },
       {
         "file": "components/App.tsx",
-        "bytes": 26736,
-        "sha256": "8e37e7a3501b30698683d4f30db1add47ce36cc77cedb299564c830d40dfa44b"
+        "bytes": 27248,
+        "sha256": "50edf152eb79e1cf78a169d4bb167c1e46eeddf847ea5be079ea21417e11bb01"
       },
       {
         "file": "components/Header.tsx",
@@ -364,13 +364,13 @@
       },
       {
         "file": "seoConfig.ts",
-        "bytes": 51048,
-        "sha256": "5d3da605d3c7aefb84bee78cd9d2590c39964307f7cbddda92f3dc91206f78e8"
+        "bytes": 53656,
+        "sha256": "ff4cfc9fe944120b69ac54644b8f47bc806fd7f33c208c0e70d42111c53ac5f0"
       },
       {
         "file": "server.ts",
-        "bytes": 43971,
-        "sha256": "8a3d2412ae4938eef21552e10f110ba5faf89375534bdd849cc4b1fbeef1c7d5"
+        "bytes": 41364,
+        "sha256": "af672b488dd6aa29215fe0d469d34396c0678ede207d603512c38c4d192106cd"
       },
       {
         "file": "scripts/render-services.mjs",
@@ -379,13 +379,13 @@
       },
       {
         "file": "scripts/build-vercel.mjs",
-        "bytes": 2028,
-        "sha256": "97294593d9c8cfdce4dff1460f40dcc9cea031b5d535f641dfe9e3f4e4eb86c5"
+        "bytes": 2119,
+        "sha256": "3a22b6a4084ffd6327de746e3f1e9abf22fbb37617db12cc36d686ef162d47f9"
       },
       {
         "file": "scripts/prepare-vercel-output.mjs",
-        "bytes": 8176,
-        "sha256": "5d37dd487aae8f1ad60c0a53a60c26b71b8da11c5a977ae27084ae3b59db3f54"
+        "bytes": 8187,
+        "sha256": "cccba9f3146b89a7533ace97bd41e6b3bbd6e35cb823202dd6d54ad254df01e9"
       },
       {
         "file": "vite.config.ts",
@@ -394,8 +394,8 @@
       },
       {
         "file": "package.json",
-        "bytes": 1609,
-        "sha256": "0fa2d2c6f101abdb27f08b231bda1c05ef34d1d3799bff5985f65328e728ada2"
+        "bytes": 1756,
+        "sha256": "2a364b3a75f6f60f21f89da7c7c7f686c31231e268716033b0791bb6d22fdbd6"
       },
       {
         "file": "public/sitemap.xml",
@@ -423,8 +423,8 @@
       },
       {
         "file": "components/home/TransitSection.tsx",
-        "bytes": 12174,
-        "sha256": "9fee2702bb2a84eea17331e53c196a4e35ac4448c3ef804d01d9d200aa1a62d4"
+        "bytes": 12237,
+        "sha256": "67572553333faebfd6a1bddbbe58368fe8256058cc3181f9da122e200ff7f551"
       },
       {
         "file": "components/home/transit-section.css",
@@ -532,8 +532,8 @@
     "files": [
       {
         "file": "components/home/WhyKrakenSection.tsx",
-        "bytes": 8203,
-        "sha256": "13533b84e0efeffbb9e87590210b012637e671f3714a7fe863cf219b84dcfd54"
+        "bytes": 8250,
+        "sha256": "7180eaf582672c5359e1ff81ffdedfaafe4cce0ffe28d961265c66f233193d21"
       },
       {
         "file": "components/home/why-kraken.css",
@@ -547,13 +547,13 @@
       },
       {
         "file": "components/home/ApprovedHome.tsx",
-        "bytes": 25856,
-        "sha256": "79c84efadbe6bdb923fa50fa55a9bb6e1cf11e8076c2e238d3673d1f57b4fdf4"
+        "bytes": 26677,
+        "sha256": "338307a82e982190cb4b5071bac928b42ecca7b2fae02d853be8231fd8668caf"
       },
       {
         "file": "components/home/ApprovedHeader.tsx",
-        "bytes": 3200,
-        "sha256": "cac03b162f3db16fbb608090838b9f6f308a583f785b2b886bacd05406118d8f"
+        "bytes": 3297,
+        "sha256": "e76b0262b430a3626659f5f1e472bb6626387599c7b2e916086e4eb9daa75059"
       }
     ]
   }

@@ -169,5 +169,6 @@ test('a default image failure cached before hydration shows the translated fallb
   assert.equal(controls.get('#kaiHelpVisual').getAttribute('aria-busy'), 'false');
   assert.match(controls.get('[data-help-status]').textContent, /^ES: /);
   assert.equal(controls.get('[data-help-calculator]').dataset.service, 'windows');
+  assert.match(controls.get('[data-help-calculator]').getAttribute('href'), /[?&]service=windows/);
   dispose();
 });

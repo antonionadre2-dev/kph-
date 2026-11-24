@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="helmet" x1="29" y1="28" x2="91" y2="81" gradientUnits="userSpaceOnUse"><stop stop-color="#DEFFF0"/><stop offset=".42" stop-color="#98E5C5"/><stop offset="1" stop-color="#38A58E"/></linearGradient>
+    <linearGradient id="brim" x1="17" y1="70" x2="101" y2="86" gradientUnits="userSpaceOnUse"><stop stop-color="#3A91A0"/><stop offset="1" stop-color="#0C405D"/></linearGradient>
+    <linearGradient id="wood" x1="69" y1="79" x2="108" y2="97" gradientUnits="userSpaceOnUse"><stop stop-color="#72B8E3"/><stop offset=".5" stop-color="#317DB6"/><stop offset="1" stop-color="#10466E"/></linearGradient>
+    <linearGradient id="bristles" x1="70" y1="88" x2="104" y2="114" gradientUnits="userSpaceOnUse"><stop stop-color="#F5F9FA"/><stop offset="1" stop-color="#A0BACB"/></linearGradient>
+  </defs>
+  <ellipse cx="65" cy="113" rx="44" ry="6" fill="#062D52" opacity=".12"/>
+  <path d="M24 74V61c0-21 15-37 36-37s37 16 37 37v13z" fill="#248C7E"/>
+  <path d="M21 70V58c0-21 15-37 36-37s37 16 37 37v12z" fill="url(#helmet)"/>
+  <path d="M29 57c1-14 10-24 21-28" stroke="#EDFFF5" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+  <path d="M51 26c0-7 14-7 14 0v48H51z" fill="#56BDA3"/>
+  <path d="M48 24c0-6 13-6 13 0v47H48z" fill="#C2F5DC"/>
+  <path d="M51 25v37" stroke="#F0FFF8" stroke-width="3" stroke-linecap="round"/>
+  <path d="M16 68c2-4 10-5 17-4l17 2c7 1 15 1 22 0l17-2c9-1 16 1 17 6l-1 6c-3 7-21 13-46 13-23 0-42-6-46-13z" fill="#0C405D"/>
+  <path d="M15 65c2-4 11-5 18-4l17 2c7 1 15 1 22 0l17-2c9-1 16 1 17 6 2 7-18 16-47 16-25 0-46-8-44-14z" fill="url(#brim)"/>
+  <path d="M22 67c8 5 21 8 37 8" stroke="#95DBC9" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+  <path d="m75 89 30 10-4 16-37-12z" fill="url(#bristles)"/>
+  <path d="m75 94-4 12m11-10-4 12m11-10-4 12m11-10-4 12m10-10-3 12" stroke="#6D91A9" stroke-width="2.3" stroke-linecap="round"/>
+  <path d="m74 79 32 11c3 1 4 4 3 7l-1 3c-1 3-4 4-6 3L69 92c-3-1-4-4-3-7l1-2c1-3 4-5 7-4z" fill="url(#wood)"/>
+  <path d="m75 82 28 10" stroke="#B5E4FF" stroke-width="3" stroke-linecap="round"/>
+  <path d="m88 83 13-28c2-4 7-5 10-3 4 2 5 6 3 9L98 88z" fill="#143F5E"/>
+  <path d="m90 81 12-26c1-2 4-3 6-2" stroke="#5897BE" stroke-width="3" stroke-linecap="round"/>
+</svg>

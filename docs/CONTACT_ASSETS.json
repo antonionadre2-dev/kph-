@@ -1,0 +1,435 @@
+{
+  "sourcePackage": "kraken-contacto-codex-v2.zip",
+  "sourceZipSha256": "98bc8d135ac746e2d1632a0d466c0688d5bc42a7826faa9d50f56776cf9acc42",
+  "sourceZipBytes": 1743668,
+  "sourceName": "Kraken Contact v2",
+  "sourceCreated": "2026-11-24",
+  "integrationDate": "2026-11-24",
+  "scope": "Local integration for review only; not published to production.",
+  "sourceManifest": {
+    "source": "manifest.json",
+    "bytes": 4951,
+    "sha256": "a224970e6211717a2ea5a2bb4e23951167f81a1513519e1b199be93a4cbea047",
+    "entriesVerified": 29,
+    "bytesVerified": 4115070
+  },
+  "integration": "Native React ContactContent on /kontakt with shared six-language navigation and calculator. The original calm D3 vector-map design is restored: original supplied geometry around Schaffhausen and official swisstopo vector tiles beyond that extent, rendered with the same palette. Live Swiss geocoding remains connected; server-only openrouteservice routing is prepared, but no private key is configured. No raster/WMS or additional map rendering engine is used. Original supplied image/data/vendor/license files remain unchanged; new decoder licenses are recorded separately.",
+  "assetsIdenticalToSuppliedPackage": true,
+  "assets": [
+    {
+      "path": "public/kraken-contact/assets/contact-exterior.webp",
+      "source": "public/kraken-contact/assets/contact-exterior.webp",
+      "bytes": 108314,
+      "sha256": "997b9147015a4e6ba87f27c6e3c68b1032af3b98c53e1209b1f85832ebd34cb8",
+      "sourceManifestVerified": true,
+      "identicalToSuppliedPackage": true,
+      "format": "WEBP",
+      "width": 960,
+      "height": 640,
+      "content": "Concept image; not a verified photograph of the office."
+    },
+    {
+      "path": "public/kraken-contact/assets/contact-interior.webp",
+      "source": "public/kraken-contact/assets/contact-interior.webp",
+      "bytes": 58544,
+      "sha256": "4aa48db50c5fe84dce83a530948bfcf61d77b4b73e6f1e0ef92ec874343c039c",
+      "sourceManifestVerified": true,
+      "identicalToSuppliedPackage": true,
+      "format": "WEBP",
+      "width": 960,
+      "height": 640,
+      "content": "Concept image; not a verified photograph of the office."
+    },
+    {
+      "path": "public/kraken-contact/assets/logo-kraken-azul.webp",
+      "source": "public/kraken-contact/assets/logo-kraken-azul.webp",
+      "bytes": 59822,
+      "sha256": "8821afc66d10704dfa5adc9c1ed28aa1fb15d92e6dfe293a0d85cddf0fe21a68",
+      "sourceManifestVerified": true,
+      "identicalToSuppliedPackage": true,
+      "format": "WEBP",
+      "width": 1024,
+      "height": 1024,
+      "reuseReason": "Byte-identical to the existing public/logo-kraken-azul.webp and public/home-approved/assets/logo.webp."
+    },
+    {
+      "path": "public/kraken-contact/data/contact-map-data.json",
+      "source": "public/kraken-contact/data/contact-map-data.json",
+      "bytes": 359174,
+      "sha256": "3078d98a36eb79ee6337a89b3cf4e342e8d912de39c25fe097c1dbefd4e05bed",
+      "sourceManifestVerified": true,
+      "identicalToSuppliedPackage": true,
+      "usedByCurrentLiveMap": true,
+      "retentionReason": "Original geometry is used within its Schaffhausen coverage to restore the approved design; precomputed route distances/times are not reused by live routing."
+    },
+    {
+      "path": "public/kraken-contact/licenses/D3_LICENSE.txt",
+      "source": "licenses/D3_LICENSE.txt",
+      "bytes": 731,
+      "sha256": "3e6849627f74ff73c257a3ae1efb574015d94fc1035c05ec3c15805165efcbc4",
+      "sourceManifestVerified": true,
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/kraken-contact/licenses/LUCIDE_LICENSE.txt",
+      "source": "licenses/LUCIDE_LICENSE.txt",
+      "bytes": 3208,
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+      "sourceManifestVerified": true,
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/kraken-contact/licenses/MANROPE_OFL.txt",
+      "source": "licenses/MANROPE_OFL.txt",
+      "bytes": 4387,
+      "sha256": "58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b",
+      "sourceManifestVerified": true,
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/kraken-contact/licenses/MANROPE_SOURCE.txt",
+      "source": "licenses/MANROPE_SOURCE.txt",
+      "bytes": 2440,
+      "sha256": "a090a2daf36f30cf7cf5fb7b21907bdce3919061bf1fc49d123354358ee301d6",
+      "sourceManifestVerified": true,
+      "identicalToSuppliedPackage": true
+    },
+    {
+      "path": "public/kraken-contact/vendor/d3-7.9.0.min.js",
+      "source": "public/kraken-contact/vendor/d3-7.9.0.min.js",
+      "bytes": 279706,
+      "sha256": "f2094bbf6141b359722c4fe454eb6c4b0f0e42cc10cc7af921fc158fceb86539",
+      "sourceManifestVerified": true,
+      "identicalToSuppliedPackage": true
+    }
+  ],
+  "components": [
+    {
+      "file": "components/KontaktPage.tsx",
+      "bytes": 16310,
+      "sha256": "03a0afd111324494eb277510ec0af99f686ed167a4ba86102163b38d46520677"
+    },
+    {
+      "file": "components/contact/ContactMessageForm.tsx",
+      "bytes": 19937,
+      "sha256": "96179347cfd8b104139afd5b4e4fb3c9069884c9716ae09f4b57081898f78f45"
+    },
+    {
+      "file": "components/contact/contact-api.ts",
+      "bytes": 3542,
+      "sha256": "cbb4b331d4c5bb42a9f78829ef976e1f4bdcd50741f096bdd7357487118eb7d4"
+    },
+    {
+      "file": "components/contact/contact-basemap.d.ts",
+      "bytes": 635,
+      "sha256": "5a1262369ead1727a6144fe2de5315e28e121db9f95a5219e7bbf458af0a0f2c"
+    },
+    {
+      "file": "components/contact/contact-basemap.js",
+      "bytes": 13434,
+      "sha256": "e44a36867ca904c680ec096fe1b11e1a056d2726ee6a7974ecd4cd4a60f3f911"
+    },
+    {
+      "file": "components/contact/contact-controller.d.ts",
+      "bytes": 2651,
+      "sha256": "be5b00ab744856736f93423d1e291e858da6db71e093164199b8c4c2ea9f19f7"
+    },
+    {
+      "file": "components/contact/contact-controller.js",
+      "bytes": 35317,
+      "sha256": "5f5fb1bff32f4b52eaafbec3013ec4170238d138db22d802488848e01c1b6cbd"
+    },
+    {
+      "file": "components/contact/contact-route-logic.d.ts",
+      "bytes": 1538,
+      "sha256": "452a3b54ffeee4313f299cf256289d33169a55e7b5f6e896851dca52504c91f7"
+    },
+    {
+      "file": "components/contact/contact-route-logic.js",
+      "bytes": 5341,
+      "sha256": "8c8103409f7cb67578c7794286379434dc6cdfdd889e063a8284d7279d94e845"
+    },
+    {
+      "file": "components/contact/contact-vector-data.d.ts",
+      "bytes": 1207,
+      "sha256": "ffb99cb5130bf7b4a2d3d72b5606d1101015e6c69ce971dff6a890d5ea12e66e"
+    },
+    {
+      "file": "components/contact/contact-vector-data.js",
+      "bytes": 9666,
+      "sha256": "ba5b5b03202fef6fabe26597d42de9e208ea44179a0535f179ff1c5042f63497"
+    },
+    {
+      "file": "components/contact/contact.css",
+      "bytes": 19792,
+      "sha256": "e12317fb3b323ff23df3da2dc6f408075061024a9f27f4cffd4c5ab98c4c8f8a"
+    },
+    {
+      "file": "components/contact/contactTranslations.ts",
+      "bytes": 30954,
+      "sha256": "65e8f0ea9f4d431bc214d3936d680b93146a00dfad56c40214391f0851095919"
+    },
+    {
+      "file": "components/contact/integration.css",
+      "bytes": 8184,
+      "sha256": "94bdce7c110f063c3569e0d4c46712f1594b4fbf1fbd56ae3b444a14efcdf2a2"
+    }
+  ],
+  "integrationFiles": [
+    {
+      "file": "components/App.tsx",
+      "bytes": 27248,
+      "sha256": "50edf152eb79e1cf78a169d4bb167c1e46eeddf847ea5be079ea21417e11bb01"
+    },
+    {
+      "file": "components/home/ApprovedHeader.tsx",
+      "bytes": 3297,
+      "sha256": "e76b0262b430a3626659f5f1e472bb6626387599c7b2e916086e4eb9daa75059"
+    },
+    {
+      "file": "components/Footer.tsx",
+      "bytes": 7171,
+      "sha256": "f62292529b97b9b7436a288eb82600c58a2c157bccedab74673717e3ba628388"
+    },
+    {
+      "file": "components/home/approved-home.css",
+      "bytes": 110341,
+      "sha256": "954dbecb0c777ba496ad1ca1b012062469a048d5a41610bc49e7b14c20645fc9"
+    },
+    {
+      "file": "components/home/responsive-fixes.css",
+      "bytes": 754,
+      "sha256": "982e1361046deea44a09105b50a74a67e0ea169bf632ade58a2de00d05cefb2a"
+    },
+    {
+      "file": "components/home/home-language.css",
+      "bytes": 2953,
+      "sha256": "4b2015b19273e393c0ed3c8ba56d9f343118032eb984cea3544bd413770f6cc4"
+    },
+    {
+      "file": "components/home/device-fixes.css",
+      "bytes": 3790,
+      "sha256": "b56f065a57c0c63f19d042bc43215030d51945dc26456f917179c6c1654d96b7"
+    },
+    {
+      "file": "src/locale.ts",
+      "bytes": 2600,
+      "sha256": "da6d5b7f5a2d1bd59d11670be0f2e21400018122aed0cf045931c3f21d3f8cb8"
+    },
+    {
+      "file": "src/home/calculator.ts",
+      "bytes": 4496,
+      "sha256": "406c51dd1324c8eaea81240fc1e5b146f7386ad3176e050a52035c2ab30b5e2e"
+    },
+    {
+      "file": "package.json",
+      "bytes": 1756,
+      "sha256": "2a364b3a75f6f60f21f89da7c7c7f686c31231e268716033b0791bb6d22fdbd6"
+    },
+    {
+      "file": "server.ts",
+      "bytes": 41364,
+      "sha256": "af672b488dd6aa29215fe0d469d34396c0678ede207d603512c38c4d192106cd"
+    },
+    {
+      "file": "seoConfig.ts",
+      "bytes": 53656,
+      "sha256": "ff4cfc9fe944120b69ac54644b8f47bc806fd7f33c208c0e70d42111c53ac5f0"
+    },
+    {
+      "file": "scripts/render-contact.mjs",
+      "bytes": 2442,
+      "sha256": "b2d8c786662ee332808ad78fa0f2f0e30b573364a519c5c84a91c5b538e193b3"
+    },
+    {
+      "file": "scripts/build-vercel.mjs",
+      "bytes": 2119,
+      "sha256": "3a22b6a4084ffd6327de746e3f1e9abf22fbb37617db12cc36d686ef162d47f9"
+    },
+    {
+      "file": "scripts/prepare-vercel-output.mjs",
+      "bytes": 8187,
+      "sha256": "cccba9f3146b89a7533ace97bd41e6b3bbd6e35cb823202dd6d54ad254df01e9"
+    },
+    {
+      "file": "tests/contact-controller.test.mjs",
+      "bytes": 16776,
+      "sha256": "300d02363a503dfcbf1dc6bed75a78bf1d897ca408e143d336e1cadc77d60f3a"
+    },
+    {
+      "file": "tests/contact-render.test.mjs",
+      "bytes": 4714,
+      "sha256": "18660317c8001f3187f95dac18f8d3722445378e25a66084a112f6d46e782a49"
+    },
+    {
+      "file": "tests/contact-translations.test.ts",
+      "bytes": 8196,
+      "sha256": "3071090809fbb5ee310543557614f76fd893171e65f278a33000620ef337b5ac"
+    },
+    {
+      "file": "tests/home-compiled-server.test.mjs",
+      "bytes": 9311,
+      "sha256": "5cd4da44477ffc275e83fc57cfc5f19b0efb758d67a6d31126719c78640199b9"
+    },
+    {
+      "file": "tests/home-vercel-output.test.mjs",
+      "bytes": 6178,
+      "sha256": "7e95bc9d147c68dfb5753c23229e81d7578af5a4a772640198f16abdd8cddf1b"
+    },
+    {
+      "file": "docs/CONTACT_INTEGRATION.md",
+      "bytes": 7592,
+      "sha256": "fe25ab98c1d46391c0d0ea79daeefc32823a0aa3e71fcbdd92ee63234b2d3d55"
+    },
+    {
+      "file": ".env.example",
+      "bytes": 1707,
+      "sha256": "12a869cf38a5357602e631caca226de091c84de497618e43db7c9317d997f1a0"
+    },
+    {
+      "file": "src/contact/routing-server.ts",
+      "bytes": 11543,
+      "sha256": "cbf00089d9f0c035342327693a3e9099c395b35b8e562dfce16982258e651ca9"
+    },
+    {
+      "file": "tests/contact-api.test.ts",
+      "bytes": 2976,
+      "sha256": "034020ff918eac9fc7f1e8658204f4f441ca978c4d6d6b3ac34d84b8f87eb789"
+    },
+    {
+      "file": "tests/contact-controller-live.test.mjs",
+      "bytes": 15216,
+      "sha256": "03b4f3ca561127fe617a3b839486c336a0870213ca2a7cb9fc55e41b33864557"
+    },
+    {
+      "file": "tests/contact-routing-server.test.ts",
+      "bytes": 11336,
+      "sha256": "eb66393d971755d3fa86ad10ad2150fb7607477ba1f4b921000e24d19bafdd87"
+    },
+    {
+      "file": "docs/CONTACT_ROUTING.md",
+      "bytes": 8618,
+      "sha256": "bdf071c8d0d2140e36be6b8f33a89f39047f2f952327527361b3a917508992cb"
+    },
+    {
+      "file": "tests/contact-vector-data.test.mjs",
+      "bytes": 8746,
+      "sha256": "53da447156080a0af5efaa7097285cd0f5122406988ddfeaec56b25b31d0365e"
+    },
+    {
+      "file": "package-lock.json",
+      "bytes": 314755,
+      "sha256": "b307419b715e1c0c7ad52494a5aa2df0347e5c163e1835bc0a0f2c8fe61f59bb"
+    }
+  ],
+  "routing": {
+    "mode": "Live Swiss address/postcode/place geocoding with the original D3 vector-map design. Authenticated route calculation remains disabled until a server-side private key is configured.",
+    "coverage": "CH",
+    "geocoding": {
+      "provider": "geo.admin.ch SearchServer",
+      "endpoint": "https://api3.geo.admin.ch/rest/services/ech/SearchServer",
+      "realPublicLocationChecksPassed": true,
+      "maximumCandidates": 8,
+      "automaticSelection": false
+    },
+    "basemap": {
+      "renderer": "Existing D3 SVG renderer; restored original light background, pale blue water, muted green land, grey buildings and white roads.",
+      "defaultGeometry": "public/kraken-contact/data/contact-map-data.json",
+      "defaultGeometryUse": "Original supplied geometry is reused within its Schaffhausen extent for the approved initial appearance.",
+      "dynamicProvider": "swisstopo official vector tiles",
+      "dynamicEndpoint": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/{z}/{x}/{y}.pbf",
+      "publishedBounds": [
+        3.57,
+        44.18,
+        13.66,
+        48.88
+      ],
+      "minimumZoom": 0,
+      "maximumZoom": 14,
+      "maximumVisibleTiles": 16,
+      "maximumParallelDownloads": 4,
+      "maximumCachedDecodedTiles": 32,
+      "maximumTileBytes": 2097152,
+      "maximumRawFeaturesPerTile": 120000,
+      "maximumSelectedFeaturesPerTile": 40000,
+      "minorRoadDetailMinimumZoom": 12,
+      "staleRequestsCancelled": true,
+      "oldGeometryStretchedToNewLocations": false,
+      "rasterWmsUsed": false,
+      "decoderDependencies": {
+        "@mapbox/vector-tile": "3.0.0",
+        "pbf": "5.2.0",
+        "@mapbox/point-geometry": "1.1.0"
+      }
+    },
+    "directions": {
+      "provider": "openrouteservice",
+      "endpoint": "https://api.heigit.org/openrouteservice/v2/directions/driving-car/geojson",
+      "privateServerVariable": "CONTACT_ROUTING_API_KEY",
+      "configured": false,
+      "authenticatedLiveRequestVerified": false,
+      "mockProviderChecksPassed": true,
+      "directionsRequestedIndependently": true,
+      "automaticDemoFallback": false,
+      "liveTraffic": false,
+      "gpsTracking": false
+    },
+    "exampleDestinations": [
+      "Bahnhof Schaffhausen",
+      "Bahnhof Neuhausen",
+      "Rheinfall"
+    ],
+    "precomputedMetricsUsedByLivePage": false,
+    "attribution": "© swisstopo · © OpenStreetMap contributors / openrouteservice",
+    "originalSampleRouteAttribution": "© swisstopo · © OpenStreetMap contributors / OSRM"
+  },
+  "galleryDisclaimer": {
+    "source": "Konzeptbilder · keine Fotos des Standorts",
+    "localizedInSixLanguages": true,
+    "placement": "Next to the office concept image and inside the gallery."
+  },
+  "excludedStandaloneRuntime": [
+    "public/kraken-contact/index.html",
+    "public/kraken-contact/boot.js",
+    "public/kraken-contact/contact-controller.js",
+    "public/kraken-contact/contact.css",
+    "public/kraken-contact/vendor/lucide-1.17.0.min.js",
+    "public/kraken-contact/font.css",
+    "public/kraken-contact/assets/manrope-latin-variable.woff2"
+  ],
+  "dependencyLicenses": [
+    {
+      "path": "public/kraken-contact/licenses/VECTOR_TILE_LICENSE.txt",
+      "source": "node_modules/@mapbox/vector-tile/LICENSE.txt",
+      "package": "@mapbox/vector-tile",
+      "version": "3.0.0",
+      "license": "BSD-3-Clause",
+      "bytes": 1500,
+      "sha256": "5b09a507df6f21d6c2112c46dcaf2927b9dbd8b580a08b542d8ec2f9191d783d",
+      "sourcePackageLicenseVerified": true,
+      "identicalToInstalledPackage": true
+    },
+    {
+      "path": "public/kraken-contact/licenses/PBF_LICENSE.txt",
+      "source": "node_modules/pbf/LICENSE",
+      "package": "pbf",
+      "version": "5.2.0",
+      "license": "BSD-3-Clause",
+      "bytes": 1467,
+      "sha256": "fdf1d5279107d760c7df8c6edab1faab2b72ba17528273a8b417b08f1e12ebbe",
+      "sourcePackageLicenseVerified": true,
+      "identicalToInstalledPackage": true
+    },
+    {
+      "path": "public/kraken-contact/licenses/POINT_GEOMETRY_LICENSE.txt",
+      "source": "node_modules/@mapbox/point-geometry/LICENSE",
+      "package": "@mapbox/point-geometry",
+      "version": "1.1.0",
+      "license": "ISC",
+      "bytes": 725,
+      "sha256": "0c0ede0036a425ff8b2d49341ea9aa8eccbeeae1ac4eb59874c9dd8bcf5186d3",
+      "sourcePackageLicenseVerified": true,
+      "identicalToInstalledPackage": true
+    }
+  ]
+}

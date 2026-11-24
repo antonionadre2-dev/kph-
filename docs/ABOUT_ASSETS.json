@@ -279,13 +279,13 @@
     "files": [
       {
         "file": "components/about/ApprovedAbout.tsx",
-        "bytes": 30499,
-        "sha256": "61f87675e5bd490967f24e93083f95d1bec3212ad146e2ccd04cf970cd27b2c6"
+        "bytes": 30617,
+        "sha256": "25f553be8c697c7e6598d50cfc6e833e6444e8a0e819669fe0793130fb19dde3"
       },
       {
         "file": "components/about/about-interactions.ts",
-        "bytes": 17580,
-        "sha256": "de31eacf1f9137ad28e62059c66da151aa1b696539847c747cf9317ed947c97d"
+        "bytes": 17808,
+        "sha256": "b7f7be13e8e232f5b4b6230969f165e78b345a91d9617ad1c433663c5b528b0d"
       },
       {
         "file": "components/about/about.css",

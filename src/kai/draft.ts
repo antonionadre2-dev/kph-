@@ -12,7 +12,7 @@ type TransferEnvelope = KaiTransfer & { version: 1; createdAt: number };
 type StorageAccess = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 type Data = Record<string, unknown>;
 let pendingTransfer: TransferEnvelope | null = null;
-type LiveCalculation = { contact: Data; config: Data };
+type LiveCalculation = { contact: Data; config: Data; conflicts?: string[] };
 let liveCalculation: ((draft: KaiDraft) => LiveCalculation) | null = null;
 /** Let the summary detect unsaved edits in an already-mounted calculator without exposing them on the DOM. */
 export function registerKaiCalculationPreview(provider: (draft: KaiDraft) => LiveCalculation): () => void {
@@ -91,7 +91,7 @@ export function getKaiTransferPreview(value: unknown, storage: StorageAccess | n
   const item = request?.kind === 'service' ? saved.cart.find(item => item.type === request.service) : undefined;
   const config = isRecord(item?.details) ? item.details : {};
   const current = liveCalculation?.(draft);
-  return { conflicts: applyKaiToCalculation({ ...saved.contact, ...current?.contact }, current?.config || config, draft, 'preserve').conflicts, malformed: false };
+  return { conflicts: [...new Set([...applyKaiToCalculation({ ...saved.contact, ...current?.contact }, current?.config || config, draft, 'preserve').conflicts, ...(current?.conflicts || [])])], malformed: false };
 }
 
 /** Explicit Continue action only. Existing consultation/cart/payment keys are never written here. */

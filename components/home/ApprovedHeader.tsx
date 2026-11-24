@@ -4,7 +4,7 @@ import { homeText, normalizeHomeLanguage } from './homeTranslations';
 import { HomeLanguageSelector } from './HomeLanguageSelector';
 
 /** The approved navigation is shared by the home and the services page. */
-export default function ApprovedHeader({ servicesPage = false, page }: { onNavigate: (path: string) => void; servicesPage?: boolean; page?: 'home' | 'services' | 'about' }) {
+export default function ApprovedHeader({ servicesPage = false, page }: { onNavigate: (path: string) => void; servicesPage?: boolean; page?: 'home' | 'services' | 'about' | 'contact' | 'calculator' }) {
   const { language } = useTranslation();
   const t = (source: string) => homeText(normalizeHomeLanguage(language), source);
   const [open, setOpen] = useState(false);
@@ -29,7 +29,7 @@ export default function ApprovedHeader({ servicesPage = false, page }: { onNavig
     <a href={href('/leistungen')} aria-current={currentPage === 'services' ? 'page' : undefined}>{t('Leistungen')}</a>
     <a href={href('/#umzug')}>{t('Kleine Umzüge')}</a>
     <a href={href('/about')} aria-current={currentPage === 'about' ? 'page' : undefined}>{t('Über Kraken')}</a>
-    <a href="#kontakt">{t('Kontakt')}</a>
+    <a href={href('/kontakt')} aria-current={currentPage === 'contact' ? 'page' : undefined}>{t('Kontakt')}</a>
   </>;
   return <>
     <a className="skip-link" href="#main">{t('Zum Inhalt')}</a>

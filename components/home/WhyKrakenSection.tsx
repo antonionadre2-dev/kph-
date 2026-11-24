@@ -2,11 +2,12 @@ import React from 'react';
 import './why-kraken.css';
 
 type WhyKrakenSectionProps = {
+  quoteHref?: string;
   t: (source: string, params?: Record<string, string | number>) => string;
 };
 
 /** Owner-approved personal introduction and conditional VAT comparison. */
-export default function WhyKrakenSection({ t }: WhyKrakenSectionProps) {
+export default function WhyKrakenSection({ t, quoteHref = '/quote' }: WhyKrakenSectionProps) {
   return (
     <section className="why-section" id="warum-kraken" aria-labelledby="why-title">
       <span id="ueber-uns" className="why-legacy-anchor" aria-hidden="true">
@@ -24,7 +25,7 @@ export default function WhyKrakenSection({ t }: WhyKrakenSectionProps) {
       <span>{t("Inhaber & Ihr Ansprechpartner")}</span>
       </div>
       <div className="why-primary-action">
-      <a className="why-button" href="/quote" data-calculator="">{' '}{t("Auftrag im Rechner planen")}{' '}</a>
+      <a className="why-button" href={quoteHref} data-calculator="">{' '}{t("Auftrag im Rechner planen")}{' '}</a>
       <p>{t("Die nächsten Schritte besprechen wir persönlich.")}</p>
       </div>
       <div className="why-private-benefit">

@@ -135,7 +135,7 @@ test('exported app retains API, weather, redirects, SEO and safe asset routing w
         const chat = await get('/api/chat', 'POST', JSON.stringify({ messages: [{ role: 'user', text: 'hola' }], language: 'es' }));
         assert.equal(chat.status, 200); assert.equal(JSON.parse(chat.body).success, true);
         const payment = await get('/api/payrexx/create-gateway', 'POST', JSON.stringify({ amount: 10 }));
-        assert.equal(payment.status, 500); assert.equal(JSON.parse(payment.body).success, false);
+        assert.equal(payment.status, 410); assert.equal(JSON.parse(payment.body).code, 'BOOKING_CHECKOUT_REQUIRED');
         assert.equal((await get('/api/download-zip')).status, 404);
         const redirect = await get('/contacto?lang=es');
         assert.equal(redirect.status, 301); assert.equal(redirect.headers.location, '/kontakt?lang=es');

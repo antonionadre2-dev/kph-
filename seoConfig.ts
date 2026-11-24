@@ -2,6 +2,9 @@ import { translations } from "./i18n.ts";
 import { MUNICIPALITIES } from "./src/data/locations.ts";
 import { homeText, normalizeHomeLanguage } from "./components/home/homeTranslations.ts";
 import { languageFromSearch } from "./src/locale.ts";
+import { contactText } from "./components/contact/contactTranslations.ts";
+import { bookingText } from "./src/booking/uiCopy.ts";
+import { customerAccessText } from "./src/booking/customerAccessCopy.ts";
 
 export type Language = "de" | "en" | "fr" | "it" | "es" | "pt";
 
@@ -15,6 +18,8 @@ export const OG_IMAGE_TYPE = "image/jpeg";
 export const PATH_TO_PAGE_MAP: Record<string, string> = {
   "/": "home",
   "/quote": "consultation",
+  "/quote-demo": "calculator-demo",
+  "/customer-access": "customer-access",
   "/about": "about",
   "/ueber-kraken": "about",
   "/services": "services-page",
@@ -790,6 +795,40 @@ export function getMetadataForPath(
   ogImageType: string;
 } {
   const cleanPath = pathname.split("?")[0];
+  if (cleanPath === '/customer-access') {
+    const locale = normalizeHomeLanguage(langParam || languageFromSearch(pathname.includes('?') ? pathname.slice(pathname.indexOf('?')) : '') || 'de');
+    const title = customerAccessText(locale, 'title');
+    const description = customerAccessText(locale, 'personal');
+    return {
+      title: `${title} · Kraken PFM`, description, canonical: `${BASE_URL}/customer-access`,
+      hreflangs: [], pageType: 'customer-access', h1: title, h2: BRAND, bodyText: description,
+      ogImage: DEFAULT_OG_IMAGE, ogImageWidth: OG_IMAGE_WIDTH, ogImageHeight: OG_IMAGE_HEIGHT, ogImageType: OG_IMAGE_TYPE,
+    };
+  }
+  if (cleanPath === '/quote' || cleanPath === '/quote-demo') {
+    const locale = normalizeHomeLanguage(langParam || languageFromSearch(pathname.includes('?') ? pathname.slice(pathname.indexOf('?')) : '') || 'de');
+    const t = (key: string) => bookingText(locale, key);
+    const h1 = `${t('titleStart')} ${t('titleAccent')}`;
+    const description = t('intro');
+    return {
+      title: `${cleanPath === '/quote-demo' ? 'Demo · ' : ''}${h1} · Kraken PFM`,
+      description, canonical: `${BASE_URL}/quote`, hreflangs: [],
+      pageType: cleanPath === '/quote-demo' ? 'calculator-demo' : 'consultation',
+      h1, h2: BRAND, bodyText: description, ogImage: DEFAULT_OG_IMAGE,
+      ogImageWidth: OG_IMAGE_WIDTH, ogImageHeight: OG_IMAGE_HEIGHT, ogImageType: OG_IMAGE_TYPE,
+    };
+  }
+  if (cleanPath.replace(/\/$/, '') === "/kontakt") {
+    const locale = normalizeHomeLanguage(langParam || languageFromSearch(pathname.includes('?') ? pathname.slice(pathname.indexOf('?')) : '') || 'de');
+    const title = contactText(locale, 'Kontakt · Kraken PFM in Schaffhausen');
+    const description = contactText(locale, 'Kontaktieren Sie Kraken PFM in Schaffhausen. Persönlich erreichbar von Montag bis Sonntag, 09:00–19:00 Uhr. Reinigung und kleine Umzüge im bestehenden Rechner planen.');
+    return {
+      title, description, canonical: `${BASE_URL}/kontakt`, hreflangs: [], pageType: 'kontakt',
+      h1: `${contactText(locale, 'Näher dran.')} ${contactText(locale, 'Persönlich für Sie da.')}`,
+      h2: BRAND, bodyText: description,
+      ogImage: DEFAULT_OG_IMAGE, ogImageWidth: OG_IMAGE_WIDTH, ogImageHeight: OG_IMAGE_HEIGHT, ogImageType: OG_IMAGE_TYPE,
+    };
+  }
   if (cleanPath === "/about" || cleanPath === "/ueber-kraken") {
     const locale = normalizeHomeLanguage(langParam || languageFromSearch(pathname.includes('?') ? pathname.slice(pathname.indexOf('?')) : '') || 'de');
     const copy = {
