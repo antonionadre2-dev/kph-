@@ -5,6 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { renderServicesHtml } from './render-services.mjs';
 import { renderAboutHtml } from './render-about.mjs';
 import { renderContactHtml } from './render-contact.mjs';
+import { renderSeoHtml } from './render-seo.mjs';
 
 // Vercel's native Express integration serves public/ from its CDN, while the
 // function reads dist/*.html for the existing route-specific SEO response.
@@ -27,6 +28,9 @@ export function publishVercelAssets(root) {
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const sitemap = spawnSync(process.execPath, ['--import', 'tsx', path.join(root, 'scripts/generate-sitemap.mjs')], { cwd: root, stdio: 'inherit' });
+  if (sitemap.error) throw sitemap.error;
+  if (sitemap.status !== 0) process.exit(sitemap.status || 1);
   // Never feed a previous generated CDN bundle back into Vite's public copy.
   rmSync(path.join(root, 'public/assets'), { recursive: true, force: true });
   const result = spawnSync(process.execPath, [path.join(root, 'node_modules/vite/bin/vite.js'), 'build'], {
@@ -39,6 +43,7 @@ if (isMain) {
   await renderServicesHtml(root);
   await renderAboutHtml(root);
   await renderContactHtml(root);
+  await renderSeoHtml(root);
   publishVercelAssets(root);
   console.log('Vercel ready: frontend public/assets on CDN; dist/*.html for Express. No Node bundle, stats or source maps published.');
 }

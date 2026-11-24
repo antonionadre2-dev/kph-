@@ -1,5 +1,5 @@
 /** Approved services copy. German source text is the stable key; values are plain text. */
-import { homeText, normalizeHomeLanguage, type HomeLanguage } from '../home/homeTranslations';
+import { homeText, normalizeHomeLanguage, type HomeLanguage } from '../home/homeTranslations.ts';
 
 type TranslationRow = readonly [de: string, en: string, es: string, pt: string, it: string, fr: string];
 const languageIndex: Readonly<Record<HomeLanguage, number>> = { de: 0, en: 1, es: 2, pt: 3, it: 4, fr: 5 };

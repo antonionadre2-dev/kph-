@@ -4,7 +4,10 @@ import dotenv from "dotenv";
 import path from "path";
 import compression from "compression";
 import fs from "fs";
-import { getMetadataForPath, isRouteValid, VALID_CITIES } from "./seoConfig.ts";
+import { isRouteValid, VALID_CITIES } from "./seoConfig.ts";
+import { getPageSeo, normalizeCanonicalPath } from "./src/seo/metadata.ts";
+import { injectPageSeo, escapeSeoHtml } from "./src/seo/html.ts";
+import { seoFragmentName } from "./src/seo/render-contract.ts";
 import { MUNICIPALITIES } from "./src/data/locations.ts";
 import { createHomeWeatherHandler } from "./server/homeWeather.ts";
 import { normalizeSiteLanguage } from "./src/locale.ts";
@@ -29,8 +32,10 @@ async function configureApplication() {
 
   app.use((req, res, next) => {
     const hostname = req.hostname?.toLowerCase();
-    if ((hostname !== "krakenpfm.ch" && hostname !== "www.krakenpfm.ch") || ['/quote-demo', '/customer-access'].includes(req.path)) {
+    if (hostname !== "krakenpfm.ch" && hostname !== "www.krakenpfm.ch") {
       res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    } else if ((!path.extname(req.path) || req.path.startsWith('/api/')) && !getPageSeo(req.originalUrl).indexable) {
+      res.setHeader("X-Robots-Tag", "noindex, follow");
     }
     if (['/quote', '/quote-demo', '/customer-access'].includes(req.path)) {
       res.setHeader('Referrer-Policy', 'no-referrer');
@@ -356,64 +361,7 @@ async function configureApplication() {
     }
   });
 
-  const injectSeoMeta = (html: string, pathname: string, langQuery?: string): string => {
-    try {
-      const meta = getMetadataForPath(pathname, langQuery);
-
-      // Replace Title
-      let renderedHtml = html.replace(
-        /<title>[\s\S]*?<\/title>/i,
-        `<title>${meta.title}</title>`
-      );
-      const htmlLanguage = normalizeSiteLanguage(langQuery) || 'de-CH';
-      renderedHtml = renderedHtml.replace(/<html\b([^>]*?)\blang="[^"]*"/i, `<html$1lang="${htmlLanguage}"`);
-
-      // Replace other title metas
-      renderedHtml = renderedHtml.replace(
-        /<meta property="og:title" content="[\s\S]*?">/i,
-        `<meta property="og:title" content="${meta.title}">`
-      );
-      renderedHtml = renderedHtml.replace(
-        /<meta name="twitter:title" content="[\s\S]*?">/i,
-        `<meta name="twitter:title" content="${meta.title}">`
-      );
-      renderedHtml = renderedHtml.replace(
-        /<meta name="title" content="[\s\S]*?">/i,
-        `<meta name="title" content="${meta.title}">`
-      );
-
-      // Replace Description
-      renderedHtml = renderedHtml.replace(
-        /<meta name="description" content="[\s\S]*?">/i,
-        `<meta name="description" content="${meta.description}">`
-      );
-      renderedHtml = renderedHtml.replace(
-        /<meta property="og:description" content="[\s\S]*?">/i,
-        `<meta property="og:description" content="${meta.description}">`
-      );
-      renderedHtml = renderedHtml.replace(
-        /<meta name="twitter:description" content="[\s\S]*?">/i,
-        `<meta name="twitter:description" content="${meta.description}">`
-      );
-
-      // Replace Canonical
-      renderedHtml = renderedHtml.replace(
-        /<link rel="canonical" href="[\s\S]*?" \/>/i,
-        `<link rel="canonical" href="${meta.canonical}" />`
-      );
-
-      // Strip existing alternate hreflangs to avoid duplication
-      renderedHtml = renderedHtml.replace(
-        /<link rel="alternate" hreflang="[\s\S]*?" href="[\s\S]*?">/gi,
-        ""
-      );
-
-      return renderedHtml;
-    } catch (error) {
-      console.error("Error injecting SEO meta:", error);
-      return html;
-    }
-  };
+  const injectSeoMeta = (html: string, pathname: string, language?: string) => injectPageSeo(html, pathname, language);
 
   const handleHtmlRequest = async (req: express.Request, res: express.Response) => {
     try {
@@ -421,19 +369,6 @@ async function configureApplication() {
       const distPath = (typeof __dirname !== "undefined" && path.basename(__dirname) === "dist")
         ? __dirname
         : path.join(process.cwd(), "dist");
-
-      // 1. In production, check if a pre-rendered HTML file exists for this path
-      if (isProd) {
-        const cleanPath = req.path.replace(/\/$/, ""); // remove trailing slash
-        const preRenderedFilePath = cleanPath === "" 
-          ? path.join(distPath, "index.html")
-          : path.join(distPath, `${cleanPath}.html`);
-
-        if (cleanPath !== "" && fs.existsSync(preRenderedFilePath)) {
-          res.setHeader("Content-Type", "text/html; charset=utf-8");
-          return res.sendFile(preRenderedFilePath);
-        }
-      }
 
       // 2. Fallback to SPA template (use index-spa.html backup in prod if exists, otherwise index.html)
       const indexPath = isProd
@@ -450,48 +385,41 @@ async function configureApplication() {
           html = await viteInstance.transformIndexHtml(req.originalUrl, html);
         }
 
-        const langParam = (req.query.lang || req.query.hl) as string | undefined;
-        let detectedLang = langParam;
-        if (!detectedLang && req.headers["accept-language"]) {
-          const header = req.headers["accept-language"] as string;
-          const match = header.match(/(de|en|fr|it|es|pt)/i);
-          if (match) {
-            detectedLang = match[1].toLowerCase();
-          }
-        }
-
+        // One deterministic default URL in Swiss German; explicit locale sessions remain available.
+        const detectedLang = normalizeSiteLanguage(req.query.lang || req.query.hl) || 'de-CH';
+        const locale = detectedLang.slice(0, 2);
         const valid = isRouteValid(req.path);
-        if (!valid) {
-          res.status(404);
+        if (!valid) res.status(404);
+        const meta = getPageSeo(req.originalUrl, detectedLang);
+        const fragmentPath = path.join(distPath, seoFragmentName(normalizeCanonicalPath(req.path), locale));
+        let content: string;
+        if (isProd && fs.existsSync(fragmentPath)) {
+          content = fs.readFileSync(fragmentPath, 'utf8');
+        } else {
+          // Non-indexable legacy/auth pages receive an honest route introduction,
+          // never a copy of the homepage. React supplies their interactive flow.
+          const copy = ({
+            de: ['Seite nicht gefunden', 'Bitte nutzen Sie die Navigation oder kontaktieren Sie Kraken persönlich.'],
+            en: ['Page not found', 'Use the navigation or contact Kraken for personal help.'],
+            es: ['Página no encontrada', 'Utilice la navegación o contacte personalmente con Kraken.'],
+            fr: ['Page introuvable', 'Utilisez la navigation ou contactez Kraken personnellement.'],
+            it: ['Pagina non trovata', 'Utilizzi la navigazione o contatti Kraken per un aiuto personale.'],
+            pt: ['Página não encontrada', 'Utilize a navegação ou contacte a Kraken pessoalmente.'],
+          } as Record<string,string[]>)[locale] || ['Page not found', 'Contact Kraken.'];
+          content = `<main id="main" class="container"><h1>${escapeSeoHtml(valid ? meta.h1 : copy[0])}</h1><p>${escapeSeoHtml(valid ? meta.description : copy[1])}</p><p><a href="/leistungen?lang=${locale}">Kraken PFM</a> · <a href="tel:+41774505705">+41 77 450 57 05</a> · <a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></p></main>`;
+          const shell = path.join(distPath, `seo-shell-${locale}.html`);
+          if (isProd && fs.existsSync(shell)) content = fs.readFileSync(shell, 'utf8').replace('<!-- seo-route-content -->', () => content);
         }
-
-        if (isProd && ['/leistungen', '/about', '/kontakt'].includes(req.path.replace(/\/$/, ''))) {
-          html = html.replace(/<link rel="preload" as="image" href="\/home-approved\/assets\/hero-room-day-v4\.webp"[^>]*>/, '');
-          const servicesLocale = (normalizeSiteLanguage(detectedLang) || 'de').slice(0, 2);
-          const contentKind = ({ '/leistungen': 'services', '/about': 'about', '/kontakt': 'contact' } as const)[req.path.replace(/\/$/, '')];
-          const contentPath = path.join(distPath, `${contentKind}-content-${servicesLocale}.html`);
-          const content = fs.readFileSync(contentPath, 'utf8');
-          // Keep the stylesheet outside React's mount, which replaces this body.
-          const styles = content.match(/<link rel="stylesheet" href="[^"]+">/g) || [];
-          html = html.replace('</head>', () => styles.join('') + '</head>');
-          const body = content.replace(/<link rel="stylesheet" href="[^"]+">/g, '');
-          const rootPattern = html.includes('<!-- kraken-root-end -->')
-            ? /<div id="root">[\s\S]*?<\/div>(?=\s*<!-- kraken-root-end -->)/
-            : /<div id="root">[\s\S]*?<\/div>/;
-          html = html.replace(rootPattern, () => `<div id="root">${body}</div>`);
-        }
-        if (isProd && req.path === '/') {
-          const locale = (normalizeSiteLanguage(detectedLang) || 'de').slice(0, 2);
-          const fragmentPath = path.join(distPath, `why-content-${locale}.html`);
-          if (fs.existsSync(fragmentPath)) {
-            const fragment = fs.readFileSync(fragmentPath, 'utf8');
-            const styles = fragment.match(/<link rel="stylesheet" href="[^"]+">/g) || [];
-            html = html.replace('</head>', () => styles.join('') + '</head>');
-            const why = fragment.replace(/<link rel="stylesheet" href="[^"]+">/g, '');
-            html = html.replace('</main>', () => `</main>${why}`);
-          }
-        }
-        html = injectSeoMeta(html, req.path, detectedLang);
+        const styles = content.match(/<link rel="stylesheet" href="[^"]+">/g) || [];
+        html = html.replace('</head>', () => [...new Set(styles)].join('') + '</head>');
+        const body = content.replace(/<link rel="stylesheet" href="[^"]+">/g, '');
+        const rootPattern = html.includes('<!-- kraken-root-end -->')
+          ? /<div id="root">[\s\S]*?<\/div>(?=\s*<!-- kraken-root-end -->)/
+          : /<div id="root">[\s\S]*?<\/div>/;
+        html = html.replace(rootPattern, () => `<div id="root">${body}</div>`);
+        // The apartment illustration is requested only by the real homepage.
+        if (req.path !== '/') html = html.replace(/<link rel="preload" as="image" href="\/home-approved\/assets\/hero-room-day-v4\.webp"[^>]*>/, '');
+        html = injectSeoMeta(html, req.originalUrl, detectedLang);
         res.setHeader("Content-Type", "text/html; charset=utf-8");
         return res.send(html);
       }
@@ -531,7 +459,7 @@ async function configureApplication() {
     let pathname: string;
     try { pathname = decodeURIComponent(req.path).toLowerCase(); }
     catch { return res.status(400).type("text/plain").send("Bad request"); }
-    if (pathname.endsWith(".map") || /(?:^|\/)(?:server\.(?:cjs|mjs|js)|stats\.html)$/.test(pathname)) {
+    if (pathname.endsWith(".map") || /(?:^|\/)(?:server\.(?:cjs|mjs|js)|stats\.html|index-spa\.html|(?:seo-page|seo-shell|services-content|about-content|contact-content|why-content)-[a-z0-9-]+\.html)$/.test(pathname)) {
       return res.status(404).type("text/plain").send("Not found");
     }
     next();
@@ -566,6 +494,12 @@ async function configureApplication() {
     const isViteInternal = req.path.startsWith("/src") || req.path.startsWith("/@") || req.path.startsWith("/node_modules");
     if (isAsset || isViteInternal) {
       return next();
+    }
+
+    const canonicalPath = normalizeCanonicalPath(req.path);
+    if (canonicalPath !== req.path && isRouteValid(canonicalPath)) {
+      const query = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+      return res.redirect(301, canonicalPath + query);
     }
 
     // 301 Redirect for legacy /consultation, /contact, /contacto URLs

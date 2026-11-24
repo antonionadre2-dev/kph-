@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, lazy, Suspense, Component, ReactNode } from 'react';
 import { useTranslation } from '../i18n';
-import { getMetadataForPath, parsePath } from '../seoConfig';
+import { parsePath } from '../seoConfig';
 import Header from './Header';
 import ApprovedHome from './home/ApprovedHome';
+import ApprovedHeader from './home/ApprovedHeader';
+import { getPageSeo } from '../src/seo/metadata';
 import { LOCALE_LOCATION_EVENT, languageFromSearch, localizedNavigationUrl, type SiteLanguage } from '../src/locale';
 import Footer from './Footer';
 import { useAuth } from './Auth';
@@ -204,6 +206,16 @@ const PAGE_TO_PATH_MAP: Record<string, string> = {
 
 const App: React.FC = () => {
   const { language, t } = useTranslation();
+  const [seoUrl, setSeoUrl] = useState(() => typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/');
+  useEffect(() => {
+    const syncSeoUrl = () => setSeoUrl(window.location.pathname + window.location.search);
+    window.addEventListener('popstate', syncSeoUrl);
+    window.addEventListener(LOCALE_LOCATION_EVENT, syncSeoUrl);
+    return () => {
+      window.removeEventListener('popstate', syncSeoUrl);
+      window.removeEventListener(LOCALE_LOCATION_EVENT, syncSeoUrl);
+    };
+  }, []);
   const [page, setPage] = useState(() => {
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
     return parsePath(currentPath).page;
@@ -357,14 +369,13 @@ const App: React.FC = () => {
 
   // --- Dynamic SEO: per-page <title> and meta description (DE primary, fully localized) ---
   React.useEffect(() => {
-    const currentPath = window.location.pathname;
-    const meta = getMetadataForPath(currentPath, language);
+    const meta = getPageSeo(seoUrl, language);
 
     document.documentElement.lang = language;
     const robots = document.querySelector('meta[name="robots"]');
     if (robots) {
       const publicHost = ['krakenpfm.ch', 'www.krakenpfm.ch'].includes(window.location.hostname);
-      robots.setAttribute('content', publicHost ? 'index, follow' : 'noindex, nofollow');
+      robots.setAttribute('content', publicHost ? meta.robots : 'noindex, nofollow');
     }
 
     document.title = meta.title;
@@ -395,13 +406,23 @@ const App: React.FC = () => {
 
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', meta.description);
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', meta.canonical);
+    let schema = document.querySelector<HTMLScriptElement>('#kraken-page-schema');
+    if (!schema) {
+      document.head.querySelectorAll('script[type="application/ld+json"]').forEach(element => element.remove());
+      schema = document.createElement('script');
+      schema.id = 'kraken-page-schema'; schema.type = 'application/ld+json';
+      document.head.appendChild(schema);
+    }
+    schema.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': meta.structuredData });
 
     const twTitle = document.querySelector('meta[name="twitter:title"]');
     if (twTitle) twTitle.setAttribute('content', meta.title);
 
     const twDesc = document.querySelector('meta[name="twitter:description"]');
     if (twDesc) twDesc.setAttribute('content', meta.description);
-  }, [page, language, seoCityId, seoServiceId]);
+  }, [page, language, seoCityId, seoServiceId, seoUrl]);
 
 
   const renderPage = () => {
@@ -584,7 +605,8 @@ const App: React.FC = () => {
 };
 
   const isReviewPage = page === 'review-invite';
-  const isApprovedHome = ['home', 'approved-services', 'about', 'kontakt', 'consultation', 'calculator-demo', 'customer-access'].includes(page);
+  const isLocalSeo = ['region-hub', 'municipality-page', 'coverage-hub', 'seo-landing'].includes(page);
+  const isApprovedHome = isLocalSeo || ['home', 'approved-services', 'about', 'kontakt', 'consultation', 'calculator-demo', 'customer-access'].includes(page);
 
   return (
     <div className="bg-slate-50 text-gray-800 relative">
@@ -598,6 +620,7 @@ const App: React.FC = () => {
       )}
       
       {!isReviewPage && !isApprovedHome && <Header onNavigate={handleNavigate} currentPage={page as any} />}
+      {isLocalSeo && <div className="kraken-home"><ApprovedHeader onNavigate={handleNavigate} page="local" /></div>}
       {renderPage()}
       <Footer onNavigate={handleNavigate} />
       {mounted && !isReviewPage && (

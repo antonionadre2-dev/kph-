@@ -4,7 +4,7 @@ import { homeText, normalizeHomeLanguage } from './homeTranslations';
 import { HomeLanguageSelector } from './HomeLanguageSelector';
 
 /** The approved navigation is shared by the home and the services page. */
-export default function ApprovedHeader({ servicesPage = false, page }: { onNavigate: (path: string) => void; servicesPage?: boolean; page?: 'home' | 'services' | 'about' | 'contact' | 'calculator' }) {
+export default function ApprovedHeader({ servicesPage = false, page }: { onNavigate: (path: string) => void; servicesPage?: boolean; page?: 'home' | 'services' | 'about' | 'contact' | 'calculator' | 'local' }) {
   const { language } = useTranslation();
   const t = (source: string) => homeText(normalizeHomeLanguage(language), source);
   const [open, setOpen] = useState(false);

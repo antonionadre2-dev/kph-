@@ -7512,7 +7512,7 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const I18nProvider: React.FC<{ children: ReactNode; initialLanguage?: Language }> = ({ children, initialLanguage }) => {
   const readLanguage = (): Language => {
     let saved: string | null = null;
     try { saved = typeof window === 'undefined' ? null : window.localStorage.getItem(LANGUAGE_STORAGE_KEY); }
@@ -7523,7 +7523,7 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       browserLanguage: typeof navigator === 'undefined' ? '' : navigator.language
     });
   };
-  const [language, setLanguageState] = useState<Language>(readLanguage);
+  const [language, setLanguageState] = useState<Language>(() => initialLanguage || readLanguage());
 
   const [activeToast, setActiveToast] = useState<{ show: boolean; msg: string; langCode: string } | null>(null);
 

@@ -5,6 +5,7 @@ import { languageFromSearch } from "./src/locale.ts";
 import { contactText } from "./components/contact/contactTranslations.ts";
 import { bookingText } from "./src/booking/uiCopy.ts";
 import { customerAccessText } from "./src/booking/customerAccessCopy.ts";
+import { getLocalSeoDescriptor } from "./src/seo/local-content.ts";
 
 export type Language = "de" | "en" | "fr" | "it" | "es" | "pt";
 
@@ -298,6 +299,27 @@ export const parsePath = (path: string) => {
 
   return { page: "404", cityId: "", serviceId: "" };
 };
+
+/** Stable public URLs shared by HTML, client navigation metadata and the sitemap. */
+export function normalizeCanonicalPath(pathOrUrl: string): string {
+  let pathname: string;
+  try { pathname = new URL(pathOrUrl, BASE_URL).pathname; }
+  catch { pathname = pathOrUrl.split(/[?#]/, 1)[0] || '/'; }
+  pathname = pathname.replace(/\/+$/, '') || '/';
+  const lower = pathname.toLowerCase();
+  const aliases: Record<string, string> = {
+    '/imprint': '/impressum', '/ueber-kraken': '/about', '/consultation': '/quote',
+    '/contact': '/kontakt', '/contacto': '/kontakt', '/services': '/leistungen',
+    '/reinigung/uhwiesen': '/reinigung/laufen-uhwiesen',
+  };
+  if (aliases[lower]) return aliases[lower];
+  const normalizedService = lower.replace(/^\/services\/(?:zuerich)\//, '/services/zurich/')
+    .replace(/^\/services\/neuhausen-am-rheinfall\//, '/services/neuhausen/');
+  const parsed = parsePath(normalizedService);
+  if (parsed.page === 'seo-landing') return `/services/${parsed.cityId}/${parsed.serviceId.toLowerCase()}`;
+  if (parsed.page !== '404') return normalizedService;
+  return pathname;
+}
 
 export const HOME_METADATA = {
   title: "Kraken PFM – Reinigung & kleine Umzüge in Zürich, Schaffhausen und Winterthur",
@@ -794,7 +816,17 @@ export function getMetadataForPath(
   ogImageHeight: string;
   ogImageType: string;
 } {
-  const cleanPath = pathname.split("?")[0];
+  const cleanPath = normalizeCanonicalPath(pathname);
+  const localLanguage = normalizeHomeLanguage(langParam || languageFromSearch(pathname.includes('?') ? pathname.slice(pathname.indexOf('?')) : '') || 'de');
+  const local = isRouteValid(cleanPath) ? getLocalSeoDescriptor(cleanPath, localLanguage) : null;
+  if (local) {
+    return {
+      title: local.title, description: local.description, canonical: `${BASE_URL}${cleanPath}`,
+      hreflangs: [], pageType: parsePath(cleanPath).page,
+      h1: local.h1, h2: BRAND, bodyText: local.description,
+      ogImage: DEFAULT_OG_IMAGE, ogImageWidth: OG_IMAGE_WIDTH, ogImageHeight: OG_IMAGE_HEIGHT, ogImageType: OG_IMAGE_TYPE,
+    };
+  }
   if (cleanPath === '/customer-access') {
     const locale = normalizeHomeLanguage(langParam || languageFromSearch(pathname.includes('?') ? pathname.slice(pathname.indexOf('?')) : '') || 'de');
     const title = customerAccessText(locale, 'title');
@@ -915,111 +947,18 @@ export function getMetadataForPath(
     }
   }
 
-  const parsed = parsePath(pathname);
+  const parsed = parsePath(cleanPath);
   const page = parsed.page;
-  const seoCityId = parsed.cityId;
-  const seoServiceId = parsed.serviceId;
-
-  let title = "";
-  let description = "";
-  let h1 = "";
-  let h2 = "";
-  let bodyText = "";
-
-  if (page === "seo-landing" && seoCityId && seoServiceId) {
-    const cName = cityMap[seoCityId.toLowerCase()]?.[currentLang] || seoCityId;
-    const i18nKey = wizardToI18nService[seoServiceId.toLowerCase()] || seoServiceId;
-    const sName = translateKey(`services.${i18nKey}.title`, currentLang) || seoServiceId;
-
-    const titleTemplates: Record<string, string> = {
-      de: `${sName} in ${cName} | Schweizer Meisterklasse | ${BRAND}`,
-      en: `${sName} in ${cName} | Swiss Masterclass | ${BRAND}`,
-      fr: `${sName} à ${cName} | Classe de Maître Suisse | ${BRAND}`,
-      it: `${sName} a ${cName} | Classe Magistrale Svizzera | ${BRAND}`,
-      es: `${sName} en ${cName} | Clase Maestra Suiza | ${BRAND}`,
-      pt: `${sName} em ${cName} | Classe Mestre Suíça | ${BRAND}`
-    };
-
-    const descTemplates: Record<string, string> = {
-      de: `Professionelle ${sName} in ${cName} mit Festpreisgarantie. Erfahrenes, versichertes Team, modernste Ausrüstung und 100% ökologische Verantwortung.`,
-      en: `Professional ${sName} in ${cName} with fixed price guarantee. Experienced, insured team, state-of-the-art equipment and 100% ecological responsibility.`,
-      fr: `${sName} professionnel à ${cName} avec garantie de prix fixe. Équipe expérimentée et assurée, équipement de pointe et responsabilité 100% écologique.`,
-      it: `${sName} professionale a ${cName} con garanzia di prezzo fisso. Team esperto e assicurato, attrezzature all'avanguardia e responsabilità ecologica al 100%.`,
-      es: `${sName} profesional en ${cName} con garantía de precio fijo. Equipo experimentado y asegurado, equipos de última generación y responsabilidad 100% ecológica.`,
-      pt: `${sName} profissional em ${cName} com garantia de preço fixo. Equipa experiente e segurada, equipamentos de última geração e responsabilidade 100% ecológica.`
-    };
-
-    title = titleTemplates[currentLang] || titleTemplates["de"];
-    description = descTemplates[currentLang] || descTemplates["de"];
-
-    if (currentLang === "de") {
-      let fromPrice = "";
-      const mun = MUNICIPALITIES.find(m => m.slug === seoCityId.toLowerCase());
-      if (mun) {
-        if (seoServiceId.toLowerCase() === "end-of-tenancy") {
-          fromPrice = `${mun.priceAnchors.endOfTenancyFrom}`;
-        } else if (seoServiceId.toLowerCase() === "deep-cleaning") {
-          fromPrice = `${mun.priceAnchors.deepCleaningFrom}`;
-        }
-      }
-      if (!fromPrice) {
-        if (seoServiceId.toLowerCase() === "end-of-tenancy") {
-          fromPrice = "520";
-        } else if (seoServiceId.toLowerCase() === "deep-cleaning") {
-          fromPrice = "320";
-        } else {
-          fromPrice = seoCityId.toLowerCase() === "schaffhausen" ? "45" : seoCityId.toLowerCase() === "winterthur" ? "50" : "55";
-        }
-      }
-      title = `${sName} ${cName} ab CHF ${fromPrice} | ${BRAND}`;
-      description = `Professionelle ${sName} in ${cName} ab CHF ${fromPrice}. Mit 100% Abnahmegarantie, GAV-konformem Team & bester Ausrüstung. Jetzt Online-Preis berechnen!`;
-    }
-
-    h1 = sName;
-    h2 = cName;
-    bodyText = description;
-  } else if (page === "region-hub" && seoCityId) {
-    const regionName = seoCityId === "schaffhausen" 
-      ? "Kanton Schaffhausen" 
-      : seoCityId === "winterthur" 
-      ? "Region Winterthur" 
-      : "Region Zürich";
-
-    title = `Reinigung & Facility Management im ${regionName} | ${BRAND}`;
-    description = `Professionelle Reinigung und Facility Services im ${regionName}. GAV-konforme Teams, versichert bis CHF 10 Mio., Übergabegarantie & Sofort-Offerte.`;
-    h1 = `Reinigung & Facility Management im ${regionName}`;
-    h2 = BRAND;
-    bodyText = description;
-  } else if (page === "municipality-page" && seoCityId) {
-    const mun = MUNICIPALITIES.find(m => m.slug === seoCityId);
-    if (mun) {
-      const plzStr = mun.plz.join(', ');
-      title = `Reinigungsfirma in ${mun.name} (${plzStr}) | ${BRAND}`;
-      description = `Professionelle Reinigungsfirma in ${mun.name} (${plzStr}). Umzugsreinigung mit Abnahmegarantie ab CHF ${mun.priceAnchors.endOfTenancyFrom}. GAV-konform & versichert.`;
-      h1 = `Reinigungsfirma in ${mun.name}`;
-      h2 = `${mun.name} (${plzStr})`;
-      bodyText = description;
-    } else {
-      title = `Reinigungsfirma | ${BRAND}`;
-      description = `Professionelle Reinigungsdienstleistungen mit Schweizer Qualitätsstandard.`;
-      h1 = "Reinigungsfirma";
-      h2 = BRAND;
-      bodyText = description;
-    }
-  } else {
-    const chosenMap = mapsByLang[currentLang] || {};
-    const meta = chosenMap[page] || defaults[page] || defaults["home"];
-    title = meta.title;
-    description = meta.description;
-
-    h1 = title.split("|")[0].trim();
-    h2 = BRAND;
-    bodyText = description;
-  }
+  const chosenMap = mapsByLang[currentLang] || {};
+  const meta = chosenMap[page] || defaults[page] || defaults["home"];
+  const title = meta.title;
+  const description = meta.description;
+  const h1 = title.split("|")[0].trim();
+  const h2 = BRAND;
+  const bodyText = description;
 
   // Authoritative canonical URL
-  const pathWithoutQuery = pathname.split("?")[0];
-  const canonical = `${BASE_URL}${pathWithoutQuery}`;
+  const canonical = `${BASE_URL}${cleanPath}`;
 
   // Multi-language hreflangs (Disabled per SEO requirements)
   const hreflangs: { lang: string; href: string }[] = [];

@@ -10,8 +10,8 @@ import ReactDOMServer from 'react-dom/server';
 import App from '../components/App';
 import { I18nProvider } from '../i18n';
 import { AuthProvider } from '../components/Auth';
-import { getMetadataForPath, VALID_CITIES, VALID_SERVICES } from '../seoConfig';
-import { MUNICIPALITIES } from '../src/data/locations';
+import { getMetadataForPath } from '../seoConfig';
+import { generateSitemap } from './generate-sitemap.mjs';
 
 function escapeHtml(unsafe: string): string {
   if (!unsafe) return '';
@@ -97,65 +97,9 @@ async function prerender() {
   const sitemapPath = path.join(rootPath, 'public', 'sitemap.xml');
   const templatePath = path.join(rootPath, 'dist', 'index.html');
 
-  // Programmatically generate sitemap.xml
-  let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-  
-  const staticPages = [
-    '',
-    '/blog',
-    '/blog/wohnungsabgabe-zurich-perfekte-uebergabe',
-    '/blog/iot-smart-facility-management-schweizer-bueros',
-    '/services',
-    '/commercial',
-    '/quote',
-    '/about',
-    '/sustainability',
-    '/careers',
-    '/our-story',
-    '/hse',
-    '/terms',
-    '/gdpr',
-    '/impressum',
-    '/kontakt',
-    '/einsatzgebiete'
-  ];
-
-  staticPages.forEach(p => {
-    const priority = p === '' ? '1.0' : p === '/services' || p === '/commercial' ? '0.9' : '0.7';
-    const freq = p === '' || p === '/blog' ? 'weekly' : 'monthly';
-    sitemapXml += `  <url>\n    <loc>https://krakenpfm.ch${p}</loc>\n    <changefreq>${freq}</changefreq>\n    <priority>${priority}</priority>\n  </url>\n`;
-  });
-
-  // Level 1 Region Hubs
-  const regionHubs = [
-    '/reinigung/kanton-schaffhausen',
-    '/reinigung/region-winterthur',
-    '/reinigung/region-zuerich'
-  ];
-  regionHubs.forEach(p => {
-    sitemapXml += `  <url>\n    <loc>https://krakenpfm.ch${p}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
-  });
-
-  // Level 2 Municipalities (indexable only)
-  const indexableMunicipalities = MUNICIPALITIES.filter(m => m.indexable);
-  indexableMunicipalities.forEach(mun => {
-    sitemapXml += `  <url>\n    <loc>https://krakenpfm.ch/reinigung/${mun.slug}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
-  });
-
-  // Level 3 Services
-  VALID_CITIES.forEach(city => {
-    VALID_SERVICES.forEach(service => {
-      sitemapXml += `  <url>\n    <loc>https://krakenpfm.ch/services/${city}/${service}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`;
-    });
-  });
-
-  sitemapXml += `</urlset>\n`;
-
-  fs.writeFileSync(sitemapPath, sitemapXml, 'utf-8');
-  const distSitemapPath = path.join(rootPath, 'dist', 'sitemap.xml');
-  fs.writeFileSync(distSitemapPath, sitemapXml, 'utf-8');
-  const totalUrls = staticPages.length + regionHubs.length + indexableMunicipalities.length + (VALID_CITIES.length * VALID_SERVICES.length);
-  console.log(`✅ Dynamically generated sitemap.xml with ${totalUrls} URLs.`);
+  // Share the reviewed canonical route list with the normal production build.
+  const sitemapUrls = generateSitemap(rootPath, { includeDist: true });
+  console.log(`Generated sitemap.xml with ${sitemapUrls.length} reviewed canonical URLs.`);
 
   if (!fs.existsSync(templatePath)) {
     console.error(`❌ dist/index.html template not found at: ${templatePath}. Run "vite build" first.`);

@@ -3,11 +3,23 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { INDEXABLE_PATHS } from '../src/seo/crawl-policy.ts';
+import { seoFragmentName } from '../src/seo/render-contract.ts';
+
+const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
+const seoPages = languages.flatMap(language => INDEXABLE_PATHS.map(pathname => seoFragmentName(pathname, language)));
+const seoShells = languages.map(language => `seo-shell-${language}.html`);
+const runtimeHtmlNames = [
+  'index.html',
+  ...languages.flatMap(language => ['services', 'about', 'why', 'contact'].map(kind => `${kind}-content-${language}.html`)),
+  ...seoPages,
+  ...seoShells,
+];
 
 const digest = file => createHash('sha256').update(readFileSync(file)).digest('hex');
 const forbidden = name => name.split('/').some(segment => segment.startsWith('.'))
   || /\.(?:zip|map|cjs|log|pem|key|md)$/i.test(name)
-  || /(?:^|\/)(?:server\.(?:js|mjs)|stats\.html|index\.html)$/i.test(name);
+  || /(?:^|\/)(?:server\.(?:js|mjs)|stats\.html|index\.html|seo-(?:page|shell)-[^/]+\.html|(?:services|about|why|contact)-content-[^/]+\.html)$/i.test(name);
 
 function filesWithin(directory, prefix = '') {
   return readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
@@ -47,6 +59,13 @@ function validateRuntime(root) {
 export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = false } = {}) {
   root = path.resolve(root);
   const { output, html, functionConfig, directory } = validateRuntime(root);
+  // These fragments are runtime inputs, not optional static optimizations.
+  // Check the complete rendering contract before changing any prepared output.
+  const runtimeHtml = runtimeHtmlNames.map(name => {
+    const source = path.join(root, 'dist', name);
+    if (!existsSync(source) || !lstatSync(source).isFile()) throw new Error(`Missing or invalid built HTML: ${name}`);
+    return { name, source };
+  });
   // Only Git-tracked public originals and freshly built Vite bundles may be
   // published. Untracked archives, credentials and diagnostics are excluded.
   const tracked = trackedPublicFiles ?? execFileSync('git', ['ls-files', '-z', '--', 'public'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean);
@@ -73,8 +92,10 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
     || !homeFiles.includes('home-approved/assets/service-moving-v6.webp')) {
     throw new Error('Expected all 14 approved home assets and six supplied service images.');
   }
-  const references = [...new Set([...readFileSync(html, 'utf8').matchAll(/(?:src|href)=["'](\/assets\/[^"']+)["']/g)].map(match => decodeURIComponent(match[1].split(/[?#]/)[0]).slice(1)))];
-  if (!references.length) throw new Error('The built HTML has no frontend bundle references.');
+  const referencesFor = source => [...readFileSync(source, 'utf8').matchAll(/(?:src|href)=["'](\/assets\/[^"']+)["']/g)]
+    .map(match => decodeURIComponent(match[1].split(/[?#]/)[0]).slice(1));
+  if (!referencesFor(html).length) throw new Error('The built HTML has no frontend bundle references.');
+  const references = [...new Set(runtimeHtml.flatMap(({ source }) => referencesFor(source)))];
   for (const reference of references) if (!files.has(reference)) throw new Error(`Built HTML references an unpublished frontend file: ${reference}`);
 
   const staticDirectory = path.join(output, 'static');
@@ -101,14 +122,10 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
     }
   }
   for (const relative of filesWithin(staticDirectory)) if (!files.has(relative)) throw new Error(`Unexpected static output: ${relative}`);
-  const runtimeHtml = path.join(directory, 'dist/index.html');
-  if (!existsSync(runtimeHtml) || digest(runtimeHtml) !== digest(html)) throw new Error('Missing or changed function dist/index.html.');
-  for (const language of ['de', 'en', 'es', 'pt', 'it', 'fr']) {
-    for (const kind of ['services', 'about', 'why', 'contact']) {
-      const name = `${kind}-content-${language}.html`;
-      const original = path.join(root, 'dist', name);
-      const bundled = path.join(directory, 'dist', name);
-      if (!existsSync(original) || !existsSync(bundled) || digest(original) !== digest(bundled)) throw new Error(`Missing or changed ${kind} HTML: ${name}`);
+  for (const { name, source } of runtimeHtml) {
+    const bundled = path.join(directory, 'dist', name);
+    if (!existsSync(bundled) || !lstatSync(bundled).isFile() || digest(source) !== digest(bundled)) {
+      throw new Error(`Missing or changed function HTML: dist/${name}`);
     }
   }
   return {
@@ -119,6 +136,9 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
     homeAssets: homeFiles.length,
     htmlBundleReferences: references.length,
     generatedBundles: [...files.keys()].filter(name => name.startsWith('assets/')).length,
+    seoPageFragments: seoPages.length,
+    seoShellFragments: seoShells.length,
+    runtimeHtmlFilesVerified: runtimeHtml.length,
     sha256Verified: files.size,
     missing: 0
   };

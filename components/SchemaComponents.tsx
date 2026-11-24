@@ -1,4 +1,6 @@
 import React from 'react';
+import { SITE_IDENTITY } from '../src/seo/site-identity.ts';
+import { safeSchemaJson } from '../src/seo/metadata.ts';
 
 export interface BreadcrumbItem {
   name: string;
@@ -26,7 +28,7 @@ export const BreadcrumbSchema: React.FC<{ items: BreadcrumbItem[] }> = ({ items 
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: safeSchemaJson(schema) }}
     />
   );
 };
@@ -51,7 +53,7 @@ export const FAQSchema: React.FC<{ faqs: FaqItem[] }> = ({ faqs }) => {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: safeSchemaJson(schema) }}
     />
   );
 };
@@ -65,23 +67,16 @@ export const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({ cities
   const baseSchema: any = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": "Kraken Properties and Facilities Management",
-    "image": "https://krakenpfm.ch/logo-kraken-azul.webp",
-    "telephone": "+41 77 450 57 05",
-    "priceRange": "CHF",
+    "@id": `${SITE_IDENTITY.origin}/#business`,
+    "name": SITE_IDENTITY.name,
+    "image": SITE_IDENTITY.origin + SITE_IDENTITY.imagePath,
+    "telephone": SITE_IDENTITY.telephone,
+    "email": SITE_IDENTITY.email,
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Seewadelstrasse 3",
-      "addressLocality": "Schaffhausen",
-      "postalCode": "8203",
-      "addressCountry": "CH"
+      ...SITE_IDENTITY.address,
     },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": 47.6954,
-      "longitude": 8.6357
-    },
-    "url": "https://krakenpfm.ch",
+    "url": `${SITE_IDENTITY.origin}/`,
     "openingHoursSpecification": [
       {
         "@type": "OpeningHoursSpecification",
@@ -90,23 +85,13 @@ export const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({ cities
           "Tuesday",
           "Wednesday",
           "Thursday",
-          "Friday"
+          "Friday",
+          "Saturday",
+          "Sunday"
         ],
-        "opens": "07:30",
-        "closes": "18:00"
-      },
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": "Saturday",
-        "opens": "08:00",
-        "closes": "16:00"
+        ...SITE_IDENTITY.openingHours,
       }
     ],
-    "sameAs": [
-      "https://www.facebook.com/krakenpfm",
-      "https://www.instagram.com/krakenpfm",
-      "https://search.google.com/local/writereview?placeid=ChIJw_vX3CgQkEcR_VMyRUpGfK4"
-    ]
   };
 
   if (citiesServed && citiesServed.length > 0) {
@@ -119,7 +104,7 @@ export const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({ cities
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(baseSchema) }}
+      dangerouslySetInnerHTML={{ __html: safeSchemaJson(baseSchema) }}
     />
   );
 };
@@ -135,7 +120,6 @@ export interface ServiceSchemaProps {
 export const ServiceSchema: React.FC<ServiceSchemaProps> = ({
   serviceName,
   cityName,
-  priceFrom,
   description
 }) => {
   const schema: any = {
@@ -144,15 +128,7 @@ export const ServiceSchema: React.FC<ServiceSchemaProps> = ({
     "name": serviceName,
     "description": description,
     "provider": {
-      "@type": "LocalBusiness",
-      "name": "Kraken Properties and Facilities Management",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Seewadelstrasse 3",
-        "addressLocality": "Schaffhausen",
-        "postalCode": "8203",
-        "addressCountry": "CH"
-      }
+      "@id": `${SITE_IDENTITY.origin}/#business`,
     },
     "areaServed": {
       "@type": "City",
@@ -160,28 +136,10 @@ export const ServiceSchema: React.FC<ServiceSchemaProps> = ({
     }
   };
 
-  if (priceFrom) {
-    schema.offers = {
-      "@type": "Offer",
-      "priceCurrency": "CHF",
-      "price": priceFrom,
-      "priceSpecification": {
-        "@type": "UnitPriceSpecification",
-        "price": priceFrom,
-        "priceCurrency": "CHF",
-        "referenceQuantity": {
-          "@type": "QuantitativeValue",
-          "value": "1",
-          "unitCode": "C62"
-        }
-      }
-    };
-  }
-
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: safeSchemaJson(schema) }}
     />
   );
 };

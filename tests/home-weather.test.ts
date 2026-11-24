@@ -233,14 +233,16 @@ test('Express adapter serves JSON before a site fallback and keeps its independe
   assert.equal(await (await fetch(`${base}/about`)).text(), '<main>site</main>');
 });
 
-test('actual server marks preview hosts noindex and injects home metadata before serving the SPA', async t => {
+test('actual server marks preview hosts noindex and serves generated bodies through the metadata layer', async t => {
   const directory = await mkdtemp(path.join(tmpdir(), 'kraken-home-server-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   await mkdir(path.join(directory, 'dist'));
-  const html = (marker: string) => `<html><head><title>fixture</title></head><body>${marker}</body></html>`;
+  const html = (marker: string) => `<html><head><title>fixture</title></head><body><div id="root"><main><h1>${marker}</h1></main></div><!-- kraken-root-end --></body></html>`;
   await writeFile(path.join(directory, 'dist/index.html'), html('prerender-home-bypass'));
   await writeFile(path.join(directory, 'dist/index-spa.html'), html('spa-home-injected'));
   await writeFile(path.join(directory, 'dist/about.html'), html('existing-prerendered-route'));
+  await writeFile(path.join(directory, 'dist/seo-page-home-de.html'), '<main><h1>Generated home</h1>home-crawl-body</main>');
+  await writeFile(path.join(directory, 'dist/seo-page-about-de.html'), '<main><h1>Generated about</h1>about-crawl-body</main>');
   const reservation = createServer();
   reservation.listen(0, '127.0.0.1');
   await once(reservation, 'listening');
@@ -282,15 +284,17 @@ test('actual server marks preview hosts noindex and injects home metadata before
   }
   for (const host of ['krakenpfm.ch', 'www.krakenpfm.ch']) {
     const response = await get('/api/health', host);
-    assert.equal(response.headers['x-robots-tag'], undefined);
+    assert.equal(response.headers['x-robots-tag'], 'noindex, follow');
   }
   const home = await get('/');
   assert.equal(home.status, 200);
   assert.equal(home.headers['x-robots-tag'], 'noindex, nofollow');
   const markup = home.body;
-  assert.ok(markup.includes('spa-home-injected'));
+  assert.ok(markup.includes('home-crawl-body'));
+  assert.ok(!markup.includes('spa-home-injected'));
   assert.ok(!markup.includes('prerender-home-bypass'));
   assert.ok(!markup.includes('<title>fixture</title>'), 'home title must pass through injectSeoMeta');
   const about = await get('/about');
-  assert.ok(about.body.includes('existing-prerendered-route'));
+  assert.ok(about.body.includes('about-crawl-body'));
+  assert.ok(!about.body.includes('existing-prerendered-route'));
 });

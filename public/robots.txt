@@ -1,8 +1,32 @@
+# Public information may be crawled for conventional and ChatGPT search.
+# GPTBot retains the existing wildcard policy; search access does not require training access.
+# ChatGPT-User is user initiated and may not apply robots.txt rules.
+# Crawl preferences do not replace authentication or authorization.
 User-agent: *
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
 Allow: /
+Disallow: /api
+Disallow: /admin
 Disallow: /dashboard
 Disallow: /login
 Disallow: /register
-Disallow: /admin
+Disallow: /auth
+Disallow: /customer-access
+Disallow: /recovery
+Disallow: /quote-demo
+Disallow: /commercial-quote
+Disallow: /review-invite
+Disallow: /reviews
+Disallow: /reviewsvip
+Disallow: /dejar-opinion
+Disallow: /*?*booking=
+Disallow: /*?*draft=
+Disallow: /*?*access=
+Disallow: /*?*accesstoken=
+Disallow: /*?*token=
+Disallow: /*?*payment=
+Disallow: /*?*guide=
+Disallow: /*?*oobcode=
 
 Sitemap: https://krakenpfm.ch/sitemap.xml

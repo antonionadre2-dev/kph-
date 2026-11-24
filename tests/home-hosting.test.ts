@@ -14,7 +14,7 @@ function fixture() {
   const directory = mkdtempSync(path.join(tmpdir(), 'kraken-hosting-'));
   mkdirSync(path.join(directory, 'dist/assets'), { recursive: true });
   mkdirSync(path.join(directory, 'public/assets'), { recursive: true });
-  writeFileSync(path.join(directory, 'dist/index.html'), '<html><head><title>fixture</title></head><body>APP_TEMPLATE</body></html>');
+  writeFileSync(path.join(directory, 'dist/index.html'), '<html><head><title>fixture</title></head><body><div id="root"><main><h1>APP_TEMPLATE</h1></main></div><!-- kraken-root-end --></body></html>');
   writeFileSync(path.join(directory, 'dist/assets/app-a1b2c3d4.js'), 'FRONTEND');
   writeFileSync(path.join(directory, 'dist/assets/app-a1b2c3d4.css'), 'FRONTEND_CSS');
   writeFileSync(path.join(directory, 'dist/assets/app-a1b2c3d4.js.map'), 'PRIVATE_MAP');
@@ -140,7 +140,8 @@ test('exported app retains API, weather, redirects, SEO and safe asset routing w
         const redirect = await get('/contacto?lang=es');
         assert.equal(redirect.status, 301); assert.equal(redirect.headers.location, '/kontakt?lang=es');
         const home = await get('/');
-        assert.equal(home.status, 200); assert.ok(home.body.includes('APP_TEMPLATE'));
+        assert.equal(home.status, 200); assert.ok(!home.body.includes('APP_TEMPLATE'));
+        assert.equal((home.body.match(/<h1\\b/g)||[]).length,1);
         assert.ok(!home.body.includes('<title>fixture</title>'));
         assert.equal(home.headers['x-robots-tag'], undefined);
         const quote = await get('/quote?lang=es');
@@ -149,7 +150,10 @@ test('exported app retains API, weather, redirects, SEO and safe asset routing w
         const bundle = await get('/assets/app-a1b2c3d4.js');
         assert.equal(bundle.status, 200); assert.equal(bundle.body, 'FRONTEND');
         assert.match(bundle.headers['cache-control'], /immutable/);
-        assert.equal((await get('/logo.webp')).body, 'EXISTING_PUBLIC_IMAGE');
+        assert.equal(bundle.headers['x-robots-tag'], undefined);
+        const logo = await get('/logo.webp');
+        assert.equal(logo.body, 'EXISTING_PUBLIC_IMAGE');
+        assert.equal(logo.headers['x-robots-tag'], undefined);
         for (const pathname of ['/server.cjs', '/server%2ecjs', '/server.cjs.map', '/stats.html', '/assets/app-a1b2c3d4.js.map']) {
           const response = await get(pathname);
           assert.equal(response.status, 404, pathname);

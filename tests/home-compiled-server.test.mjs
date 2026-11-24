@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import ts from 'typescript';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, symlinkSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, readdirSync, writeFileSync, symlinkSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -15,15 +15,16 @@ test('compiled server graph runs under plain Node without source .ts files and s
     const configuration = ts.readConfigFile(path.join(root, 'tsconfig.json'), ts.sys.readFile);
     const { options } = ts.parseJsonConfigFileContent(configuration.config, ts.sys, root);
     assert.equal(options.rewriteRelativeImportExtensions, true);
-    for (const name of ['server.ts', 'seoConfig.ts', 'i18n.ts', 'src/data/locations.ts', 'server/homeWeather.ts', 'src/locale.ts', 'components/home/homeTranslations.ts', 'components/contact/contactTranslations.ts', 'server/kaiAssistant.ts', 'server/kaiKnowledge.ts', 'src/kai/types.ts', 'src/contact/routing-server.ts', 'server/booking.ts', 'server/booking-store.ts', 'server/booking-payrexx.ts', 'server/booking-email.ts', 'src/booking/pricing.ts', 'src/booking/uiCopy.ts', 'src/booking/journeyCopy.ts']) {
+    for (const name of ['server.ts', 'seoConfig.ts', 'i18n.ts', 'src/data/locations.ts', 'server/homeWeather.ts', 'src/locale.ts', 'components/home/homeTranslations.ts', 'components/contact/contactTranslations.ts', 'server/kaiAssistant.ts', 'server/kaiKnowledge.ts', 'src/kai/types.ts', 'src/contact/routing-server.ts', 'server/booking.ts', 'server/booking-store.ts', 'server/booking-payrexx.ts', 'server/booking-email.ts', 'src/booking/pricing.ts', 'src/booking/uiCopy.ts', 'src/booking/journeyCopy.ts', ...readdirSync(path.join(root, 'src/seo')).filter(name => name.endsWith('.ts')).map(name => `src/seo/${name}`)]) {
       const output = ts.transpileModule(readFileSync(path.join(root, name), 'utf8'), { fileName: name, compilerOptions: options }).outputText;
       assert.doesNotMatch(output, /from\s*["']\.\.?\/[^"']+\.ts["']/);
       const destination = path.join(directory, name.replace(/\.ts$/, '.js'));
       mkdirSync(path.dirname(destination), { recursive: true });
       writeFileSync(destination, output);
     }
-    for (const source of ['src/booking/customerAccessCopy.ts', 'server/booking-webhooks.ts']) {
+    for (const source of ['src/booking/customerAccessCopy.ts', 'server/booking-webhooks.ts', 'components/services/servicesTranslations.ts']) {
       const destination = path.join(directory, source.replace(/\.ts$/, '.js'));
+      mkdirSync(path.dirname(destination), { recursive: true });
       writeFileSync(destination, ts.transpileModule(readFileSync(path.join(root, source), 'utf8'), { fileName: source, compilerOptions: options }).outputText);
     }
     for (const name of ['firebase-applet-config.json', ...['service', 'http', 'policy', 'emails', 'firestore-store'].map(name => `integrations/recovery/${name}.mjs`)]) {
@@ -40,6 +41,12 @@ test('compiled server graph runs under plain Node without source .ts files and s
       writeFileSync(path.join(directory, 'dist/about-content-' + language + '.html'), '<link rel="stylesheet" href="/assets/about.css"><main><h1>ABOUT_' + language + '</h1><p>STORY_' + language + '</p></main>');
       writeFileSync(path.join(directory, 'dist/services-content-' + language + '.html'), '<link rel="stylesheet" href="/assets/services.css"><main><h1>SERVICES_' + language + '</h1><details><summary>Service</summary>BODY_' + language + '</details></main>');
       writeFileSync(path.join(directory, 'dist/contact-content-' + language + '.html'), '<link rel="stylesheet" href="/assets/contact.css"><main><h1>CONTACT_' + language + '</h1><p>DETAILS_' + language + '</p><a href="tel:+41774505705">+41 77 450 57 05</a></main>');
+      for (const [route, kind] of [['leistungen', 'services'], ['about', 'about'], ['kontakt', 'contact']]) {
+        writeFileSync(path.join(directory, `dist/seo-page-${route}-${language}.html`), readFileSync(path.join(directory, `dist/${kind}-content-${language}.html`)));
+      }
+      writeFileSync(path.join(directory, `dist/seo-page-home-${language}.html`), `<main><h1>HOME_${language}</h1><section id="warum-kraken">WHY_${language}</section></main>`);
+      writeFileSync(path.join(directory, `dist/seo-page-quote-${language}.html`), `<main><h1>QUOTE_${language}</h1></main>`);
+      writeFileSync(path.join(directory, `dist/seo-page-services-zurich-window-cleaning-${language}.html`), `<main><h1>WINDOWS_ZURICH_${language}</h1></main>`);
     }
     const driver = `
       import assert from 'node:assert/strict';
@@ -73,7 +80,8 @@ test('compiled server graph runs under plain Node without source .ts files and s
         for (const route of ['/', '/quote?lang=es']) {
           const result=await get(route);
           assert.equal(result.status,200,route);
-          assert.ok(result.body.includes('COMPILED_TEMPLATE'));
+          assert.ok(result.body.includes(route === '/' ? 'HOME_de' : 'QUOTE_es'));
+          assert.ok(!result.body.includes('COMPILED_TEMPLATE'));
           assert.ok(!result.body.includes('<title>fixture</title>'));
         }
         for (const language of ['de', 'en', 'es', 'pt', 'it', 'fr']) {
@@ -104,6 +112,14 @@ test('compiled server graph runs under plain Node without source .ts files and s
             assert.equal(redirect.status,301);assert.equal(redirect.headers.location,'/kontakt?lang='+language);
           }
         }
+        const local = await get('/services/zurich/window-cleaning?lang=en');
+        assert.equal(local.status, 200); assert.ok(local.body.includes('WINDOWS_ZURICH_en'));
+        for (const route of ['/login','/register','/quote?booking=example','/customer-access','/quote-demo']) {
+          const privatePage = await get(route);
+          assert.equal(privatePage.headers['x-robots-tag'], 'noindex, follow', route);
+          assert.match(privatePage.body, /name="robots" content="noindex, follow"/);
+        }
+        for (const route of ['/seo-page-home-de.html', '/contact-content-de.html']) assert.equal((await get(route)).status,404);
         console.log('COMPILED_SERVER_OK');
       } finally {await new Promise(resolve => server.close(resolve));}
     `;
