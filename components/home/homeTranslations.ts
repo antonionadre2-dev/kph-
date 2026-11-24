@@ -215,7 +215,7 @@ const rows = [
   ['Ihr Zuhause.', 'Your home.', 'Su hogar.', 'A sua casa.', 'La sua casa.', 'Votre maison.'],
   ['Unser nächster Auftrag?', 'Our next job?', '¿Nuestro próximo encargo?', 'O nosso próximo serviço?', 'Il nostro prossimo intervento?', 'Notre prochaine mission ?'],
   ['Erzählen Sie uns, wobei wir helfen dürfen.', 'Tell us how we can help.', 'Cuéntenos en qué podemos ayudarle.', 'Diga-nos como podemos ajudar.', 'Ci dica come possiamo aiutarla.', 'Dites-nous comment nous pouvons vous aider.'],
-  ['Jetzt im Rechner starten', 'Start in the calculator', 'Empezar en el calculador', 'Começar no simulador', 'Inizia nel calcolatore', 'Commencer dans le calculateur'],
+  ['Meine Offerte berechnen', 'Get my quote', 'Calcular mi presupuesto', 'Calcular o meu orçamento', 'Calcolare il mio preventivo', 'Calculer mon devis'],
   ['Kraken PFM – nach oben', 'Kraken PFM – back to top', 'Kraken PFM – volver arriba', 'Kraken PFM – voltar ao topo', 'Kraken PFM – torna in alto', 'Kraken PFM – retour en haut'],
   ['Reinigung und kleine Umzüge.', 'Cleaning and small moves.', 'Limpieza y pequeñas mudanzas.', 'Limpeza e pequenas mudanças.', 'Pulizie e piccoli traslochi.', 'Nettoyage et petits déménagements.'],
   ['Für private Haushalte.', 'For private households.', 'Para hogares particulares.', 'Para casas particulares.', 'Per abitazioni private.', 'Pour les particuliers.'],
