@@ -74,7 +74,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
   function mailJob(record:any,kind:string,templateId:string,eventId:string,id?:string,extra:any={}) {
     let notification,notificationError;
     try{notification=notificationForBooking(record,templateId,eventId,extra);}catch{notificationError='EMAIL_SNAPSHOT_REVIEW_REQUIRED';}
-    return {id:id||`${record.bookingId}:${templateId}:${digest(eventId).slice(0,24)}`,bookingId:record.bookingId,kind,status:'queued',dueAt:clock(),...(notification?{notification}:{notificationError})};
+    return {id:id||`${record.bookingId}:${templateId}:${digest(eventId).slice(0,24)}`,bookingId:record.bookingId,kind,status:'queued',dueAt:clock(),...(notification?{notification}:{notification:null,notificationError})};
   }
   function eligibleNotification(record:any,job:any) {
     if(job.kind==='customer_access')return job.expiresAt>clock();
