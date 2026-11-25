@@ -203,18 +203,22 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
     const gates={bookingEnabled:env.BOOKING_ENABLED==='true',tokenSecretReady:secret.length>=32,adminCredentialProvided:Boolean(env.FIREBASE_SERVICE_ACCOUNT_JSON || env.GOOGLE_APPLICATION_CREDENTIALS || env.BOOKING_USE_APPLICATION_DEFAULT==='true')};
     // Initialization is cached: emit one private diagnostic, never the error or its message/stack.
     const diagnostic=(phase:string,cause?:unknown)=>{
-      const error=cause as {name?:unknown;code?:unknown}|undefined;
+      const error=cause as {name?:unknown;code?:unknown;message?:unknown}|undefined;
       const name=typeof error?.name==='string'&&['Error','SyntaxError','TypeError','RangeError','FirebaseError','FirebaseAppError','FirebaseAuthError','FirebaseFirestoreError','GoogleError','BookingError'].includes(error.name)?error.name:cause?'UnknownError':null;
       const code=typeof error?.code==='number'&&Number.isInteger(error.code)&&error.code>=0&&error.code<=16?error.code:
-        typeof error?.code==='string'&&/^(?:app\/(?:invalid-credential|invalid-app-options|invalid-argument|duplicate-app|no-app|app-deleted|network-error|network-timeout|unable-to-parse-response)|auth\/(?:invalid-credential|invalid-project-id|invalid-argument)|firestore\/(?:invalid-argument|failed-precondition|permission-denied|unauthenticated|unavailable)|ERR_MODULE_NOT_FOUND|MODULE_NOT_FOUND|ERR_PACKAGE_PATH_NOT_EXPORTED)$/.test(error.code)?error.code:null;
-      const entry={...gates,phase,error:{name,code}};
+        typeof error?.code==='string'&&/^(?:app\/(?:invalid-credential|invalid-app-options|invalid-argument|duplicate-app|no-app|app-deleted|network-error|network-timeout|unable-to-parse-response)|auth\/(?:invalid-credential|invalid-project-id|invalid-argument)|firestore\/(?:invalid-argument|failed-precondition|permission-denied|unauthenticated|unavailable)|ERR_MODULE_NOT_FOUND|MODULE_NOT_FOUND|ERR_PACKAGE_PATH_NOT_EXPORTED|ERR_REQUIRE_ESM|ERR_REQUIRE_ASYNC_MODULE|ERR_AMBIGUOUS_MODULE_SYNTAX|ERR_INTERNAL_ASSERTION|ERR_DLOPEN_FAILED|ERR_UNSUPPORTED_DIR_IMPORT|ERR_IMPORT_ATTRIBUTE_MISSING|ERR_REQUIRE_CYCLE_MODULE|ENOENT|EACCES)$/.test(error.code)?error.code:null;
+      const message=phase.startsWith('sdk_')&&typeof error?.message==='string'?error.message:'';
+      const errorCategory=phase.startsWith('sdk_')?{dynamicRequire:message.includes('Dynamic require'),missingModule:message.includes('Cannot find module'),missingPackage:message.includes('Cannot find package'),notSupported:message.includes('not supported'),requireCall:message.includes('require()'),packageJson:message.includes('package.json'),cannotLoad:message.includes('Cannot load'),missingExport:message.includes('does not provide an export')}:null;
+      const entry={...gates,phase,error:{name,code},...(errorCategory?{errorCategory}:{})};
       if(cause)console.error('[booking:initialize]',entry);else if(phase==='gates')console.warn('[booking:initialize]',entry);else console.info('[booking:initialize]',entry);
     };
     if(!gates.bookingEnabled || !gates.tokenSecretReady || !gates.adminCredentialProvided){diagnostic('gates');return disabled;}
-    let phase='sdk_import';
+    let phase='sdk_app_import';
     try {
       const {getApps,initializeApp,cert,applicationDefault}=await import('firebase-admin/app');
+      phase='sdk_firestore_import';
       const {getFirestore}=await import('firebase-admin/firestore');
+      phase='sdk_auth_import';
       const {getAuth}=await import('firebase-admin/auth');
       let app=getApps().find(app=>app.name==='kraken-booking');
       if(!app){
