@@ -87,7 +87,7 @@ test('explicit language preference persists and controls future reminders withou
 test('invalid language updates are atomic and language changes never opt a customer into reminders',async()=>{
   const f=fixture();const saved=await f.capture({language:'fr',reminderConsent:false});await f.service.runDue();
   const before=await f.store.getDraft(saved.id);f.advance(HOUR_MS);
-  for(const language of ['zz','de-CH','',null,42,{},[]]) {
+  for(const language of ['zz','de_CH','',null,42,{},[]]) {
     await assert.rejects(f.service.activity(saved.id,saved.accessToken,{language,selection:{service:'regular',frequency:'weekly',hours:4}}),/INVALID_LANGUAGE/);
     assert.deepEqual(await f.store.getDraft(saved.id),before);
   }

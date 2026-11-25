@@ -1,0 +1,760 @@
+{
+  "quote_saved": {
+    "stage": "Pianificare",
+    "title": "Selezione salvata",
+    "subject": "{{firstName}}, la tua selezione Kraken è salvata",
+    "preheader": "I tuoi dati per {{serviceName}} a {{city}}. Riprendi quando preferisci.",
+    "eyebrow": "Il tuo prossimo passo",
+    "headline": "È tutto pronto. Con i tuoi tempi.",
+    "intro": "La tua selezione per {{serviceName}} a {{city}} è salvata. Con questo link personale puoi riprendere esattamente da dove avevi lasciato.",
+    "body": [
+      "Puoi ricontrollare dati ed extra prima dell’invio. Non hai ancora conferito un incarico e nessun appuntamento è stato riservato."
+    ],
+    "cta": "Apri la mia selezione",
+    "secondary": "Fai una domanda",
+    "nextTitle": "Come proseguire",
+    "next": [
+      "Controlla la tua selezione",
+      "Indica la data desiderata",
+      "Invia il riepilogo"
+    ],
+    "note": "Questo link personale è destinato solo a te.",
+    "tone": "calm",
+    "visual": "service",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "quote.saved.email_requested"
+  },
+  "quote_reminder_1": {
+    "stage": "Pianificare",
+    "title": "Primo promemoria della selezione",
+    "subject": "{{firstName}}, vuoi riprendere la tua selezione?",
+    "preheader": "I tuoi dati sono conservati. Siamo qui se hai ancora una domanda.",
+    "eyebrow": "Un passaggio in meno",
+    "headline": "La tua casa. Il tuo prossimo passo.",
+    "intro": "La tua selezione per {{serviceName}} a {{city}} è già pronta. Non serve inserire di nuovo i tuoi dati.",
+    "body": [
+      "Hai ancora qualche dubbio? Rispondi a questa email. Vedremo insieme cosa è più adatto alla tua casa."
+    ],
+    "cta": "Riprendi la selezione",
+    "secondary": "Chiedi un consiglio",
+    "nextTitle": "Continua con i tuoi tempi",
+    "next": [
+      "Apri i dati salvati",
+      "Modifica i dettagli se necessario"
+    ],
+    "note": "Ricevi questo promemoria perché hai autorizzato i promemoria sulla tua selezione salvata.",
+    "tone": "calm",
+    "visual": "service",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "reminder_consented",
+    "event": "quote.reminder.first_due"
+  },
+  "quote_reminder_2": {
+    "stage": "Pianificare",
+    "title": "Ultimo promemoria della selezione",
+    "subject": "La tua selezione Kraken salvata: un ultimo promemoria",
+    "preheader": "Se il tuo progetto è ancora attuale, puoi riprendere direttamente.",
+    "eyebrow": "Pianificare senza pressione",
+    "headline": "Siamo qui quando ne hai bisogno.",
+    "intro": "La tua selezione per {{serviceName}} a {{city}} è ancora salvata. Se vuoi continuare, il link ti riporta direttamente al tuo progetto.",
+    "body": [
+      "I tuoi programmi sono cambiati? Non devi fare nulla. Questo è il nostro ultimo promemoria per questa selezione salvata."
+    ],
+    "cta": "Visualizza la mia selezione",
+    "secondary": "Contatta Kraken",
+    "nextTitle": "Decidi tu",
+    "next": [
+      "Riprendi o modifica la selezione",
+      "Parla con noi se hai domande"
+    ],
+    "note": "Puoi disattivare i promemoria in qualsiasi momento.",
+    "tone": "calm",
+    "visual": "service",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "reminder_consented",
+    "event": "quote.reminder.final_due"
+  },
+  "request_received": {
+    "stage": "Richiedere",
+    "title": "Richiesta ricevuta",
+    "subject": "Richiesta ricevuta: {{serviceName}} · {{bookingReference}}",
+    "preheader": "Grazie, {{firstName}}. Verifichiamo i tuoi dati e la data desiderata.",
+    "eyebrow": "La tua richiesta è arrivata",
+    "headline": "Abbiamo ricevuto la tua richiesta.",
+    "intro": "Grazie per la richiesta di {{serviceName}} a {{city}}. Verifichiamo le prestazioni richieste, i tuoi dati e la disponibilità.",
+    "body": [
+      "La data desiderata non è ancora confermata. Una volta chiariti i dettagli, riceverai il prossimo passo con quanto concordato."
+    ],
+    "cta": "Visualizza la mia richiesta",
+    "secondary": "Completa i dati",
+    "nextTitle": "Cosa succede ora",
+    "next": [
+      "Verifichiamo la tua richiesta",
+      "Chiariamo le eventuali domande con te",
+      "Ricevi una conferma separata"
+    ],
+    "note": "Per qualsiasi domanda, indica il riferimento {{bookingReference}}.",
+    "tone": "calm",
+    "visual": "service",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "booking.request_received"
+  },
+  "details_required": {
+    "stage": "Richiedere",
+    "title": "Dati da completare",
+    "subject": "Una breve domanda sulla richiesta {{bookingReference}}",
+    "preheader": "Con poche informazioni aggiuntive possiamo preparare meglio il tuo servizio.",
+    "eyebrow": "Prepariamoci insieme",
+    "headline": "Ci manca ancora un dettaglio.",
+    "intro": "Per {{serviceName}} a {{city}} ci servono alcune informazioni aggiuntive. Trovi i punti da completare direttamente nella tua richiesta.",
+    "body": [
+      "Puoi aggiungere i dati tramite il link oppure rispondere a questa email. Potremo così concordare con te le prestazioni e il prossimo passo."
+    ],
+    "cta": "Completa i dati",
+    "secondary": "Chiarisci via email",
+    "nextTitle": "Cosa ci serve da te",
+    "next": [
+      "Rispondi alle domande indicate nella richiesta",
+      "Se necessario, aggiungi foto pertinenti tramite il link sicuro"
+    ],
+    "note": "L’appuntamento sarà confermato solo con una nostra conferma separata.",
+    "tone": "action",
+    "visual": "service",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "booking.details_requested"
+  },
+  "quote_ready": {
+    "stage": "Richiedere",
+    "title": "Offerta personalizzata",
+    "subject": "La tua offerta per {{serviceName}} è pronta",
+    "preheader": "Prestazioni, extra e prezzo totale in un riepilogo chiaro.",
+    "eyebrow": "Su misura per la tua casa",
+    "headline": "La tua offerta. Chiara in ogni dettaglio.",
+    "intro": "Abbiamo preparato la tua offerta per {{serviceName}} a {{city}}. Trovi le prestazioni concordate e il prezzo totale in un unico posto.",
+    "body": [
+      "Controlla i dettagli con calma. Se desideri una modifica, parlane con noi prima di accettare l’offerta."
+    ],
+    "cta": "Controlla l’offerta",
+    "secondary": "Richiedi una modifica",
+    "nextTitle": "Come proseguire",
+    "next": [
+      "Controlla prestazioni e condizioni",
+      "Accetta l’offerta se ti va bene",
+      "Ricevi la conferma dell’appuntamento"
+    ],
+    "note": "Kraken non è soggetta all’IVA. Non viene addebitata alcuna IVA.",
+    "tone": "action",
+    "visual": "service",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "quote.issued"
+  },
+  "booking_confirmed": {
+    "stage": "Prenotare",
+    "title": "Appuntamento confermato",
+    "subject": "Confermato: {{serviceName}} il {{appointmentDate}}",
+    "preheader": "Il tuo appuntamento è fissato. Qui trovi ora, luogo e prossimi passi.",
+    "eyebrow": "Ben organizzati. Vicini a te.",
+    "headline": "Siamo felici di poterti aiutare.",
+    "intro": "Il tuo appuntamento per {{serviceName}} a {{city}} è confermato: {{appointmentDate}} alle {{appointmentTime}}. Trovi qui sotto i dettagli concordati.",
+    "body": [
+      "Controlla l’indirizzo e le indicazioni per l’accesso. Se qualcosa cambia, contattaci per tempo così potremo organizzarci insieme."
+    ],
+    "cta": "Visualizza la mia prenotazione",
+    "secondary": "Aggiungi al calendario",
+    "nextTitle": "Per prepararci al meglio",
+    "next": [
+      "Controlla indirizzo e accesso",
+      "Leggi i consigli per il tuo servizio",
+      "Concorda eventuali modifiche per tempo"
+    ],
+    "note": "Tutti gli orari sono nel fuso Europe/Zurich.",
+    "tone": "success",
+    "visual": "service",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "booking.confirmed"
+  },
+  "reschedule_proposed": {
+    "stage": "Prenotare",
+    "title": "Nuova data proposta",
+    "subject": "Una proposta di data per {{bookingReference}}",
+    "preheader": "Controlla l’orario proposto. Concorderemo la modifica con te.",
+    "eyebrow": "Riorganizziamoci insieme",
+    "headline": "Questo appuntamento ti va bene?",
+    "intro": "Per {{serviceName}} ti proponiamo il {{appointmentDate}} alle {{appointmentTime}}. Facci sapere se questo orario ti va bene.",
+    "body": [
+      "Si tratta di una proposta, non ancora di una modifica dell’appuntamento. Lo stato attualmente confermato è visibile nella tua prenotazione."
+    ],
+    "cta": "Controlla la proposta",
+    "secondary": "Concorda un altro orario",
+    "nextTitle": "La scelta è tua",
+    "next": [
+      "Consulta la proposta",
+      "Accetta o richiedi un altro orario",
+      "Ricevi la conferma aggiornata"
+    ],
+    "note": "Il nuovo orario è valido solo dopo una conferma separata.",
+    "tone": "action",
+    "visual": "calendar",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "booking.reschedule_proposed"
+  },
+  "booking_updated": {
+    "stage": "Prenotare",
+    "title": "Prenotazione aggiornata",
+    "subject": "Prenotazione {{bookingReference}} aggiornata",
+    "preheader": "Ecco il nuovo riepilogo confermato della tua prenotazione.",
+    "eyebrow": "Tutto aggiornato",
+    "headline": "Le tue modifiche sono confermate.",
+    "intro": "Abbiamo registrato le modifiche concordate per {{serviceName}}. Trovi il riepilogo aggiornato in questa email e nella tua prenotazione.",
+    "body": [
+      "Per la pianificazione successiva fanno riferimento gli ultimi dati confermati qui indicati. Contattaci se noti qualcosa che non torna."
+    ],
+    "cta": "Visualizza la prenotazione aggiornata",
+    "secondary": "Parla di una modifica",
+    "nextTitle": "Un rapido controllo",
+    "next": [
+      "Controlla appuntamento e indirizzo",
+      "Consulta prestazioni e prezzo aggiornati"
+    ],
+    "note": "Il riepilogo dei pagamenti indica se la modifica comporta un saldo da pagare o un rimborso.",
+    "tone": "success",
+    "visual": "calendar",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "booking.updated_confirmed"
+  },
+  "appointment_reminder": {
+    "stage": "Prepararsi",
+    "title": "Promemoria dell’appuntamento",
+    "subject": "Il tuo appuntamento Kraken il {{appointmentDate}} alle {{appointmentTime}}",
+    "preheader": "Un breve riepilogo e la preparazione adatta al tuo servizio.",
+    "eyebrow": "Presto un impegno in meno",
+    "headline": "È tutto pronto per il tuo appuntamento?",
+    "intro": "Ti ricordiamo {{serviceName}} a {{city}} il {{appointmentDate}} alle {{appointmentTime}}. Trovi più sotto i tuoi consigli personalizzati per prepararti.",
+    "body": [
+      "Assicurati che l’accesso concordato sia disponibile. Se indirizzo, recapiti o modalità di accesso sono cambiati, avvisaci brevemente."
+    ],
+    "cta": "Consulta appuntamento e preparazione",
+    "secondary": "Chiama Kraken",
+    "nextTitle": "Prima dell’appuntamento",
+    "next": [
+      "Verifica l’accesso e la persona di riferimento",
+      "Segui i consigli per il servizio prenotato"
+    ],
+    "note": "Siamo felici di rendere la tua giornata un po’ più semplice.",
+    "tone": "calm",
+    "visual": "service",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "appointment.reminder_due"
+  },
+  "team_on_the_way": {
+    "stage": "Prepararsi",
+    "title": "Team in viaggio",
+    "subject": "Kraken è in viaggio verso il tuo appuntamento",
+    "preheader": "Il nostro team ha segnalato la partenza per l’intervento confermato.",
+    "eyebrow": "A tra poco",
+    "headline": "Stiamo arrivando da te.",
+    "intro": "Il nostro team è in viaggio per {{serviceName}} a {{city}}. Prepara l’accesso concordato e resta raggiungibile per eventuali domande.",
+    "body": [
+      "Trovi le informazioni aggiornate sull’appuntamento nella tua prenotazione. Se non riusciamo a contattarti o se qualcosa cambia, ti avviseremo personalmente."
+    ],
+    "cta": "Visualizza l’appuntamento",
+    "secondary": "Chiama Kraken",
+    "nextTitle": "Un ultimo rapido controllo",
+    "next": [
+      "Tieni accessibili citofono e ingresso",
+      "Avvisa la persona di riferimento concordata"
+    ],
+    "note": "Un orario di arrivo viene mostrato solo se è stato confermato per il tuo intervento.",
+    "tone": "success",
+    "visual": "transit",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "dispatch.departed_confirmed"
+  },
+  "payment_requested": {
+    "stage": "Pagare",
+    "title": "Richiesta di pagamento",
+    "subject": "Il tuo pagamento Kraken · {{bookingReference}}",
+    "preheader": "L’importo richiesto e le relative prestazioni in un colpo d’occhio.",
+    "eyebrow": "Un importo chiaro. Un passo semplice.",
+    "headline": "Il tuo pagamento è pronto.",
+    "intro": "Per la prenotazione {{bookingReference}} è richiesto il pagamento di {{amountFormatted}}. Controlla il riepilogo e apri il tuo link personale di pagamento.",
+    "body": [
+      "Il link mostra l’importo e i metodi di pagamento disponibili. Inserisci i dati di pagamento esclusivamente nella pagina di pagamento che si apre."
+    ],
+    "cta": "Apri il pagamento",
+    "secondary": "Fai una domanda sul pagamento",
+    "nextTitle": "Per completare questo passo",
+    "next": [
+      "Controlla importo e prenotazione",
+      "Paga tramite il tuo link personale",
+      "Ricevi la conferma dopo l’incasso"
+    ],
+    "note": "Kraken non è soggetta all’IVA. IVA addebitata su questa fattura: CHF 0.00.",
+    "tone": "action",
+    "visual": "payment",
+    "signature": "Il tuo team Kraken",
+    "kind": "transactional",
+    "event": "payment.request_issued"
+  },
+  "deposit_received": {
+    "stage": "Pagare",
+    "title": "Acconto ricevuto",
+    "subject": "Acconto ricevuto: {{amountFormatted}} · {{bookingReference}}",
+    "preheader": "Grazie. La ricevuta e l’importo residuo sono disponibili.",
+    "eyebrow": "Pagamento confermato",
+    "headline": "Grazie. Il tuo acconto è arrivato.",
+    "intro": "Abbiamo ricevuto il tuo acconto di {{amountFormatted}} per {{serviceName}}. Viene detratto dall’importo totale concordato.",
+    "body": [
+      "Trovi l’importo pagato, il saldo residuo e la ricevuta nel riepilogo. Lo stato dell’appuntamento è indicato separatamente nella tua prenotazione."
+    ],
+    "cta": "Visualizza la ricevuta",
+    "secondary": "Apri la prenotazione",
+    "nextTitle": "Tutto chiaro per te",
+    "next": [
+      "Controlla l’acconto nella ricevuta",
+      "Consulta lo stato dell’appuntamento e i consigli di preparazione"
+    ],
+    "note": "Un pagamento non sostituisce una conferma separata dell’appuntamento.",
+    "tone": "success",
+    "visual": "payment",
+    "signature": "Il tuo team Kraken",
+    "kind": "transactional",
+    "event": "payment.deposit_settled"
+  },
+  "payment_received": {
+    "stage": "Pagare",
+    "title": "Pagamento completo ricevuto",
+    "subject": "Pagamento confermato · {{bookingReference}}",
+    "preheader": "Il tuo servizio è interamente pagato. Ecco la ricevuta.",
+    "eyebrow": "Tutto pagato",
+    "headline": "Grazie per il tuo pagamento.",
+    "intro": "Abbiamo ricevuto il pagamento di {{amountFormatted}}. Per le prestazioni attualmente concordate della prenotazione {{bookingReference}} non resta alcun saldo da pagare.",
+    "body": [
+      "La ricevuta riporta le prestazioni prenotate e il pagamento. Trovi lo stato attuale dell’appuntamento nella tua prenotazione."
+    ],
+    "cta": "Visualizza la ricevuta",
+    "secondary": "Apri la mia prenotazione",
+    "nextTitle": "I tuoi documenti a portata di mano",
+    "next": [
+      "Conserva la ricevuta",
+      "Consulta appuntamento e consigli nella prenotazione"
+    ],
+    "note": "Kraken non è soggetta all’IVA. Non è stata addebitata alcuna IVA.",
+    "tone": "success",
+    "visual": "payment",
+    "signature": "Il tuo team Kraken",
+    "kind": "transactional",
+    "event": "payment.settled_balance_zero"
+  },
+  "payment_pending": {
+    "stage": "Pagare",
+    "title": "Pagamento in verifica",
+    "subject": "Pagamento {{bookingReference}}: ancora in attesa",
+    "preheader": "Non è ancora arrivata la conferma definitiva del gestore del pagamento.",
+    "eyebrow": "Teniamo sotto controllo lo stato",
+    "headline": "Il tuo pagamento è ancora in verifica.",
+    "intro": "Non abbiamo ancora ricevuto la conferma definitiva del pagamento. Controlla lo stato attuale prima di avviare un altro pagamento.",
+    "body": [
+      "Quando il gestore confermerà l’incasso, riceverai la ricevuta. Una preautorizzazione o un movimento in sospeso non costituiscono ancora un pagamento definitivamente contabilizzato."
+    ],
+    "cta": "Controlla lo stato del pagamento",
+    "secondary": "Ricevi assistenza",
+    "nextTitle": "Il prossimo passo",
+    "next": [
+      "Consulta lo stato aggiornato",
+      "Contattaci in caso di dubbi"
+    ],
+    "note": "Questo messaggio non è una conferma di pagamento.",
+    "tone": "pending",
+    "visual": "payment",
+    "signature": "Il tuo team Kraken",
+    "kind": "transactional",
+    "event": "payment.pending_verified"
+  },
+  "payment_failed": {
+    "stage": "Pagare",
+    "title": "Pagamento non completato",
+    "subject": "Il pagamento per {{bookingReference}} non è stato completato",
+    "preheader": "I tuoi dati sono conservati. Controlla lo stato prima di riprovare.",
+    "eyebrow": "Ti aiutiamo a proseguire",
+    "headline": "Puoi riprendere il pagamento.",
+    "intro": "Il tuo ultimo tentativo di pagamento non è andato a buon fine. I dati della prenotazione sono conservati, così puoi riprendere facilmente.",
+    "body": [
+      "Controlla prima lo stato attuale del pagamento. Se sul tuo conto compare già un importo, contattaci prima di pagare di nuovo."
+    ],
+    "cta": "Controlla e riprendi il pagamento",
+    "secondary": "Ricevi assistenza personale",
+    "nextTitle": "Come proseguire",
+    "next": [
+      "Controlla lo stato e l’importo richiesto",
+      "Se necessario, scegli un altro metodo di pagamento disponibile"
+    ],
+    "note": "Inviamo una ricevuta solo dopo la conferma dell’incasso.",
+    "tone": "action",
+    "visual": "payment",
+    "signature": "Il tuo team Kraken",
+    "kind": "transactional",
+    "event": "payment.failed_verified"
+  },
+  "balance_due": {
+    "stage": "Pagare",
+    "title": "Saldo da pagare",
+    "subject": "Saldo della prenotazione {{bookingReference}}",
+    "preheader": "I pagamenti già ricevuti sono stati conteggiati.",
+    "eyebrow": "Un riepilogo finale chiaro",
+    "headline": "Ecco il tuo importo residuo.",
+    "intro": "Per {{serviceName}} restano da pagare {{balanceFormatted}}. I pagamenti già ricevuti sono detratti nel riepilogo.",
+    "body": [
+      "Controlla il riepilogo finale delle prestazioni concordate. Se qualcosa non torna, contattaci prima di pagare."
+    ],
+    "cta": "Controlla e paga il saldo",
+    "secondary": "Fai una domanda sul saldo",
+    "nextTitle": "Tutto in un unico posto",
+    "next": [
+      "Controlla prestazioni e pagamenti già effettuati",
+      "Paga l’importo residuo tramite il link"
+    ],
+    "note": "Non viene addebitata IVA aggiuntiva.",
+    "tone": "action",
+    "visual": "payment",
+    "signature": "Il tuo team Kraken",
+    "kind": "transactional",
+    "event": "invoice.balance_due_issued"
+  },
+  "refund_issued": {
+    "stage": "Pagare",
+    "title": "Rimborso avviato",
+    "subject": "Rimborso avviato · {{bookingReference}}",
+    "preheader": "Il rimborso confermato e i relativi dettagli in un colpo d’occhio.",
+    "eyebrow": "Il punto sul tuo pagamento",
+    "headline": "Il tuo rimborso è stato avviato.",
+    "intro": "È stato avviato un rimborso di {{amountFormatted}} tramite il gestore del pagamento per la prenotazione {{bookingReference}}.",
+    "body": [
+      "Il momento in cui l’importo apparirà sul tuo conto dipende dal metodo di pagamento e dalla tua banca. Trovi i dettagli del rimborso tramite il link."
+    ],
+    "cta": "Visualizza il rimborso",
+    "secondary": "Fai una domanda",
+    "nextTitle": "Cosa sapere adesso",
+    "next": [
+      "Conserva i dettagli del rimborso",
+      "Indica il tuo riferimento in caso di domande"
+    ],
+    "note": "Questo messaggio conferma l’avvio del rimborso, non l’accredito sul tuo conto bancario.",
+    "tone": "success",
+    "visual": "payment",
+    "signature": "Il tuo team Kraken",
+    "kind": "transactional",
+    "event": "refund.accepted_verified"
+  },
+  "service_completed": {
+    "stage": "Dopo il servizio",
+    "title": "Servizio completato",
+    "subject": "Il tuo servizio Kraken è completato · {{bookingReference}}",
+    "preheader": "Grazie per la fiducia. Qui trovi i dettagli di fine intervento.",
+    "eyebrow": "La giornata un po’ più leggera",
+    "headline": "Grazie per averci scelto.",
+    "intro": "Il nostro team ha segnalato il completamento di {{serviceName}} a {{city}}. Trovi il riepilogo delle prestazioni e i pagamenti aggiornati nella tua prenotazione.",
+    "body": [
+      "Se qualcosa non corrisponde alle tue aspettative, rispondi a questa email. Ti ascoltiamo e concordiamo personalmente con te il prossimo passo."
+    ],
+    "cta": "Visualizza il riepilogo finale",
+    "secondary": "Lascia un commento sul servizio",
+    "nextTitle": "Al tuo fianco anche dopo",
+    "next": [
+      "Controlla i dettagli di fine intervento",
+      "Chiarisci con noi eventuali domande"
+    ],
+    "note": "Grazie per la tua fiducia in Kraken.",
+    "tone": "success",
+    "visual": "service",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "service.completed_verified"
+  },
+  "review_requested": {
+    "stage": "Dopo il servizio",
+    "title": "Un parere sincero",
+    "subject": "{{firstName}}, come è andato il servizio Kraken?",
+    "preheader": "La tua esperienza sincera ci aiuta a migliorare.",
+    "eyebrow": "La tua opinione conta",
+    "headline": "Com’è stata la tua esperienza con Kraken?",
+    "intro": "Ci auguriamo che {{serviceName}} ti abbia semplificato la giornata. Se vuoi, condividi con noi la tua esperienza sincera.",
+    "body": [
+      "Cosa ha funzionato bene? Cosa avremmo potuto migliorare? Ogni commento è utile, indipendentemente da come valuti il servizio."
+    ],
+    "cta": "Condividi la mia esperienza",
+    "secondary": "Contatta direttamente Kraken",
+    "nextTitle": "Un breve commento personale",
+    "next": [
+      "Racconta la tua esperienza con parole tue",
+      "Parla direttamente con noi se qualcosa è rimasto aperto"
+    ],
+    "note": "Il tuo parere è facoltativo. Non deve necessariamente essere positivo.",
+    "tone": "calm",
+    "visual": "thanks",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "feedback_consented",
+    "event": "feedback.request_due"
+  },
+  "issue_received": {
+    "stage": "Dopo il servizio",
+    "title": "Segnalazione ricevuta",
+    "subject": "Ci occupiamo della tua segnalazione · {{bookingReference}}",
+    "preheader": "Il tuo messaggio è arrivato. Verifichiamo i punti segnalati.",
+    "eyebrow": "Ti ascoltiamo",
+    "headline": "Grazie per avercelo fatto sapere.",
+    "intro": "Abbiamo ricevuto la tua segnalazione su {{serviceName}}. Ci dispiace che ci sia ancora un punto da chiarire per te. Esamineremo quanto ci hai indicato.",
+    "body": [
+      "I dati già inviati restano associati alla prenotazione. Per aggiungere un dettaglio puoi rispondere a questa email o aprire la segnalazione."
+    ],
+    "cta": "Visualizza la mia segnalazione",
+    "secondary": "Chiama Kraken",
+    "nextTitle": "Come ce ne occupiamo",
+    "next": [
+      "Verifichiamo la tua segnalazione",
+      "Chiariamo le domande personalmente",
+      "Concordiamo con te il prossimo passo"
+    ],
+    "note": "Non devi raccontare di nuovo tutta la situazione.",
+    "tone": "care",
+    "visual": "support",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "service.issue_received"
+  },
+  "issue_resolved": {
+    "stage": "Dopo il servizio",
+    "title": "Soluzione concordata documentata",
+    "subject": "La soluzione concordata per {{bookingReference}}",
+    "preheader": "Qui trovi i dettagli della gestione della tua segnalazione.",
+    "eyebrow": "Chiarito personalmente",
+    "headline": "L’intervento concordato è stato eseguito.",
+    "intro": "Abbiamo eseguito l’intervento concordato con te in merito alla segnalazione. Trovi i dettagli nel relativo riepilogo.",
+    "body": [
+      "Contattaci se per te resta ancora qualcosa da chiarire. Un eventuale rimborso concordato separatamente sarà confermato quando il gestore del pagamento lo avrà elaborato."
+    ],
+    "cta": "Visualizza la soluzione e i dettagli",
+    "secondary": "Aggiungi un commento",
+    "nextTitle": "Per i tuoi documenti",
+    "next": [
+      "Controlla l’intervento eseguito",
+      "Rispondi direttamente se restano punti aperti"
+    ],
+    "note": "Grazie per averci dato l’opportunità di chiarire la situazione.",
+    "tone": "care",
+    "visual": "support",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "service.issue_resolution_completed"
+  },
+  "recurring_visit": {
+    "stage": "Visite regolari",
+    "title": "Prossima visita regolare",
+    "subject": "La tua prossima visita Kraken il {{appointmentDate}}",
+    "preheader": "Il prossimo appuntamento confermato e le prestazioni concordate.",
+    "eyebrow": "Un buon ritmo per la tua casa",
+    "headline": "La tua prossima visita è fissata.",
+    "intro": "Il prossimo appuntamento confermato per {{serviceName}} a {{city}} è il {{appointmentDate}} alle {{appointmentTime}}. Saremo felici di aiutarti di nuovo.",
+    "body": [
+      "Hai richieste particolari per questa visita? Aggiungile nella prenotazione. Eventuali prestazioni extra saranno concordate con te in anticipo."
+    ],
+    "cta": "Visualizza la prossima visita",
+    "secondary": "Comunica le tue richieste",
+    "nextTitle": "Prima della visita",
+    "next": [
+      "Controlla appuntamento e accesso",
+      "Comunica in anticipo le richieste particolari"
+    ],
+    "note": "Si applicano le prestazioni e i prezzi confermati per questa visita.",
+    "tone": "calm",
+    "visual": "regular",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "recurring.visit_confirmed"
+  },
+  "recurring_updated": {
+    "stage": "Visite regolari",
+    "title": "Programma regolare aggiornato",
+    "subject": "Il programma delle tue visite Kraken è aggiornato",
+    "preheader": "La frequenza concordata e gli appuntamenti interessati in un riepilogo.",
+    "eyebrow": "Secondo le tue esigenze",
+    "headline": "Il tuo programma è aggiornato.",
+    "intro": "Abbiamo registrato la modifica concordata alle tue visite regolari. Nel riepilogo trovi le visite interessate e il loro stato attuale.",
+    "body": [
+      "Puoi vedere quali appuntamenti sono confermati, spostati o sospesi. Le prestazioni particolari già concordate restano indicate singolarmente."
+    ],
+    "cta": "Visualizza il programma delle visite",
+    "secondary": "Parla del programma con noi",
+    "nextTitle": "Tutto sotto controllo",
+    "next": [
+      "Controlla gli appuntamenti interessati",
+      "Verifica prestazioni e frequenza"
+    ],
+    "note": "Le modifiche a prestazioni o prezzi sono indicate in modo esplicito.",
+    "tone": "success",
+    "visual": "regular",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "recurring.schedule_updated_confirmed"
+  },
+  "magic_link": {
+    "stage": "Area personale",
+    "title": "Accesso sicuro",
+    "subject": "Il tuo accesso personale a Kraken",
+    "preheader": "Apri l’accesso senza password che hai richiesto.",
+    "eyebrow": "Le tue prenotazioni in un unico posto",
+    "headline": "Il tuo accesso personale è pronto.",
+    "intro": "Hai richiesto l’accesso alla tua area Kraken. Questo link personale ti permette di aprire i dati salvati e le prenotazioni.",
+    "body": [
+      "Il link è destinato solo a te. Se non hai richiesto questo accesso, non devi fare nulla."
+    ],
+    "cta": "Apri la mia area Kraken",
+    "secondary": "Ricevi assistenza per l’accesso",
+    "nextTitle": "Prosegui in sicurezza",
+    "next": [
+      "Apri il link personale",
+      "Consulta i dati salvati o le prenotazioni"
+    ],
+    "note": "Non condividere questo link di accesso.",
+    "tone": "calm",
+    "visual": "access",
+    "signature": "Il tuo team Kraken",
+    "kind": "transactional",
+    "event": "auth.magic_link_requested"
+  },
+  "support_received": {
+    "stage": "Contatto",
+    "title": "Messaggio ricevuto",
+    "subject": "Il tuo messaggio è arrivato a Kraken",
+    "preheader": "Grazie, {{firstName}}. Abbiamo ricevuto la tua richiesta.",
+    "eyebrow": "Ci siamo, personalmente",
+    "headline": "Grazie per averci scritto.",
+    "intro": "Abbiamo ricevuto il tuo messaggio e ci occuperemo della tua richiesta. Le tue informazioni ci aiutano a capire subito come assisterti.",
+    "body": [
+      "Il servizio clienti è raggiungibile dal lunedì alla domenica, dalle 09:00 alle 19:00. Per aggiungere un dettaglio, rispondi semplicemente a questa email."
+    ],
+    "cta": "Visualizza il mio messaggio",
+    "secondary": "Chiama Kraken",
+    "nextTitle": "Come proseguire",
+    "next": [
+      "Leggiamo ed esaminiamo la tua richiesta",
+      "Ricevi una risposta personale"
+    ],
+    "note": "Questa conferma di ricezione non conferma un appuntamento né un pagamento.",
+    "tone": "care",
+    "visual": "support",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "support.message_received"
+  },
+  "support_reply": {
+    "stage": "Contatto",
+    "title": "Risposta personale",
+    "subject": "Una risposta personale da Kraken",
+    "preheader": "Abbiamo esaminato la tua richiesta. La nostra risposta è pronta.",
+    "eyebrow": "Il tuo contatto diretto con Kraken",
+    "headline": "Ti abbiamo risposto.",
+    "intro": "La risposta al tuo messaggio è pronta. Apri la conversazione per leggere i dettagli e gli eventuali prossimi passi.",
+    "body": [
+      "Se resta una domanda, rispondi semplicemente. Tutto rimane nella stessa conversazione e non devi ripetere i tuoi dati."
+    ],
+    "cta": "Leggi la risposta personale",
+    "secondary": "Chiama Kraken",
+    "nextTitle": "Restiamo in contatto",
+    "next": [
+      "Leggi la risposta e i prossimi passi",
+      "Se necessario, rispondi nella conversazione"
+    ],
+    "note": "Un messaggio personale dal tuo team Kraken.",
+    "tone": "care",
+    "visual": "support",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "support.reply_published"
+  },
+  "cancellation_received": {
+    "stage": "Modificare",
+    "title": "Richiesta di cancellazione ricevuta",
+    "subject": "La richiesta di cancellazione {{bookingReference}} è arrivata",
+    "preheader": "Verifichiamo la richiesta e confermeremo lo stato separatamente.",
+    "eyebrow": "I tuoi programmi sono cambiati",
+    "headline": "Verifichiamo la richiesta di cancellazione.",
+    "intro": "Abbiamo ricevuto la tua richiesta di cancellazione di {{serviceName}}. Verifichiamo la prenotazione e le condizioni concordate.",
+    "body": [
+      "Questo messaggio non conferma ancora la cancellazione. Riceverai un riepilogo separato dello stato della prenotazione e degli eventuali pagamenti o costi."
+    ],
+    "cta": "Visualizza lo stato della richiesta",
+    "secondary": "Parla della richiesta con noi",
+    "nextTitle": "Cosa succede ora",
+    "next": [
+      "Verifichiamo prenotazione e condizioni",
+      "Ricevi lo stato confermato e tutte le conseguenze economiche"
+    ],
+    "note": "Se l’appuntamento è imminente, puoi chiamarci durante gli orari del servizio clienti.",
+    "tone": "pending",
+    "visual": "calendar",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "booking.cancellation_requested"
+  },
+  "cancellation_confirmed": {
+    "stage": "Modificare",
+    "title": "Cancellazione confermata",
+    "subject": "Cancellazione confermata · {{bookingReference}}",
+    "preheader": "Il tuo appuntamento è cancellato. Qui trovi il riepilogo dei pagamenti.",
+    "eyebrow": "Stato aggiornato",
+    "headline": "La tua cancellazione è confermata.",
+    "intro": "La prenotazione per {{serviceName}} è stata cancellata. Non è più previsto alcun intervento per questo appuntamento cancellato.",
+    "body": [
+      "Il riepilogo mostra i pagamenti ricevuti e gli eventuali costi di cancellazione concordati o rimborsi previsti. Confermeremo separatamente ogni rimborso effettivamente avviato."
+    ],
+    "cta": "Visualizza cancellazione e dettagli",
+    "secondary": "Fai una domanda",
+    "nextTitle": "Per i tuoi documenti",
+    "next": [
+      "Controlla i dettagli della cancellazione",
+      "Conserva il riepilogo dei pagamenti"
+    ],
+    "note": "Saremo qui quando avrai di nuovo bisogno di una mano.",
+    "tone": "calm",
+    "visual": "calendar",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "booking.cancelled_confirmed"
+  },
+  "moving_guide": {
+    "stage": "Prepararsi",
+    "title": "Piano di trasloco personalizzato",
+    "subject": "{{firstName}}, il tuo piano di trasloco è pronto",
+    "preheader": "Una checklist adatta ai tuoi dati: preparazione, cambio indirizzo e contatti utili.",
+    "eyebrow": "Preparati bene al prossimo passo",
+    "headline": "Un piano adatto al tuo trasloco.",
+    "intro": "Abbiamo preparato il tuo piano di trasloco a partire dai dati forniti. La checklist ti aiuta a seguire le attività prima e dopo il trasloco.",
+    "body": [
+      "In base alle tue scelte, il piano include indicazioni su cambio indirizzo, veicolo, parcheggio e riconsegna dell’alloggio. I siti degli enti ufficiali indicati forniscono le disposizioni aggiornate."
+    ],
+    "cta": "Apri il mio piano di trasloco",
+    "secondary": "Fai una domanda sul trasloco",
+    "nextTitle": "Il tuo piano, passo dopo passo",
+    "next": [
+      "Verifica il luogo di partenza e di arrivo",
+      "Spunta le attività che ti riguardano",
+      "Aggiorna il piano se i dati cambiano"
+    ],
+    "note": "Il piano non sostituisce una conferma dell’appuntamento. Verifica scadenze e autorizzazioni presso l’ente competente.",
+    "tone": "calm",
+    "visual": "transit",
+    "signature": "Antonio e il tuo team Kraken",
+    "kind": "transactional",
+    "event": "moving_guide.requested_ready"
+  }
+}

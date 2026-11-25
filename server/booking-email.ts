@@ -28,7 +28,8 @@ export function renderBookingEmail(booking:any, kind:'request'|'receipt', origin
 export function createResendEmailAdapter(apiKey:string, fetcher:typeof fetch=fetch) {
   return async (message:any)=>{
     let response:Response;
-    try { response=await fetcher('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json','Idempotency-Key':message.idempotencyKey},body:JSON.stringify({from:message.from,to:[message.to],subject:message.subject,html:message.html,text:message.text}),signal:AbortSignal.timeout(10000)}); }
+    const from=typeof message.from==='object'?`${JSON.stringify(message.from.name)} <${message.from.email}>`:message.from;
+    try { response=await fetcher('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json','Idempotency-Key':message.idempotencyKey},body:JSON.stringify({from,to:[message.to],subject:message.subject,html:message.html,text:message.text,...(message.replyTo?{reply_to:message.replyTo}:{}),...(message.headers?{headers:message.headers}:{})}),signal:AbortSignal.timeout(10000)}); }
     catch { throw new BookingError('EMAIL_OUTCOME_UNKNOWN',503); }
     const parsed=await response.json().catch(()=>null);
     if(!response.ok) {

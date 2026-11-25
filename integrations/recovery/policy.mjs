@@ -1,3 +1,5 @@
+import { normalizeEmailLanguage } from '../email-collection/language.mjs';
+
 export const CONSENT_VERSION = 'recovery-2026-11-24';
 export const DAY_MS = 86_400_000;
 export const HOUR_MS = 3_600_000;
@@ -78,8 +80,10 @@ export function normaliseCapture(input) {
   if (typeof input.idempotencyKey !== 'string' || !/^[a-zA-Z0-9_-]{16,128}$/.test(input.idempotencyKey)) throw new RecoveryError('INVALID_IDEMPOTENCY_KEY');
   if (typeof input.reminderConsent !== 'boolean') throw new RecoveryError('CONSENT_REQUIRED');
   if (input.reminderConsent && input.consentVersion !== CONSENT_VERSION) throw new RecoveryError('CONSENT_VERSION_CHANGED', 409);
+  let language;
+  try { language=normalizeEmailLanguage(input.language); } catch { throw new RecoveryError('INVALID_LANGUAGE'); }
   const selection = cleanSelection(input.selection);
-  return { email: normaliseEmail(input.email), language: normaliseLanguage(input.language), selection, guidePreferences:cleanGuidePreferences(input.guidePreferences), reminderConsent: input.reminderConsent,
+  return { email: normaliseEmail(input.email), language, selection, guidePreferences:cleanGuidePreferences(input.guidePreferences), reminderConsent: input.reminderConsent,
     consentVersion: input.reminderConsent ? CONSENT_VERSION : null, idempotencyKey: input.idempotencyKey };
 }
 

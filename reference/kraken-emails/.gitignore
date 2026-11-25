@@ -1,0 +1,4 @@
+# Reproducible review artifacts; preserve the 61 original package inputs.
+/samples/
+/ABRIR_EMAIL_STUDIO.html
+/EMAIL_CATALOG.json

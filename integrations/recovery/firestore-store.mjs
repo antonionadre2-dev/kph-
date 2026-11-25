@@ -35,7 +35,7 @@ export function createFirestoreRecoveryStore(db) {
         const saved = {...draft, version:1};
         tx.create(drafts.doc(draft.id), saved);
         tx.create(ref, {draftId:draft.id, expiresAt:draft.expiresAt});
-        for (const job of pending) tx.create(jobs.doc(key(job.id)), {id:job.id,draft_id:draft.id,kind:job.kind,due_at:job.dueAt,status:'queued',attempts:0,lease_until:null});
+        for (const job of pending) tx.create(jobs.doc(key(job.id)), {id:job.id,draft_id:draft.id,kind:job.kind,due_at:job.dueAt,status:'queued',attempts:0,lease_until:null,...(job.notification?{notification:JSON.parse(JSON.stringify(job.notification))}:{})});
         return saved;
       });
     },
@@ -44,6 +44,18 @@ export function createFirestoreRecoveryStore(db) {
         const ref = drafts.doc(draft.id), current = data(await tx.get(ref));
         if (!current || current.version !== expectedVersion) return false;
         tx.set(ref, {...draft,version:expectedVersion+1}); return true;
+      });
+    },
+    /** The preference and every still-unattempted snapshot change atomically. */
+    async updateDraftAndPending(draft, expectedVersion, pending) {
+      return db.runTransaction(async tx=>{
+        const ref=drafts.doc(draft.id), current=data(await tx.get(ref));
+        if(!current || current.version!==expectedVersion)return false;
+        const rows=[];
+        for(const item of pending)rows.push({item,ref:jobs.doc(key(item.id)),job:data(await tx.get(jobs.doc(key(item.id))))});
+        tx.set(ref,{...draft,version:expectedVersion+1});
+        for(const {item,ref:jobRef,job}of rows)if(job?.status==='queued'&&(job.attempts||0)===0&&!job.prepared)tx.update(jobRef,{notification:JSON.parse(JSON.stringify(item.notification))});
+        return true;
       });
     },
     async getSuppression(emailHash) { return data(await suppressions.doc(emailHash).get()); },
@@ -62,6 +74,17 @@ export function createFirestoreRecoveryStore(db) {
       });
     },
     async getJob(id) { return data(await jobs.doc(key(id)).get()); },
+    /** CAS before provider use. Retries receive the original immutable envelope. */
+    async prepareJob(id, envelope, {preparedAt,expiresAt}={}) {
+      return db.runTransaction(async tx=>{
+        const ref=jobs.doc(key(id)), job=data(await tx.get(ref));
+        if(job?.status!=='sending')return null;
+        if(job.prepared)return job;
+        if(!job.notification)return null;
+        const fields={prepared:JSON.parse(JSON.stringify(envelope)),preparedAt,preparedExpiresAt:expiresAt};
+        tx.update(ref,fields);return {...job,...fields};
+      });
+    },
     async listDue(now, limit=20) {
       const result=await jobs.where('status','==','queued').where('due_at','<=',now).orderBy('due_at').limit(Math.min(50,limit)).get();
       return result.docs.map(doc=>doc.data());

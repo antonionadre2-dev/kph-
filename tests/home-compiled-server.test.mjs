@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import ts from 'typescript';
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, readFileSync, readdirSync, writeFileSync, symlinkSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, readdirSync, writeFileSync, symlinkSync, rmSync, cpSync } from 'node:fs';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -22,7 +22,7 @@ test('compiled server graph runs under plain Node without source .ts files and s
       mkdirSync(path.dirname(destination), { recursive: true });
       writeFileSync(destination, output);
     }
-    for (const source of ['src/booking/customerAccessCopy.ts', 'server/booking-webhooks.ts', 'components/services/servicesTranslations.ts']) {
+    for (const source of ['src/booking/customerAccessCopy.ts', 'server/booking-webhooks.ts', 'server/customer-notifications.ts', 'components/services/servicesTranslations.ts']) {
       const destination = path.join(directory, source.replace(/\.ts$/, '.js'));
       mkdirSync(path.dirname(destination), { recursive: true });
       writeFileSync(destination, ts.transpileModule(readFileSync(path.join(root, source), 'utf8'), { fileName: source, compilerOptions: options }).outputText);
@@ -32,6 +32,7 @@ test('compiled server graph runs under plain Node without source .ts files and s
       mkdirSync(path.dirname(destination), { recursive: true });
       writeFileSync(destination, readFileSync(path.join(root, name)));
     }
+    cpSync(path.join(root,'integrations/email-collection'),path.join(directory,'integrations/email-collection'),{recursive:true});
     writeFileSync(path.join(directory, 'package.json'), '{"type":"module"}');
     symlinkSync(path.join(root, 'node_modules'), path.join(directory, 'node_modules'), 'dir');
     mkdirSync(path.join(directory, 'dist'));

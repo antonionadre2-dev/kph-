@@ -1,0 +1,13 @@
+{
+  "name": "kraken-customer-email-studio",
+  "version": "1.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Kraken PFM — 30 customer email templates in six languages, with a local visual studio.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "demo:language": "node examples/selected-language.mjs"
+  },
+  "engines": { "node": ">=20" }
+}

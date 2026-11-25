@@ -1,0 +1,242 @@
+{
+  "README_CODEX_ES.txt": {
+    "bytes": 2441,
+    "sha256": "00495c39a7bb35090fc3f786326738886dbdee8128f64ff412ec4402cdc7ec85"
+  },
+  "assets/email-appointment_reminder.png": {
+    "bytes": 322982,
+    "sha256": "fee50072037ac5e9bc79cb8b5223f12ddbb11d38eb9b0acc94303bf0f9d983ec"
+  },
+  "assets/email-balance_due.png": {
+    "bytes": 180467,
+    "sha256": "b9882b8c57eefc2a4f2fe4ab0d2a8f7e51c29f5ea0519d5e9db428dccfa1da9f"
+  },
+  "assets/email-booking_confirmed.png": {
+    "bytes": 270715,
+    "sha256": "a91f787a54009ec6a2df9adf6b7364c60f91c5967295e518ea529e8d337d280c"
+  },
+  "assets/email-booking_updated.png": {
+    "bytes": 290226,
+    "sha256": "f4e500422690911f3f4f7b2391cd04caa791e274eac0456f64a2626cccc23429"
+  },
+  "assets/email-cancellation_confirmed.png": {
+    "bytes": 176491,
+    "sha256": "a931e066fafeda0721d427c3a29913cb33f8bd6c0f4a7fb3156c7bd5d4495762"
+  },
+  "assets/email-cancellation_received.png": {
+    "bytes": 176439,
+    "sha256": "9bc3fab39fe5b01158768137ab3b4c7d6a1bef10e48c33ab9105d808b32bbf97"
+  },
+  "assets/email-deposit_received.png": {
+    "bytes": 193132,
+    "sha256": "3cb4cd1955c69092d7462315d3b48580618ed958a25d7e43b485cc2d6f6e358c"
+  },
+  "assets/email-details_required.png": {
+    "bytes": 288975,
+    "sha256": "7275ac32869ee9c5920d6ef935d502a8ea45923c85d913c687b9170d578b0120"
+  },
+  "assets/email-issue_received.png": {
+    "bytes": 249178,
+    "sha256": "fce5aa5519b03f94a9abd8be62dbd0f36819ac14eb21d8c3ff6ae75d9c430fa9"
+  },
+  "assets/email-issue_resolved.png": {
+    "bytes": 246760,
+    "sha256": "24e434cd341bab4b228f1aee8b3b41dc104411a2e114afcd5a8b9a5e931c92ce"
+  },
+  "assets/email-magic_link.png": {
+    "bytes": 166304,
+    "sha256": "b27fdfb4dd483f1795fc7a72df192f72a5e8c351ccb8e1d4032fda665dc5efb5"
+  },
+  "assets/email-moving_guide.png": {
+    "bytes": 283953,
+    "sha256": "3b3aa70744cb99652403a7cd8522535d0c74a98b473c97589594fb3b7044deb1"
+  },
+  "assets/email-payment_failed.png": {
+    "bytes": 191332,
+    "sha256": "29b290e9b985a5bb787706605f60c73a1beed8cc8f2f681fe384c8123f1cf882"
+  },
+  "assets/email-payment_pending.png": {
+    "bytes": 248649,
+    "sha256": "9db012af33e43d380b2b27ef20f03627a7aa7ea3a453017af0ccc7068cabc138"
+  },
+  "assets/email-payment_received.png": {
+    "bytes": 207091,
+    "sha256": "6561eae66908b107460c360fa13f197a300dbb8e9d69e1ea39e3ab40bca2a896"
+  },
+  "assets/email-payment_requested.png": {
+    "bytes": 226589,
+    "sha256": "1cf072d6ed70a2d70151ec2c3ba8c9c55dcbd2f5c2c398291e5b485263fea6b4"
+  },
+  "assets/email-quote_ready.png": {
+    "bytes": 326722,
+    "sha256": "9235c73845fbc79ac921626ebd181ef8bc0f9f3bf475c9bf0007993de6bd0ed7"
+  },
+  "assets/email-quote_reminder_1.png": {
+    "bytes": 316759,
+    "sha256": "4b7512bebb71a1a1cd5da9259b29232ae76c95163b490ca8f977aac7e74e0752"
+  },
+  "assets/email-quote_reminder_2.png": {
+    "bytes": 257684,
+    "sha256": "ed51ccd2d0db5effea375cccf3f89048fc1a7bf172f8894da2dcd44fd707cedb"
+  },
+  "assets/email-quote_saved.png": {
+    "bytes": 306579,
+    "sha256": "ba4e59d591105814be6d93335a5d23aca6a6804700ce057830523545077d3887"
+  },
+  "assets/email-recurring_updated.png": {
+    "bytes": 246088,
+    "sha256": "ab69ab43a3afdb8a05a82e0d5a28052419081a5b8449a4eb4cbc596bbdeb6743"
+  },
+  "assets/email-recurring_visit.png": {
+    "bytes": 224541,
+    "sha256": "c4241c33d86657e387c43cc25b5bb1cab809442b23237833c7ff99f1ba2509b9"
+  },
+  "assets/email-refund_issued.png": {
+    "bytes": 244850,
+    "sha256": "ef91e0b217b82dade6e15df8bc3c8870f6e17232ecf56ff47306189c55a3798a"
+  },
+  "assets/email-request_received.png": {
+    "bytes": 280485,
+    "sha256": "15cdd340523dde87ab8f3156173e56bc43ad5f9043eb2acdd74d8368c5569955"
+  },
+  "assets/email-reschedule_proposed.png": {
+    "bytes": 198162,
+    "sha256": "6f93d35dfbefe67247982d21913bdf782762abba52f3dca02b51a711df9d950e"
+  },
+  "assets/email-review_requested.png": {
+    "bytes": 309947,
+    "sha256": "c9325ba84d8413bb166405bf8ef98881cbb5f31a71189616f21d0ce655e81b64"
+  },
+  "assets/email-service_completed.png": {
+    "bytes": 353686,
+    "sha256": "a4d1905e4a804aca358bf9f428ce845a967adcdf217c894dbf57c575112c2102"
+  },
+  "assets/email-support_received.png": {
+    "bytes": 247719,
+    "sha256": "8c9f8cf97fa95740e26dc3a474975d2ba888dbdb8e68ab8c6c608d3b48599d1e"
+  },
+  "assets/email-support_reply.png": {
+    "bytes": 290351,
+    "sha256": "e56e02296ce7db086e70b671be2997441ac0d22f72942e3d0c3555d94315fcd6"
+  },
+  "assets/email-team_on_the_way.png": {
+    "bytes": 332826,
+    "sha256": "cc80ecda95b06ac86e1027de99c68efb6780e97526d10b623a100ce95884da70"
+  },
+  "assets/kraken-logo.png": {
+    "bytes": 65308,
+    "sha256": "23a09ae6ae1686e05ddbb2e27d54583654e785cfd3f300a0ebfdfc225b63b4c1"
+  },
+  "content/catalog.de.json": {
+    "bytes": 35401,
+    "sha256": "ef7ea29e614b8c5c02ef1cfca78335968aa89af35bcce667091097104c2d67a0"
+  },
+  "content/catalog.en.json": {
+    "bytes": 33114,
+    "sha256": "b4965e45d96ae655635a862e6ee4172666c1e562bfbe43fbc48deafbb8f468ab"
+  },
+  "content/catalog.es.json": {
+    "bytes": 34440,
+    "sha256": "715db130e825c4bad0fe0b77af18fa01e6237a09797119f2051ffd8655c59a32"
+  },
+  "content/catalog.fr.json": {
+    "bytes": 36697,
+    "sha256": "621127ed787d6fdee6639e10051d2991ed3c6354ec42c046991924aaec40eb98"
+  },
+  "content/catalog.it.json": {
+    "bytes": 34887,
+    "sha256": "24090c4891a55562a0c010df3ca4279c20cfcf4bd12a3706a8c53c6aa67566b5"
+  },
+  "content/catalog.pt.json": {
+    "bytes": 34590,
+    "sha256": "f238399d341c1dfe1a257a41e4aaabcec98be26a3a744c793fdb9039a3db28cc"
+  },
+  "docs/BRAND_AUDIT_ES.md": {
+    "bytes": 8767,
+    "sha256": "c51d4f18cfe5220872fbfe4301e495fc9f3961a6fa82cdbb726e796b60a0cf5f"
+  },
+  "docs/INTEGRACION_CODEX_ES.txt": {
+    "bytes": 27282,
+    "sha256": "b0c25a860d4038d6ac9b3c986afe5b3ca95ef3b74355bc8886d4ab73b697f4c7"
+  },
+  "docs/LIFECYCLE_ES.md": {
+    "bytes": 15712,
+    "sha256": "5f4324b8fdc1c3af115e6192bcf367fe00a2c9db2f8633aad5bb95bca02a46c4"
+  },
+  "docs/REVISION_REALIZADA_ES.md": {
+    "bytes": 4602,
+    "sha256": "825c02470cedcb1edb30816fd050161fa2d1b5a609509533be134b4e388195a3"
+  },
+  "docs/art-booking-prompts.json": {
+    "bytes": 15657,
+    "sha256": "6f033f25b28720d69b90135a947a4dbfedda4468e9633519c4f3ce7b73838917"
+  },
+  "docs/art-care-prompts.json": {
+    "bytes": 13211,
+    "sha256": "37e0dd1783d036430b8ba316e8fd823abe2de45b71716ce93c2e7be2c492cb3d"
+  },
+  "docs/art-finance-prompts.json": {
+    "bytes": 12960,
+    "sha256": "db2e85cb1fe6b3a469de7c66f056ce1036f71d5ef43a6de7d65431941c5b235f"
+  },
+  "examples/selected-language.mjs": {
+    "bytes": 2562,
+    "sha256": "037f54755dfc92b489920d13b0b19cfb3d747f52e1531a7e2a7dbb433b25c6fc"
+  },
+  "package.json": {
+    "bytes": 410,
+    "sha256": "357565baa83a0d3ad7e9ee6bf10e828b0dfbf50a8ae1d233c0bab7d61b1e320d"
+  },
+  "scripts/build.mjs": {
+    "bytes": 2913,
+    "sha256": "75edcddd33085851eb36f144586956bfd982524854b3917ec0d7dcfb563f3130"
+  },
+  "src/artwork.mjs": {
+    "bytes": 3512,
+    "sha256": "e588dd8cad7e18c33a19a305fa1210f1ec28ad33b5b816292e972a2dc05c3a40"
+  },
+  "src/demo-data.mjs": {
+    "bytes": 4890,
+    "sha256": "c9c5ebc51a59ba283c0a8a4db11a021e4b9801e38155412e78e7432a5d2bc747"
+  },
+  "src/labels.mjs": {
+    "bytes": 17446,
+    "sha256": "084ae7a711c2c4f95de0f06400e9096a737dfff5b8e684c19883122e2c5ec51f"
+  },
+  "src/language.mjs": {
+    "bytes": 7764,
+    "sha256": "3b7cf17f2ebfa6ef42401512d4f08d1764f7e0eb5b0cee959e0cc5cd461b8c8a"
+  },
+  "src/preparation.mjs": {
+    "bytes": 5443,
+    "sha256": "2af2e724e409ade20dbfd368bcdb3994aeee1f6119f3f23882f23e1cc121098e"
+  },
+  "src/render.mjs": {
+    "bytes": 28857,
+    "sha256": "3677de5a133c741585dac8b65a9a06e7b7f9f4c03b466d7c6bb7b7bc3c067a72"
+  },
+  "src/server-email.mjs": {
+    "bytes": 6035,
+    "sha256": "7a007d957ae9be92c5a745eb1eb7edb6a824fa95e033919a316235f0b92dafd8"
+  },
+  "src/studio.html": {
+    "bytes": 15523,
+    "sha256": "2d69e626ec7165eb0a3e77f8975bb7120c6e6e4abe56e7767645704fc6b762ef"
+  },
+  "tests/language.test.mjs": {
+    "bytes": 6060,
+    "sha256": "cf0c9097ac609165e39edc4662c853bd265d4abc45107cdc55564f6868062336"
+  },
+  "tests/render-language.test.mjs": {
+    "bytes": 4332,
+    "sha256": "e4845701f5f6fb6d66746d72fe913046a6cbbb7ffe274e3195ba2164e86d6dcb"
+  },
+  "tests/render.test.mjs": {
+    "bytes": 19008,
+    "sha256": "42f9ef5ad9546a661aa9bc1c9b22b32a3aa63588965e1a033cb5307acb07471c"
+  },
+  "tests/server-email.test.mjs": {
+    "bytes": 7760,
+    "sha256": "38a549fff8b89e79fbc90fac2c5068afda7abaebccbcaf2587c4650832cda6d8"
+  }
+}

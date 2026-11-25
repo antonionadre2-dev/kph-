@@ -27,6 +27,10 @@ CREATE TABLE IF NOT EXISTS recovery_outbox (
   provider_id TEXT,
   sent_at INTEGER,
   last_error_code TEXT,
+  notification_json TEXT CHECK(notification_json IS NULL OR json_valid(notification_json)),
+  prepared_json TEXT CHECK(prepared_json IS NULL OR json_valid(prepared_json)),
+  prepared_at INTEGER,
+  prepared_expires_at INTEGER,
   UNIQUE(draft_id,kind)
 );
 CREATE INDEX IF NOT EXISTS recovery_outbox_due ON recovery_outbox(status,due_at);

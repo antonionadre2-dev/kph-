@@ -8,6 +8,8 @@ import { verifyPayrexxWebhook, verifyResendWebhook } from './booking-webhooks.ts
 import { createRecoveryService } from '../integrations/recovery/service.mjs';
 import { createRecoveryHandler } from '../integrations/recovery/http.mjs';
 import { createFirestoreRecoveryStore } from '../integrations/recovery/firestore-store.mjs';
+import { bookingAppointmentStart, bookingEmailLinks, collectionConfiguration, createCustomerNotification, notificationForBooking, prepareCustomerEnvelope, selectedEmailSnapshot } from './customer-notifications.ts';
+import { languageForBackgroundEmail, normalizeEmailLanguage } from '../integrations/email-collection/index.mjs';
 import firebaseConfig from '../firebase-applet-config.json' with {type:'json'};
 
 export const BOOKING_TERMS_VERSION='kraken-2026-11-24';
@@ -20,7 +22,7 @@ const bearer=(req:Request)=>/^Bearer ([A-Za-z0-9_.-]{20,4096})$/.exec(req.get('A
 const privateResponse=(res:Response)=>{res.set({'Cache-Control':'private, no-store','Referrer-Policy':'no-referrer','X-Content-Type-Options':'nosniff'});};
 const validEmail=(value:unknown)=>typeof value==='string' && value.length<=254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 const string=(value:unknown,max:number,code:string,min=1)=>{if(typeof value!=='string' || value.trim().length<min || value.length>max || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value))throw new BookingError(code);return value.trim();};
-const language=(value:unknown)=>{if(typeof value!=='string' || !languages.includes(value))throw new BookingError('INVALID_LANGUAGE');return value;};
+const language=(value:unknown)=>{try{return normalizeEmailLanguage(value);}catch{throw new BookingError('INVALID_LANGUAGE');}};
 
 /** Validates the actual Zurich wall-clock instant, including calendar and CET/CEST. */
 export function validateAppointment(date:any,time:any,now=Date.now()) {
@@ -63,13 +65,33 @@ export function validateBookingRequest(input:any,now=Date.now()) {
   return {selection,quote,customer:{name,email:customer.email.trim().toLowerCase(),phone,address,postalCode:customer.postalCode,city},requestedDate:input.requestedDate,requestedTime:input.requestedTime,language:language(input.language),notes:string(input.notes??'',4000,'INVALID_NOTES',0),idempotencyKey,recovery:input.recovery};
 }
 
-export function createBookingService({store,tokenSecret,origin,mode='unconfigured',payment=null,sendEmail=null,sender='',clock=Date.now,recovery=null}: {store:BookingStore;tokenSecret:string;origin:string;mode?:string;payment?:any;sendEmail?:any;sender?:string;clock?:()=>number;recovery?:any}) {
+export function createBookingService({store,tokenSecret,origin,mode='unconfigured',payment=null,sendEmail=null,sender='',clock=Date.now,recovery=null,emailCollectionEnabled=false,paymentNotificationsEnabled=false}: {store:BookingStore;tokenSecret:string;origin:string;mode?:string;payment?:any;sendEmail?:any;sender?:string;clock?:()=>number;recovery?:any;emailCollectionEnabled?:boolean;paymentNotificationsEnabled?:boolean}) {
   const token=(id:string)=>crypto.createHmac('sha256',tokenSecret).update(`booking:${id}`).digest('base64url');
   let recoveryService=recovery;
   const canCheckout=(record:any)=>Boolean(payment && ['confirmed','held'].includes(record.scheduling.status) && Date.parse(record.scheduling.holdExpiresAt)>clock() && record.quote.totalCents>0 && !record.quote.manualReviewReasons.length && !['paid','test_paid','refunded','partially_refunded','chargeback','disputed','reconciliation_required'].includes(record.payment.status) && !['cancelled','expired','completed'].includes(record.status));
-  const view=(record:any,includeToken=false)=>({bookingId:record.bookingId,reference:record.reference,...(includeToken?{publicToken:token(record.bookingId)}:{}),status:record.status,language:record.language,quote:record.quote,quoteRevision:record.quoteRevision,canCheckout:canCheckout(record),customer:record.customer,notes:record.notes,scopeNotes:record.scopeNotes,termsVersion:record.termsVersion,scheduling:record.scheduling,payment:record.payment,email:record.email});
+  const view=(record:any,includeToken=false)=>({bookingId:record.bookingId,reference:record.reference,...(includeToken?{publicToken:token(record.bookingId)}:{}),status:record.status,language:record.language,languageSnapshot:record.languageSnapshot,quote:record.quote,quoteRevision:record.quoteRevision,canCheckout:canCheckout(record),customer:record.customer,notes:record.notes,scopeNotes:record.scopeNotes,termsVersion:record.termsVersion,scheduling:record.scheduling,payment:record.payment,email:record.email});
   async function authenticated(id:string,access:string) {if(!safeId.test(id)||!timingEqual(access,token(id)))throw new BookingError('BOOKING_NOT_FOUND',404);const record=await store.get(id);if(!record || record.tokenRevoked)throw new BookingError('BOOKING_NOT_FOUND',404);return record;}
-  async function enqueue(record:any,kind:'request'|'receipt') {await store.addMail({id:`${record.bookingId}:${kind}:${kind==='receipt'?record.checkout?.reference:'1'}`,bookingId:record.bookingId,kind,status:'queued',dueAt:clock()});}
+  function mailJob(record:any,kind:string,templateId:string,eventId:string,id?:string,extra:any={}) {
+    let notification,notificationError;
+    try{notification=notificationForBooking(record,templateId,eventId,extra);}catch{notificationError='EMAIL_SNAPSHOT_REVIEW_REQUIRED';}
+    return {id:id||`${record.bookingId}:${templateId}:${digest(eventId).slice(0,24)}`,bookingId:record.bookingId,kind,status:'queued',dueAt:clock(),...(notification?{notification}:{notificationError})};
+  }
+  function eligibleNotification(record:any,job:any) {
+    if(job.kind==='customer_access')return job.expiresAt>clock();
+    if(!record)return false;
+    if(job.kind==='receipt')return ['paid','test_paid'].includes(record.payment.status);
+    if(job.kind!=='notification')return true;
+    const template=job.notification?.templateId;
+    if(['booking_confirmed','appointment_reminder'].includes(template)){
+      if(record.scheduling.status!=='confirmed'||['cancelled','expired','completed'].includes(record.status)||['refunded','partially_refunded','chargeback','disputed','reconciliation_required'].includes(record.payment.status))return false;
+      try{if(bookingAppointmentStart(record)!==job.notification.renderData.appointment?.start)return false;}catch{return false;}
+    }
+    if(template==='payment_pending'&&record.payment.status!=='pending')return false;
+    if(template==='payment_failed'&&record.payment.status!=='failed')return false;
+    if(template==='payment_requested'&&(!canCheckout(record)||record.checkout?.expiresAt<=clock()))return false;
+    if(template==='appointment_reminder'&&Date.parse(job.notification?.renderData?.appointment?.start||'')<=clock())return false;
+    return true;
+  }
   const service={
     token,view,authenticated,canCheckout,
     setRecovery(value:any){recoveryService=value;},
@@ -84,9 +106,9 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       }
       const id=crypto.randomBytes(18).toString('base64url'), total=value.quote.totalCents;
       const now=clock();
-      const record={bookingId:id,reference:`K-${new Date(now).getUTCFullYear()}-${id.slice(0,8).toUpperCase()}`,status:'awaiting_confirmation',mode,createdAt:now,revision:1,selection:value.selection,quote:value.quote,quoteRevision:1,customer:value.customer,notes:value.notes,language:value.language,termsVersion:BOOKING_TERMS_VERSION,termsAcceptedAt:now,scheduling:{status:'requested',date:value.requestedDate,time:value.requestedTime,timeZone:'Europe/Zurich'},payment:{status:'not_started',depositPercent:DEPOSIT_PERCENT,amountDueNowCents:total===null?0:Math.round(total*DEPOSIT_PERCENT/100),amountPaidCents:0,remainingBalanceCents:total??0},email:{request:'queued'},...(value.recovery?{recoveryId:value.recovery.id}:{})};
+      const record={bookingId:id,reference:`K-${new Date(now).getUTCFullYear()}-${id.slice(0,8).toUpperCase()}`,status:'awaiting_confirmation',mode,createdAt:now,revision:1,selection:value.selection,quote:value.quote,quoteRevision:1,customer:value.customer,notes:value.notes,language:value.language,languageSnapshot:selectedEmailSnapshot(value.language),termsVersion:BOOKING_TERMS_VERSION,termsAcceptedAt:now,scheduling:{status:'requested',date:value.requestedDate,time:value.requestedTime,timeZone:'Europe/Zurich'},payment:{status:'not_started',depositPercent:DEPOSIT_PERCENT,amountDueNowCents:total===null?0:Math.round(total*DEPOSIT_PERCENT/100),amountPaidCents:0,remainingBalanceCents:total??0},email:{request:'queued'},...(value.recovery?{recoveryId:value.recovery.id}:{})};
       const fingerprint=digest(canonical({...value,recovery:value.recovery||null}));
-      const saved=await store.create(value.idempotencyKey,fingerprint,record,{id:`${id}:request:1`,bookingId:id,kind:'request',status:'queued',dueAt:now});
+      const saved=await store.create(value.idempotencyKey,fingerprint,record,mailJob(record,'request','request_received',`${id}:requested:1`,`${id}:request:1`));
       if(value.recovery)await recoveryService.linkBooking({...value.recovery,email:value.customer.email,bookingId:saved.bookingId});
       return view(saved,true);
     },
@@ -101,7 +123,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       await authenticated(id,access);
       if(!payment)throw new BookingError('PAYMENT_NOT_CONFIGURED',503);
       if(input?.termsAccepted!==true || input.termsVersion!==BOOKING_TERMS_VERSION)throw new BookingError('TERMS_REQUIRED');
-      const locale=language(input.language);
+      language(input.language); // Checkout presentation never changes the saved communication preference.
       const claimed=await store.mutate(id,current=>{
         if(input.acceptedQuoteRevision!==current.quoteRevision)throw new BookingError('PRICE_CHANGED',409);
         if(!['live','test'].includes(mode)||current.mode!==mode)throw new BookingError('PAYMENT_MODE_CHANGED',409);
@@ -111,12 +133,13 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         if(current.checkout && ['creating','unknown'].includes(current.checkout.status))throw new BookingError('PAYMENT_RECONCILIATION_REQUIRED',409);
         if(current.checkout?.expiresAt<=clock())throw new BookingError('CHECKOUT_EXPIRED',409);
         const expiresAt=Math.min(Date.parse(current.scheduling.holdExpiresAt),clock()+30*60000);
-        return {...current,language:locale,checkout:{status:'creating',reference:`${id}-r${current.quoteRevision}`,expiresAt},revision:current.revision+1};
+        return {...current,checkout:{status:'creating',reference:`${id}-r${current.quoteRevision}`,expiresAt,createdAt:clock()},revision:current.revision+1};
       });
       if(claimed.checkout.link)return {link:claimed.checkout.link};
       try {
         const gateway=await payment.create(claimed,token(id),Math.max(1,Math.floor((claimed.checkout.expiresAt-clock())/60000)));
-        await store.mutate(id,current=>({...current,checkout:{...current.checkout,gatewayId:gateway.id,link:gateway.link,status:'created'},payment:{...current.payment,status:'pending',checkoutExpiresAt:new Date(current.checkout.expiresAt).toISOString()}}));
+        await store.mutateWithMail(id,current=>({...current,checkout:{...current.checkout,gatewayId:gateway.id,link:gateway.link,status:'created'},payment:{...current.payment,status:'pending',checkoutExpiresAt:new Date(current.checkout.expiresAt).toISOString()}}),record=>emailCollectionEnabled?mailJob(record,'notification','payment_requested',`${id}:gateway:${gateway.id}`):null);
+        if(emailCollectionEnabled)try{await service.runDue({jobId:`${id}:payment_requested:${digest(`${id}:gateway:${gateway.id}`).slice(0,24)}`,limit:1});}catch{console.warn('[booking:email-dispatch]',{phase:'payment-request'});}
         return {link:gateway.link};
       } catch {
         await store.mutate(id,current=>({...current,checkout:{...current.checkout,status:'unknown'}}));
@@ -135,8 +158,24 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         const status=(terminal.includes(previous)&&!terminal.includes(verified.status))||(['paid','test_paid'].includes(previous)&&['pending','failed','cancelled','expired'].includes(verified.status))?previous:verified.status;
         const paid=['paid','test_paid'].includes(status);
         const amount=paid?record.payment.amountDueNowCents:record.payment.amountPaidCents;
-        return {...record,lastVerifiedAt:clock(),revision:record.payment.status===status?record.revision:record.revision+1,payment:{...record.payment,status,transactionId:verified.transactionId,amountPaidCents:amount,remainingBalanceCents:Math.max(0,(record.quote.totalCents||0)-amount)},...(paid?{scheduling:{...record.scheduling,status:'confirmed'},email:{...record.email,receipt:record.email.receipt||'queued'}}:{})};
-      },record=>['paid','test_paid'].includes(record.payment.status)?{id:`${id}:receipt:${record.checkout.reference}`,bookingId:id,kind:'receipt',status:'queued',dueAt:clock()}:null);
+        return {...record,lastVerifiedAt:clock(),revision:record.payment.status===status?record.revision:record.revision+1,payment:{...record.payment,status,transactionId:verified.transactionId,amountPaidCents:amount,remainingBalanceCents:Math.max(0,(record.quote.totalCents||0)-amount)},...(paid?{scheduling:{...record.scheduling,status:'confirmed'},email:{...record.email,...(!emailCollectionEnabled||paymentNotificationsEnabled?{receipt:record.email.receipt||'queued'}:{})}}:{})};
+      },record=>{
+        if(['paid','test_paid'].includes(record.payment.status)){
+          const jobs=(!emailCollectionEnabled||paymentNotificationsEnabled)?[mailJob(record,'receipt',record.payment.remainingBalanceCents>0?'deposit_received':'payment_received',`${id}:settled:${record.checkout.reference}`,`${id}:receipt:${record.checkout.reference}`)]:[];
+          if(emailCollectionEnabled){
+            jobs.push(mailJob(record,'notification','booking_confirmed',`${id}:appointment:${record.checkout.reference}`));
+            const reminder=mailJob(record,'notification','appointment_reminder',`${id}:appointment-reminder:${record.checkout.reference}`);
+            const appointment=Date.parse(reminder.notification?.renderData?.appointment?.start||'');
+            if(appointment>clock()+24*3600000)jobs.push({...reminder,dueAt:appointment-24*3600000});
+          }
+          return emailCollectionEnabled?jobs:jobs[0];
+        }
+        if(emailCollectionEnabled&&record.payment.status==='failed')return mailJob(record,'notification','payment_failed',`${id}:failed:${record.checkout.reference}`);
+        // A gateway wait is not a settled payment. Notify only after a verified, sustained wait.
+        if(emailCollectionEnabled&&record.payment.status==='pending'&&Number.isSafeInteger(record.checkout.createdAt)&&clock()-record.checkout.createdAt>=15*60000)
+          return mailJob(record,'notification','payment_pending',`${id}:pending:${record.checkout.reference}`);
+        return null;
+      });
       if(['paid','test_paid'].includes(next.payment.status)) {
         if(next.recoveryId && recoveryService)await recoveryService.stopDraft(next.recoveryId,'paid');
       }
@@ -144,6 +183,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       if(['paid','test_paid'].includes(next.payment.status)) {
         try {
           await service.runDue({jobId:`${id}:receipt:${next.checkout.reference}`,limit:1});
+          if(emailCollectionEnabled)await service.runDue({jobId:`${id}:booking_confirmed:${digest(`${id}:appointment:${next.checkout.reference}`).slice(0,24)}`,limit:1});
           return await store.get(id) || next;
         } catch {
           console.warn('[booking:email-dispatch]',{phase:'receipt'});
@@ -162,13 +202,22 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       });
     },
     /** Private commercial approval; the customer must accept the resulting revision in checkout. */
-    async approveManualQuote(id:string,{totalCents,scopeNotes,operatorId}:{totalCents:number;scopeNotes:string;operatorId:string}) {
+    async approveManualQuote(id:string,{totalCents,scopeNotes,scopeLanguage,operatorId}:{totalCents:number;scopeNotes:string;scopeLanguage?:string;operatorId:string}) {
       if(!operatorId || !Number.isSafeInteger(totalCents)||totalCents<=0||totalCents>100000000)throw new BookingError('INVALID_APPROVED_PRICE');
       const scope=string(scopeNotes,4000,'INVALID_SCOPE',10);
-      return store.mutate(id,record=>{
+      if(emailCollectionEnabled&&!scopeLanguage)throw new BookingError('SCOPE_LANGUAGE_REQUIRED');
+      const reviewedLanguage=scopeLanguage?language(scopeLanguage):undefined;
+      return store.mutateWithMail(id,record=>{
         if(record.checkout || !record.quote.manualReviewReasons.length || ['cancelled','expired','completed'].includes(record.status))throw new BookingError('MANUAL_QUOTE_NOT_AVAILABLE',409);
-        return {...record,originalQuote:record.quote,scopeNotes:scope,quote:{...record.quote,lines:[{id:'approved-manual-quote',label:scope,labelKey:'approvedManualQuote',quantity:1,unit:'package',unitPriceCents:totalCents,totalCents}],subtotalCents:totalCents,totalCents,vatComparisonCents:Math.round(totalCents*.081),manualReviewReasons:[]},quoteRevision:record.quoteRevision+1,revision:record.revision+1,priceApprovedBy:operatorId,priceApprovedAt:clock(),payment:{...record.payment,amountDueNowCents:Math.round(totalCents*DEPOSIT_PERCENT/100),remainingBalanceCents:totalCents}};
-      });
+        if(emailCollectionEnabled&&reviewedLanguage!==record.language)throw new BookingError('SCOPE_LANGUAGE_MISMATCH');
+        return {...record,originalQuote:record.quote,scopeNotes:scope,...(reviewedLanguage?{scopeContentLanguage:reviewedLanguage}:{}),quote:{...record.quote,lines:[{id:'approved-manual-quote',label:scope,labelKey:'approvedManualQuote',quantity:1,unit:'package',unitPriceCents:totalCents,totalCents}],subtotalCents:totalCents,totalCents,vatComparisonCents:Math.round(totalCents*.081),manualReviewReasons:[]},quoteRevision:record.quoteRevision+1,revision:record.revision+1,priceApprovedBy:operatorId,priceApprovedAt:clock(),payment:{...record.payment,amountDueNowCents:Math.round(totalCents*DEPOSIT_PERCENT/100),remainingBalanceCents:totalCents}};
+      },record=>emailCollectionEnabled?mailJob(record,'notification','quote_ready',`${id}:quote:${record.quoteRevision}`):null);
+    },
+    async changeEmailLanguage(id:string,access:string,input:any) {
+      await authenticated(id,access);
+      const snapshot=selectedEmailSnapshot(language(input?.language));
+      const next=await store.updateLanguageAndPending(id,snapshot,clock(),notification=>({...notification,languageSnapshot:snapshot}));
+      return view(next);
     },
     async resolveBookingForRecovery(id:string,email:string) {
       const record=await store.get(id);if(!record || record.customer.email!==email)return null;
@@ -184,14 +233,34 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       for(const pending of pendingJobs.slice(0,batch)) {
         if(performance.now()+15000>=deadlineAt)break;
         const job=await store.claimMail(pending.id,clock());if(!job)continue;
+        if(!emailCollectionEnabled&&(job.kind==='notification'||job.prepared?.notificationId)){await store.finishMail(job.id,'cancelled',null);continue;}
+        if(emailCollectionEnabled&&!paymentNotificationsEnabled&&job.kind==='receipt'){await store.finishMail(job.id,'cancelled',null);continue;}
         if(job.kind==='customer_access' && (!job.message || job.expiresAt<=clock())) {await store.finishMail(job.id,'cancelled',null);continue;}
         const record=job.bookingId?await store.get(job.bookingId):null;
-        if(job.kind!=='customer_access' && (!record || (job.kind==='receipt'&&!['paid','test_paid'].includes(record.payment.status)))) {await store.finishMail(job.id,'cancelled',null);continue;}
+        if(!eligibleNotification(record,job)){await store.finishMail(job.id,'cancelled',null);continue;}
         const recipient=job.email||record.customer.email;
         if(await store.isEmailSuppressed(recipient)) {await store.finishMail(job.id,'cancelled',null);if(record&&job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:'failed'}}));continue;}
         try {
-          const rendered=job.kind==='customer_access'?job.message:renderBookingEmail(record,job.kind,origin,token(record.bookingId));
-          const accepted=await sendEmail({from:sender,to:job.email||record.customer.email,...rendered,idempotencyKey:`kraken-booking:${job.id}`});
+          let message=job.prepared;
+          if(!message) {
+            if(emailCollectionEnabled) {
+              if(!job.notification)throw Object.assign(new Error('EMAIL_SNAPSHOT_REVIEW_REQUIRED'),{definitelyNotSent:true});
+              const links=job.kind==='customer_access'?job.authorisedLinks:bookingEmailLinks(record,job.notification,origin,token(record.bookingId));
+              message=prepareCustomerEnvelope(job.notification,links,origin);
+              // Keep the old stable job/provider key across a renderer rollout.
+              message={...message,idempotencyKey:`kraken-booking:${job.id}`};
+            } else {
+              const rendered=job.kind==='customer_access'?job.message:renderBookingEmail(record,job.kind,origin,token(record.bookingId));
+              message={from:sender,to:job.email||record.customer.email,...rendered,idempotencyKey:`kraken-booking:${job.id}`};
+            }
+            if(typeof store.prepareMail==='function')message=await store.prepareMail(job.id,message,clock(),job.expiresAt);
+            else if(emailCollectionEnabled)throw Object.assign(new Error('EMAIL_PREPARATION_STORE_REQUIRED'),{definitelyNotSent:true});
+            if(!message)continue;
+          }
+          if(job.preparedExpiresAt&&job.preparedExpiresAt<=clock()){await store.finishMail(job.id,'cancelled',null);continue;}
+          if(await store.isEmailSuppressed(message.to)){await store.finishMail(job.id,'cancelled',null);continue;}
+          if(!eligibleNotification(job.bookingId?await store.get(job.bookingId):null,job)){await store.finishMail(job.id,'cancelled',null);continue;}
+          const accepted=await sendEmail(message);
           await store.finishMail(job.id,'sent',accepted.id);
           if(job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:'sent'}}));
           sent++;
@@ -256,9 +325,10 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       const emailReady=Boolean(env.RESEND_API_KEY&&env.BOOKING_EMAIL_FROM&&origin.startsWith('https://'));
       const providerEmail=emailReady?createResendEmailAdapter(env.RESEND_API_KEY!,fetcher):null;
       const sendEmail=providerEmail?async(message:any)=>{if(await store.isEmailSuppressed(message.to)){const error:any=new BookingError('EMAIL_SUPPRESSED');error.definitelyNotSent=true;throw error;}return providerEmail(message);}:null;
-      const service=createBookingService({store,tokenSecret:secret,origin,mode,payment,sendEmail,sender:env.BOOKING_EMAIL_FROM,clock});
+      const emailCollection=collectionConfiguration(env,origin);
+      const service=createBookingService({store,tokenSecret:secret,origin,mode,payment,sendEmail,sender:env.BOOKING_EMAIL_FROM,clock,emailCollectionEnabled:emailCollection.enabled,paymentNotificationsEnabled:env.BOOKING_EMAIL_COLLECTION_PAYMENTS_ENABLED==='true'});
       const remindersEnabled=env.BOOKING_RECOVERY_REMINDERS_ENABLED==='true'&&(env.RESEND_WEBHOOK_SECRET||'').length>=32;
-      const recovery=emailReady&&(env.RECOVERY_TOKEN_SECRET||'').length>=32&&(env.CRON_SECRET||'').length>=32?createRecoveryService({store:createFirestoreRecoveryStore(db),calculatePrice,sendEmail,resolveBookingForRecovery:service.resolveBookingForRecovery,publicBaseUrl:origin,sender:env.BOOKING_EMAIL_FROM!,tokenSecret:env.RECOVERY_TOKEN_SECRET!,remindersEnabled,clock}):null;
+      const recovery=emailReady&&(env.RECOVERY_TOKEN_SECRET||'').length>=32&&(env.CRON_SECRET||'').length>=32?createRecoveryService({store:createFirestoreRecoveryStore(db),calculatePrice,sendEmail,resolveBookingForRecovery:service.resolveBookingForRecovery,publicBaseUrl:origin,sender:env.BOOKING_EMAIL_FROM!,tokenSecret:env.RECOVERY_TOKEN_SECRET!,remindersEnabled,emailCollection,clock}):null;
       const customerAccess=env.BOOKING_CUSTOMER_ACCESS_ENABLED==='true'&&emailReady&&Boolean(recovery);
       let auth=null;
       if(customerAccess){
@@ -333,10 +403,11 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
         }
         return res.status(201).json(result);
       }
-      const match=/^\/api\/booking\/requests\/([A-Za-z0-9_-]{1,128})(\/checkout)?$/.exec(req.path);
+      const match=/^\/api\/booking\/requests\/([A-Za-z0-9_-]{1,128})(\/(?:checkout|language))?$/.exec(req.path);
       if(match) {
         if(req.method==='GET'&&!match[2])return res.json(await runtime.service.read(match[1],bearer(req)));
-        if(req.method==='POST'&&match[2])return res.json(await runtime.service.checkout(match[1],bearer(req),req.body));
+        if(req.method==='POST'&&match[2]==='/checkout')return res.json(await runtime.service.checkout(match[1],bearer(req),req.body));
+        if(req.method==='PATCH'&&match[2]==='/language')return res.json(await runtime.service.changeEmailLanguage(match[1],bearer(req),req.body));
         throw new BookingError('METHOD_NOT_ALLOWED',405);
       }
       if(req.path==='/api/customer/access'&&req.method==='POST') {

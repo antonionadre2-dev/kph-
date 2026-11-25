@@ -1,0 +1,74 @@
+[
+  {
+    "id": "payment_requested",
+    "prompt": "Use case: stylized-concept. Asset: unique transparent email illustration for Kraken 'payment requested'. New scene, NOT a screenshot: one elegant small navy payment terminal with a blank pale glass screen, a blank mint bank card inserted partway, and a small translucent shield beside it. No character. Premium friendly 3D, restrained Swiss service branding, navy #002d5b, mint #b7f2d6, pale icy blue, soft studio lighting and gentle highlights. Three-quarter view, compact centered square composition, full objects visible with generous transparent margins. True transparent background, no ground plane. No letters, no numbers, no currency, no checkmark, no watermark; leave screen blank. Reference images define color and material quality only.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-71455c82-d452-4f40-9618-1be1eb6a9d4a.png",
+    "final": "assets/email-payment_requested.png",
+    "tool": "built-in image_gen"
+  },
+  {
+    "id": "deposit_received",
+    "prompt": "Use case: stylized-concept. Asset: premium 3D transparent email illustration for Kraken. Soft studio lighting, delicate specular highlights, pale frosted glass, mint #b7f2d6, icy blue and restrained navy #002d5b, rounded well-crafted forms. Reference image 1 for friendly polished material style, reference 2 for color only. No character for this image. Centered square, single compact composition, entire objects visible, ample transparent margins, genuine alpha transparent background, no ground plane. No letters, numbers, currency signs, text or watermark. Subject: a luminous pale glass receipt folder holding one small mint token, with three restrained pale circular progress beads along its bottom edge, ONLY the first one mint-filled and the others frosted empty. Show partial deposit safely received, NOT fully paid. No checkmark, no success celebration, no stacks of cash. Quiet reassurance. Light-colored objects must read clearly on a dark navy email background.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-4469368f-a19d-49bd-a0b1-d4bc5c02c91c.png",
+    "final": "assets/email-deposit_received.png",
+    "tool": "built-in image_gen"
+  },
+  {
+    "id": "payment_received",
+    "prompt": "Use case: stylized-concept. Asset: premium 3D transparent email illustration for Kraken. Soft studio lighting, delicate specular highlights, pale frosted glass, mint #b7f2d6, icy blue and restrained navy #002d5b, rounded well-crafted forms. Reference image 1 for friendly polished material style, reference 2 for color only. No character for this image. Centered square, single compact composition, entire objects visible, ample transparent margins, genuine alpha transparent background, no ground plane. No letters, numbers, currency signs, text or watermark. Subject: an elegant rolled pale-white receipt with subtle embossed line strokes (no text), and a large translucent mint circular seal bearing one clearly shaped checkmark leaning in front of it. Two tiny pale blue sparkles at most. All payment complete, restful reassuring finish. Light-colored forms must read on a dark navy email background. No card, no numbers.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-2354c9ea-02bf-4817-8ebd-970156d8948f.png",
+    "final": "assets/email-payment_received.png",
+    "tool": "built-in image_gen"
+  },
+  {
+    "id": "payment_pending",
+    "prompt": "Use case: stylized-concept. Asset: premium 3D transparent email illustration for Kraken. Soft studio lighting, delicate specular highlights, pale frosted glass, mint #b7f2d6, icy blue and restrained navy #002d5b, rounded well-crafted forms. Reference image 1 for friendly polished material style, reference 2 for color only. No character for this image. Centered square, single compact composition, entire objects visible, ample transparent margins, genuine alpha transparent background, no ground plane. No letters, numbers, currency signs, text or watermark. Subject: an elegant glass hourglass with a small amount of mint sand flowing mid-process, framed by one partial blue circular processing arc. No receipt, no checkmark, no success star, no money. Calm in-progress status, no urgency. Fully visible object. Different composition from a payment terminal.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-1f13b8b5-248b-4ddd-8a6a-48f9b19eb663.png",
+    "final": "assets/email-payment_pending.png",
+    "tool": "built-in image_gen"
+  },
+  {
+    "id": "payment_failed",
+    "prompt": "Use case: stylized-concept. Asset: premium 3D transparent email illustration for Kraken. Soft studio lighting, delicate specular highlights, pale frosted glass, mint #b7f2d6, icy blue and restrained navy #002d5b, rounded well-crafted forms. Reference image 1 for friendly polished material style, reference 2 for color only. No character for this image. Centered square, single compact composition, entire objects visible, ample transparent margins, genuine alpha transparent background, no ground plane. No letters, numbers, currency signs, text or watermark. Subject: an upright navy blank bank card resting beside a soft amber curved retry arrow. A small pale glass shield behind. Card has a blank chip and embossed abstract lines, never account numbers. Calm gentle retry status, no scary red, no X, NO checkmark or celebration. The amber arrow is clear and smooth. Minimal single compact object group.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-f0db2551-afba-44e1-a15d-df6750e9c522.png",
+    "final": "assets/email-payment_failed.png",
+    "tool": "built-in image_gen"
+  },
+  {
+    "id": "balance_due",
+    "prompt": "Use case: stylized-concept. Asset: premium 3D transparent email illustration for Kraken. Soft studio lighting, delicate specular highlights, pale frosted glass, mint #b7f2d6, icy blue and restrained navy #002d5b, rounded well-crafted forms. Reference image 1 for friendly polished material style, reference 2 for color only. No character for this image. Centered square, single compact composition, entire objects visible, ample transparent margins, genuine alpha transparent background, no ground plane. No letters, numbers, currency signs, text or watermark. Subject: a pale rolled receipt split visually into two sections by an embossed horizontal rule. The upper smaller section contains one mint coin token and the lower larger section a single empty frosted circular slot, conveying deposit received and remaining balance. A small navy wallet open behind. No successful-payment checkmark. Only these three objects, compact clean geometry.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-416f87eb-5e7d-4e51-9c96-cde68df50bd4.png",
+    "final": "assets/email-balance_due.png",
+    "tool": "built-in image_gen"
+  },
+  {
+    "id": "refund_issued",
+    "prompt": "Use case: stylized-concept. Asset: premium 3D transparent email illustration for Kraken. Soft studio lighting, delicate specular highlights, pale frosted glass, mint #b7f2d6, icy blue and restrained navy #002d5b, rounded well-crafted forms. Reference image 1 for friendly polished material style, reference 2 for color only. No character for this image. Centered square, single compact composition, entire objects visible, ample transparent margins, genuine alpha transparent background, no ground plane. No letters, numbers, currency signs, text or watermark. Subject: a pale icy-blue leather wallet open toward viewer, one mint token returning into it, and a smooth frosted pale mint return arrow arching back toward the wallet. Distinct from a receipt icon. Calm reassuring refund status. Light-colored objects readable on dark navy background. No currency signs, no checkmark.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-c55c670c-fcd1-4b84-8872-1a5f6854f829.png",
+    "final": "assets/email-refund_issued.png",
+    "tool": "built-in image_gen"
+  },
+  {
+    "id": "team_on_the_way",
+    "prompt": "Use case: stylized-concept. Asset: unique premium 3D transparent email illustration for Kraken. Reference 1 is the exact Kai identity to preserve: cobalt-blue friendly octopus with round expressive eyes, navy cap and navy polo, reddish suckers, smiling kind face. Reference 2 is the original Kraken wordmark for uniform/vehicle only; preserve its drawn shapes, do not invent lettering. NEW pose, no phone, no headset. Soft studio lighting, polished blue skin, navy #002d5b, mint #b7f2d6 and icy blue props. Square centered compact composition, full shapes visible and generous margins, true transparent alpha background, no scenery, no captions, no numbers, no watermark. Subject: a realistic-proportioned stylized navy Ford Transit delivery van in three-quarter front view, pointing to the right. Kai seated naturally inside driving seat, small enough to fit cabin, head visible through clear side window, two tentacles on steering wheel. Van dominates 85% of composition and is MUCH larger than Kai. Show full vehicle and all visible wheels. White original Kraken logo on side panel, no other text or license lettering. Small mint location pin beside front wheel, no map. Do not place giant character standing beside van.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-d8a73c57-1f50-45f8-8d0e-5e9668c90efc.png",
+    "final": "assets/email-team_on_the_way.png",
+    "tool": "built-in image_gen"
+  },
+  {
+    "id": "service_completed",
+    "prompt": "Use case: stylized-concept. Asset: unique premium 3D transparent email illustration for Kraken. Reference 1 is the exact Kai identity to preserve: cobalt-blue friendly octopus with round expressive eyes, navy cap and navy polo, reddish suckers, smiling kind face. Reference 2 is the original Kraken wordmark for uniform/vehicle only; preserve its drawn shapes, do not invent lettering. NEW pose, no phone, no headset. Soft studio lighting, polished blue skin, navy #002d5b, mint #b7f2d6 and icy blue props. Square centered compact composition, full shapes visible and generous margins, true transparent alpha background, no scenery, no captions, no numbers, no watermark. Subject: Kai standing beside a small elegant symbolic clean apartment cutaway (single pale window and mint doormat), proudly handing over a simple silver keyring with one mint house-shaped fob to the viewer using one front tentacle, another tentacle holds folded blue microfiber cloth. Calm helpful smile, modest clean sparkle at window. Make Kai main character in unique forward-facing finishing pose, no phone, no bags, no receipt, no calendar. Keep everything compact, clean and fully visible.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-20c12b35-82b9-4a96-a9b7-9629c9b55c25.png",
+    "final": "assets/email-service_completed.png",
+    "tool": "built-in image_gen",
+    "originalBeforeEdit": "/workspace/scratch/30982c904823/generated_images/exec-3746a742-adbc-495c-9e1c-dc8c28aa313f.png",
+    "editPrompt": "Use case: precise-object-edit. Edit target is image1. Change ONLY the two tiny foot-like blue shapes protruding beneath Kai's polo: replace them with elegant curved octopus tentacle tips with reddish suction cups, visibly curling sideways rather than looking like feet. Kai is an octopus and has no feet, shoes or legs. Keep the entire face, cap, exact logos, pose, cloth, keyring, mini apartment, lighting, framing, blue color and all other tentacles unchanged. Preserve transparent background and full visible composition. No new text, no extra props."
+  },
+  {
+    "id": "review_requested",
+    "prompt": "Use case: stylized-concept. Asset: unique premium 3D transparent email illustration for Kraken. Reference 1 is the exact Kai identity to preserve: cobalt-blue friendly octopus with round expressive eyes, navy cap and navy polo, reddish suckers, smiling kind face. Reference 2 is the original Kraken wordmark for uniform/vehicle only; preserve its drawn shapes, do not invent lettering. NEW pose, no phone, no headset. Soft studio lighting, polished blue skin, navy #002d5b, mint #b7f2d6 and icy blue props. Square centered compact composition, full shapes visible and generous margins, true transparent alpha background, no scenery, no captions, no numbers, no watermark. Subject: Kai gently holding up one large translucent icy-blue speech bubble containing a SINGLE hollow outlined star shape, while another tentacle opens in a welcoming conversational gesture. Kind curious expression inviting honest feedback. No five-star array, no five filled stars, no rating numbers, no thumbs-up, no clipboard, no phone. Make bubble large enough to read at thumbnail size, entire Kai torso and curled tentacles visible.",
+    "original": "/workspace/scratch/30982c904823/generated_images/exec-b34f3c0f-3589-49c4-b400-9e58c04a3523.png",
+    "final": "assets/email-review_requested.png",
+    "tool": "built-in image_gen"
+  }
+]

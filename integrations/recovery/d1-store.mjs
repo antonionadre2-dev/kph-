@@ -6,6 +6,7 @@ export function createD1RecoveryStore(db) {
   const all = async (sql, values) => (await statement(sql, values).all()).results || [];
   const run = (sql, values) => statement(sql, values).run();
   const unpack = row => row ? { ...JSON.parse(row.data_json), version:row.version, status:row.status, reminderConsent:row.reminder_consent === 1, lastActivityAt:row.last_activity_at } : null;
+  const unpackJob = row => row ? {...row,...(row.notification_json?{notification:JSON.parse(row.notification_json)}:{}),...(row.prepared_json?{prepared:JSON.parse(row.prepared_json)}:{}),preparedAt:row.prepared_at,preparedExpiresAt:row.prepared_expires_at}:null;
   const getDraft = async id => unpack(await first('SELECT * FROM recovery_drafts WHERE id=?', [id]));
   const getByIdempotency = async key => unpack(await first('SELECT * FROM recovery_drafts WHERE idempotency_key=?', [key]));
   return {
@@ -14,8 +15,8 @@ export function createD1RecoveryStore(db) {
       const actions = [statement(`INSERT INTO recovery_drafts (id,idempotency_key,fingerprint,email_hash,created_at,expires_at,status,last_activity_at,reminder_consent,version,data_json)
         VALUES (?,?,?,?,?,?,?,?,?,1,?) ON CONFLICT(idempotency_key) DO NOTHING`,
         [draft.id,draft.idempotencyKey,draft.fingerprint,draft.emailHash,draft.createdAt,draft.expiresAt,draft.status,draft.lastActivityAt,Number(draft.reminderConsent),JSON.stringify(draft)])];
-      for (const job of jobs) actions.push(statement(`INSERT INTO recovery_outbox(id,draft_id,kind,due_at,status)
-        SELECT ?,id,?,?,'queued' FROM recovery_drafts WHERE id=? ON CONFLICT(id) DO NOTHING`, [job.id,job.kind,job.dueAt,draft.id]));
+      for (const job of jobs) actions.push(statement(`INSERT INTO recovery_outbox(id,draft_id,kind,due_at,status,notification_json)
+        SELECT ?,id,?,?,'queued',? FROM recovery_drafts WHERE id=? ON CONFLICT(id) DO NOTHING`, [job.id,job.kind,job.dueAt,job.notification?JSON.stringify(job.notification):null,draft.id]));
       await db.batch(actions);
       return getByIdempotency(draft.idempotencyKey);
     },
@@ -23,6 +24,12 @@ export function createD1RecoveryStore(db) {
       const result = await run(`UPDATE recovery_drafts SET status=?,last_activity_at=?,reminder_consent=?,data_json=?,version=version+1 WHERE id=? AND version=?`,
         [draft.status,draft.lastActivityAt,Number(draft.reminderConsent),JSON.stringify(draft),draft.id,expectedVersion]);
       return result.meta?.changes === 1;
+    },
+    async updateDraftAndPending(draft, expectedVersion, pending) {
+      const serialized=JSON.stringify(draft);
+      const actions=[statement(`UPDATE recovery_drafts SET status=?,last_activity_at=?,reminder_consent=?,data_json=?,version=version+1 WHERE id=? AND version=?`,[draft.status,draft.lastActivityAt,Number(draft.reminderConsent),serialized,draft.id,expectedVersion])];
+      for(const item of pending)actions.push(statement(`UPDATE recovery_outbox SET notification_json=? WHERE id=? AND draft_id=? AND status='queued' AND attempts=0 AND prepared_json IS NULL AND EXISTS(SELECT 1 FROM recovery_drafts WHERE id=? AND version=? AND data_json=?)`,[JSON.stringify(item.notification),item.id,draft.id,draft.id,expectedVersion+1,serialized]));
+      const results=await db.batch(actions);return results[0].meta?.changes===1;
     },
     async getSuppression(emailHash) { return first('SELECT reason FROM recovery_suppressions WHERE email_hash=?',[emailHash]); },
     async isSuppressed(emailHash) { return Boolean(await first('SELECT email_hash FROM recovery_suppressions WHERE email_hash=?',[emailHash])); },
@@ -39,8 +46,12 @@ export function createD1RecoveryStore(db) {
         expires_at=CASE WHEN expires_at<=? THEN excluded.expires_at ELSE expires_at END RETURNING count`,[key,now+windowMs,now,now]);
       return result.count <= limit;
     },
-    async getJob(id) { return first('SELECT * FROM recovery_outbox WHERE id=?',[id]); },
-    async listDue(now, limit=20) { return all("SELECT * FROM recovery_outbox WHERE status='queued' AND due_at<=? ORDER BY due_at,id LIMIT ?",[now,Math.min(50,limit)]); },
+    async getJob(id) { return unpackJob(await first('SELECT * FROM recovery_outbox WHERE id=?',[id])); },
+    async prepareJob(id,envelope,{preparedAt,expiresAt}={}) {
+      await run(`UPDATE recovery_outbox SET prepared_json=?,prepared_at=?,prepared_expires_at=? WHERE id=? AND status='sending' AND prepared_json IS NULL AND notification_json IS NOT NULL`,[JSON.stringify(envelope),preparedAt,expiresAt,id]);
+      const row=unpackJob(await first('SELECT * FROM recovery_outbox WHERE id=?',[id]));return row?.status==='sending'&&row.prepared?row:null;
+    },
+    async listDue(now, limit=20) { return (await all("SELECT * FROM recovery_outbox WHERE status='queued' AND due_at<=? ORDER BY due_at,id LIMIT ?",[now,Math.min(50,limit)])).map(unpackJob); },
     async claimJob(id, now) {
       const result = await run(`UPDATE recovery_outbox SET status='sending',attempts=attempts+1,lease_until=?
         WHERE id=? AND status='queued' AND due_at<=? AND EXISTS(SELECT 1 FROM recovery_drafts d WHERE d.id=recovery_outbox.draft_id AND d.status='active' AND d.expires_at>?)`,[now+60_000,id,now,now]);

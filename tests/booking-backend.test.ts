@@ -94,7 +94,7 @@ test('verified paid update atomically queues one receipt, preserves balance and 
   await service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,language:'fr'});
   await service.reconcile(booking.bookingId);const second=await service.reconcile(booking.bookingId);
   assert.equal(second.payment.amountPaidCents,second.payment.amountDueNowCents);assert.equal(second.payment.remainingBalanceCents,second.quote.totalCents-second.payment.amountPaidCents);assert.equal(second.scheduling.status,'confirmed');
-  assert.equal(second.language,'fr');assert.equal(store.mail.size,2);
+  assert.equal(second.language,'es');assert.equal(store.mail.size,2);
   await service.runDue();await service.runDue();assert.equal(emails,2);assert.equal((await service.read(booking.bookingId,booking.publicToken)).email.receipt,'sent');
 });
 test('a slow verified paid response cannot revive a booking after a newer terminal refund result',async()=>{

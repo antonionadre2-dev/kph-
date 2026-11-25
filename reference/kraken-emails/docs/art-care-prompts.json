@@ -1,0 +1,66 @@
+[
+  {
+    "id": "issue_received",
+    "prompt": "Use case: stylized-concept. Asset type: unique transparent 3D illustration for Kraken customer email, issue received. Reference 1 is Kai identity only, reference 2 is exact Kraken logo for navy uniform. Keep blue octopus face, large blue eyes, navy cap and polo, pink suction cups; change pose completely and remove telephone. Show caring Kai looking thoughtfully down at a small pale mint note held in his tentacle, with a modest magnifying glass in another tentacle. This is acknowledgement of a concern being reviewed, not resolution: no check mark, no celebration. Premium softly lit matte and glass 3D render, navy #002d5b, mint #b7f2d6, blue. Three-quarter full figure with enough clear margins, entire shape uncropped, legible at 180px. Transparent background with subtle shadow only. No scenery, no other text, letters, numbers or watermark; uniform logo may follow reference.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-16b2722f-fc94-41a2-9d0e-b345dacbcc0f.png",
+    "output": "assets/email-issue_received.png",
+    "initialSource": "/workspace/scratch/30982c904823/generated_images/exec-c53a66b2-eb52-468c-9159-d0bafa727989.png",
+    "editPrompt": "Edit only the lower body in this illustration. Replace the two human-leg-like limbs below the polo shirt with a compact seated cluster of curled blue octopus tentacles with pink suction cups, like a real octopus mascot. Keep exactly the same face, expression, head, cap logo, uniform, magnifying glass, mint note, upper arm poses, colors, 3D quality and lighting. All tentacles must be smooth curved coils, no human legs or feet. Entire character isolated on genuinely transparent background with only subtle little shadow. Keep clear margins. No other changes."
+  },
+  {
+    "id": "issue_resolved",
+    "prompt": "Use case: stylized-concept. Asset type: a unique transparent 3D illustration for a Kraken customer email. Reference 1 locks Kai's identity, not his original phone pose. Reference 2 is exact Kraken wordmark for navy uniform if present. Preserve original bright blue octopus face, large blue eyes, navy cap and polo, pink suction cups; only curled tentacle lower body, no human legs. Premium polished 3D with matte navy fabric and mint glass props, soft studio lighting, navy #002d5b mint #b7f2d6 sky blue. Full form uncropped with generous clear margins, recognizable at 180px, transparent background and subtle ground shadow. No text, letters, numbers, watermarks except the supplied uniform logo. Show friendly Kai holding up a finished small mint clipboard with ONE elegant raised check symbol, holding a neat cleaning cloth in another tentacle. Calm relieved smile, slight three-quarter angle. This is a resolved customer concern, thoughtful reassurance, not confetti or exaggerated celebration. Different pose from original.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-6b29ece9-902d-45d8-8ddc-56078ac5cf29.png",
+    "output": "assets/email-issue_resolved.png"
+  },
+  {
+    "id": "recurring_visit",
+    "prompt": "Use case: stylized-concept. Asset type: a unique transparent 3D illustration for a Kraken customer email. Reference 1 locks Kai's identity, not his original phone pose. Reference 2 is exact Kraken wordmark for navy uniform if present. Preserve original bright blue octopus face, large blue eyes, navy cap and polo, pink suction cups; only curled tentacle lower body, no human legs. Premium polished 3D with matte navy fabric and mint glass props, soft studio lighting, navy #002d5b mint #b7f2d6 sky blue. Full form uncropped with generous clear margins, recognizable at 180px, transparent background and subtle ground shadow. No text, letters, numbers, watermarks except the supplied uniform logo. Show cheerful Kai seated beside a small navy desk calendar, one tentacle curling around a mint circular repeat arrow in front of the calendar; another gently points at a blank highlighted calendar square. Calendar uses plain blank squares, no dates or lettering. The theme is a familiar regular cleaning visit. No checkmark, no telephone.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-025f548c-35cc-411c-8ce0-c0fd0c004c4d.png",
+    "output": "assets/email-recurring_visit.png"
+  },
+  {
+    "id": "recurring_updated",
+    "prompt": "Use case: stylized-concept. Asset type: one high-quality minimal 3D object illustration for Kraken customer email. Brand style reference is friendly polished 3D, midnight navy #002d5b, frosted translucent mint glass #b7f2d6 and pale sky blue. No mascot in this particular illustration. Soft studio light, small subtle contact shadow; genuinely transparent background with NO gradient backdrop or floor, no glow clouds, isolated complete object centered and uncropped with 12% clear margins. Square composition designed to be legible at 180px. No words, letters, dates, digits, watermark, pseudo-text. A sculptural small spiral desk calendar with blank day squares and a smooth navy pencil resting diagonally across it; one mint circular repeat arrow surrounds the bottom corner to communicate an updated recurring schedule. Do not include any checkmark. Clean memorable asymmetrical composition.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-71cde73e-37f6-4007-9126-a51ca27ee0ea.png",
+    "output": "assets/email-recurring_updated.png"
+  },
+  {
+    "id": "magic_link",
+    "prompt": "Use case: stylized-concept. Asset type: one high-quality minimal 3D object illustration for Kraken customer email. Brand style reference is friendly polished 3D, midnight navy #002d5b, frosted translucent mint glass #b7f2d6 and pale sky blue. No mascot in this particular illustration. Soft studio light, small subtle contact shadow; genuinely transparent background with NO gradient backdrop or floor, no glow clouds, isolated complete object centered and uncropped with 12% clear margins. Square composition designed to be legible at 180px. No words, letters, dates, digits, watermark, pseudo-text. An elegant substantial navy padlock with frosted mint translucent arch and a polished silver house key angled beside it, a tiny mint translucent shield behind. Calm secure-access email, one obvious key and one lock. No key codes, no checkmark, no padlock open, no text.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-e4913799-8bd7-4105-b406-043463984240.png",
+    "output": "assets/email-magic_link.png"
+  },
+  {
+    "id": "cancellation_received",
+    "prompt": "Use case: stylized-concept. Asset type: one high-quality minimal 3D object illustration for Kraken customer email. Brand style reference is friendly polished 3D, midnight navy #002d5b, frosted translucent mint glass #b7f2d6 and pale sky blue. No mascot in this particular illustration. Soft studio light, small subtle contact shadow; genuinely transparent background with NO gradient backdrop or floor, no glow clouds, isolated complete object centered and uncropped with 12% clear margins. Square composition designed to be legible at 180px. No words, letters, dates, digits, watermark, pseudo-text. A compact navy calendar with blank squares beside a small frosted mint hourglass with pale blue grains. A calm pending cancellation review, no checkmarks, no crosses, no successful completion symbols. The hourglass is prominent to show the request is still being reviewed.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-95f73e81-89e8-4ef4-9a57-4afbf81dd86f.png",
+    "output": "assets/email-cancellation_received.png"
+  },
+  {
+    "id": "support_received",
+    "prompt": "Use case: stylized-concept. Asset type: unique transparent 3D illustration for Kraken customer email. Reference 1 is Kai identity, reference 2 is exact logo for navy uniform. Preserve bright blue octopus face, very large blue eyes, navy cap and polo, pink suction cups. New pose, no phone; curled lower tentacles instead of human legs. Premium polished 3D matte navy fabric with pale mint glass props, soft studio light, navy #002d5b mint #b7f2d6. Entire isolated object uncropped with 12% margins, genuinely transparent background NO floor or cloudy backdrop, subtle small shadow only. Square compact composition legible at 180px. No words, digits or extra text apart from supplied uniform logo. Kai is seated behind a very small rounded navy service desk, delicately placing an unmarked pale mint envelope into a single shallow sky-blue inbox tray; he looks toward the visitor with welcoming but calm smile. One envelope only, no laptop, no phone, no check mark. This is acknowledgement of a new message received, not its resolution.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-980c46d6-e17f-4561-b16a-1bfe117e7d6e.png",
+    "output": "assets/email-support_received.png"
+  },
+  {
+    "id": "support_reply",
+    "prompt": "Use case: stylized-concept. Asset type: unique transparent 3D illustration for Kraken customer email. Reference 1 is Kai identity, reference 2 is exact logo for navy uniform. Preserve bright blue octopus face, very large blue eyes, navy cap and polo, pink suction cups. New pose, no phone; curled lower tentacles instead of human legs. Premium polished 3D matte navy fabric with pale mint glass props, soft studio light, navy #002d5b mint #b7f2d6. Entire isolated object uncropped with 12% margins, genuinely transparent background NO floor or cloudy backdrop, subtle small shadow only. Square compact composition legible at 180px. No words, digits or extra text apart from supplied uniform logo. Kai leans forward in a friendly three-quarter pose, extending one tentacle to hand a folded personal pale mint reply note toward the viewer; other tentacle gently raised in conversation. A small transparent empty speech bubble sits behind the note. No desk, no inbox, no checkmark, no phone. This is personal helpful human reply.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-d6c306b3-58cf-471f-b8dc-c662118a4c07.png",
+    "output": "assets/email-support_reply.png"
+  },
+  {
+    "id": "moving_guide",
+    "prompt": "Use case: stylized-concept. Asset type: unique transparent 3D illustration for Kraken customer email. Reference 1 is Kai identity, reference 2 is exact logo for navy uniform. Preserve bright blue octopus face, very large blue eyes, navy cap and polo, pink suction cups. New pose, no phone; curled lower tentacles instead of human legs. Premium polished 3D matte navy fabric with pale mint glass props, soft studio light, navy #002d5b mint #b7f2d6. Entire isolated object uncropped with 12% margins, genuinely transparent background NO floor or cloudy backdrop, subtle small shadow only. Square compact composition legible at 180px. No words, digits or extra text apart from supplied uniform logo. Kai studies a large folded pale mint street map held open across his lower body, a simple navy route and two unlettered location pins drawn on the map. Two small neat kraft cardboard moving boxes beside him, one open with a small plant. Engaged helpful expression. No real street names, no digits, no wordmarks on boxes, no checkmark. This is a personal moving preparation guide.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-8cc3aa53-0dbe-4faf-abce-1c06da5b2968.png",
+    "output": "assets/email-moving_guide.png"
+  },
+  {
+    "id": "cancellation_confirmed",
+    "prompt": "Use case: stylized-concept. Asset type: unique transparent 3D illustration for Kraken customer email, confirmed cancellation. One sculptural navy desk calendar closed like a small compact book, silver binding rings along top and a single calm pale mint circular badge with a simple dark navy horizontal minus symbol resting in front. Two elegantly aligned blank loose paper sheets beside it. The visual communicates a booking has been cancelled, orderly closure, no distress or celebration. No checkmarks, no hourglass, no clock, no arrows, no red crosses, no mascot in this one. Premium polished matte navy #002d5b and frosted mint glass #b7f2d6, subtle softbox lighting. Square centered composition with 12% margins, complete isolated object, genuinely transparent background, no gradient, floor or scenery, small contact shadow only. No letters, words, dates, digits or watermark. Designed for coherent branded customer emails and legibility at 180px.",
+    "source": "/workspace/scratch/30982c904823/generated_images/exec-0d31ea81-b7ce-4c95-9362-e4d8f1b04462.png",
+    "output": "assets/email-cancellation_confirmed.png",
+    "initialSource": "/workspace/scratch/30982c904823/generated_images/exec-d7212352-6aef-494d-8ef7-f8916aa11802.png",
+    "editPrompt": "Remove only the entire gray-white hazy background from this object illustration. Preserve exactly the navy calendar, silver binding rings, mint circular badge with navy minus sign, and the two loose white papers. Background must be fully alpha-transparent all around, no clouds, no white or gray haze, no vignette, no floor, no shadows except a very small subtle contact shadow directly beneath objects. Keep object edges crisp and complete and colors, angle, scale and geometry identical. Do not add anything."
+  }
+]

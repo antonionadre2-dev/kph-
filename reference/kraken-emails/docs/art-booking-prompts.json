@@ -1,0 +1,79 @@
+{
+  "mode": "built-in image_gen",
+  "referenceImages": [
+    "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/kai-help.png",
+    "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/kraken-logo.png"
+  ],
+  "outputSize": 560,
+  "transparent": true,
+  "items": [
+    {
+      "id": "quote_saved",
+      "prompt": "Use case: stylized-concept. Create one premium 3D email illustration on a genuinely transparent background. Reference image 1 is Kai's character identity only: preserve friendly blue octopus, huge expressive eyes, navy cap and navy polo, pink suction cups, character proportions and polished texture. Reference image 2 is the exact Kraken logo if small uniform branding is visible. NEW SCENE: Kai smiling gently while carefully sliding a blank ivory quote clipboard into an open mint document folder to keep it safe; both hands/tentacles interact with the folder; no phone. Subtle relief house symbol on folder. Centered square composition, entire character and prop visible with generous 12% margins, soft studio light, restrained navy #002d5b, mint #b7f2d6 and cyan. Sophisticated clear silhouette readable at 180px. No lettering, numbers, money amounts, extra people, busy setting or background.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-721a0b70-ec5c-4fbc-ba8c-e2b48dba0308.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-quote_saved.png"
+    },
+    {
+      "id": "quote_reminder_1",
+      "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Kai seated gently at the edge of a small mint cushion, holding one blank cream reminder card with a tiny navy paperclip and pointing softly toward it. Kind quiet invitation expression, modest closed smile, no urgency, no clock, no warning, no checkmark. Distinct three-quarter view.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-a4f3796c-5178-4484-925d-aacac71b5630.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-quote_reminder_1.png"
+    },
+    {
+      "id": "quote_reminder_2",
+      "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Object-only composition without mascot: a welcoming mint document wallet open like a small book, a blank ivory bookmark protruding, one polished blue home-shaped keyring beside it. A softly curved glass-blue arrow points back to the open wallet. Calm invitation to return to an unfinished quote, no checkmarks, no urgency. Premium tactile materials.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-2a737b33-af05-461a-9530-4f2d45363698.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-quote_reminder_2.png"
+    },
+    {
+      "id": "request_received",
+      "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Kai standing behind a small mint open inbox tray, gently lowering a closed ivory envelope into the tray. He looks toward viewer with a reassuring smile. One hand on envelope, one tentacle steadying tray, a little abstract navy home stamp on envelope. Communication received only, no calendar or payment success marks.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-d2f0f15a-0f3a-47dd-a714-824b48d0be20.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-request_received.png"
+    },
+    {
+      "id": "details_required",
+      "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Kai leans forward in a curious helpful pose, examining a blank ivory checklist with a small mint magnifying glass. Three empty square checkboxes embossed on the checklist, nothing ticked. One tentacle steadies the board, thoughtful brows and reassuring gentle smile. Details still needed, no completion symbol.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-eb183719-cd50-4cee-a2b0-14d78f26bf9d.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-details_required.png"
+    },
+    {
+      "id": "quote_ready",
+      "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Kai presents an elegant open navy quotation portfolio toward the viewer with both hands, ivory unlettered papers inside and a slim mint ribbon on its edge. Slight proud smile, body in three-quarter side view, one tentacle raised in welcoming gesture. Proposal ready to review, no checkmarks or paid symbols.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-97d6a68b-43ec-4b70-969b-1e6d2f41e53a.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-quote_ready.png",
+      "revisions": [
+        {
+          "source": "/workspace/scratch/30982c904823/generated_images/exec-d60e4c20-75a2-44b4-9caf-c54699583e6f.png",
+          "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Kai presents an elegant open navy quotation portfolio toward the viewer with both hands, ivory unlettered papers inside and a slim mint ribbon on its edge. Slight proud smile, body in three-quarter side view, one tentacle raised in welcoming gesture. Proposal ready to review, no checkmarks or paid symbols.",
+          "reason": "Original uniform monogram incomplete; replaced through imagegen edit"
+        }
+      ],
+      "editPrompt": "Use case: precise-object-edit. Image 1 is the edit target: Kai presenting a navy portfolio. Image 2 is the EXACT original Kraken logo reference. Change ONLY the embroidery on Kai's navy cap and polo: replace the incomplete K-like monograms with the COMPLETE original Kraken wordmark from image 2, embroidered in white at the existing small scale. Preserve logo letterforms and octopus motif exactly. Preserve every other element: pose, face, body, blue tentacles, portfolio, blank pages, ribbon, framing, lighting, true transparent background. No added captions. The existing logo is incomplete; the entire reference mark must fit in each location."
+    },
+    {
+      "id": "booking_confirmed",
+      "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Object-only hero without Kai: a chunky white and translucent-mint freestanding desk calendar with blank rounded date tiles, one large sculpted mint checkmark on a navy circular seal resting beside it, and a small blue house key. Premium rounded 3D forms and metallic binding rings. Clear booking confirmed feeling, no words or numerals.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-faf32d0b-1e45-45e9-b203-76fcc23f7f2f.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-booking_confirmed.png"
+    },
+    {
+      "id": "reschedule_proposed",
+      "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Object-only hero, no mascot: two small freestanding calendars facing each other at different gentle angles. One navy, one frosted mint. Each calendar has only blank ivory tiles. Between them a pair of smooth blue curved swap arrows. Subtle amber dot indicates a proposal waiting for response. No checkmarks, no confirmed state. All shapes rounded and high-quality, soft light. Uniform embroidery, if present, must show the complete small original Kraken wordmark, not a truncated monogram.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-6a18988f-4b7d-4c54-a30b-367405caa7a3.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-reschedule_proposed.png"
+    },
+    {
+      "id": "booking_updated",
+      "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Kai looks focused and content, holding a compact ivory desk calendar with mint binding and carefully updating one blank date tile using a chunky navy pencil. A small mint completed-update check symbol sits at the corner of the calendar. New pose, slight side view, folded tentacle supports calendar. Clear simple forms. Uniform embroidery, if present, must show the complete small original Kraken wordmark, not a truncated monogram.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-7ec8ee1b-a051-466b-bdfd-4252e1224e0d.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-booking_updated.png"
+    },
+    {
+      "id": "appointment_reminder",
+      "prompt": "Use case: stylized-concept. One premium polished 3D illustration for a Kraken customer email, true transparent background. Image 1 provides exact Kai character identity: friendly blue octopus with large blue expressive eyes, navy cap and navy polo, pink suction cups, no humanoid legs. Image 2 provides original Kraken wordmark for tiny uniform embroidery only. Keep identity and material quality, but completely new pose, never on phone. Soft studio light, navy #002d5b, mint #b7f2d6, sky blue and ivory. Center square isolated composition, fully visible edges with generous 12% margin, clear readable silhouette at 180px. No words, lettering, numbers, money amounts, extra people or scenery. NEW SCENE: Kai in a calm prepared pose, holding a polished mint analogue clock with simple navy hands and no numbers in one hand, and a silver house key with blue fob in the other. A tiny navy cleaning caddy with one mint cloth sits by a curled tentacle. Friendly ready-to-help expression. No alarm sparks or urgency. Uniform embroidery, if present, must show the complete small original Kraken wordmark, not a truncated monogram.",
+      "source": "/workspace/scratch/30982c904823/generated_images/exec-ce5c4279-e631-4097-a5f1-edf44ec717a7.png",
+      "asset": "/workspace/scratch/30982c904823/kraken-email-studio-20261125/assets/email-appointment_reminder.png"
+    }
+  ]
+}

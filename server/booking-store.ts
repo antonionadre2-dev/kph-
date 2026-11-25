@@ -52,16 +52,36 @@ export function createFirestoreBookingStore(db:Firestore) {
       return db.runTransaction(async tx=>{
         const ref=bookings.doc(id),current=(await tx.get(ref)).data();
         if(!current)throw new BookingError('BOOKING_NOT_FOUND',404);
-        const next=transform(current), job=makeJob(next);
-        const mailRef=job?outbox.doc(digest(job.id)):null;
-        const existing=mailRef?await tx.get(mailRef):null;
+        const next=transform(current), made=makeJob(next), jobs=Array.isArray(made)?made:made?[made]:[];
+        const pending=[];
+        for(const job of jobs){const ref=outbox.doc(digest(job.id));pending.push({ref,job,exists:(await tx.get(ref)).exists});}
         tx.set(ref,clean(next));
-        if(mailRef&&!existing?.exists)tx.create(mailRef,clean(job));
+        for(const item of pending)if(!item.exists)tx.create(item.ref,clean(item.job));
         return next;
       });
     },
     async addMail(job:any) {
       return db.runTransaction(async tx=>{const ref=outbox.doc(digest(job.id));if((await tx.get(ref)).exists)return false;tx.create(ref,clean(job));return true;});
+    },
+    async prepareMail(id:string,message:any,preparedAt:number,expiresAt?:number) {
+      return db.runTransaction(async tx=>{
+        const ref=outbox.doc(digest(id)),current=(await tx.get(ref)).data();
+        if(!current||current.status!=='sending')return null;
+        if(current.prepared)return current.prepared;
+        const prepared=clean(message);
+        tx.update(ref,{prepared,preparedAt,...(expiresAt?{preparedExpiresAt:expiresAt}:{})});
+        return prepared;
+      });
+    },
+    async updateLanguageAndPending(id:string,languageSnapshot:any,now:number,updateNotification:(notification:any)=>any) {
+      return db.runTransaction(async tx=>{
+        const ref=bookings.doc(id),record=(await tx.get(ref)).data();
+        if(!record)throw new BookingError('BOOKING_NOT_FOUND',404);
+        const pending=await tx.get(outbox.where('bookingId','==',id));
+        for(const doc of pending.docs){const job=doc.data();if(job.status==='queued'&&!(job.attempts>0)&&!job.prepared&&job.notification)tx.update(doc.ref,{notification:clean(updateNotification(job.notification))});}
+        const next={...record,language:languageSnapshot.language,languageSnapshot,communicationPreferenceUpdatedAt:now,revision:record.revision+1};
+        tx.set(ref,clean(next));return next;
+      });
     },
     async listDueMail(now:number,limit=20) {
       return (await outbox.where('status','==','queued').where('dueAt','<=',now).orderBy('dueAt').limit(Math.max(1,Math.min(20,Math.floor(limit)))).get()).docs.map(doc=>doc.data());
@@ -70,7 +90,7 @@ export function createFirestoreBookingStore(db:Firestore) {
       return db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(!current || current.status!=='queued' || current.dueAt>now)return null;const attempts=Number.isSafeInteger(current.attempts)&&current.attempts>=0?current.attempts:0;const next={...current,status:'sending',attempts:attempts+1,leaseUntil:now+60000};tx.set(ref,next);return next;});
     },
     async finishMail(id:string, status:string, providerId:string|null, retryAt?:number) {
-      await db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(current?.status==='sending')tx.update(ref,{status,providerId,leaseUntil:null,...(status==='queued'&&Number.isSafeInteger(retryAt)?{dueAt:retryAt}:{}),...(current.kind==='customer_access'&&status!=='queued'?{message:null}:{})});});
+      await db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(current?.status==='sending')tx.update(ref,{status,providerId,leaseUntil:null,...(status==='queued'&&Number.isSafeInteger(retryAt)?{dueAt:retryAt}:{}),...(current.kind==='customer_access'&&status!=='queued'?{message:null,prepared:null}:{})});});
     },
     async markStaleMail(now:number,{limit=20,deadlineAt=Infinity}={}) {
       for(const doc of (await outbox.where('status','==','sending').where('leaseUntil','<=',now).limit(Math.max(1,Math.min(20,Math.floor(limit)))).get()).docs) {

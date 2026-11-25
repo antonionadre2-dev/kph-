@@ -8,7 +8,8 @@ import KrakenServiceIcon from './KrakenServiceIcon';
 import QuoteRecoveryCard from './QuoteRecoveryCard';
 import KrakenJourney, { JourneyEmailPreview, type JourneyPhase } from './KrakenJourney';
 import MovingGuide from './MovingGuide';
-import { journeyCopy } from '../src/booking/journeyCopy';
+import { journeyCopy, LANGUAGE_NAMES } from '../src/booking/journeyCopy';
+import { communicationLanguageToRestore, communicationPreferenceDiffers } from '../src/booking/communicationLanguage';
 import { guidePreferencesFromQuery, type GuidePreferences } from '../src/booking/movingGuide';
 import { createDemoBooking, confirmDemoAppointment, settleDemoPayment, type DemoBooking, type DemoPaymentOutcome } from '../src/booking/demoJourney';
 import { consumeHomeCalculatorRequest, subscribeHomeCalculatorRequests, HOME_CALCULATOR_INTENT_KEY } from '../src/home/calculator';
@@ -35,7 +36,7 @@ interface BookingConfig {
 }
 interface BookingView {
   bookingId: string; reference: string; publicToken?: string; status: string;
-  language?: string; demo?: boolean;
+  language?: string; languageSnapshot?: {language:string;source:string;version:number}; demo?: boolean;
   quote: PriceQuote; quoteRevision: number; canCheckout?: boolean;
   customer?: Customer; scopeNotes?: string; notes?: string; termsVersion?: string;
   scheduling: { status: 'requested' | 'held' | 'confirmed' | 'needs_reschedule'; date: string; time: string; endTime?: string; timeZone: string; holdExpiresAt?: string };
@@ -51,6 +52,14 @@ const tokenKey = (id: string) => `kraken.booking.${id}`;
 const recoveryTokenKey = (id: string) => `kraken.recovery.${id}`;
 const safeId = /^[A-Za-z0-9_-]{1,128}$/;
 const safeToken = /^[A-Za-z0-9_-]{20,256}$/;
+const communicationCopy = {
+  de:{use:'Diese Sprache für E-Mails verwenden',note:'Speichern Sie Ihre bevorzugte Sprache für kommende Mitteilungen.',saved:'Ihre E-Mail-Sprache wurde gespeichert.',error:'Die Änderung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.'},
+  en:{use:'Use this language for emails',note:'Save your preferred language for future communications.',saved:'Your email language has been saved.',error:'The change could not be saved. Please try again.'},
+  es:{use:'Usar este idioma para los emails',note:'Guarde su idioma preferido para las próximas comunicaciones.',saved:'Su idioma de email se ha guardado.',error:'No se ha podido guardar el cambio. Inténtelo de nuevo.'},
+  fr:{use:'Utiliser cette langue pour les emails',note:'Enregistrez votre langue préférée pour les prochaines communications.',saved:'La langue de vos emails a été enregistrée.',error:'Le changement n’a pas pu être enregistré. Veuillez réessayer.'},
+  it:{use:'Usa questa lingua per le email',note:'Salva la lingua preferita per le prossime comunicazioni.',saved:'La lingua delle email è stata salvata.',error:'Non è stato possibile salvare la modifica. Riprova.'},
+  pt:{use:'Usar este idioma nos emails',note:'Guarde o seu idioma preferido para as próximas comunicações.',saved:'O idioma dos seus emails foi guardado.',error:'Não foi possível guardar a alteração. Tente novamente.'}
+};
 
 function localToday(instant = new Date()): string {
   const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Zurich', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(instant);
@@ -231,6 +240,10 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
   const [booking, setBooking] = useState<BookingView | null>(null);
   const [bookingAccess, setBookingAccess] = useState<{ id: string; token: string } | null>(null);
   const [recoveryAccess, setRecoveryAccess] = useState<RecoveryAccess | null>(null);
+  const [recoveryEmailLanguage, setRecoveryEmailLanguage] = useState<string | null>(null);
+  const [changingEmailLanguage, setChangingEmailLanguage] = useState(false);
+  const [emailLanguageNotice, setEmailLanguageNotice] = useState<'saved'|'error'|null>(null);
+  const restoreLanguageRef=useRef(setLanguage);restoreLanguageRef.current=setLanguage;
   const [recoveryRestored, setRecoveryRestored] = useState(false);
   const [recoveryLoading, setRecoveryLoading] = useState(() => !preview && new URLSearchParams(window.location.search).has('draft'));
   const [returnMissing, setReturnMissing] = useState(false);
@@ -302,8 +315,9 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
     void api<{ selection: BookingSelection; language: string; email?: string; guidePreferences?:GuidePreferences; bookingId?: string | null; resumeBooking?: { bookingId: string; publicToken: string; canCheckout: boolean; status: string } | null }>(`/api/recovery/drafts/${encodeURIComponent(id)}`, { signal: controller.signal, headers: { Authorization: `Bearer ${accessToken}` } })
       .then(draft => {
         if (controller.signal.aborted) return;
-        const explicitLanguage = new URLSearchParams(window.location.search).get('lang')?.split('-')[0];
-        if (!explicitLanguage || !['de','en','es','fr','it','pt'].includes(explicitLanguage)) setLanguage(bookingLanguage(draft.language));
+        const restore=communicationLanguageToRestore(draft.language,window.location.search);
+        if(restore)restoreLanguageRef.current(restore);
+        setRecoveryEmailLanguage(draft.language);
         if(draft.guidePreferences) setGuidePreferences(draft.guidePreferences);
         // A payment reminder must resume its existing booking, never create a duplicate request.
         if (draft.bookingId || draft.resumeBooking) {
@@ -338,10 +352,10 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
       if (document.hidden) return;
-      void api(`/api/recovery/drafts/${encodeURIComponent(recoveryAccess.id)}/activity`, { method: 'POST', signal: controller.signal, headers: { Authorization: `Bearer ${recoveryAccess.accessToken}` }, body: JSON.stringify({ selection, language: locale, guidePreferences }) }).catch(() => { /* A failed heartbeat must not block the quote or pretend it was saved. */ });
+      void api(`/api/recovery/drafts/${encodeURIComponent(recoveryAccess.id)}/activity`, { method: 'POST', signal: controller.signal, headers: { Authorization: `Bearer ${recoveryAccess.accessToken}` }, body: JSON.stringify({ selection, guidePreferences }) }).catch(() => { /* Activity never changes a communication preference. */ });
     }, 1200);
     return () => { window.clearTimeout(timer); controller.abort(); };
-  }, [preview, recoveryAccess, selection, wizardStep, booking, bookingAccess, locale, guidePreferences]);
+  }, [preview, recoveryAccess, selection, wizardStep, booking, bookingAccess, guidePreferences]);
   const manualReview = Boolean(quote && (quote.totalCents === null || quote.manualReviewReasons.length));
   const checkoutExpiry = booking?.payment.checkoutExpiresAt ? Date.parse(booking.payment.checkoutExpiresAt) : Number.NaN;
   const checkoutHasExpired = booking?.payment.status === 'pending' && Number.isFinite(checkoutExpiry) && checkoutExpiry <= paymentClock;
@@ -391,7 +405,11 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
   const readStatus = useCallback(async (access: { id: string; token: string }, signal?: AbortSignal) => {
     if (preview) throw new BookingApiError('PREVIEW_ONLY', 403);
     const value = await api<BookingView>(`/api/booking/requests/${encodeURIComponent(access.id)}`, { signal, headers: { Authorization: `Bearer ${access.token}` } });
-    if (!signal?.aborted) setBooking(value);
+    if (!signal?.aborted) {
+      setBooking(value);
+      const restore=communicationLanguageToRestore(value.language,window.location.search);
+      if(restore)restoreLanguageRef.current(restore);
+    }
     return value;
   }, [preview]);
 
@@ -508,10 +526,27 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
   const acceptRecoveryAccess = (access: RecoveryAccess) => {
     if (preview || !safeId.test(access.id) || !safeToken.test(access.accessToken)) return;
     setRecoveryAccess(access);
+    setRecoveryEmailLanguage(locale);setEmailLanguageNotice(null);
     try { sessionStorage.setItem(recoveryTokenKey(access.id), access.accessToken); } catch { /* No customer details are stored. */ }
     const url = new URL(window.location.href); url.searchParams.set('draft', access.id);
     window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
   };
+
+  async function changeCommunicationLanguage() {
+    if(preview || changingEmailLanguage || (!bookingAccess&&!recoveryAccess))return;
+    setChangingEmailLanguage(true);setEmailLanguageNotice(null);
+    try {
+      if(bookingAccess) {
+        const updated=await api<BookingView>(`/api/booking/requests/${encodeURIComponent(bookingAccess.id)}/language`,{method:'PATCH',headers:{Authorization:`Bearer ${bookingAccess.token}`},body:JSON.stringify({language:locale})});
+        setBooking(current=>current?.bookingId===updated.bookingId?{...current,language:updated.language,languageSnapshot:updated.languageSnapshot}:current);
+      } else if(recoveryAccess) {
+        const updated=await api<{language:string}>(`/api/recovery/drafts/${encodeURIComponent(recoveryAccess.id)}/activity`,{method:'POST',headers:{Authorization:`Bearer ${recoveryAccess.accessToken}`},body:JSON.stringify({language:locale})});
+        setRecoveryEmailLanguage(updated.language);
+      }
+      setEmailLanguageNotice('saved');
+    }catch{setEmailLanguageNotice('error');}
+    finally{setChangingEmailLanguage(false);}
+  }
 
   function focusStep(fieldId?: string) {
     window.requestAnimationFrame(() => {
@@ -679,7 +714,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
     setRequestedDate(''); setRequestedTime('09:00'); setNotes('');
     setKaiSummary(null); setKaiConflicts([]); touchedSelection.current.clear(); interruptedSelections.current.clear();
     setWizardStep(0);
-    setRecoveryAccess(null); setRecoveryRestored(false); setRecoveryLoading(false);
+    setRecoveryAccess(null); setRecoveryEmailLanguage(null);setEmailLanguageNotice(null);setRecoveryRestored(false); setRecoveryLoading(false);
     intentHandled.current = true; setLegacyImported(false); setUnsupportedIntent(false);
     const url = new URL(window.location.href);
     for (const key of ['booking', 'payment', 'service', 'draft']) url.searchParams.delete(key);
@@ -860,6 +895,11 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
       {returnMissing && <section className="kr-calc-card kr-calc-return-error" role="status"><ShieldCheck aria-hidden="true" /><p>{text('returnMissing')}</p><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a><button type="button" className="kr-calc-secondary" onClick={reset}>{text('newRequest')}</button></section>}
       {bookingAccess && !booking && <div className="kr-calc-loading" role="status">{loadingStatus ? <><LoaderCircle className="kr-calc-spin" aria-hidden="true" />{text('working')}</> : <button type="button" className="kr-calc-secondary" onClick={() => { void refreshStatus(); }}>{text('refresh')}</button>}</div>}
       {error && <p className="kr-calc-alert" role="alert">{error}</p>}
+      {!preview && (booking?.language || (recoveryAccess && recoveryEmailLanguage)) && <section className="kr-calc-card" style={{marginBottom:24}} aria-label={journey.emailLanguage}>
+        <p>{journey.emailLanguage}: <strong>{LANGUAGE_NAMES[bookingLanguage(booking?.language || recoveryEmailLanguage || locale)]}</strong></p>
+        {communicationPreferenceDiffers(locale,booking?.language || recoveryEmailLanguage) && <><p>{communicationCopy[locale].note}</p><button type="button" className="kr-calc-secondary" disabled={changingEmailLanguage} onClick={()=>void changeCommunicationLanguage()}>{changingEmailLanguage?<LoaderCircle className="kr-calc-spin" aria-hidden="true"/>:null}{communicationCopy[locale].use}</button></>}
+        {emailLanguageNotice && <p role={emailLanguageNotice==='error'?'alert':'status'}>{communicationCopy[locale][emailLanguageNotice]}</p>}
+      </section>}
       {!bookingAccess && !booking && !returnMissing && !recoveryLoading && <>
         {unsupportedIntent && <p className="kr-calc-alert" role="status">{text('unsupportedIntent')}</p>}
         {wizardStep === 0 && legacyCart.length > 0 && <section className="kr-calc-card" style={{ marginBottom: 24 }} aria-labelledby="kr-calc-legacy-title"><h2 id="kr-calc-legacy-title" className="kr-calc-subtitle" style={{ marginTop: 0 }}>{text('previousBasket', { count: legacyCart.length })}</h2><p className="kr-calc-section-hint" style={{ marginTop: 0 }}>{text('previousBasketHint')}</p>

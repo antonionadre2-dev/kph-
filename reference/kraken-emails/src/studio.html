@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kraken · Email Studio</title>
+  <style>
+    :root{--navy:#002d5b;--mint:#b7f2d6;--bg:#f4f8fb;--line:#dce7ef;--ink:#183c59;--muted:#5f7689}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}button,input,select{font:inherit}button,a,select,input{touch-action:manipulation}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #1484c0;outline-offset:3px}
+    header{padding:24px 4vw;background:white;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:24px}.logo{width:116px;height:auto;display:block}.brand{display:flex;align-items:center;gap:20px}.descriptor{border-left:1px solid var(--line);padding-left:20px;font-size:11px;line-height:1.5;color:var(--muted)}.mode-badge{border:1px solid #b8dbc9;background:#eef8f2;border-radius:100px;padding:8px 13px;color:#2b6754;font-size:11px;font-weight:650}.mode-badge i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#32a775;margin-right:7px}
+    .intro{padding:34px 4vw 28px;display:flex;justify-content:space-between;gap:35px;align-items:flex-end}.eyebrow{text-transform:uppercase;letter-spacing:1.8px;font-size:10px;font-weight:750;color:#4d7d6b;margin:0 0 11px}h1{font-size:clamp(26px,2.6vw,40px);font-weight:680;letter-spacing:-1.5px;line-height:1.15;margin:0 0 12px}.lede{max-width:690px;margin:0;color:var(--muted);font-size:14px;line-height:1.7}.facts{display:flex;gap:26px;flex-shrink:0}.facts strong{display:block;font-size:28px;line-height:1;color:var(--navy);font-weight:650}.facts span{font-size:10px;letter-spacing:.7px;color:var(--muted);text-transform:uppercase;display:block;margin-top:9px}
+    main{padding:0 4vw 50px;display:grid;grid-template-columns:290px minmax(0,1fr);gap:26px;align-items:start}.sidebar{position:sticky;top:18px;background:white;border:1px solid var(--line);border-radius:18px;overflow:hidden}.sidebar-head{padding:20px 20px 17px;border-bottom:1px solid var(--line)}.sidebar-head p{margin:4px 0 0;color:var(--muted);font-size:11px}.sidebar-head h2{font-size:14px;margin:0}.search{width:100%;padding:10px 11px;margin:14px 0 0;border:1px solid var(--line);border-radius:9px;background:#fafcfd}.template-list{max-height:67vh;overflow:auto;padding:12px}.group-title{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);padding:16px 9px 7px;margin:0}.template-button{display:flex;gap:11px;align-items:flex-start;width:100%;background:white;color:#3e5b72;border:0;border-radius:10px;text-align:left;padding:11px 10px;font-size:12px;line-height:1.45}.template-button span{font:10px/1.7 ui-monospace,monospace;opacity:.6;min-width:18px}.template-button:hover{background:#f2f7fa}.template-button[aria-current=true]{background:var(--navy);color:white}
+    .workspace{min-width:0}.controls{padding:20px;border:1px solid var(--line);border-radius:18px;background:white;display:grid;grid-template-columns:1fr 1.4fr 1fr 1fr;gap:12px}.control label{font-size:10px;letter-spacing:.5px;color:var(--muted);font-weight:700;display:block;margin-bottom:6px}.control input,.control select{width:100%;height:41px;border:1px solid #d7e3eb;border-radius:9px;padding:0 10px;background:#fff;color:var(--ink);font-size:12px}.toolbar{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:20px 1px 14px}.tabs{display:flex;padding:4px;background:#e7eff4;border-radius:10px;gap:4px}.tabs button{border:0;color:#5c7487;background:none;border-radius:7px;padding:8px 13px;font-size:11px;font-weight:650}.tabs button[aria-pressed=true]{background:white;color:var(--navy);box-shadow:0 2px 7px #0a345b0c}.download{border:1px solid #cbdde7;background:white;border-radius:9px;padding:10px 13px;font-size:11px;color:var(--navy);font-weight:650}.envelope{max-width:720px;margin:0 auto;padding:20px 23px;background:white;border:1px solid var(--line);border-radius:16px 16px 0 0}.meta{display:grid;grid-template-columns:56px minmax(0,1fr);gap:5px 8px;font-size:11px;color:#61768a}.meta strong{color:var(--ink);font-weight:600;overflow-wrap:anywhere}.meta .subject{font-size:14px;line-height:1.45}.frame-wrap{max-width:720px;margin:0 auto;background:#eef3f7;border:1px solid var(--line);border-top:0;border-radius:0 0 16px 16px;overflow:hidden;transition:max-width .2s}iframe{display:block;width:100%;border:0;min-height:700px;background:#eef3f7}.frame-wrap.mobile{max-width:390px;box-shadow:0 18px 50px #002d5b12}.text-view{display:none;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;padding:25px;color:var(--ink);font:13px/1.7 ui-monospace,monospace;background:white}.context-note{max-width:720px;margin:18px auto 0;font-size:11px;line-height:1.7;color:var(--muted)}.context-note strong{color:var(--ink)}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);width:min(90vw,540px);border:1px solid #b3dbc8;background:#e3f5eb;color:#164d3d;padding:17px 22px;border-radius:12px;box-shadow:0 10px 30px #002d5b1a;font-size:13px;z-index:9}.toast[hidden]{display:none}.footnote{text-align:center;padding:25px;font-size:11px;color:var(--muted);border-top:1px solid var(--line)}
+    @media(max-width:1050px){.facts{display:none}main{grid-template-columns:245px minmax(0,1fr)}.controls{grid-template-columns:1fr 1fr}.descriptor{display:none}}
+    @media(max-width:760px){header{padding:18px 20px}.mode-badge{font-size:10px}.intro{padding:26px 20px}.intro h1{font-size:29px}main{display:block;padding:0 12px 28px}.sidebar{position:static;margin-bottom:16px}.template-list{max-height:180px;display:grid;grid-template-columns:1fr 1fr;gap:1px}.group-title{grid-column:1/-1;padding-top:10px}.sidebar-head{padding:16px}.sidebar-head p{display:none}.search{margin-top:10px}.controls{padding:15px}.toolbar{gap:8px}.tabs button{padding:8px 10px}.download{font-size:10px;padding:10px}.envelope{padding:16px}.meta{grid-template-columns:43px 1fr;font-size:10px}.meta .subject{font-size:12px}.context-note{padding:0 10px}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <header><div class="brand"><img id="brand-logo" class="logo" alt="Kraken"><span class="descriptor">Properties &amp; Facilities<br>Management</span></div><span class="mode-badge"><i></i>Demo privada · sin envíos</span></header>
+  <section class="intro"><div><p class="eyebrow">Kraken / Customer experience</p><h1>Cada detalle habla de Kraken.</h1><p class="lede">30 imágenes diferentes, una para cada momento. Cambia el servicio, el idioma y el nombre para ver cómo se adapta cada email a su cliente.</p></div><div class="facts"><div><strong>30</strong><span>Momentos</span></div><div><strong>6</strong><span>Idiomas</span></div><div><strong>30</strong><span>Imágenes propias</span></div></div></section>
+  <main>
+    <aside class="sidebar"><div class="sidebar-head"><h2>El recorrido del cliente</h2><p>Cada mensaje tiene su momento.</p><label class="sr-only" for="search" style="display:block;font-size:10px;color:#5f7689;margin-top:12px;">Buscar un email</label><input class="search" id="search" placeholder="Reserva, pago, recordatorio…" type="search" style="margin-top:5px;"></div><nav class="template-list" id="template-list" aria-label="Plantillas de email"></nav></aside>
+    <section class="workspace" aria-label="Personalizar y revisar email">
+      <div class="controls">
+        <div class="control"><label for="language">IDIOMA DEL CLIENTE</label><select id="language"><option value="de">Deutsch (CH)</option><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="it">Italiano</option><option value="pt">Português</option></select></div>
+        <div class="control"><label for="service">SERVICIO</label><select id="service"><option value="end">Limpieza de fin de contrato</option><option value="windows">Limpieza de ventanas</option><option value="regular">Limpieza regular</option><option value="deep">Limpieza profunda</option><option value="moving">Mudanza pequeña</option><option value="construction">Limpieza de fin de obra</option></select></div>
+        <div class="control"><label for="first-name">NOMBRE DEL CLIENTE</label><input id="first-name" value="Laura" maxlength="60" autocomplete="off"></div>
+        <div class="control"><label for="city">CIUDAD</label><select id="city"><option>Zürich</option><option>Schaffhausen</option><option>Winterthur</option></select></div>
+      </div>
+      <div class="toolbar"><div class="tabs" aria-label="Formato"><button data-view="desktop" aria-pressed="true">Escritorio</button><button data-view="mobile" aria-pressed="false">Móvil</button><button data-view="text" aria-pressed="false">Texto</button></div><button class="download" id="download">Descargar este email ↓</button></div>
+      <div class="envelope"><div class="meta"><span>De</span><strong>Kraken PFM &lt;kai@krakenpfm.ch&gt;</strong><span>Para</span><strong id="recipient">Laura Meier &lt;laura@example.com&gt;</strong><span>Asunto</span><strong class="subject" id="subject"></strong><span>Preview</span><span id="preheader"></span></div></div>
+      <div class="frame-wrap" id="frame-wrap"><iframe id="email-frame" title="Vista del email" sandbox="allow-same-origin"></iframe><pre class="text-view" id="text-view"></pre></div>
+      <p class="context-note" id="context-note"></p>
+    </section>
+  </main>
+  <p class="footnote">Datos ficticios para revisar el diseño. Los importes son ejemplos. Ninguna acción envía emails, realiza pagos ni crea reservas.</p>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script>
+  __ENGINE__
+  const EMAIL_CATALOGS=__CATALOGS__;
+  const EMAIL_ASSETS=__ASSETS__;
+  const groups=[
+    ['01 · Antes de reservar',['quote_saved','quote_reminder_1','quote_reminder_2','moving_guide']],
+    ['02 · Solicitud y presupuesto',['request_received','details_required','quote_ready']],
+    ['03 · Cita y preparación',['booking_confirmed','reschedule_proposed','booking_updated','appointment_reminder','team_on_the_way']],
+    ['04 · Pagos y recibos',['payment_requested','deposit_received','payment_received','payment_pending','payment_failed','balance_due','refund_issued']],
+    ['05 · Después del servicio',['service_completed','review_requested','issue_received','issue_resolved']],
+    ['06 · Relación y cambios',['recurring_visit','recurring_updated','magic_link','support_received','support_reply','cancellation_received','cancellation_confirmed']]
+  ];
+  let selected='booking_confirmed', view='desktop', currentEmail, frameObserver;
+  const $=id=>document.getElementById(id);
+  $('brand-logo').src=EMAIL_ASSETS['kraken-logo.png'];
+  function notice(text){$('toast').textContent=text;$('toast').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>$('toast').hidden=true,5500);}
+  function drawList(){
+    const query=$('search').value.trim().toLocaleLowerCase('es');
+    $('template-list').innerHTML='';
+    groups.forEach(([name,ids])=>{
+      const filtered=ids.filter(id=>EMAIL_CATALOGS.es[id].title.toLowerCase().includes(query));
+      if(!filtered.length)return;
+      const heading=document.createElement('p');heading.className='group-title';heading.textContent=name;$('template-list').appendChild(heading);
+      filtered.forEach(id=>{const b=document.createElement('button');b.className='template-button';b.setAttribute('aria-current',String(id===selected));b.dataset.template=id;const n=document.createElement('span');n.textContent=String(Object.keys(EMAIL_CATALOGS.de).indexOf(id)+1).padStart(2,'0');b.appendChild(n);b.appendChild(document.createTextNode(EMAIL_CATALOGS.es[id].title));b.onclick=()=>{selected=id;drawList();renderCurrent();};$('template-list').appendChild(b);});
+    });
+  }
+  function renderCurrent(){
+    const lang=$('language').value;
+    const data=demoData(selected,lang,$('service').value);
+    const name=$('first-name').value.trim()||'Laura';
+    data.customer.firstName=name;
+    data.staffReply=data.staffReply.replaceAll('Laura',name);
+    data.city=$('city').value;
+    if(data.address)data.address=`Musterstrasse 12, ${{'Zürich':'8000','Schaffhausen':'8200','Winterthur':'8400'}[data.city]} ${data.city}`;
+    if(data.service==='moving')data.move={from:data.city,to:data.city==='Schaffhausen'?'Zürich':'Schaffhausen'};
+    $('service').value=data.service;
+    try{
+      currentEmail=renderEmail(selected,data,{catalogs:EMAIL_CATALOGS,assets:EMAIL_ASSETS,mode:'preview'});
+      $('subject').textContent=currentEmail.subject;$('preheader').textContent=currentEmail.preheader;$('recipient').textContent=`${name} Meier <laura@example.com>`;
+      $('text-view').textContent=currentEmail.text;$('email-frame').srcdoc=currentEmail.html;
+      const type=EMAIL_CATALOGS.de[selected].kind;
+      $('context-note').innerHTML=`<strong>${escapeHtml(EMAIL_CATALOGS.es[selected].title)}.</strong> ${type==='reminder_consented'?'Se envía únicamente con permiso para los recordatorios; se detiene al reservar, pagar o darse de baja.':type==='feedback_consented'?'Petición de opinión voluntaria. La misma opción de valoración está disponible para todos los clientes.':'Se vincula al estado real de la solicitud, la reserva o el pago.'} Firma, servicio, ubicación, idioma y detalle de importes se adaptan al cliente. Los botones de esta vista sólo muestran una explicación.`;
+      setView(view);
+    }catch(error){notice(error.message);}
+  }
+  $('email-frame').addEventListener('load',()=>{
+    const doc=$('email-frame').contentDocument;
+    if(!doc)return;
+    const fit=()=>{$('email-frame').style.height=`${Math.max(700,Math.ceil(doc.body.getBoundingClientRect().height))}px`;};
+    if(frameObserver)frameObserver.disconnect();
+    frameObserver=new ResizeObserver(fit);frameObserver.observe(doc.body);
+    doc.addEventListener('click',event=>{const a=event.target.closest('a');if(a){event.preventDefault();notice('Vista de diseño: en la versión conectada este botón abrirá el enlace personal y seguro del cliente. Aquí no se envía ni se contrata nada.');}});
+    fit();
+  });
+  function setView(next){view=next;document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===view)));$('frame-wrap').classList.toggle('mobile',view==='mobile');$('email-frame').style.display=view==='text'?'none':'block';$('text-view').style.display=view==='text'?'block':'none';}
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+  ['language','service','city'].forEach(id=>$(id).addEventListener('change',renderCurrent));
+  $('first-name').addEventListener('input',renderCurrent);$('search').addEventListener('input',drawList);
+  $('download').onclick=()=>{const isText=view==='text';const blob=new Blob([isText?currentEmail.text:currentEmail.html],{type:isText?'text/plain;charset=utf-8':'text/html;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`kraken-${selected}-${$('language').value}.${isText?'txt':'html'}`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+  drawList();renderCurrent();
+  window.KRAKEN_DEMO={select(id){selected=id;drawList();renderCurrent();},setView,renderCurrent};
+  </script>
+</body>
+</html>

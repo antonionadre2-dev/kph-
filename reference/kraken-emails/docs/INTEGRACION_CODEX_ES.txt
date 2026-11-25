@@ -1,0 +1,302 @@
+IMPLEMENTAR LOS EMAILS DE KRAKEN EN EL IDIOMA SELECCIONADO EN LA WEB
+
+CONTEXTO Y OBJETIVO
+
+Trabaja en el repositorio real de Kraken PFM. Integra el paquete de referencia kraken-email-studio, que contiene 30 tipos de emails en seis idiomas: de, en, es, fr, it y pt. Queremos comunicaciones personales, claras y visuales, coherentes con la web existente: logo original, azul marino Kraken, menta, espacios blancos, Kai como apoyo, firma personal y footer completo.
+
+Implementa el flujo real de persistencia y envío automático con los sistemas que ya utiliza Kraken, listo para su proceso habitual de despliegue. Las pruebas deben utilizar datos sintéticos y un transporte falso o entorno de pruebas; no envíes pruebas a clientes ni realices cobros. No sustituyas el backend real por una demo ni declares una integración activa si faltan credenciales, configuración o verificación.
+
+Primero inspecciona la arquitectura actual, las instrucciones aplicables del repositorio, el proveedor de emails, el backend de reservas, la base de datos, el sistema de idiomas, la autenticación, la integración de Payrexx y los tests ya disponibles. Conserva los cambios de otras personas y utiliza las convenciones existentes. No reemplaces el proyecto ni añadas otro backend si ya existe uno adecuado.
+
+FUENTES DEL PAQUETE
+
+- README_ES.md: alcance y uso de la colección.
+- content/catalog.de.json, .en.json, .es.json, .fr.json, .it.json y .pt.json: 30 variantes completas por idioma.
+- src/render.mjs: renderEmail(id, data, options), escape de datos, HTML, texto y cabeceras aplicables. En producción exige un idioma válido explícito.
+- src/language.mjs: normalización, selección de idioma y snapshot persistible.
+- src/server-email.mjs: prepareServerEmail() prepara el mensaje con idioma y destinatario del snapshot del servidor.
+- examples/selected-language.mjs: prueba ejecutable con datos ficticios, sin envíos.
+- src/labels.mjs: etiquetas, formatos y nombres de servicios.
+- src/preparation.mjs: preparación por servicio/idioma.
+- src/demo-data.mjs: datos FICTICIOS, exclusivos de la galería y pruebas.
+- assets/: logo original y 30 ilustraciones diferentes, assets/email-<id>.png.
+- src/artwork.mjs: relación exacta entre plantilla e imagen. Mantén esta asignación; no sustituyas todas las escenas por una única imagen de Kai.
+- docs/LIFECYCLE_ES.md: eventos, estados y personalización.
+- docs/BRAND_AUDIT_ES.md: fuentes de negocio y documentación primaria de email.
+
+No uses la galería ABRIR_EMAIL_STUDIO.html como plantilla de envío. Usa el HTML y texto producidos por renderEmail. No envíes el objeto de demo-data a un destinatario real.
+
+
+REQUISITO PRINCIPAL: IDIOMA DE PRINCIPIO A FIN
+
+La elección explícita del selector de krakenpfm.ch debe determinar todos los emails correspondientes a esa solicitud o reserva: asunto, preheader, cuerpo, nombres de servicios, instrucciones, CTA, firma y footer.
+
+Idiomas admitidos: de, en, es, fr, it y pt. Las variantes regionales se normalizan (de-CH a de, en-GB a en, pt-PT o pt-BR a pt). No deduzcas el idioma por nombre, dirección, nacionalidad, panel administrativo ni ubicación en Suiza.
+
+A. FRONTEND
+
+Reutiliza el selector y el estado de idioma existentes. Al guardar una selección, solicitar servicio, crear una reserva o abrir un caso de soporte, incluye language con el valor actual del selector. Normaliza con normalizeEmailLanguage(locale). Mantén ese idioma al navegar a la calculadora y al recuperar una selección guardada. La elección manual tiene prioridad sobre el idioma del navegador.
+
+No uses navigator.language como sustituto de una elección ya hecha. Sólo puede servir como ayuda al iniciar una visita sin preferencia previa. No introduzcas claves de almacenamiento nuevas si ya hay una fuente correcta en la web. Conserva los borradores existentes. No reutilices kraken_consultation_data_v2 ni claves de sesión de acceso como almacenes de email.
+
+B. BACKEND Y BASE DE DATOS
+
+En solicitudes nuevas exige language válido; si falta o es incompatible, devuelve un error de validación localizado. No lo conviertas silenciosamente en alemán.
+
+const selected = normalizeEmailLanguage(body.language);
+const languageSnapshot = snapshotEmailLanguage({ selectedLanguage: selected });
+
+Guarda el objeto completo {language, source, version:1} junto con la solicitud/reserva en la MISMA transacción que el registro de negocio. Si el modelo usa una columna email_language, deriva su valor del snapshot y evita inconsistencias entre ambos. Copia la preferencia de la solicitud al presupuesto y de éste a la reserva. Incluye el idioma guardado en la respuesta autenticada al recuperar una reserva, para que la interfaz también lo restaure.
+
+Para registros históricos sin idioma, utiliza migrateLegacyEmailLanguage() en una migración explícita: idioma válido de la reserva, preferencia válida guardada del cliente y finalmente de. Registra que se aplicó el valor de legado. No sobrescribas valores corruptos sin revisarlos ni realices este fallback en cada envío.
+
+C. EVENTOS, PAYREXX Y RECORDATORIOS
+
+Tras un evento de negocio verificado, crea una notificación en la cola/outbox existente, copiando languageSnapshot y el destinatario autorizado. El webhook Payrexx y los recordatorios leen la reserva o la notificación guardada: no tienen que depender de cookies, pestañas abiertas, Accept-Language del callback ni del idioma del administrador.
+
+Esquema del snapshot que acepta el adaptador del paquete:
+
+{
+  id: "id-persistido-de-notificacion",
+  eventId: "id-persistido-de-evento-de-negocio",
+  eventType: "evento-real-mapeado-al-catalogo",
+  entityId: "id-reserva-o-caso",
+  recipientIdentity: "id-estable-de-cliente-o-contacto",
+  recipientEmail: "email-del-registro-autorizado",
+  templateId: "payment_received",
+  templateRevision: "1.2.0",
+  languageSnapshot: { language: "es", source: "selected", version: 1 },
+  renderData: { /* Datos reales del backend según el contrato del renderer */ }
+}
+
+Los valores anteriores describen el contrato; no son registros para insertar. Mapea el esquema al repositorio actual. Al crear el trabajo usa una restricción única durable para el evento + plantilla + identidad del destinatario. El ID de notificación debe ser estable para todos sus intentos.
+
+Cuando llegue el momento del primer intento, genera los enlaces autorizados con su caducidad real, prepara el email con prepareServerEmail(), persiste el contenido preparado y utiliza el proveedor real de Kraken. Si el trabajo se creó días antes, no fabriques un magic link que vaya a caducar antes del envío. Los reintentos reutilizan el contenido y la clave persistidos; no vuelven a elegir idioma ni a recalcular importes. Antes de cada intento, vuelve a comprobar si un recordatorio voluntario sigue permitido y si su solicitud ya se completó o fue cancelada. No uses un consentimiento histórico para ignorar una baja posterior. No reenvíes enlaces que ya hayan caducado; resuelve ese caso mediante el flujo autenticado y la política de reintentos del proyecto.
+
+const envelope = prepareServerEmail(
+  { templateId: row.templateId, notificationSnapshot: row, links: authorisedLinks },
+  { catalogs, brand, assetBaseUrl }
+);
+
+El envelope devuelve to, from:{name,email}, replyTo, subject, html, text, headers, language, notificationId e idempotencyKey. Adapta estos campos al SDK/transporte real que ya esté instalado. El adaptador no tiene base de datos ni transporte: implementa las llamadas reales en el repositorio, no dejes una función ficticia sendEmail() y declares la tarea terminada.
+
+Revisa otras automatizaciones y notificaciones de pago ya activas para evitar mensajes duplicados. Los emails propios de Payrexx u otro tercero pueden tener una configuración de idioma distinta: verifica sus opciones reales y no inventes parámetros de API. Los correos de Kraken deben salir con las plantillas de este paquete y el idioma guardado.
+
+D. CAMBIOS DE PREFERENCIA Y ENLACES
+
+Durante la edición autorizada de una selección o reserva en borrador, una elección deliberada nueva puede actualizar su idioma. Un cambio de idioma en otra página no debe reescribir reservas o recibos existentes. Para cambiar la preferencia de comunicaciones de una reserva ya guardada, usa una acción explícita y autenticada y aplica el cambio a mensajes futuros que todavía no se hayan intentado. Los mensajes ya enviados y los recibos archivados conservan su versión original.
+
+Los botones deben devolver al cliente al idioma de su reserva usando el enrutador existente. Añade el contexto de idioma antes de firmar enlaces; no añadas ?lang= a cualquier URL de pago, enlace firmado o magic link ya emitido. Conserva los parámetros de reserva y el fragmento de acceso si el flujo actual lo utiliza. No borres #access al cambiar idioma antes de que lo consuma el mecanismo de autenticación.
+
+E. CONTENIDO DINÁMICO
+
+Los seis catálogos traducen la estructura del email. No traducen automáticamente una respuesta libre del equipo.
+
+- Frecuencia, extras y alcance deben proceder del catálogo de servicios localizado, preferiblemente a partir de códigos estables.
+- Se aceptan mapas por idioma: frequency:{es:"Semanal"}, extras:{es:["Interior del horno"]}, serviceScope:{es:"Cocina, baño y suelos"}.
+- Si envías esas etiquetas como cadenas/listas ya localizadas, declara localizedContentLanguage con el idioma correspondiente.
+- staffReply, resolution y openQuestions admiten mapas por idioma o texto redactado/revisado en el idioma del cliente con staffContentLanguage.
+- El renderer detecta versiones que faltan o metadatos de idioma incompatibles. No certifica que un texto haya sido traducido correctamente.
+- Las notas originales del cliente se conservan como tales; no alteres sus indicaciones ni inventes hechos operativos para completar traducciones.
+
+F. PRUEBA DE ACEPTACIÓN OBLIGATORIA
+
+Comprueba que la web esté inicialmente en alemán, el cliente elija español y guarde su solicitud. Cierra la sesión o simula otro navegador en alemán, procesa un evento de pago verificado y ejecuta un recordatorio. Los emails de Kraken deben seguir íntegramente en español. Repite el recorrido para de, en, es, fr, it y pt. Comprueba también recuperación desde otro dispositivo, preferencia histórica sin idioma, idioma inválido, mensajes del equipo, rechazo de contenido no traducido, duplicado de webhook, consentimiento revocado y funcionamiento de enlaces localizados.
+
+El paquete incluye npm test y npm run demo:language -- es. La demo es sintética y no envía correos. Añade pruebas de integración reales con la infraestructura del proyecto y transporte de prueba; no cuentes la demo como verificación de entrega en buzón o de Payrexx.
+
+1. ADAPTAR EL MOTOR AL PROYECTO
+
+El motor usa módulos nativos de Node.js, sin dependencias externas de renderizado. Si el proyecto trabaja con TypeScript, añade tipos o un adaptador siguiendo su estructura. Reutiliza catálogos, recursos y lógica, manteniendo el resultado visual.
+
+La API actual es:
+
+renderEmail(templateId, data, {
+  mode: 'production',
+  catalogs,
+  brand,
+  assetBaseUrl
+})
+
+Devuelve subject, preheader, html, text, headers, kind, eventType y preview, además de id/language. No envía mensajes ni verifica proveedores. En la integración de envío exige mode: 'production' de manera explícita; el valor por defecto del paquete es preview.
+
+Adapta el resultado al proveedor que ya use Kraken. No incluyas credenciales en el frontend, en plantillas, en screenshots ni en el ZIP. Configura el remitente de Kraken y un Reply-To realmente atendido, basado en kai@krakenpfm.ch si esa es la bandeja operativa confirmada.
+
+2. DATOS Y PERSONALIZACIÓN
+
+Los emails deben usar la versión autorizada de los datos del backend, no un payload de importes enviado por el navegador.
+
+Contrato orientativo del paquete:
+
+- language: de | en | es | fr | it | pt.
+- service: windows | end | regular | deep | moving | construction.
+- reference: referencia de la solicitud/reserva/caso real.
+- customer: firstName, lastName opcional y email.
+- city y address, sólo si corresponden al mensaje y se conocen.
+- rooms, areaM2, frequency, extras y customerNote cuando procedan.
+- appointment: start ISO con zona/offset y status requested | proposed | confirmed.
+- pricing: currency='CHF', totalRappen, paidRappen, transactionRappen, vatRappen y refundRappen cuando correspondan.
+- paymentStatus: estado verificado que corresponda a la operación.
+- links: primary, secondary y unsubscribe cuando proceda.
+- consent: permisos específicos guardados, con trazabilidad en la base de datos.
+- event: id único persistido y type correspondiente a la plantilla.
+- expiresAt: caducidad real para accesos que la requieran.
+- move: origen y destino reales cuando procedan.
+- staffReply, openQuestions, resolution: texto del equipo / caso real, no generado como supuesto hecho.
+
+Consulta el renderer para los tipos concretos de cada campo; algunos textos, como frecuencia y extras, admiten versiones por idioma. No expongas todo el registro del cliente si el email sólo necesita unos pocos datos.
+
+Guarda el idioma que el cliente eligió en la web con la solicitud y la reserva. Usa ese idioma para confirmación, recordatorios, recibos y seguimiento. No infieras idioma, nacionalidad o trato a partir del nombre. Si el cliente cambia expresamente su preferencia, aplícala a comunicaciones futuras sin reescribir facturas anteriores ya emitidas.
+
+El paquete exige nombre de pila. Si el flujo real no lo recoge, añade un saludo neutro traducido; no envíes {{firstName}} ni inventes nombres desde la dirección de email. Las fechas y horas se muestran en Europe/Zurich, con formato local del idioma. No conviertas una fecha solicitada en una cita confirmada.
+
+Los importes se guardan y calculan como enteros en céntimos de CHF. Conserva la versión del presupuesto / precio que el cliente aceptó. No copies las tarifas de ejemplo de demo-data como una nueva tabla de precios.
+
+3. PLANTILLAS Y EVENTOS REALES
+
+Integra estos 30 IDs según los eventos auténticos del sistema:
+
+quote_saved
+quote_reminder_1
+quote_reminder_2
+request_received
+details_required
+quote_ready
+booking_confirmed
+reschedule_proposed
+booking_updated
+appointment_reminder
+team_on_the_way
+payment_requested
+deposit_received
+payment_received
+payment_pending
+payment_failed
+balance_due
+refund_issued
+service_completed
+review_requested
+issue_received
+issue_resolved
+recurring_visit
+recurring_updated
+magic_link
+support_received
+support_reply
+cancellation_received
+cancellation_confirmed
+moving_guide
+
+El campo event del catálogo documenta el nombre propuesto del evento. Mapea esos nombres al modelo existente sin fingir que basta un string para verificar una operación. La igualdad de event.type y los controles del renderer son una defensa adicional, no una prueba de autenticidad.
+
+Envía cada mensaje sólo después de persistir el hecho correspondiente. Implementa unicidad durable por evento de negocio + tipo de plantilla + identidad estable del destinatario en la base o cola existente. El idioma y la versión de plantilla son metadatos: un despliegue nuevo no debe crear otro envío para el mismo evento. prepareServerEmail() devuelve una clave estable basada en el ID persistido de la notificación; no impide duplicados por sí solo. Si un proveedor devuelve un resultado incierto, reconcilia su estado antes de reenviar. Distingue aceptación del proveedor, entrega y rebote.
+
+Requisitos de estado:
+
+- request_received: solicitud recibida; no fecha confirmada ni pago presumido.
+- quote_ready: precio y alcance aprobados; presupuesto disponible para aceptar.
+- booking_confirmed: disponibilidad y cita realmente confirmadas.
+- reschedule_proposed: propuesta que todavía no sustituye el estado confirmado anterior.
+- booking_updated: cambio acordado y persistido.
+- team_on_the_way: salida realmente registrada; ETA sólo con datos reales, sin animación convertida en supuesto evento de negocio.
+- deposit_received: pago liquidado verificado, importe positivo y saldo positivo.
+- payment_received: pago liquidado verificado y saldo actual igual a cero.
+- payment_pending: estado pendiente verificado; no mandar correos por cada segundo de carga.
+- payment_failed: fallo final verificado; no asegurar que nunca hubo una autorización o retención bancaria.
+- balance_due: saldo positivo derivado de una liquidación real, descontando pagos previos.
+- refund_issued: devolución aceptada por el proveedor; distinguir de dinero ya visible en la cuenta del cliente.
+- service_completed: finalización registrada por el equipo; no supone automáticamente satisfacción del cliente.
+- cancellation_received: solicitud de cancelación pendiente.
+- cancellation_confirmed: cancelación efectiva; devolución y posibles tasas según las condiciones ya acordadas, sin inventarlas.
+
+4. PAYREXX Y RECIBOS
+
+Utiliza la integración Payrexx real existente. Verifica el mecanismo de autenticidad/autorización de sus eventos según la documentación vigente del proveedor y consulta el estado desde servidor cuando sea necesario. Una redirección de éxito, un parámetro en la URL, un botón pulsado o una animación terminada no confirman un pago.
+
+Antes de generar un recibo, relaciona la transacción con la reserva correcta y valida importe, moneda, estado y referencia desde datos autorizados. Impide asignar el pago de otra reserva. Gestiona eventos repetidos, fuera de orden y devoluciones parciales conforme al modelo del proveedor.
+
+La pantalla de pago y los emails deben compartir la misma fuente autorizada de total, pagado y saldo. No sumes dos veces anticipos ni descuentes IVA dos veces. Los emails de recibo enlazan o adjuntan el documento real generado por el sistema. Si todavía no existe un PDF de factura/recibo, implementa el documento con los campos comerciales reales o enlaza la vista autenticada; no enlaces un archivo inexistente.
+
+Una confirmación de pago no confirma por sí sola la disponibilidad de una fecha. Si la fecha aún no está acordada, muestra el estado pendiente de forma explícita.
+
+5. IVA Y PRESUPUESTOS CON REVISIÓN MANUAL
+
+La configuración suministrada es vatStatus='not_registered', con IVA CHF 0.00, porque Kraken declara que no está sujeto a facturación de IVA. Mantén el texto que explica esa situación; no lo conviertas en un tipo legal general del 0 %.
+
+En los presupuestos que muestran comparación fiscal, explica que se trata de una comparación hipotética al mismo precio neto. total × 0,081 representa el IVA de ese ejemplo, no una promesa de ahorro universal frente a todas las empresas y no un descuento adicional del precio Kraken.
+
+Si un servicio necesita revisión manual, no generes un precio ficticio ni un cobro. Envía request_received o details_required; genera quote_ready únicamente tras aprobar alcance y precio. No uses CHF 0.00 para expresar «pendiente de presupuesto».
+
+Si cambia la situación fiscal de Kraken, actualiza juntos cálculo, etiquetas, plantillas y controles de producción antes de enviar nuevos documentos.
+
+6. RECUPERACIÓN Y PERMISOS
+
+El email quote_saved responde a la petición explícita «guardar mi progreso». Los dos recordatorios posteriores requieren permiso separado y registrado. No marques consentimiento por defecto ni bloquees el presupuesto detrás de una cuenta obligatoria.
+
+Implementa la serie sólo si el usuario quiere esos recordatorios y el borrador sigue activo. Una configuración inicial coherente con lo trabajado es alrededor de 4 horas y 24 horas, dentro del horario de 09:00–19:00 en Zúrich; debe ser configurable y medirse, no presentarse como una regla demostrada de máximo rendimiento.
+
+Antes de cada intento revalida consentimiento, baja, vigencia del borrador, enlace, reserva/pago posterior y deduplicación. Detén la serie al completar la contratación, retirar el permiso, caducar o eliminar el borrador. El segundo recordatorio es el último de esa serie.
+
+Implementa una baja visible y operativa. Si el renderer devuelve List-Unsubscribe y List-Unsubscribe-Post para una secuencia permitida, el endpoint debe aceptar correctamente la operación de baja correspondiente; añadir las cabeceras sin un endpoint funcional no es suficiente. La baja no puede exigir iniciar sesión.
+
+No añadas compras ficticias, plazas inventadas, falsas caducidades o promociones no autorizadas. No reutilices el permiso de guardar un presupuesto para newsletters generales.
+
+Para review_requested, usa la base/permiso configurado y pide una opinión honesta sin filtrar sólo a quienes dieron una puntuación positiva. No ofrezcas recompensas condicionadas a una buena reseña.
+
+7. ACCESO, ENLACES Y PRIVACIDAD
+
+Los CTA deben ir a destinos reales que implementes o ya existan: solicitud, reserva, estado de pago, guía, conversación o acceso. No exportes enlaces #preview ni botones que aparenten funcionar en producción.
+
+Usa enlaces firmados u opacos, con acceso limitado y caducidad apropiada. No incluyas nombres, direcciones completas, códigos de acceso al inmueble ni datos de tarjeta en query strings. Valida los destinos en el backend, conserva HTTPS y evita redirecciones abiertas. Los enlaces de acceso se generan con el proveedor de autenticación real, no con un token de demo.
+
+Configura brand.privacyUrl con la página auténtica. brand.instagram queda desactivado hasta conocer el perfil real. Verifica los demás datos de contacto antes de activar envíos; no adivines URLs. La dirección y el teléfono ya presentes en el proyecto son Seewadelstrasse 3, 8203 Schaffhausen y +41 77 450 57 05. El email de contacto es kai@krakenpfm.ch.
+
+Mantén el escape HTML de todos los datos del cliente. No interpoles HTML libre de entradas externas. Conserva el bloqueo de saltos de línea en asuntos/cabeceras. No publiques datos de clientes en logs ni en vistas de demostración.
+
+support_reply debe incluir la respuesta real que escribió el equipo, o enlazar a esa conversación. details_required incluye las preguntas realmente pendientes. issue_resolved sólo incluye una medida que haya sido efectivamente aplicada. No inventes texto operativo para rellenar huecos.
+
+moving_guide enlaza al plan real personalizado del cliente. El kit no trae un PDF personalizado adjunto ya generado. Reutiliza el generador de guía existente y sus preferencias de origen/destino/cantón/vehículo. Si se añade un archivo adjunto, genéralo desde el registro correcto, comprueba destinatario y evita que un cliente reciba la guía de otro.
+
+8. DISEÑO, IMÁGENES Y FOOTER
+
+Conserva el logo original. No lo regeneres con IA ni alteres su proporción. Las imágenes enviadas deben tener URLs HTTPS públicas adecuadas para email, dimensiones explícitas y alt. No envíes las imágenes como data URLs por defecto; las data URLs de la galería son para vista local. El proveedor y los clientes de correo determinan si conviene alguna alternativa como CID; adáptala sólo si se prueba correctamente.
+
+La versión 1.1 incluye 30 ilustraciones individuales generadas para cada email. Publica assets/email-<id>.png en el mismo assetBaseUrl que el logo y conserva src/artwork.mjs. Los emails ya no usan la misma imagen de Kai ni una foto de servicio repetida. En móvil, la ilustración se apila debajo del titular y sigue visible; no vuelvas a ocultar .hero-art. Las ilustraciones son decorativas y mantienen alt vacío; el logo lleva alt descriptivo. Los títulos, estados, fechas, importes y CTA son siempre HTML y usan el idioma del cliente. No añadas importes o datos personales dentro de las imágenes.
+
+Los emails usan tablas de presentación y estilos esenciales inline. No conviertas el cuerpo en una única imagen ni dependas de JavaScript, vídeo, flex, grid o fuentes externas para leer información esencial. El HTML debe seguir siendo útil si se bloquean imágenes.
+
+Mantén una acción principal por email y el contraste del botón. En recibos, da prioridad a importes/estado y reduce la decoración. En incidencias, tono personal sin celebración. Firma de Antonio y equipo para relación/servicio; equipo para pagos/acceso. No uses una fotografía del fundador.
+
+El footer incluye identidad, dirección, teléfono, email, horario, web, motivo del mensaje, privacidad y baja cuando corresponda. No uses no-reply si queremos que el cliente pueda responder. El crédito Website made by seociety.ch permanece como crédito de la web y no se añade automáticamente a los recibos.
+
+9. ENTREGA Y CONFIGURACIÓN DEL REMITENTE
+
+Reutiliza el proveedor de envío existente y sus variables de entorno. Documenta exactamente qué variables hacen falta. No inventes credenciales ni muestres secretos en chat. Prepara el código y las pruebas sin activar comunicaciones reales durante esta tarea.
+
+Comprueba la configuración de dominio/remitente que exija el proveedor. Para entregabilidad, consulta las fuentes primarias recogidas en docs/BRAND_AUDIT_ES.md:
+
+https://developers.google.com/workspace/gmail/design/css
+https://support.google.com/mail/answer/81126?hl=en
+https://support.google.com/a/answer/14229414?hl=en
+https://learn.microsoft.com/en-us/troubleshoot/outlook/user-interface/formatting-lost-when-editing-the-htmlbody-property
+
+SPF, DKIM, DMARC, dominio del remitente, Reply-To, rebotes y bajas se resuelven en la configuración real de envío. El kit no certifica que el DNS de Kraken esté configurado ni garantiza bandeja principal. No modifiques DNS como efecto secundario de integrar los diseños.
+
+10. VERIFICACIÓN Y ENTREGA FINAL
+
+Ejecuta las comprobaciones existentes del kit y las del proyecto que correspondan a este cambio. Añade pruebas que cubran riesgos concretos de integración:
+
+- Plantillas disponibles en seis idiomas y ausencia de tokens sin resolver.
+- Idioma conservado desde la solicitud hasta el recibo.
+- Importes enteros coherentes, anticipos, saldo y revisión manual sin precio inventado.
+- Eventos repetidos sin doble email; eventos de pago sin autenticidad no producen recibos.
+- Redirección de éxito del navegador sin pago confirmado no envía payment_received.
+- Solicitud pendiente no envía booking_confirmed.
+- Baja/consentimiento revocado detiene los recordatorios.
+- Enlaces reales, HTTPS, acceso privado y sin #preview en producción.
+- HTML y texto plano coherentes, acentos correctos y contenido utilizable con imágenes bloqueadas.
+- No envío a destinatarios reales durante los tests.
+
+Revisa visualmente desktop y móvil. Para una validación real de Gmail, Apple Mail y Outlook se requieren envíos de prueba a cuentas autorizadas y revisión en esos clientes; no afirmes que una captura de navegador prueba esa compatibilidad. Conserva las previsualizaciones como tales: se generaron con WeasyPrint y Poppler a partir del HTML, sin envíos a buzones reales.
+
+Entrega el código integrado, una explicación clara de qué cambió, cómo se comprobó y qué servicios concretos faltan por configurar. Identifica exactamente los valores pendientes —proveedor, dominio, URL de privacidad, perfil Instagram, secretos o jobs— sin fingir activación. No te detengas en un plan: realiza toda la integración local que ya es posible con el repositorio, preservando el resto del sitio.
