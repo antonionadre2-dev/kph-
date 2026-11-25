@@ -200,14 +200,37 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
     let origin='https://krakenpfm.ch';try{origin=new URL(env.APP_URL||origin).origin;}catch{}
     const secret=env.BOOKING_TOKEN_SECRET||'';
     const disabled:Runtime={service:null,recovery:null,handleRecovery:(createRecoveryHandler as any)({publicBaseUrl:origin}),store:null,auth:null,origin,mode:'unconfigured',paymentReady:false,emailReady:false,customerAccess:false,secret};
-    if(env.BOOKING_ENABLED!=='true' || secret.length<32 || !(env.FIREBASE_SERVICE_ACCOUNT_JSON || env.GOOGLE_APPLICATION_CREDENTIALS || env.BOOKING_USE_APPLICATION_DEFAULT==='true'))return disabled;
+    const gates={bookingEnabled:env.BOOKING_ENABLED==='true',tokenSecretReady:secret.length>=32,adminCredentialProvided:Boolean(env.FIREBASE_SERVICE_ACCOUNT_JSON || env.GOOGLE_APPLICATION_CREDENTIALS || env.BOOKING_USE_APPLICATION_DEFAULT==='true')};
+    // Initialization is cached: emit one private diagnostic, never the error or its message/stack.
+    const diagnostic=(phase:string,cause?:unknown)=>{
+      const error=cause as {name?:unknown;code?:unknown}|undefined;
+      const name=typeof error?.name==='string'&&['Error','SyntaxError','TypeError','RangeError','FirebaseError','FirebaseAppError','FirebaseAuthError','FirebaseFirestoreError','GoogleError','BookingError'].includes(error.name)?error.name:cause?'UnknownError':null;
+      const code=typeof error?.code==='number'&&Number.isInteger(error.code)&&error.code>=0&&error.code<=16?error.code:
+        typeof error?.code==='string'&&/^(?:app\/(?:invalid-credential|invalid-app-options|invalid-argument|duplicate-app|no-app|app-deleted|network-error|network-timeout|unable-to-parse-response)|auth\/(?:invalid-credential|invalid-project-id|invalid-argument)|firestore\/(?:invalid-argument|failed-precondition|permission-denied|unauthenticated|unavailable)|ERR_MODULE_NOT_FOUND|MODULE_NOT_FOUND|ERR_PACKAGE_PATH_NOT_EXPORTED)$/.test(error.code)?error.code:null;
+      const entry={...gates,phase,error:{name,code}};
+      if(cause)console.error('[booking:initialize]',entry);else if(phase==='gates')console.warn('[booking:initialize]',entry);else console.info('[booking:initialize]',entry);
+    };
+    if(!gates.bookingEnabled || !gates.tokenSecretReady || !gates.adminCredentialProvided){diagnostic('gates');return disabled;}
+    let phase='sdk_import';
     try {
       const {getApps,initializeApp,cert,applicationDefault}=await import('firebase-admin/app');
       const {getFirestore}=await import('firebase-admin/firestore');
       const {getAuth}=await import('firebase-admin/auth');
-      const app=getApps().find(app=>app.name==='kraken-booking') || initializeApp({credential:env.FIREBASE_SERVICE_ACCOUNT_JSON?cert(JSON.parse(env.FIREBASE_SERVICE_ACCOUNT_JSON)):applicationDefault(),projectId:env.BOOKING_FIREBASE_PROJECT_ID||firebaseConfig.projectId},'kraken-booking');
+      let app=getApps().find(app=>app.name==='kraken-booking');
+      if(!app){
+        phase='credential_json';
+        const account=env.FIREBASE_SERVICE_ACCOUNT_JSON?JSON.parse(env.FIREBASE_SERVICE_ACCOUNT_JSON):null;
+        phase='firebase_credential';
+        const credential=env.FIREBASE_SERVICE_ACCOUNT_JSON?cert(account):applicationDefault();
+        phase='firebase_app';
+        app=initializeApp({credential,projectId:env.BOOKING_FIREBASE_PROJECT_ID||firebaseConfig.projectId},'kraken-booking');
+      }
+      phase='firestore';
       const db=getFirestore(app,env.BOOKING_FIREBASE_DATABASE_ID||firebaseConfig.firestoreDatabaseId);
-      const store=createFirestoreBookingStore(db),auth=getAuth(app);
+      const store=createFirestoreBookingStore(db);
+      phase='auth';
+      const auth=getAuth(app);
+      phase='services';
       const mode=['live','test'].includes(env.PAYREXX_MODE||'')?env.PAYREXX_MODE!:'unconfigured';
       const paymentReady=Boolean(env.PAYREXX_INSTANCE&&env.PAYREXX_API_SECRET&&mode!=='unconfigured'&&origin.startsWith('https://'));
       const payment=paymentReady?createPayrexxAdapter({instance:env.PAYREXX_INSTANCE!,secret:env.PAYREXX_API_SECRET!,mode:mode as 'live'|'test',origin},fetcher):null;
@@ -222,8 +245,9 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
         const remote=request.headers.get('x-kraken-server-remote');
         return session&&remote?{rateKey:remote}:null;
       }}:{})});
+      diagnostic('ready');
       return {service,recovery,store,auth,origin,mode,paymentReady,emailReady,customerAccess:env.BOOKING_CUSTOMER_ACCESS_ENABLED==='true'&&emailReady&&Boolean(recovery),handleRecovery,secret};
-    }catch{return disabled;}
+    }catch(cause){diagnostic(phase,cause);return disabled;}
   })();
   async function middleware(req:Request,res:Response,next:any) {
     if(!/^\/api\/(?:booking(?:\/|$)|bookings\/activity|recovery\/|customer\/)/.test(req.path)&&req.path!=='/recovery/unsubscribe')return next();
