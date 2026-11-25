@@ -7,7 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import { CONTACT_TRANSLATIONS, contactText, contactTranslationRows, contactTranslationSources } from '../components/contact/contactTranslations';
-import { homeText } from '../components/home/homeTranslations';
+import { getContactCopy } from '../src/contact/contact-copy';
 import { publicHref } from '../src/routing/site-paths';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -89,11 +89,12 @@ test('Contact JSX, runtime branches and example destination labels request trans
   }
   const data = JSON.parse(readFileSync(path.join(root, 'public/kraken-contact/data/contact-map-data.json'), 'utf8'));
   for (const destination of data.destinations) sources.push({ file: 'contact-map-data.json', line: 1, text: destination.label });
-  assert.ok(sources.length > 60, 'Inspect static copy, ARIA labels and runtime conditionals');
+  assert.ok(sources.some(source => source.file.endsWith('contact-controller.js')), 'Inspect retained controller messages');
+  assert.ok(sources.some(source => source.file.endsWith('contact-basemap.js')), 'Inspect retained basemap messages');
   assert.deepEqual(sources.filter(source => !known.has(source.text)), [], 'No silent fallback to untranslated German');
 });
 
-test('Contact renders real multilingual HTML and usable contact/calculator links before the map loads', async () => {
+test('Contact renders translated current copy without the retired route or office interface', async () => {
   const cache = path.join(root, 'node_modules/.cache');
   mkdirSync(cache, { recursive: true });
   const temporary = mkdtempSync(path.join(cache, 'contact-content-test-'));
@@ -108,22 +109,15 @@ test('Contact renders real multilingual HTML and usable contact/calculator links
       const html = render(language);
       assert.equal((html.match(/<h1\b/g) || []).length, 1, language);
       assert.equal((html.match(/id="kraken-contact-real"/g) || []).length, 1, language);
-      assert.match(html, /Seewadelstrasse 3/);
-      assert.match(html, /8203 Schaffhausen/);
+      const copy=getContactCopy(language);
       assert.match(html, /href="tel:\+41774505705"/);
       assert.match(html, /href="mailto:kai@krakenpfm\.ch"/);
       assert.ok(html.includes('href="'+publicHref('/quote',language)+'"'));
       assert.match(html, /09:00–19:00/);
-      assert.match(html, /Europe\/Zurich/);
-      assert.ok(html.includes(homeText(language,'Reinigung & kleine Umzüge').replace(/&/g,'&amp;')));
-      assert.ok(html.includes(contactText(language, 'Konzeptbilder · keine Fotos des Standorts')), language + ': translated office concept disclaimer');
-      if (language !== 'de') assert.ok(!html.includes('Konzeptbilder · keine Fotos des Standorts'), language + ': no German disclaimer fallback');
-      assert.match(html, /© swisstopo · © OpenStreetMap contributors \/ openrouteservice/);
-      assert.ok(html.includes(contactText(language, 'Mo–So')), language + ': seven contact days');
-      const initialMetrics = html.match(/<div\b[^>]*class="kr-result"[^>]*>/)?.[0];
-      assert.ok(initialMetrics?.includes('hidden'), language + ': no invented route before data loads');
-      assert.doesNotMatch(html, /<iframe|data:image\/|(?:CHF|EUR)\s*\d/);
-      if (language !== 'de') assert.ok(!html.includes('Persönlich für Sie da.'), language + ': translated heading');
+      assert.ok(html.includes(copy.hero.title));
+      assert.ok(html.includes(copy.hero.eyebrow));
+      assert.doesNotMatch(html, /Europe\/Zurich|contact-(?:exterior|interior)\.webp|openrouteservice|Routenplanung|Konzeptbilder|kr-result|<iframe|data:image\/|(?:CHF|EUR)\s*\d/);
+
     }
   } finally { rmSync(temporary, { recursive: true, force: true }); }
 });

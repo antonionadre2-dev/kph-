@@ -1,5 +1,6 @@
 import { normalizeHomeLanguage } from '../../components/home/homeTranslations.ts';
 import { getRegionalPageMetadata } from './regional-metadata.ts';
+import { getContactCopy } from '../contact/contact-copy.ts';
 
 type Copy = { title: string; description: string; h1?: string };
 type Language = 'de' | 'en' | 'es' | 'pt' | 'it' | 'fr';
@@ -29,14 +30,6 @@ const PAGE_COPY: Record<string, Record<Language, Copy>> = {
     pt: { title: 'Sobre a Kraken: Antonio, a nossa equipa e o Kai | Kraken PFM', description: 'Conheça Antonio, a Kraken e a mascote Kai. Limpeza e pequenas mudanças com atendimento pessoal a partir de Schaffhausen para Zurique e Winterthur.' },
     it: { title: 'Kraken: Antonio, il nostro team e Kai | Kraken PFM', description: 'Conosca Antonio, Kraken e la mascotte Kai. Pulizie e piccoli traslochi con assistenza personale da Sciaffusa per Zurigo e Winterthur.' },
     fr: { title: 'Kraken : Antonio, notre équipe et Kai | Kraken PFM', description: 'Découvrez Antonio, Kraken et la mascotte Kai. Nettoyage et petits déménagements avec un suivi personnel depuis Schaffhouse pour Zurich et Winterthour.' },
-  },
-  '/kontakt': {
-    de: { title: 'Kontakt zu Kraken in Schaffhausen | Mo–So 09–19 Uhr', description: 'Fragen zur Reinigung oder zum kleinen Umzug? Kontaktieren Sie Kraken in Schaffhausen: +41 77 450 57 05, kai@krakenpfm.ch. Mo–So 09:00–19:00 Uhr.' },
-    en: { title: 'Contact Kraken in Schaffhausen | Mon–Sun 09:00–19:00', description: 'Questions about cleaning or a small move? Contact Kraken in Schaffhausen: +41 77 450 57 05, kai@krakenpfm.ch. Mon–Sun 09:00–19:00.' },
-    es: { title: 'Contacto con Kraken en Schaffhausen | Lu–Do 09:00–19:00', description: '¿Dudas sobre limpieza o una pequeña mudanza? Contacte con Kraken en Schaffhausen: +41 77 450 57 05, kai@krakenpfm.ch. Lu–Do 09:00–19:00.' },
-    pt: { title: 'Contacto Kraken em Schaffhausen | Seg–Dom 09:00–19:00', description: 'Dúvidas sobre limpeza ou uma pequena mudança? Contacte a Kraken em Schaffhausen: +41 77 450 57 05, kai@krakenpfm.ch. Seg–Dom 09:00–19:00.' },
-    it: { title: 'Contatti Kraken a Sciaffusa | Lun–Dom 09:00–19:00', description: 'Domande sulle pulizie o su un piccolo trasloco? Contatti Kraken a Sciaffusa: +41 77 450 57 05, kai@krakenpfm.ch. Lun–Dom 09:00–19:00.' },
-    fr: { title: 'Contacter Kraken à Schaffhouse | Lun–Dim 09:00–19:00', description: 'Des questions sur le nettoyage ou un petit déménagement ? Contactez Kraken à Schaffhouse : +41 77 450 57 05, kai@krakenpfm.ch. Lun–Dim 09:00–19:00.' },
   },
   '/quote': {
     de: { title: 'Reinigung & Umzug berechnen | Kraken Service-Rechner', description: 'Wählen Sie Ihre Leistung, den passenden Umfang und Ihren Wunschtermin. Planen Sie Reinigung oder kleinen Umzug mit Kraken. Keine MwSt. auf Ihrer Rechnung.' },
@@ -72,7 +65,8 @@ const PAGE_IMAGES: Record<string, { path: string; width: string; height: string 
 export function getApprovedPageMetadata(pathname: string, language: string) {
   const path = pathname.split(/[?#]/)[0].replace(/\/$/, '') || '/';
   const locale = normalizeHomeLanguage(language);
-  const copy: Copy | null = PAGE_COPY[path]?.[locale] || getRegionalPageMetadata(path, locale);
+  const contact = path === '/kontakt' ? getContactCopy(locale) : null;
+  const copy: Copy | null = contact ? { ...contact.meta, h1: contact.hero.title } : PAGE_COPY[path]?.[locale] || getRegionalPageMetadata(path, locale);
   const image = PAGE_IMAGES[path];
   if (!copy || !image) return null;
   return {

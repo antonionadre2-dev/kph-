@@ -202,7 +202,7 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
   </label>;
 
   return <>
-    <button className="kai-assistant-launcher" ref={launcher} hidden={!showLauncher || open} aria-label={kt('open')} aria-haspopup="dialog" aria-controls="kai-assistant" type="button"
+    <button className="kai-assistant-launcher" ref={launcher} hidden={!showLauncher || open || currentPage === 'kontakt'} aria-label={kt('open')} aria-haspopup="dialog" aria-controls="kai-assistant" type="button"
       onClick={event => { opener.current = event.currentTarget; setOpen(true); }}>
       <img {...responsiveImage('/home-approved/assets/kai.webp','64px')} alt="" aria-hidden="true" width="48" height="48" /><span>{kt('open')}</span>
     </button>

@@ -1,446 +1,134 @@
-import React, { useState, useEffect, useRef, FormEvent } from 'react';
-import { CheckIcon } from '../icons';
-import emailjs from '@emailjs/browser';
-import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { sendLead } from '../leadWebhook';
+import React, { useEffect, useRef, useState, type FormEvent } from 'react';
+import { getContactCopy } from '../../src/contact/contact-copy.ts';
+import { CONTACT_CHANNELS, CONTACT_SERVICES, contactLanguage, emptyContactFields, normalizeContactFields, validateContactFields, type ContactFields, type ContactField, type ContactFieldError } from '../../src/contact/intake-contract.ts';
+import { acceptedContactResponse, contactRetryIdentity, loadContactTurnstile, type ContactRetryIdentity, type ContactTurnstile } from '../../src/contact/intake-client.ts';
+import { publicHref } from '../../src/routing/site-paths.ts';
+import './contact-form.css';
 
-const SERVICE_ID = 'service_aiv15bc';
-const TEMPLATE_ID = 'template_aktj7t9';
-const PUBLIC_KEY = 'sH5K84ChHyssJrarm';
-
-interface ContactMessageFormProps {
-  onNavigate: (page: string) => void;
-  language: string;
-}
-
-const kontaktTranslations: Record<string, {
-  thankYouTitle: string;
-  successDesc: string;
-  backToHome: string;
-  heroBadge: string;
-  heroTitle: string;
-  heroDesc: string;
-  contactInfoTitle: string;
-  contactInfoDesc: string;
-  labelAddress: string;
-  labelPhone: string;
-  labelEmail: string;
-  labelHours: string;
-  valHoursDays: string;
-  valHoursTime: string;
-  locationTitle: string;
-  locationDesc: string;
-  formTitle: string;
-  labelName: string;
-  placeholderName: string;
-  labelEmailForm: string;
-  placeholderEmail: string;
-  labelSubject: string;
-  placeholderSubject: string;
-  labelMessage: string;
-  placeholderMessage: string;
-  btnSending: string;
-  btnSend: string;
-  validationRequiredError: string;
-  sendFailedError: string;
-  defaultInterest: string;
-}> = {
-  de: {
-    thankYouTitle: "Vielen Dank!",
-    successDesc: "Ihre Nachricht wurde erfolgreich gesendet. Unser Team wird sich so schnell wie möglich bei Ihnen melden.",
-    backToHome: "Zur Startseite",
-    heroBadge: "KONTAKTIEREN SIE UNS",
-    heroTitle: "Kontakt",
-    heroDesc: "Haben Sie Fragen zu unseren Dienstleistungen oder möchten Sie ein individuelles Angebot erhalten? Wir sind gerne für Sie da.",
-    contactInfoTitle: "Kontaktinformationen",
-    contactInfoDesc: "Besuchen Sie uns, rufen Sie uns an oder schreiben Sie uns eine E-Mail. Wir freuen uns auf Sie.",
-    labelAddress: "Adresse",
-    labelPhone: "Telefon",
-    labelEmail: "E-Mail",
-    labelHours: "Öffnungszeiten",
-    valHoursDays: "Montag – Freitag",
-    valHoursTime: "08:00 – 18:00 Uhr",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Wir bedienen Privat- und Geschäftskunden in den Regionen Schaffhausen, Zürich, Winterthur und Umgebung mit erstklassigen Reinigungs- und Facility-Services.",
-    formTitle: "Senden Sie uns eine Nachricht",
-    labelName: "Name",
-    placeholderName: "Ihr Name",
-    labelEmailForm: "E-Mail-Adresse",
-    placeholderEmail: "ihre.email@beispiel.ch",
-    labelSubject: "Betreff",
-    placeholderSubject: "Worum geht es?",
-    labelMessage: "Ihre Nachricht",
-    placeholderMessage: "Wie können wir Ihnen helfen?",
-    btnSending: "Wird gesendet...",
-    btnSend: "Nachricht senden",
-    validationRequiredError: "Bitte füllen Sie alle erforderlichen Felder aus.",
-    sendFailedError: "Senden fehlgeschlagen. Bitte kontaktieren Sie uns direkt unter kai@krakenpfm.ch.",
-    defaultInterest: "Allgemeine Kontaktanfrage"
-  },
-  en: {
-    thankYouTitle: "Thank You!",
-    successDesc: "Your message has been sent successfully. Our team will get back to you as soon as possible.",
-    backToHome: "Back to Home",
-    heroBadge: "CONTACT US",
-    heroTitle: "Contact",
-    heroDesc: "Do you have questions about our services or would you like to receive a tailored quote? We are happy to help you.",
-    contactInfoTitle: "Contact Information",
-    contactInfoDesc: "Visit us, call us or send us an email. We look forward to hearing from you.",
-    labelAddress: "Address",
-    labelPhone: "Phone",
-    labelEmail: "Email",
-    labelHours: "Opening Hours",
-    valHoursDays: "Monday – Friday",
-    valHoursTime: "08:00 – 18:00",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "We serve private and commercial clients across Schaffhausen, Zurich, Winterthur and surrounding areas with top-tier cleaning and facility services.",
-    formTitle: "Send Us a Message",
-    labelName: "Name",
-    placeholderName: "Your Name",
-    labelEmailForm: "Email Address",
-    placeholderEmail: "your.email@example.ch",
-    labelSubject: "Subject",
-    placeholderSubject: "What is it regarding?",
-    labelMessage: "Your Message",
-    placeholderMessage: "How can we help you?",
-    btnSending: "Sending...",
-    btnSend: "Send Message",
-    validationRequiredError: "Please fill out all required fields.",
-    sendFailedError: "Submission failed. Please contact us directly at kai@krakenpfm.ch.",
-    defaultInterest: "General Contact Inquiry"
-  },
-  es: {
-    thankYouTitle: "¡Muchas Gracias!",
-    successDesc: "Su mensaje ha sido enviado con éxito. Nuestro equipo se pondrá en contacto con usted lo antes posible.",
-    backToHome: "Volver al Inicio",
-    heroBadge: "CONTÁCTENOS",
-    heroTitle: "Contacto",
-    heroDesc: "¿Tiene preguntas sobre nuestros servicios o desea recibir un presupuesto personalizado? Con gusto le atenderemos.",
-    contactInfoTitle: "Información de Contacto",
-    contactInfoDesc: "Visítenos, llámenos o envíenos un correo electrónico. Estaremos encantados de atenderle.",
-    labelAddress: "Dirección",
-    labelPhone: "Teléfono",
-    labelEmail: "E-Mail",
-    labelHours: "Horario de Atención",
-    valHoursDays: "Lunes – Viernes",
-    valHoursTime: "08:00 – 18:00 hrs",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Atendemos a clientes particulares y comerciales en las regiones de Schaffhausen, Zúrich, Winterthur y alrededores con servicios de limpieza y gestión de instalaciones de primera calidad.",
-    formTitle: "Envíenos un Mensaje",
-    labelName: "Nombre",
-    placeholderName: "Su Nombre",
-    labelEmailForm: "Correo Electrónico",
-    placeholderEmail: "su.correo@ejemplo.ch",
-    labelSubject: "Asunto",
-    placeholderSubject: "¿De qué se trata?",
-    labelMessage: "Su Mensaje",
-    placeholderMessage: "¿Cómo podemos ayudarle?",
-    btnSending: "Enviando...",
-    btnSend: "Enviar Mensaje",
-    validationRequiredError: "Por favor, complete todos los campos obligatorios.",
-    sendFailedError: "Error al enviar. Por favor contáctenos directamente en kai@krakenpfm.ch.",
-    defaultInterest: "Consulta General de Contacto"
-  },
-  fr: {
-    thankYouTitle: "Merci Beaucoup !",
-    successDesc: "Votre message a été envoyé avec succès. Notre équipe vous contactera dans les plus brefs délais.",
-    backToHome: "Retour à l'Accueil",
-    heroBadge: "CONTACTEZ-NOUS",
-    heroTitle: "Contact",
-    heroDesc: "Vous avez des questions sur nos services ou vous souhaitez recevoir un devis personnalisé ? Nous sommes à votre disposition.",
-    contactInfoTitle: "Coordonnées de Contact",
-    contactInfoDesc: "Rendez-nous visite, appelez-nous ou envoyez-nous un e-mail. Au plaisir d'échanger avec vous.",
-    labelAddress: "Adresse",
-    labelPhone: "Téléphone",
-    labelEmail: "E-mail",
-    labelHours: "Heures d'ouverture",
-    valHoursDays: "Lundi – Vendredi",
-    valHoursTime: "08:00 – 18:00",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Nous servons les clients privés et professionnels dans les régions de Schaffhouse, Zurich, Winterthour et environs avec des services de nettoyage et de facility management haut de gamme.",
-    formTitle: "Envoyez-nous un Message",
-    labelName: "Nom",
-    placeholderName: "Votre Nom",
-    labelEmailForm: "Adresse E-mail",
-    placeholderEmail: "votre.email@exemple.ch",
-    labelSubject: "Sujet",
-    placeholderSubject: "De quoi s'agit-il ?",
-    labelMessage: "Votre Message",
-    placeholderMessage: "Comment pouvons-nous vous aider ?",
-    btnSending: "Envoi en cours...",
-    btnSend: "Envoyer le Message",
-    validationRequiredError: "Veuillez remplir tous les champs obligatoires.",
-    sendFailedError: "Échec de l'envoi. Veuillez nous contacter directement à kai@krakenpfm.ch.",
-    defaultInterest: "Demande de contact générale"
-  },
-  it: {
-    thankYouTitle: "Grazie Mille!",
-    successDesc: "Il tuo messaggio è stato inviato con successo. Il nostro team ti contatterà al più presto.",
-    backToHome: "Torna alla Home",
-    heroBadge: "CONTATTACI",
-    heroTitle: "Contatti",
-    heroDesc: "Hai domande sui nostri servizi o desideri ricevere un preventivo personalizzato? Siamo a tua completa disposizione.",
-    contactInfoTitle: "Informazioni di Contatto",
-    contactInfoDesc: "Vienici a trovare, chiamaci o inviaci un'e-mail. Saremo lieti di risponderti.",
-    labelAddress: "Indirizzo",
-    labelPhone: "Telefono",
-    labelEmail: "E-mail",
-    labelHours: "Orari di Apertura",
-    valHoursDays: "Lunedì – Venerdì",
-    valHoursTime: "08:00 – 18:00",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Serviamo clienti privati e commerciali nelle regioni di Sciaffusa, Zurigo, Winterthur e dintorni con servizi di pulizia e gestione strutture di prim'ordine.",
-    formTitle: "Inviaci un Messaggio",
-    labelName: "Nome",
-    placeholderName: "Il tuo Nome",
-    labelEmailForm: "Indirizzo E-mail",
-    placeholderEmail: "tua.email@esempio.ch",
-    labelSubject: "Oggetto",
-    placeholderSubject: "Di cosa si tratta?",
-    labelMessage: "Il tuo Messaggio",
-    placeholderMessage: "Come possiamo aiutarti?",
-    btnSending: "Invio in corso...",
-    btnSend: "Invia Messaggio",
-    validationRequiredError: "Si prega di compilare tutti i campi obbligatori.",
-    sendFailedError: "Invio fallito. Contattaci direttamente a kai@krakenpfm.ch.",
-    defaultInterest: "Richiesta di contatto generale"
-  },
-  pt: {
-    thankYouTitle: "Muito Obrigado!",
-    successDesc: "A sua mensagem foi enviada com sucesso. A nossa equipa entrará em contacto consigo o mais brevemente possível.",
-    backToHome: "Voltar ao Início",
-    heroBadge: "CONTACTE-NOS",
-    heroTitle: "Contacto",
-    heroDesc: "Tem dúvidas sobre os nossos serviços ou pretende receber um orçamento personalizado? Estamos à sua disposição.",
-    contactInfoTitle: "Informações de Contacto",
-    contactInfoDesc: "Visite-nos, ligue-nos ou envie-nos um e-mail. Teremos todo o gosto em atendê-lo.",
-    labelAddress: "Endereço",
-    labelPhone: "Telefone",
-    labelEmail: "E-mail",
-    labelHours: "Horário de Funcionamento",
-    valHoursDays: "Segunda-feira – Sexta-feira",
-    valHoursTime: "08:00 – 18:00",
-    locationTitle: "Kraken Properties & Facilities Management",
-    locationDesc: "Servimos clientes particulares e comerciais nas regiões de Schaffhausen, Zurique, Winterthur e arredores com serviços de limpeza e gestão de instalações de excelência.",
-    formTitle: "Envie-nos uma Mensagem",
-    labelName: "Nome",
-    placeholderName: "O seu Nome",
-    labelEmailForm: "Endereço de E-mail",
-    placeholderEmail: "seu.email@exemplo.ch",
-    labelSubject: "Assunto",
-    placeholderSubject: "Qual é o assunto?",
-    labelMessage: "A sua Mensagem",
-    placeholderMessage: "Como podemos ajudá-lo?",
-    btnSending: "A enviar...",
-    btnSend: "Enviar Mensagem",
-    validationRequiredError: "Por favor, preencha todos os campos obrigatórios.",
-    sendFailedError: "Falha ao enviar. Por favor contacte-nos directamente através de kai@krakenpfm.ch.",
-    defaultInterest: "Consulta Geral de Contacto"
-  }
-};
-
-const ContactMessageForm: React.FC<ContactMessageFormProps> = ({ onNavigate, language }) => {
-  const d = kontaktTranslations[language === 'de-CH' ? 'de' : language] || kontaktTranslations['de'];
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const confirmation = useRef<HTMLElement>(null);
+type Configuration = { available: boolean; challenge: { provider: 'turnstile'; siteKey: string; action: 'kraken_contact' } | null };
+type FormError = 'error' | 'unavailable' | 'rateLimited' | 'verificationRequired' | 'verificationFailed';
+export default function ContactMessageForm({ language }: { language: string; onNavigate?: (path: string) => void }) {
+  const locale = contactLanguage(language), t = getContactCopy(locale).form;
+  const [fields, setFields] = useState<ContactFields>(emptyContactFields);
+  const [errors, setErrors] = useState<Partial<Record<ContactField, ContactFieldError>>>({});
+  const [configuration, setConfiguration] = useState<Configuration | null>(null);
+  const [configRevision, setConfigRevision] = useState(0);
+  const [token, setToken] = useState('');
+  const [verification, setVerification] = useState<'loading' | 'ready' | 'failed'>('loading');
+  const [challengeSize, setChallengeSize] = useState<'compact' | 'flexible'>('compact');
+  const [error, setError] = useState<FormError | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
+  const challengeRoot = useRef<HTMLDivElement>(null), confirmation = useRef<HTMLDivElement>(null), form = useRef<HTMLFormElement>(null);
+  const challenge = useRef<{ api: ContactTurnstile; id: string } | null>(null);
+  const retry = useRef<ContactRetryIdentity | null>(null), honeypot = useRef<HTMLInputElement>(null);
+  const alive = useRef(false), busy = useRef(false), request = useRef<AbortController | null>(null);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; request.current?.abort(); }; }, []);
   useEffect(() => {
-    if (isSubmitted) {
-      confirmation.current?.focus({ preventScroll: true });
-      confirmation.current?.scrollIntoView({ block: 'nearest' });
-    }
-  }, [isSubmitted]);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
-      setError(d.validationRequiredError);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // 1. Save contact message to Firestore (non-blocking if it fails)
-      try {
-        await addDoc(collection(db, 'contact_messages'), {
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject || '',
-          message: formData.message,
-          language: language || 'de',
-          status: 'new',
-          createdAt: serverTimestamp()
-        });
-      } catch (fsErr) {
-        console.warn('Firestore contact_messages save failed:', fsErr);
-      }
-
-      // 2. Send lead to Make Webhook
-      const webhookPromise = sendLead({
-        ...formData,
-        source: 'CONTACT_FORM'
+    const controller = new AbortController(); let active = true;
+    const timer = setTimeout(() => controller.abort(), 10_000);
+    setConfiguration(null);
+    fetch('/api/contact/intake/config', { signal: controller.signal, credentials: 'same-origin', cache: 'no-store' })
+      .then(async response => {
+        const config = await response.json();
+        if (!response.ok || typeof config.available !== 'boolean') throw new Error('unavailable');
+        if (config.available && (config.challenge?.provider !== 'turnstile' || config.challenge?.action !== 'kraken_contact' || !/^[A-Za-z0-9_-]{10,128}$/.test(config.challenge?.siteKey || ''))) throw new Error('unavailable');
+        if (active) setConfiguration(config);
+      }).catch(() => { if (active) setConfiguration({ available: false, challenge: null }); })
+      .finally(() => clearTimeout(timer));
+    return () => { active = false; controller.abort(); clearTimeout(timer); };
+  }, [configRevision]);
+  useEffect(() => {
+    const element = challengeRoot.current;
+    if (!element) return;
+    const resize = () => setChallengeSize(element.clientWidth >= 300 ? 'flexible' : 'compact');
+    resize();
+    const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(resize) : null;
+    observer?.observe(element);
+    return () => observer?.disconnect();
+  }, [configuration, reference]);
+  useEffect(() => {
+    if (!configuration?.available || !configuration.challenge || !challengeRoot.current || reference) return;
+    let active = true;
+    setToken(''); setVerification('loading');
+    loadContactTurnstile().then(api => {
+      if (!active || !challengeRoot.current) return;
+      const id = api.render(challengeRoot.current, { sitekey: configuration.challenge!.siteKey, action: configuration.challenge!.action,
+        language: locale, theme: 'light', size: challengeSize,
+        callback: (value: string) => { if (active) { setToken(value); setVerification('ready'); } },
+        'expired-callback': () => { if (active) { setToken(''); setVerification('loading'); } },
+        'error-callback': () => { if (active) { setToken(''); setVerification('failed'); } },
       });
+      challenge.current = { api, id };
+    }).catch(() => { if (active) setVerification('failed'); });
+    return () => { active = false; const widget = challenge.current; if (widget) { try { widget.api.remove(widget.id); } catch {} challenge.current = null; } };
+  }, [configuration, locale, reference, challengeSize]);
+  useEffect(() => { if (reference) confirmation.current?.focus({ preventScroll: true }); }, [reference]);
 
-      // 3. Send notification via EmailJS
-      const emailPromise = emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          phone_number: 'N/A',
-          services_interest: formData.subject || d.defaultInterest,
-          message: formData.message,
-          property_address: 'N/A'
-        },
-        PUBLIC_KEY
-      );
-
-      await Promise.all([webhookPromise, emailPromise]);
-      setIsSubmitted(true);
-    } catch (err) {
-      console.error('Submission failed', err);
-      setError(d.sendFailedError);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isSubmitted) {
-    return (
-      <section ref={confirmation} tabIndex={-1} role="status" className="contact-message-section bg-slate-50 py-12 px-6 flex items-center justify-center">
-        <div className="max-w-xl w-full bg-white p-10 md:p-14 rounded-[2.5rem] shadow-xl text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-            <CheckIcon className="w-10 h-10 text-green-600" />
-          </div>
-          <h2 className="text-3xl font-black text-[#002D5B] mb-4 uppercase tracking-tight">{d.thankYouTitle}</h2>
-          <p className="text-gray-600 font-medium mb-8">
-            {d.successDesc}
-          </p>
-          <button
-            onClick={() => onNavigate('home')}
-            className="bg-[#002D5B] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#00254A] transition-all cursor-pointer shadow-lg"
-          >
-            {d.backToHome}
-          </button>
-        </div>
-      </section>
-    );
+  function change(field: ContactField, value: string) {
+    setFields(previous => ({ ...previous, [field]: value }));
+    setErrors(previous => ({ ...previous, [field]: undefined }));
   }
-
-  return (
-    <section className="contact-message-section" aria-labelledby="contact-message-title">
-              <div className="bg-white p-8 md:p-12 rounded-[2rem] shadow-sm border border-slate-100">
-                <h2 id="contact-message-title" className="text-2xl font-extrabold text-[#002D5B] tracking-tight mb-8">
-                  {d.formTitle}
-                </h2>
-
-                {error && (
-                  <div role="alert" className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 text-sm font-semibold rounded-2xl">
-                    {error}
-                  </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Name */}
-                    <div className="space-y-2">
-                      <label htmlFor="contact-name" className="block text-xs font-black uppercase text-slate-400 tracking-wider">
-                        {d.labelName} <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="contact-name"
-                      maxLength={150}
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder={d.placeholderName}
-                        className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-slate-800 font-medium placeholder-slate-400"
-                      />
-                    </div>
-
-                    {/* Email */}
-                    <div className="space-y-2">
-                      <label htmlFor="contact-email" className="block text-xs font-black uppercase text-slate-400 tracking-wider">
-                        {d.labelEmailForm} <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        id="contact-email"
-                      maxLength={254}
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder={d.placeholderEmail}
-                        className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-slate-800 font-medium placeholder-slate-400"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Subject */}
-                  <div className="space-y-2">
-                    <label htmlFor="contact-subject" className="block text-xs font-black uppercase text-slate-400 tracking-wider">
-                      {d.labelSubject}
-                    </label>
-                    <input
-                      type="text"
-                      id="contact-subject"
-                      maxLength={200}
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      placeholder={d.placeholderSubject}
-                      className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-slate-800 font-medium placeholder-slate-400"
-                    />
-                  </div>
-
-                  {/* Message */}
-                  <div className="space-y-2">
-                    <label htmlFor="contact-message" className="block text-xs font-black uppercase text-slate-400 tracking-wider">
-                      {d.labelMessage} <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      id="contact-message"
-                      maxLength={5000}
-                      required
-                      rows={6}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder={d.placeholderMessage}
-                      className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-slate-800 font-medium placeholder-slate-400 resize-none"
-                    />
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-[#002D5B] text-white py-4 rounded-xl font-bold hover:bg-[#00254A] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        {d.btnSending}
-                      </>
-                    ) : (
-                      d.btnSend
-                    )}
-                  </button>
-                </form>
-              </div>
-    </section>
-  );
-};
-
-export default ContactMessageForm;
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    if (busy.current || reference) return;
+    const validation = validateContactFields(fields);
+    setErrors(validation); setError(null);
+    const first = Object.keys(validation)[0] as ContactField | undefined;
+    if (first) { (form.current?.elements.namedItem(first) as HTMLElement | null)?.focus(); return; }
+    if (!configuration?.available) { setError('unavailable'); return; }
+    if (!token) { setError('verificationRequired'); return; }
+    busy.current = true; setSubmitting(true);
+    const controller = new AbortController(); request.current = controller;
+    const timer = setTimeout(() => controller.abort(), 15_000);
+    try {
+      retry.current = contactRetryIdentity(retry.current, fields, locale);
+      const response = await fetch('/api/contact/messages', {
+        method: 'POST', credentials: 'same-origin', cache: 'no-store', signal: controller.signal,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...normalizeContactFields(fields), idempotencyKey: retry.current.key, language: retry.current.language, website: honeypot.current?.value || '', turnstileToken: token }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!alive.current) return;
+      const accepted = acceptedContactResponse(response, result);
+      if (accepted) { setReference(accepted); return; }
+      const code = result?.error?.code;
+      setError(code === 'rate_limited' ? 'rateLimited' : code === 'verification_failed' ? 'verificationFailed' : 'error');
+      if (code === 'validation') setErrors(validateContactFields(fields));
+    } catch { if (alive.current) setError('error'); }
+    finally {
+      clearTimeout(timer); busy.current = false; request.current = null;
+      if (alive.current) {
+        setSubmitting(false); setToken('');
+        if (challenge.current) { try { challenge.current.api.reset(challenge.current.id); setVerification('loading'); } catch { setVerification('failed'); } }
+      }
+    }
+  }
+  const channelLabels = { email: t.channelEmail, phone: t.channelPhone, whatsapp: t.channelWhatsapp };
+  const serviceLabels = { windows: t.serviceWindows, end: t.serviceEnd, regular: t.serviceRegular, deep: t.serviceDeep, moving: t.serviceMoving, unsure: t.serviceUnsure };
+  const fieldError = (field: ContactField) => errors[field] ? <p className="contact-field-error" id={'contact-' + field + '-error'}>{t[errors[field]!]}</p> : null;
+  const describedBy = (field: ContactField, extra?: string) => [errors[field] ? 'contact-' + field + '-error' : '', extra || ''].filter(Boolean).join(' ') || undefined;
+  return <section className="contact-message-section" aria-labelledby="contact-message-title">
+    <h2 id="contact-message-title">{t.title}</h2><p className="contact-form-intro">{t.intro}</p>
+    {reference ? <div className="contact-form-success" role="status" tabIndex={-1} ref={confirmation}>
+      <h3>{t.successTitle}</h3><p>{t.successReference}: <strong>{reference}</strong></p><p>{t.successMessage}</p>
+    </div> : <form className="contact-form" method="post" action="/api/contact/messages" ref={form} onSubmit={submit} noValidate aria-busy={submitting}>
+      <div className="contact-form-grid">
+        <div className="contact-field"><label htmlFor="contact-name">{t.nameLabel}</label><input id="contact-name" name="name" autoComplete="name" maxLength={100} required value={fields.name} onChange={event => change('name', event.target.value)} aria-invalid={!!errors.name} aria-describedby={describedBy('name')} disabled={submitting} />{fieldError('name')}</div>
+        <div className="contact-field"><label htmlFor="contact-email">{t.emailLabel}</label><input id="contact-email" name="email" type="email" autoComplete="email" maxLength={254} required value={fields.email} onChange={event => change('email', event.target.value)} aria-invalid={!!errors.email} aria-describedby={describedBy('email')} disabled={submitting} />{fieldError('email')}</div>
+        <div className="contact-field"><label htmlFor="contact-phone">{t.phoneLabel} <span>({t.optional})</span></label><input id="contact-phone" name="phone" type="tel" autoComplete="tel" maxLength={40} value={fields.phone} onChange={event => change('phone', event.target.value)} aria-invalid={!!errors.phone} aria-describedby={describedBy('phone', fields.channel !== 'email' && !fields.phone.trim() ? 'contact-phone-fallback' : undefined)} disabled={submitting} />{fieldError('phone')}{fields.channel !== 'email' && !fields.phone.trim() && <p className="contact-field-hint" id="contact-phone-fallback">{t.phoneRequired}</p>}</div>
+        <div className="contact-field"><label htmlFor="contact-channel">{t.channelLabel}</label><select id="contact-channel" name="channel" value={fields.channel} onChange={event => change('channel', event.target.value)} aria-invalid={!!errors.channel} aria-describedby={describedBy('channel')} disabled={submitting}>{CONTACT_CHANNELS.map(value => <option value={value} key={value}>{channelLabels[value]}</option>)}</select>{fieldError('channel')}</div>
+        <div className="contact-field"><label htmlFor="contact-service">{t.serviceLabel}</label><select id="contact-service" name="service" value={fields.service} onChange={event => change('service', event.target.value)} aria-invalid={!!errors.service} aria-describedby={describedBy('service')} disabled={submitting}>{CONTACT_SERVICES.map(value => <option value={value} key={value}>{serviceLabels[value]}</option>)}</select>{fieldError('service')}</div>
+        <div className="contact-field"><label htmlFor="contact-postalCode">{t.postcodeLabel}</label><input id="contact-postalCode" name="postalCode" inputMode="numeric" autoComplete="postal-code" pattern="[1-9][0-9]{3}" maxLength={4} required value={fields.postalCode} onChange={event => change('postalCode', event.target.value)} aria-invalid={!!errors.postalCode} aria-describedby={describedBy('postalCode')} disabled={submitting} />{fieldError('postalCode')}</div>
+      </div>
+      <div className="contact-field"><label htmlFor="contact-message">{t.messageLabel}</label><textarea id="contact-message" name="message" rows={5} minLength={10} maxLength={4000} required value={fields.message} onChange={event => change('message', event.target.value)} aria-invalid={!!errors.message} aria-describedby={describedBy('message', 'contact-message-hint')} disabled={submitting} /><p className="contact-field-hint" id="contact-message-hint">{t.messageHint}</p>{fieldError('message')}</div>
+      <div className="contact-honeypot" aria-hidden="true"><label htmlFor="contact-website">{t.honeypotLabel}</label><input id="contact-website" name="website" ref={honeypot} tabIndex={-1} autoComplete="off" /></div>
+      {configuration?.available ? <div className="contact-verification"><div ref={challengeRoot} />{verification !== 'ready' && <p className="contact-field-hint" role="status">{verification === 'failed' ? t.verificationFailed : t.verificationLoading}</p>}{verification === 'failed' && <button className="contact-form-retry" type="button" onClick={() => setConfigRevision(value => value + 1)}>{t.retry}</button>}</div> : <p className="contact-form-notice" role="status">{configuration ? t.unavailable : t.verificationLoading}{configuration && <button className="contact-form-retry" type="button" onClick={() => setConfigRevision(value => value + 1)}>{t.retry}</button>}</p>}
+      <noscript><p className="contact-form-notice">{t.unavailable}</p></noscript>
+      {error && <p className="contact-form-error" role="alert">{t[error]}</p>}
+      <p className="contact-form-privacy">{t.privacyText}{' '}<a href={publicHref('/gdpr', locale)} target="_blank" rel="noopener noreferrer">{t.privacyLink}</a>.</p>
+      <button className="contact-form-submit" type="submit" disabled={submitting || !configuration?.available || !token}>{submitting ? t.submitting : error ? t.retry : t.submit}</button>
+    </form>}
+    <nav className="contact-form-direct" aria-label={t.directContact}><a href="https://wa.me/41774505705" target="_blank" rel="noopener noreferrer">WhatsApp</a><a href="tel:+41774505705">+41 77 450 57 05</a><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></nav>
+  </section>;
+}

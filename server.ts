@@ -16,6 +16,7 @@ import { renderStatusPage } from "./server/statusPage.ts";
 import { createHomeWeatherHandler } from "./server/homeWeather.ts";
 import { createKaiAssistantHandler } from "./server/kaiAssistant.ts";
 import { createContactRoutingHandlers } from "./src/contact/routing-server.ts";
+import { createContactIntakeHandlers } from "./server/contact-intake.ts";
 import { createBookingHandlers } from "./server/booking.ts";
 // No need to define currentDirname or use import.meta.url as they are unused and cause a parse-time SyntaxError in bundled CommonJS on startup.
 
@@ -54,6 +55,11 @@ async function configureApplication() {
   const booking = createBookingHandlers();
   app.post('/api/booking/payrexx/webhook', express.raw({ type: 'application/json', limit: '32kb' }), booking.webhook);
   app.post('/api/booking/email/webhook', express.raw({ type: 'application/json', limit: '32kb' }), booking.emailWebhook);
+  const contactIntake = createContactIntakeHandlers();
+  app.get('/api/contact/intake/config', contactIntake.config);
+  app.post('/api/contact/messages', express.json({ limit: '24kb' }), contactIntake.message);
+  app.get('/api/contact/maintenance', contactIntake.maintenance);
+  app.post('/api/contact/maintenance', contactIntake.maintenance);
   app.use('/api/contact', express.json({ limit: '4kb' }), ((error, _req, res, _next) => {
     // Contact accepts only a short query or one coordinate; parser errors must
     // stay in the same JSON error contract and never echo customer input.

@@ -17,13 +17,24 @@ const principal = (claims) => {
   connectFirestoreEmulator(db, host, Number(port), claims ? { mockUserToken: claims } : {});
   return { db, async close() { await terminate(db); await deleteApp(app); } };
 };
+const seedContact = async id => {
+  assert.ok(local, 'Privileged REST seeds are restricted to a localhost emulator');
+  const url = `http://${emulator}/v1/projects/demo-kraken-rules-audit/databases/(default)/documents/contact_messages/${encodeURIComponent(id)}`;
+  const data = { name: 'Synthetic QA', email: 'qa@example.test', phone: '', channel: 'email', service: 'end', postalCode: '8203', message: 'Synthetic local test', language: 'en', status: 'new' };
+  const fields = Object.fromEntries(Object.entries(data).map(([key, value]) => [key, { stringValue: value }]));
+  fields.createdAt = { timestampValue: new Date().toISOString() };
+  // The emulator recognizes owner as its privileged test token. No real credential or ADC lookup.
+  const response = await fetch(url, { method: 'PATCH', headers: { Authorization: 'Bearer owner', 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) });
+  assert.equal(response.status, 200);
+  assert.ok((await response.json()).name.endsWith('/contact_messages/' + id));
+};
 const ownerClaims = { sub: 'synthetic-client-a', email: 'client-a@example.test', email_verified: true };
 const otherClaims = { sub: 'synthetic-client-b', email: 'client-b@example.test', email_verified: true };
 const staffClaims = { sub: 'synthetic-staff', email: 'kai@krakenpfm.ch', email_verified: true };
 const pending = id => ({ id, userId: ownerClaims.sub, client: 'Synthetic QA', email: ownerClaims.email, phone: '', address: 'Synthetic test 1', service: 'Endreinigung', date: '2026-12-01', status: 'Pending', priority: 'Medium', amount: 560, notes: '', mediaUrls: [], mediaNames: [], createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
 if (local) setLogLevel('silent'); // Expected denials are asserted below, not mistaken for SDK failures.
 // Run against a locally started emulator loaded with firestore.rules. Never uses project credentials.
-test('public Firestore intake accepts valid legacy forms and rejects privilege, size and status injection', options, async () => {
+test('legacy commercial intake remains validated while contact creation denies every browser principal', options, async () => {
   const app = initializeApp({ projectId: 'demo-kraken-rules-audit', apiKey: 'demo-local-only' }, `rules-${Date.now()}`);
   const db = getFirestore(app);
   const [host, port] = emulator.split(':');
@@ -32,11 +43,16 @@ test('public Firestore intake accepts valid legacy forms and rejects privilege, 
   let id = 0;
   const write = (collection, data) => setDoc(doc(db, collection, `synthetic-${Date.now()}-${id++}`), data);
   const contact = () => ({ name: 'Synthetic QA', email: 'qa@example.test', subject: '', message: 'Local rules test', language: 'de', status: 'new', createdAt: serverTimestamp() });
+  const owner = principal(ownerClaims), staff = principal(staffClaims);
   const quote = () => ({ type: 'commercial_b2b', buildingType: 'office', numBuildings: 2, totalArea: 2400,
     services: { dailyCleaning: true, deepCleaning: false, maintenance: true, gardening: false, gutterCare: false, wasteLogistics: true },
     frequency: 'daily', protocols: { ecoOnly: false, emergency: false, security: false, portal: true }, postalCode: '8203', city: 'Schaffhausen', hours: 4, address: 'Synthetic test 1', companyName: 'Synthetic QA', contactName: 'QA', contactEmail: 'qa@example.test', contactPhone: '', floorPlans: [], estimatedMonthlyBudget: 850, estimatedAnnualBudget: 10200, language: 'de-CH', status: 'pending', createdAt: serverTimestamp() });
   try {
-    await write('contact_messages', contact());
+    await denied(write('contact_messages', contact()));
+    for (const client of [owner, staff]) {
+      await denied(setDoc(doc(client.db, 'contact_messages', unique('blocked-contact')), contact()));
+      await denied(setDoc(doc(client.db, 'contact_messages', unique('blocked-contact-v2')), { name: 'Synthetic QA', email: 'qa@example.test', phone: '', channel: 'email', service: 'end', postalCode: '8203', message: 'Synthetic API shape', language: 'de', status: 'new', createdAt: serverTimestamp() }));
+    }
     for (const change of [{ status: 'done' }, { admin: true }, { message: 'x'.repeat(5001) }, { language: 'unsupported' }, { createdAt: new Date(0) }, { email: 42 }]) await denied(write('contact_messages', { ...contact(), ...change }));
     await write('b2b_quotes', quote());
     await write('b2b_quotes', { ...quote(), floorPlans: Array.from({ length: 5 }, (_, index) => ({ name: `synthetic-${index}.txt`, size: '1 KB', content: 'x'.repeat(100) })) });
@@ -44,7 +60,7 @@ test('public Firestore intake accepts valid legacy forms and rejects privilege, 
     for (const change of [{ status: 'paid' }, { payment: { paid: true } }, { contactEmail: 'x'.repeat(255) }, { services: { admin: true } }, { protocols: { portal: 'true' } }, { floorPlans: [{ name: 'test.pdf', size: '1 MB', content: 'x'.repeat(750001) }] }]) await denied(write('b2b_quotes', { ...quote(), ...change }));
     await denied(getDoc(doc(db, 'contact_messages', 'synthetic-private')));
     await denied(getDoc(doc(db, 'b2b_quotes', 'synthetic-private')));
-  } finally { await terminate(db); await deleteApp(app); }
+  } finally { await terminate(db); await deleteApp(app); await Promise.all([owner.close(), staff.close()]); }
 });
 
 test('pending requests enforce owner identity, query scope and immutable price/status fields', options, async () => {
@@ -127,7 +143,8 @@ test('public intake management requires verified staff, including custom-claim a
   const admin = principal({ sub: 'synthetic-admin', email: 'admin@example.test', email_verified: true, admin: true });
   const id = unique('contact');
   try {
-    await setDoc(doc(anonymous.db, 'contact_messages', id), { name: 'Synthetic QA', email: 'qa@example.test', subject: '', message: 'Synthetic local test', language: 'en', status: 'new', createdAt: serverTimestamp() });
+    // Seed through the emulator's privileged REST endpoint; client identities still obey the rules.
+    await seedContact(id);
     for (const db of [anonymous.db, owner.db, unverified.db]) {
       await denied(getDoc(doc(db, 'contact_messages', id)));
       await denied(getDocs(collection(db, 'contact_messages')));
@@ -144,7 +161,7 @@ test('public intake management requires verified staff, including custom-claim a
 test('booking, recovery, payments and outbox namespaces deny every browser principal', options, async () => {
   const principals = [principal(), principal(ownerClaims), principal(staffClaims)];
   // Actual Admin SDK stores; none is made public by staff status in client rules.
-  const namespaces = ['kraken_bookings', 'kraken_booking_idempotency', 'kraken_booking_outbox', 'kraken_booking_rates', 'kraken_booking_email_suppressions', 'kraken_booking_email_events', 'kraken_recovery_drafts', 'kraken_recovery_outbox','kraken_recovery_rates','kraken_recovery_suppressions','kraken_recovery_idempotency','kraken_booking_activity'];
+  const namespaces = ['kraken_bookings', 'kraken_booking_idempotency', 'kraken_booking_outbox', 'kraken_booking_rates', 'kraken_booking_email_suppressions', 'kraken_booking_email_events', 'kraken_recovery_drafts', 'kraken_recovery_outbox','kraken_recovery_rates','kraken_recovery_suppressions','kraken_recovery_idempotency','kraken_booking_activity','kraken_contact_idempotency','kraken_contact_rates','kraken_contact_outbox'];
   try {
     for (const { db } of principals) for (const namespace of namespaces) {
       const ref = doc(db, namespace, 'synthetic-protected');

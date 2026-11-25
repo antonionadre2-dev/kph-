@@ -1,0 +1,56 @@
+{
+  "checkedAt": "2026-11-25T21:34:26.921Z",
+  "origin": "http://127.0.0.1:3031",
+  "productionChanged": false,
+  "pages": [
+    {
+      "path": "/kontakt",
+      "status": 200,
+      "faqs": 5,
+      "alternates": 7
+    },
+    {
+      "path": "/en/kontakt",
+      "status": 200,
+      "faqs": 5,
+      "alternates": 7
+    },
+    {
+      "path": "/es/kontakt",
+      "status": 200,
+      "faqs": 5,
+      "alternates": 7
+    },
+    {
+      "path": "/fr/kontakt",
+      "status": 200,
+      "faqs": 5,
+      "alternates": 7
+    },
+    {
+      "path": "/it/kontakt",
+      "status": 200,
+      "faqs": 5,
+      "alternates": 7
+    },
+    {
+      "path": "/pt/kontakt",
+      "status": 200,
+      "faqs": 5,
+      "alternates": 7
+    }
+  ],
+  "configuredReceiverExercised": false,
+  "formUnavailableHonest": true,
+  "noContactOfficeInvitation": true,
+  "phoneOptional": true,
+  "messageStatuses": {
+    "unconfigured": 503,
+    "invalid": 400,
+    "origin": 403,
+    "oversized": 400,
+    "maintenanceUnauthorized": 403
+  },
+  "faqMatchesSchema": true,
+  "staticMaps": 2
+}

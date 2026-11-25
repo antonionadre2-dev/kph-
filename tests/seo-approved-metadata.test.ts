@@ -15,8 +15,9 @@ test('the nine approved German pages preserve supplied metadata and resolve prod
   assert.equal(approvedPages.length, 9);
   for (const approved of approvedPages) {
     const meta = getPageSeo(approved.path);
-    assert.equal(meta.title, approved.path === '/' ? getApprovedPageMetadata('/','de')!.title : approved.title, approved.path);
-    assert.equal(meta.description, approved.path === '/' ? getApprovedPageMetadata('/','de')!.description : approved.description, approved.path);
+    const revised = ['/', '/kontakt'].includes(approved.path) ? getApprovedPageMetadata(approved.path,'de') : null;
+    assert.equal(meta.title, revised?.title || approved.title, approved.path);
+    assert.equal(meta.description, revised?.description || approved.description, approved.path);
     const imagePath = approved.productionImage || approved.image.replace('/assets/', '/home-approved/assets/');
     assert.equal(meta.ogImage, 'https://krakenpfm.ch' + imagePath);
     assert.equal(meta.ogImageType, 'image/webp');

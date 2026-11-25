@@ -127,17 +127,6 @@ service cloud.firestore {
     function submissionEmail(value) {
       return limitedText(value, 3, 254) && value.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$');
     }
-    function validContactMessage(data) {
-      return data.keys().hasOnly(['name','email','subject','message','language','status','createdAt'])
-        && data.keys().hasAll(['name','email','subject','message','language','status','createdAt'])
-        && limitedText(data.name, 1, 150)
-        && submissionEmail(data.email)
-        && limitedText(data.subject, 0, 200)
-        && limitedText(data.message, 1, 5000)
-        && submissionLanguage(data.language)
-        && data.status == 'new'
-        && data.createdAt == request.time;
-    }
     function commercialServices(data) {
       return data is map
         && data.keys().hasOnly(['dailyCleaning','deepCleaning','maintenance','gardening','gutterCare','wasteLogistics'])
@@ -202,7 +191,8 @@ service cloud.firestore {
     }
 
     match /contact_messages/{messageId} {
-      allow create: if validContactMessage(request.resource.data);
+      // Contact creation goes through the server's validated, rate-limited Admin SDK intake.
+      allow create: if false;
       allow read, update, delete: if isStaffOrAdmin();
     }
   }
