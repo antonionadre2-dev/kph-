@@ -6,131 +6,105 @@ import { mkdtempSync, mkdirSync, readFileSync, readdirSync, writeFileSync, symli
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { INDEXABLE_PATHS } from '../src/seo/crawl-policy.ts';
+import { seoFragmentName, LEGAL_DOCUMENT_PATHS, HOME_APP_SSR_MARKER } from '../src/seo/render-contract.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-
-test('compiled server graph runs under plain Node without source .ts files and serves localized public pages', () => {
+test('compiled server serves migrated language URLs and real HTTP redirect/removal policies under plain Node', () => {
   const directory = mkdtempSync(path.join(tmpdir(), 'kraken-compiled-server-'));
   try {
-    const configuration = ts.readConfigFile(path.join(root, 'tsconfig.json'), ts.sys.readFile);
-    const { options } = ts.parseJsonConfigFileContent(configuration.config, ts.sys, root);
+    const config = ts.readConfigFile(path.join(root, 'tsconfig.json'), ts.sys.readFile);
+    const { options } = ts.parseJsonConfigFileContent(config.config, ts.sys, root);
     assert.equal(options.rewriteRelativeImportExtensions, true);
-    for (const name of ['server.ts', 'seoConfig.ts', 'i18n.ts', 'src/data/locations.ts', 'server/homeWeather.ts', 'src/locale.ts', 'components/home/homeTranslations.ts', 'components/contact/contactTranslations.ts', 'server/kaiAssistant.ts', 'server/kaiKnowledge.ts', 'src/kai/types.ts', 'src/contact/routing-server.ts', 'server/booking.ts', 'server/booking-store.ts', 'server/booking-payrexx.ts', 'server/booking-email.ts', 'src/booking/pricing.ts', 'src/booking/uiCopy.ts', 'src/booking/journeyCopy.ts', ...readdirSync(path.join(root, 'src/seo')).filter(name => name.endsWith('.ts')).map(name => `src/seo/${name}`)]) {
+    const names = [
+      'server.ts', 'seoConfig.ts', 'i18n.ts', 'src/locale.ts', 'src/data/locations.ts',
+      'components/home/homeTranslations.ts', 'components/contact/contactTranslations.ts', 'components/services/servicesTranslations.ts',
+      'src/kai/types.ts', 'src/contact/routing-server.ts', 'src/booking/pricing.ts', 'src/booking/publicPricing.ts',
+      'src/booking/uiCopy.ts', 'src/booking/terms.ts', 'src/home/paint-start.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',
+      ...['server', 'src/seo', 'src/routing', 'src/i18n'].flatMap(folder => readdirSync(path.join(root, folder)).filter(name => name.endsWith('.ts')).map(name => `${folder}/${name}`)),
+    ];
+    for (const name of new Set(names)) {
       const output = ts.transpileModule(readFileSync(path.join(root, name), 'utf8'), { fileName: name, compilerOptions: options }).outputText;
       assert.doesNotMatch(output, /from\s*["']\.\.?\/[^"']+\.ts["']/);
       const destination = path.join(directory, name.replace(/\.ts$/, '.js'));
-      mkdirSync(path.dirname(destination), { recursive: true });
-      writeFileSync(destination, output);
-    }
-    for (const source of ['src/booking/customerAccessCopy.ts', 'server/booking-webhooks.ts', 'server/customer-notifications.ts', 'components/services/servicesTranslations.ts']) {
-      const destination = path.join(directory, source.replace(/\.ts$/, '.js'));
-      mkdirSync(path.dirname(destination), { recursive: true });
-      writeFileSync(destination, ts.transpileModule(readFileSync(path.join(root, source), 'utf8'), { fileName: source, compilerOptions: options }).outputText);
+      mkdirSync(path.dirname(destination), { recursive: true }); writeFileSync(destination, output);
     }
     for (const name of ['firebase-applet-config.json', ...['service', 'http', 'policy', 'emails', 'firestore-store'].map(name => `integrations/recovery/${name}.mjs`)]) {
-      const destination = path.join(directory, name);
-      mkdirSync(path.dirname(destination), { recursive: true });
+      const destination = path.join(directory, name); mkdirSync(path.dirname(destination), { recursive: true });
       writeFileSync(destination, readFileSync(path.join(root, name)));
     }
-    cpSync(path.join(root,'integrations/email-collection'),path.join(directory,'integrations/email-collection'),{recursive:true});
+    cpSync(path.join(root, 'integrations/email-collection'), path.join(directory, 'integrations/email-collection'), { recursive: true });
     writeFileSync(path.join(directory, 'package.json'), '{"type":"module"}');
     symlinkSync(path.join(root, 'node_modules'), path.join(directory, 'node_modules'), 'dir');
     mkdirSync(path.join(directory, 'dist'));
-    writeFileSync(path.join(directory, 'dist/index.html'), '<html><head><title>fixture</title></head><body><div id="root"><main id="home-loading"><div><h1>Home</h1>COMPILED_TEMPLATE</div></main></div><!-- kraken-root-end --></body></html>');
-    for (const language of ['de', 'en', 'es', 'pt', 'it', 'fr']) {
-      writeFileSync(path.join(directory, 'dist/why-content-' + language + '.html'), '<section id="warum-kraken">WHY_' + language + '</section>');
-      writeFileSync(path.join(directory, 'dist/about-content-' + language + '.html'), '<link rel="stylesheet" href="/assets/about.css"><main><h1>ABOUT_' + language + '</h1><p>STORY_' + language + '</p></main>');
-      writeFileSync(path.join(directory, 'dist/services-content-' + language + '.html'), '<link rel="stylesheet" href="/assets/services.css"><main><h1>SERVICES_' + language + '</h1><details><summary>Service</summary>BODY_' + language + '</details></main>');
-      writeFileSync(path.join(directory, 'dist/contact-content-' + language + '.html'), '<link rel="stylesheet" href="/assets/contact.css"><main><h1>CONTACT_' + language + '</h1><p>DETAILS_' + language + '</p><a href="tel:+41774505705">+41 77 450 57 05</a></main>');
-      for (const [route, kind] of [['leistungen', 'services'], ['about', 'about'], ['kontakt', 'contact']]) {
-        writeFileSync(path.join(directory, `dist/seo-page-${route}-${language}.html`), readFileSync(path.join(directory, `dist/${kind}-content-${language}.html`)));
-      }
-      writeFileSync(path.join(directory, `dist/seo-page-home-${language}.html`), `<main><h1>HOME_${language}</h1><section id="warum-kraken">WHY_${language}</section></main>`);
-      writeFileSync(path.join(directory, `dist/seo-page-quote-${language}.html`), `<main><h1>QUOTE_${language}</h1></main>`);
-      writeFileSync(path.join(directory, `dist/seo-page-services-zurich-window-cleaning-${language}.html`), `<main><h1>WINDOWS_ZURICH_${language}</h1></main>`);
+    mkdirSync(path.join(directory, 'dist/assets'));
+    writeFileSync(path.join(directory, 'dist/assets/index-12345678.css'), '.scene-room{width:100%}');
+    writeFileSync(path.join(directory, 'dist/index.html'), '<html lang="de-CH"><head><title>fixture</title><link rel="stylesheet" crossorigin href="/shared.css"><link rel="stylesheet" crossorigin href="/assets/index-12345678.css"></head><body><div id="root">OLD_TEMPLATE</div><!-- kraken-root-end --></body></html>');
+    for (const language of ['de', 'en', 'es', 'pt', 'it', 'fr']) for (const route of [...INDEXABLE_PATHS, ...LEGAL_DOCUMENT_PATHS]) {
+      const marker=route==='/'?HOME_APP_SSR_MARKER+'<link rel="preload" as="image" href="/test-room.webp"/><link rel="preload" as="image" type="image/avif" imageSrcSet="/test-room.avif 960w" imageSizes="100vw"/>':'';
+      writeFileSync(path.join(directory, 'dist', seoFragmentName(route, language)), marker+`<link rel="stylesheet" href="/shared.css"><main id="main"><h1>${route} ${language}</h1><p>RENDERED_BODY</p></main>`);
     }
     const driver = `
-      import assert from 'node:assert/strict';
-      import { createServer, request } from 'node:http';
-      globalThis.fetch = () => { throw new Error('No upstream request is allowed'); };
-      const { default: app, appReady } = await import(${JSON.stringify(pathToFileURL(path.join(directory, 'server.js')).href)});
-      await appReady;
-      const server = createServer(app);
-      await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-      const get = pathname => new Promise((resolve, reject) => {
-        const call = request({ hostname:'127.0.0.1', port:server.address().port, path:pathname, headers:{Host:'krakenpfm.ch'} }, response => {
-          let body='';response.setEncoding('utf8');response.on('data', chunk => body+=chunk);
-          response.on('end', () => resolve({status:response.statusCode,body,headers:response.headers}));
-        });call.on('error',reject);call.end();
+      import assert from 'node:assert/strict';import {createServer,request} from 'node:http';
+      globalThis.fetch=()=>{throw Error('No upstream request is allowed');};
+      const {publicHref}=await import('./src/routing/site-paths.js');
+      const {INDEXABLE_PATHS}=await import('./src/seo/crawl-policy.js');
+      const {default:app,appReady}=await import(${JSON.stringify(pathToFileURL(path.join(directory, 'server.js')).href)});await appReady;
+      const server=createServer(app);await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+      const call=(pathname,method='GET',body=null,extra={})=>new Promise((resolve,reject)=>{
+        const req=request({hostname:'127.0.0.1',port:server.address().port,path:pathname,method,headers:{Host:'krakenpfm.ch',...(body?{'Content-Type':'application/json'}:{}),...extra}},res=>{
+          let text='';res.setEncoding('utf8');res.on('data',chunk=>text+=chunk);res.on('end',()=>resolve({status:res.statusCode,body:text,headers:res.headers}));
+        });req.on('error',reject);req.end(body);
       });
-      const post = (pathname, body) => new Promise((resolve,reject)=>{
-        const call=request({hostname:'127.0.0.1',port:server.address().port,path:pathname,method:'POST',headers:{Host:'krakenpfm.ch','Content-Type':'application/json'}},response=>{
-          let text='';response.setEncoding('utf8');response.on('data',chunk=>text+=chunk);response.on('end',()=>resolve({status:response.statusCode,payload:JSON.parse(text)}));
-        });call.on('error',reject);call.end(body);
-      });
-      try {
-        assert.deepEqual(JSON.parse((await get('/api/health')).body), {status:'ok'});
-        const contactConfig = await get('/api/contact/config');
-        assert.equal(contactConfig.status,200);
-        assert.deepEqual(JSON.parse(contactConfig.body),{geocoding:true,routing:{available:false,provider:'openrouteservice'},coverage:'CH'});
-        for(const body of ['{invalid',JSON.stringify({query:'x'.repeat(5000)})]){
-          const invalid=await post('/api/contact/geocode',body);assert.equal(invalid.status,400);assert.deepEqual(invalid.payload,{error:{code:'invalid_request'}});
-        }
-        const routingMissing=await post('/api/contact/route',JSON.stringify({coordinates:[8.632696,47.698002],direction:'outbound'}));
-        assert.equal(routingMissing.status,503);assert.deepEqual(routingMissing.payload,{error:{code:'not_configured'}});
-        for (const route of ['/', '/quote?lang=es']) {
-          const result=await get(route);
-          assert.equal(result.status,200,route);
-          assert.ok(result.body.includes(route === '/' ? 'HOME_de' : 'QUOTE_es'));
-          assert.ok(!result.body.includes('COMPILED_TEMPLATE'));
-          assert.ok(!result.body.includes('<title>fixture</title>'));
-        }
-        for (const language of ['de', 'en', 'es', 'pt', 'it', 'fr']) {
-          const result = await get('/leistungen?lang=' + language);
-          assert.equal(result.status, 200);
-          assert.ok(result.body.includes('SERVICES_' + language));
-          assert.ok(result.body.includes('BODY_' + language));
-          assert.ok(result.body.indexOf('stylesheet') < result.body.indexOf('</head>'));
-          assert.equal(result.body.indexOf('stylesheet', result.body.indexOf('<div id="root">')), -1);
-        }
-        for (const language of ['de','en','es','pt','it','fr']) {
-          const result=await get('/about?lang='+language);
-          assert.equal(result.status,200);assert.ok(result.body.includes('ABOUT_'+language));assert.ok(result.body.includes('STORY_'+language));assert.ok(!result.body.includes('COMPILED_TEMPLATE'));
-          assert.ok((await get('/?lang='+language)).body.includes('WHY_'+language));
+      try{
+        assert.equal((await call('/api/health')).status,200);
+        for(const language of ['de','en','es','pt','it','fr'])for(const route of INDEXABLE_PATHS){
+          const destination=publicHref(route,language),result=await call(destination);
+          assert.equal(result.status,200,destination);assert.ok(result.body.includes('RENDERED_BODY'),destination);
+          assert.equal(result.body.split('/shared.css').length-1,1,'No duplicate stylesheet across differing attributes');
+          assert.equal(result.body.split('/assets/index-12345678.css').length-1,1,'Entry stylesheet remains one cacheable link');
+          assert.doesNotMatch(result.body,/data-kraken-inline-css/);
           assert.equal((result.body.match(/<h1\\b/g)||[]).length,1);
-          const redirect=await get('/ueber-kraken?lang='+language);
-          assert.equal(redirect.status,301);assert.equal(redirect.headers.location,'/about?lang='+language);
-          const trailing=await get('/about/?lang='+language);
-          assert.equal(trailing.status,301);assert.equal(trailing.headers.location,'/about?lang='+language);
-          const contact=await get('/kontakt?lang='+language);
-          assert.equal(contact.status,200);assert.ok(contact.body.includes('CONTACT_'+language));assert.ok(contact.body.includes('DETAILS_'+language));assert.ok(!contact.body.includes('COMPILED_TEMPLATE'));
-          assert.ok(contact.body.indexOf('stylesheet')<contact.body.indexOf('</head>'));
-          assert.equal(contact.body.indexOf('stylesheet',contact.body.indexOf('<div id="root">')),-1);
-          assert.equal((contact.body.match(/<h1\\b/g)||[]).length,1);
-          assert.ok(contact.body.includes('href="tel:+41774505705"'));
-          for (const alias of ['/contact','/contacto']) {
-            const redirect=await get(alias+'?lang='+language);
-            assert.equal(redirect.status,301);assert.equal(redirect.headers.location,'/kontakt?lang='+language);
+          assert.ok(result.body.includes('rel="canonical" href="https://krakenpfm.ch'+destination+'"'),destination);
+          assert.equal((result.body.match(/hreflang=/g)||[]).length,7);
+          assert.equal(result.headers['x-powered-by'],undefined);
+          assert.equal(result.headers['x-content-type-options'],'nosniff');
+          assert.ok(result.headers['content-security-policy-report-only']);
+          if(route==='/'){
+            assert.match(result.body,/id="root" data-kraken-home-ssr="true"/);
+            assert.ok(result.body.indexOf('/test-room.webp')<result.body.indexOf('<link rel="stylesheet"'), 'Image discovery precedes the stylesheet');
+            assert.ok(result.body.indexOf('/test-room.avif')<result.body.indexOf('<link rel="stylesheet"'), 'Responsive preload without href is retained in the head');
+            assert.doesNotMatch(result.body.slice(result.body.indexOf('<div id="root"')),/test-room\.webp|kraken-home-app-ssr/);
+          }else{
+            assert.doesNotMatch(result.body,/data-kraken-home-ssr="true"/);
+            assert.ok(result.body.includes('<link rel="stylesheet" crossorigin href="/assets/index-12345678.css">'));
           }
         }
-        const local = await get('/services/zurich/window-cleaning?lang=en');
-        assert.equal(local.status, 200); assert.ok(local.body.includes('WINDOWS_ZURICH_en'));
-        for (const route of ['/login','/register','/quote?booking=example','/customer-access','/quote-demo']) {
-          const privatePage = await get(route);
-          assert.equal(privatePage.headers['x-robots-tag'], 'noindex, follow', route);
-          assert.match(privatePage.body, /name="robots" content="noindex, follow"/);
+        for(const [source,destination] of [
+          ['/about','/ueber-uns'],['/quote?lang=es&service=end&draft=a%2Bb%26c','/es/offerte?service=end&draft=a%2Bb%26c'],
+          ['/services/zurich/end-of-tenancy?hl=fr','/fr/umzugsreinigung/zuerich'],
+          ['/reinigung/uster?lang=it','/it/reinigung/region-zuerich'],['/reinigung/neuhausen-am-rheinfall','/reinigung/kanton-schaffhausen'],
+          ['/en/about?lang=es','/en/ueber-uns'],['/de/offerte','/offerte'],
+        ]){const result=await call(source);assert.equal(result.status,301,source);assert.equal(result.headers.location,destination);}
+        for(const route of ['/services/zurich/gardening','/reinigung-zurich-property-managers','/commercial','/en/blog/iot-smart-facility-management-schweizer-bueros']){
+          const result=await call(route);assert.equal(result.status,410,route);assert.equal(result.headers['x-robots-tag'],'noindex, follow');
         }
-        for (const route of ['/seo-page-home-de.html', '/contact-content-de.html']) assert.equal((await get(route)).status,404);
+        assert.equal((await call('/missing-page')).status,404);
+        for(const route of ['/es/login','/fr/register','/dashboard','/es/offerte?booking=opaque','/en/customer-access','/quote-demo','/commercial-quote']){
+          const result=await call(route);assert.equal(result.status,200,route);assert.equal(result.headers['x-robots-tag'],'noindex, follow',route);
+          assert.match(result.body,/name="robots" content="noindex, follow"/);
+          if(route.includes('offerte')){assert.equal(result.headers['referrer-policy'],'no-referrer');assert.match(result.headers['cache-control'],/no-store/);}
+        }
+        const config=await call('/api/contact/config');assert.deepEqual(JSON.parse(config.body),{geocoding:true,routing:{available:false,provider:'openrouteservice'},coverage:'CH'});
+        const invalid=await call('/api/contact/geocode','POST','{invalid');assert.equal(invalid.status,400);
+        assert.equal((await call('/api/contact/route','POST',JSON.stringify({coordinates:[8.632696,47.698002],direction:'outbound'}))).status,503);
+        assert.equal((await call('/api/health','GET',null,{Origin:'https://other.example'})).status,403);
+        assert.equal((await call('/api/health','GET',null,{Origin:'https://krakenpfm.ch'})).headers['access-control-allow-origin'],'https://krakenpfm.ch');
+        for(const route of ['/seo-page-home-de.html','/contact-content-de.html','/server.cjs'])assert.equal((await call(route)).status,404);
         console.log('COMPILED_SERVER_OK');
-      } finally {await new Promise(resolve => server.close(resolve));}
+      }finally{await new Promise(resolve=>server.close(resolve));}
     `;
-    const result = spawnSync(process.execPath, ['--input-type=module', '-e', driver], {
-      cwd: directory,
-      env: { ...process.env, VERCEL: '1', NODE_ENV: 'production', CONTACT_ROUTING_API_KEY: '' },
-      encoding: 'utf8',
-      timeout: 15000
-    });
-    assert.equal(result.status, 0, result.stdout + result.stderr);
-    assert.match(result.stdout, /COMPILED_SERVER_OK/);
+    const result = spawnSync(process.execPath, ['--input-type=module', '-e', driver], { cwd: directory, env: { ...process.env, VERCEL: '1', NODE_ENV: 'production', CONTACT_ROUTING_API_KEY: '' }, encoding: 'utf8', timeout: 20000 });
+    assert.equal(result.status, 0, result.stdout + result.stderr); assert.match(result.stdout, /COMPILED_SERVER_OK/);
   } finally { rmSync(directory, { recursive: true, force: true }); }
 });

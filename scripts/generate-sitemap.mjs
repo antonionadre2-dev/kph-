@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BASE_URL, isRouteValid } from '../seoConfig.ts';
 import { getPageSeo, SEO_LANGUAGES } from '../src/seo/metadata.ts';
+import { publicHref, toPublicPath } from '../src/routing/site-paths.ts';
 import { INDEXABLE_PATHS, isPrivatePath, renderRobotsTxt } from '../src/seo/crawl-policy.ts';
 
 // Promote a route only after its public content and canonical have been reviewed.
@@ -15,14 +16,14 @@ const escapeXml = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;'
 /** @param {readonly string[]} paths */
 export function getSitemapUrls(paths = SITEMAP_PATHS) {
   const urls = paths.flatMap(route => {
-    if (route.includes('?') || route.includes('#') || !isRouteValid(route) || isPrivatePath(route)) {
+    if (route !== toPublicPath(route) || route.includes('?') || route.includes('#') || !isRouteValid(route) || isPrivatePath(route)) {
       throw new Error(`Sitemap route must be a public canonical path: ${route}`);
     }
     return SEO_LANGUAGES.map(language => {
       const metadata = getPageSeo(route, language);
       const canonical = new URL(metadata.canonical);
-      const languageSearch = language === 'de' ? '' : `?lang=${language}`;
-      if (canonical.origin !== BASE_URL || canonical.pathname !== route || canonical.search !== languageSearch || canonical.hash) {
+      const expected = new URL(publicHref(route, language), BASE_URL);
+      if (canonical.origin !== BASE_URL || canonical.pathname !== expected.pathname || canonical.search || canonical.hash) {
         throw new Error(`Sitemap route differs from its canonical URL: ${route}`);
       }
       if (metadata.indexable === false || metadata.noindex === true || /noindex/i.test(metadata.robots || '')) {

@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { escapedDocumentRecord, DOCUMENT_PREVIEW_CSP, documentDraftLabel, documentPreviewBlocked, documentPreviewDate, connectPreviewPrint } from '../src/security/documentPreview';
+import './private-tools.css';
+import React, { useState, useEffect, useRef } from 'react';
+import { identityScope, emailDraftHref, emailPreviewDocument, isClientEditableStatus } from '../src/auth/dashboard-safety';
+import { normalizeHomeLanguage, homeText } from './home/homeTranslations';
 import { useTranslation } from '../i18n';
 import { motion, AnimatePresence } from 'motion/react';
 import { FilePreviewModal } from './FilePreviewModal';
@@ -155,257 +159,6 @@ type ContactMessage = {
     createdAt?: any;
 };
 
-// Seed fallback data for fresh developer portals
-const INITIAL_SEED_DATA = [
-    { 
-        client: "Mandarin Oriental Resort", 
-        service: "B2B Deep Cleaning", 
-        date: "2026-06-01", 
-        status: "In Progress" as const, 
-        priority: "High" as const, 
-        amount: 4800, 
-        email: "facilities@mandarin.ch", 
-        phone: "+41 44 222 11 00", 
-        address: "Quai Turrettini 1, 1201 Geneva", 
-        notes: "Ensure specialized marble polish is completed. Standard corporate credentials requested on site.", 
-        mediaUrls: ["https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=600&auto=format&fit=crop"], 
-        mediaNames: ["lounge_marble_area.jpg"],
-        bookingMode: 'direct',
-        accessMethod: 'Coordinate with Operational Gate Staff',
-        time: '08:00 - 17:00',
-        services: [
-            {
-                type: 'deep-cleaning',
-                description: 'Office Deep Cleaning | 12 Bed/Offices | 8 Bath | Frequency: Weekly | Day: Mondays',
-                price: 4800,
-                duration: 9,
-                details: {
-                    bedrooms: 12,
-                    bathrooms: 8,
-                    frequency: 'Weekly',
-                    recurringDayPreference: 'Monday',
-                    balconyCount: 4,
-                    storageCount: 2,
-                    carpetCount: 12,
-                    furnitureCount: 24
-                }
-            }
-        ],
-        payment: {
-            method: 'card' as const,
-            gateway: 'payrexx' as const,
-            last4: '4242',
-            brand: 'visa',
-            cardholderName: 'Facilities Manager',
-            expiryMonth: '08',
-            expiryYear: '28',
-            transactionId: 'ch_3M3pxuLkdIj789BC0298aKj1',
-            amountCharged: 720,
-            currency: 'CHF',
-            status: 'captured' as const,
-            billingPostal: '1201'
-        },
-        mediaAttachments: [
-            {
-                filename: 'lounge_marble_area.jpg',
-                mimeType: 'image/jpeg',
-                sizeBytes: 1548576,
-                uploadedAt: '2026-05-31T10:15:30Z',
-                url: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=600&auto=format&fit=crop'
-            }
-        ],
-        timestamps: {
-            formSubmittedAt: '2026-05-31T10:00:23Z',
-            priceCalculatedAt: '2026-05-31T09:58:12Z',
-            depositCapturedAt: '2026-05-31T10:00:45Z',
-            lastUpdatedAt: '2026-05-31T10:05:00Z',
-            requestedServiceDate: '2026-06-01',
-            requestedServiceTime: '08:00'
-        },
-        scheduling: {
-            requestedDate: '2026-06-01',
-            preferredTimeWindow: 'specific' as const,
-            specificTime: '08:00',
-            estimatedDurationHours: 9,
-            estimatedEndTime: '17:00'
-        }
-    },
-    { 
-        client: "Zurich Swiss Tower B", 
-        service: "End of Tenancy Deluxe", 
-        date: "2026-06-08", 
-        status: "Pending" as const, 
-        priority: "Medium" as const, 
-        amount: 2450, 
-        email: "contact@towerb.ch", 
-        phone: "+41 43 900 33 22", 
-        address: "Brandschenkestrasse 90, 8002 Zurich", 
-        notes: "15 rooms handover guarantee protocol required. Client requested dual inspection reports.", 
-        mediaUrls: [], 
-        mediaNames: [],
-        bookingMode: 'direct',
-        accessMethod: 'Key under the codebox: Pin 8002',
-        time: '09:00 - 18:00',
-        services: [
-            {
-                type: 'end-of-tenancy',
-                description: 'Deluxe Handover Cleaning | 15 Rooms | 4 Bathrooms | Balcony (2)',
-                price: 2450,
-                duration: 10,
-                details: {
-                    roomsCount: 15,
-                    bathroomsCount: 4,
-                    balconyCount: 2,
-                    storageCount: 1,
-                    carpetCount: 3,
-                    furnitureCount: 5
-                }
-            }
-        ],
-        payment: {
-            method: 'bank_transfer' as const,
-            gateway: 'manual' as const,
-            last4: '',
-            brand: '',
-            cardholderName: 'Corporate Operations',
-            expiryMonth: '',
-            expiryYear: '',
-            transactionId: 'invoice_bank_transfer',
-            amountCharged: 367.50,
-            currency: 'CHF',
-            status: 'pending' as const,
-            billingPostal: '8002'
-        },
-        mediaAttachments: [],
-        timestamps: {
-            formSubmittedAt: '2026-05-31T08:24:12Z',
-            priceCalculatedAt: '2026-05-31T08:20:00Z',
-            depositCapturedAt: null,
-            lastUpdatedAt: '2026-05-31T08:24:12Z',
-            requestedServiceDate: '2026-06-08',
-            requestedServiceTime: '09:00'
-        },
-        scheduling: {
-            requestedDate: '2026-06-08',
-            preferredTimeWindow: 'specific' as const,
-            specificTime: '09:00',
-            estimatedDurationHours: 10,
-            estimatedEndTime: '19:00'
-        }
-    },
-    { 
-        client: "Grand Hotel Bellevue", 
-        service: "Exterior Glass Facade", 
-        date: "2026-05-28", 
-        status: "Completed" as const, 
-        priority: "Low" as const, 
-        amount: 1350, 
-        email: "maintenance@bellevue-gstaad.ch", 
-        phone: "+41 33 748 00 00", 
-        address: "Untergstaadstrasse 26, 3780 Gstaad", 
-        notes: "Eco-Performance water filtration system applied. 100% certified bio products used.", 
-        mediaUrls: [], 
-        mediaNames: [],
-        bookingMode: 'quote',
-        accessMethod: 'Key box near side entrance | Pass: BELLE',
-        time: '13:00 - 17:00',
-        services: [
-            {
-                type: 'exterior-cleaning',
-                description: 'Double Glass Facade Water Jet Jet wash',
-                price: 1350,
-                duration: 4.5,
-                details: {
-                    surface: 'Glass & Slate Panels',
-                    material: 'Toughened Facade Glass',
-                    approxSize: 340
-                }
-            }
-        ],
-        payment: {
-            method: 'twint' as const,
-            gateway: 'payrexx' as const,
-            last4: '',
-            brand: '',
-            cardholderName: 'Hotel Bellevue Management',
-            expiryMonth: '',
-            expiryYear: '',
-            transactionId: 'tw_9081267BcaKj32890',
-            amountCharged: 202.50,
-            currency: 'CHF',
-            status: 'captured' as const,
-            billingPostal: '3780'
-        },
-        mediaAttachments: [],
-        timestamps: {
-            formSubmittedAt: '2026-05-27T16:11:00Z',
-            priceCalculatedAt: '2026-05-27T16:05:00Z',
-            depositCapturedAt: '2026-05-27T16:12:30Z',
-            lastUpdatedAt: '2026-05-28T18:00:00Z',
-            requestedServiceDate: '2026-05-28',
-            requestedServiceTime: '13:00'
-        },
-        scheduling: {
-            requestedDate: '2026-05-28',
-            preferredTimeWindow: 'specific' as const,
-            specificTime: '13:00',
-            estimatedDurationHours: 4.5,
-            estimatedEndTime: '17:30'
-        }
-    },
-];
-
-const getClientSeedData = (userName: string, userEmail: string) => [
-   { 
-       client: userName, 
-       service: "Initial Facility Check & Key Setup", 
-       date: new Date().toISOString().split("T")[0], 
-       status: "Pending" as const, 
-       priority: "Medium" as const, 
-       amount: 350, 
-       email: userEmail, 
-       phone: "+41 79 123 45 67", 
-       address: "Zürich, Switzerland", 
-       notes: "Welcome to Kraken PFM. This onboarding check verifies your localized passcode, key-box access codes, or smart cards. A staff member will check the premises shortly.", 
-       mediaUrls: [], 
-       mediaNames: [],
-       bookingMode: 'direct',
-       accessMethod: 'Passcode sent under SMS auth',
-       time: '10:00 - 12:00',
-       services: [],
-       payment: {
-           method: 'cash' as const,
-           gateway: 'manual' as const,
-           last4: '',
-           brand: '',
-           cardholderName: userName,
-           expiryMonth: '',
-           expiryYear: '',
-           transactionId: 'hand_setup',
-           amountCharged: 52.50,
-           currency: 'CHF',
-           status: 'pending' as const,
-           billingPostal: '8000'
-       },
-       mediaAttachments: [],
-       timestamps: {
-           formSubmittedAt: new Date().toISOString(),
-           priceCalculatedAt: new Date().toISOString(),
-           depositCapturedAt: null,
-           lastUpdatedAt: new Date().toISOString(),
-           requestedServiceDate: new Date().toISOString().split("T")[0],
-           requestedServiceTime: '10:00'
-       },
-       scheduling: {
-           requestedDate: new Date().toISOString().split("T")[0],
-           preferredTimeWindow: 'specific' as const,
-           specificTime: '10:00',
-           estimatedDurationHours: 2,
-           estimatedEndTime: '12:00'
-       }
-   }
-];
-
 const Dashboard: React.FC = () => {
   const { language } = useTranslation();
   const dt = getDashboardTranslation(language);
@@ -431,12 +184,8 @@ const Dashboard: React.FC = () => {
   const [emailHistoryFilter, setEmailHistoryFilter] = useState<'all'|'sent'|'pending'|'error'>('all');
   const [emailHistoryClientFilter, setEmailHistoryClientFilter] = useState('');
   const [showEmailHistory, setShowEmailHistory] = useState(false);
-  const [emailHistory, setEmailHistory] = useState<Array<{id:string;requestId:string;clientName:string;clientEmail:string;subject:string;sentAt:string;status:'sent'|'pending'|'error';amount:string;}>>(() => {
-    try { return JSON.parse(localStorage.getItem('kraken_email_history') || '[]'); } catch { return []; }
-  });
-  const [confirmationStatuses, setConfirmationStatuses] = useState<Record<string,'confirmed'|'pending'|'none'>>(() => {
-    try { return JSON.parse(localStorage.getItem('kraken_confirm_status') || '{}'); } catch { return {}; }
-  });
+  const [emailHistory, setEmailHistory] = useState<Array<{id:string;requestId:string;clientName:string;clientEmail:string;subject:string;sentAt:string;status:'sent'|'pending'|'error';amount:string;}>>([]);
+  const [confirmationStatuses, setConfirmationStatuses] = useState<Record<string,'confirmed'|'pending'|'none'>>({});
   useEffect(() => {
     if (selectedRequest) {
       setAdminNotesText(selectedRequest.notes || '');
@@ -473,14 +222,39 @@ const Dashboard: React.FC = () => {
   const [messageSearchQuery, setMessageSearchQuery] = useState('');
   const [messageFilterStatus, setMessageFilterStatus] = useState<'all' | 'new' | 'done'>('all');
 
-  const isStaff = user?.email?.toLowerCase().trim().endsWith('@krakenpfm.ch') || user?.email?.toLowerCase().trim() === 'kai@krakenpfm.ch' || user?.email?.toLowerCase().trim() === 'antonio.nadre@anotherstar.com';
+  const isStaff = user?.staff === true;
+  const activeIdentity = identityScope(user?.uid,isStaff);
+  const identity = useRef(activeIdentity);
+  identity.current = activeIdentity;
+  const [displayIdentity,setDisplayIdentity] = useState(activeIdentity);
+  const safetyCopy = {
+    de: ['E-Mail entwerfen','Entwurf in Ihrem E-Mail-Programm. Es wird keine Nachricht automatisch gesendet.','Bitte geben Sie den tatsächlichen Betrag und die Leistung an.'],
+    en: ['Draft email','Draft in your email app. No message is sent automatically.','Enter the actual amount and service.'],
+    es: ['Redactar correo','Borrador en su programa de correo. No se envía ningún mensaje automáticamente.','Indique el importe real y el servicio.'],
+    pt: ['Preparar email','Rascunho no seu programa de email. Nenhuma mensagem é enviada automaticamente.','Indique o valor real e o serviço.'],
+    it: ['Preparare email','Bozza nel suo programma email. Nessun messaggio viene inviato automaticamente.','Indichi l’importo effettivo e il servizio.'],
+    fr: ['Rédiger un e-mail','Brouillon dans votre messagerie. Aucun message n’est envoyé automatiquement.','Indiquez le montant réel et la prestation.'],
+  }[normalizeHomeLanguage(language)];
+  useEffect(() => {
+    identity.current=activeIdentity;
+    setRequests([]);setJobApplications([]);setContactMessages([]);setSelectedRequest(null);setSelectedJobApp(null);
+    setIsFormOpen(false);setAdminNotesText('');setActionAlert(null);setSearchQuery('');setCareerSearchQuery('');setMessageSearchQuery('');setEmailHistoryClientFilter('');
+    setNewRequest({client:'',email:'',phone:'',address:'',service:'',date:'',priority:'Medium',amount:'',notes:'',mediaUrlString:''});
+    setSelectedEmailRequest(null);setEmailModalOpen(false);setEmailTo('');setEmailCC('');setEmailSubject('');setEmailBody('');
+    setEmailHistory([]);setConfirmationStatuses({});setPreviewFile(null);setDisplayIdentity(activeIdentity);
+    try { localStorage.removeItem('kraken_email_history');localStorage.removeItem('kraken_confirm_status'); } catch { /* No private history is kept in browser storage. */ }
+    return () => { identity.current=''; };
+  },[activeIdentity]);
+
 
   const fetchContactMessages = async () => {
-    if (!user) return;
+    if (!user || !isStaff) return;
+    const scope=identity.current;
     setLoadingMessages(true);
     try {
       const q = collection(db, 'contact_messages');
       const querySnapshot = await getDocs(q);
+      if(identity.current!==scope)return;
       const fetched: ContactMessage[] = [];
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data() as any;
@@ -504,17 +278,20 @@ const Dashboard: React.FC = () => {
     } catch (err) {
       console.error("Error fetching contact messages from Firestore:", err);
     } finally {
-      setLoadingMessages(false);
+      if(identity.current===scope)setLoadingMessages(false);
     }
   };
 
   const handleMessageStatusToggle = async (msgId: string, currentStatus: 'new' | 'done') => {
+    const scope=identity.current;
+    if(!user?.staff)return;
     const nextStatus = currentStatus === 'new' ? 'done' : 'new';
     try {
       await updateDoc(doc(db, 'contact_messages', msgId), {
         status: nextStatus,
         updatedAt: serverTimestamp()
       });
+          if(identity.current!==scope)return;
       setContactMessages(prev => prev.map(m => m.id === msgId ? { ...m, status: nextStatus } : m));
       setActionAlert(`Estado del mensaje actualizado a: ${nextStatus === 'done' ? 'Atendido (Done)' : 'Nuevo (New)'}`);
     } catch (err) {
@@ -524,6 +301,7 @@ const Dashboard: React.FC = () => {
 
   const fetchJobApplications = async () => {
     if (!user) return;
+    const scope=identity.current;
     setLoadingCareers(true);
     try {
       let q;
@@ -536,6 +314,7 @@ const Dashboard: React.FC = () => {
         );
       }
       const querySnapshot = await getDocs(q);
+      if(identity.current!==scope)return;
       const fetched: JobApplication[] = [];
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data() as any;
@@ -563,16 +342,19 @@ const Dashboard: React.FC = () => {
     } catch (err) {
       console.error("Error fetching candidate job applications from Firestore:", err);
     } finally {
-      setLoadingCareers(false);
+      if(identity.current===scope)setLoadingCareers(false);
     }
   };
 
   const handleJobAppStatusChange = async (appId: string, nextStatus: 'Pending' | 'Reviewed' | 'Contacted' | 'Hired' | 'Rejected') => {
+    const scope=identity.current;
+    if(!user?.staff)return;
     try {
       await updateDoc(doc(db, 'job_applications', appId), {
         status: nextStatus,
         updatedAt: serverTimestamp()
       });
+          if(identity.current!==scope)return;
       setJobApplications(prev => prev.map(app => app.id === appId ? { ...app, status: nextStatus } : app));
       if (selectedJobApp?.id === appId) {
         setSelectedJobApp(prev => prev ? { ...prev, status: nextStatus } : null);
@@ -585,6 +367,7 @@ const Dashboard: React.FC = () => {
 
   // Fetch requests
   useEffect(() => {
+    const scope=activeIdentity;
     if (!user) {
       setLoading(false);
       return;
@@ -607,6 +390,7 @@ const Dashboard: React.FC = () => {
         }
 
         const querySnapshot = await getDocs(q);
+        if(identity.current!==scope)return;
         const fetched: MaintenanceRequest[] = [];
         
         querySnapshot.forEach((doc) => {
@@ -639,83 +423,29 @@ const Dashboard: React.FC = () => {
           });
         });
 
-        // Seed if totally empty to prevent cold start feedback on clean dbs
-        const seedFlag = `seeded_v3_${user.uid}`;
-        if (fetched.length === 0 && !localStorage.getItem(seedFlag)) {
-          const seededList: MaintenanceRequest[] = [];
-          
-          const seedData = isStaff 
-            ? INITIAL_SEED_DATA 
-            : getClientSeedData(user.name, user.email);
-
-          for (const item of seedData) {
-            const newDocId = doc(collection(db, 'maintenance_requests')).id;
-            const requestRef = doc(db, 'maintenance_requests', newDocId);
-            
-            const payload = {
-              id: newDocId,
-              client: item.client,
-              service: item.service,
-              date: item.date,
-              status: item.status,
-              priority: item.priority,
-              amount: item.amount,
-              email: item.email,
-              phone: item.phone,
-              address: item.address,
-              notes: item.notes,
-              mediaUrls: item.mediaUrls,
-              mediaNames: item.mediaNames,
-              bookingMode: item.bookingMode,
-              accessMethod: item.accessMethod,
-              time: item.time,
-              services: item.services,
-              // Enrichment fields from item:
-              payment: item.payment || null,
-              mediaAttachments: item.mediaAttachments || [],
-              timestamps: item.timestamps || null,
-              scheduling: item.scheduling || null,
-              userId: user.uid,
-              createdAt: serverTimestamp(),
-              updatedAt: serverTimestamp()
-            };
-            
-            await setDoc(requestRef, sanitizeFirestoreData(payload));
-            
-            seededList.push({
-              ...payload,
-              id: newDocId,
-              createdAt: null,
-              updatedAt: null
-            });
-          }
-          
-          localStorage.setItem(seedFlag, 'true');
-          setRequests(seededList);
-        } else {
-          // Sort descending by date
-          fetched.sort((a, b) => b.date.localeCompare(a.date));
-          setRequests(fetched);
-        }
+        // An empty account stays empty. Opening the portal must never create example jobs.
+        fetched.sort((a, b) => b.date.localeCompare(a.date));
+        setRequests(fetched);
       } catch (error) {
         console.error('Error fetching maintenance requests from firestore:', error);
       } finally {
-        setLoading(false);
+        if(identity.current===scope)setLoading(false);
       }
     };
 
     fetchRequests();
     fetchJobApplications();
     fetchContactMessages();
-  }, [user, isStaff]);
+  }, [activeIdentity]);
 
   // Actions
   const handleDelete = async (id: string, e?: React.MouseEvent) => {
+    const scope=identity.current;
       if (e) e.stopPropagation();
       if (!user) return;
       
       const targetRequest = requests.find(r => r.id === id);
-      if (targetRequest && !isStaff && targetRequest.status !== 'Pending') {
+      if (targetRequest && !isStaff && !isClientEditableStatus(targetRequest.status)) {
         alert("Locked for Operations Security: Requests that are already 'In Progress' or 'Completed' cannot be cancelled or deleted online. Please contact our operational staff at kai@krakenpfm.ch for immediate assistance.");
         return;
       }
@@ -726,6 +456,7 @@ const Dashboard: React.FC = () => {
 
       try {
           await deleteDoc(doc(db, 'maintenance_requests', id));
+          if(identity.current!==scope)return;
           setRequests(requests.filter(req => req.id !== id));
           if (selectedRequest?.id === id) {
               setSelectedRequest(null);
@@ -736,6 +467,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleStatusChange = async (id: string, currentStatus: 'Pending' | 'In Progress' | 'Completed', e?: React.MouseEvent) => {
+    const scope=identity.current;
       if (e) e.stopPropagation();
       if (!user) return;
       
@@ -759,6 +491,7 @@ const Dashboard: React.FC = () => {
               status: nextStatus,
               updatedAt: serverTimestamp()
           });
+          if(identity.current!==scope)return;
 
           const updatedList = requests.map(req => {
               if (req.id === id) {
@@ -778,12 +511,15 @@ const Dashboard: React.FC = () => {
 
   // Direct Status Update Selector from details
   const updateStatusDirect = async (id: string, nextStatus: 'Pending' | 'In Progress' | 'Completed') => {
+    const scope=identity.current;
+    if(!user?.staff)return;
       if (!user) return;
       try {
           await updateDoc(doc(db, 'maintenance_requests', id), {
               status: nextStatus,
               updatedAt: serverTimestamp()
           });
+          if(identity.current!==scope)return;
 
           const updatedList = requests.map(req => {
               if (req.id === id) {
@@ -808,12 +544,14 @@ const Dashboard: React.FC = () => {
   };
 
   const handleSaveNotes = async (id: string, notesText: string) => {
+    const scope=identity.current;
       if (!user) return;
       try {
           await updateDoc(doc(db, 'maintenance_requests', id), {
               notes: notesText,
               updatedAt: serverTimestamp()
           });
+          if(identity.current!==scope)return;
 
           const updatedList = requests.map(req => {
               if (req.id === id) {
@@ -834,8 +572,9 @@ const Dashboard: React.FC = () => {
   };
 
   const handleSendEmail = (req: MaintenanceRequest) => {
+    if(!isStaff)return;
     const subjText = dt.emailSubjConfirmation + ' – ' + (req.service || req.client || 'Service') + ' | CHF ' + (req.amount || '0');
-    const bHtml = `<!DOCTYPE html><html><head><meta charset='utf-8'><style>body{font-family:Arial,sans-serif;background:#f0f4f8;margin:0;padding:0}.c{max-width:600px;margin:20px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1)}.h{background:#0f1b2d;padding:28px 32px;text-align:center}.h h1{color:#00d4ff;margin:0;font-size:22px;letter-spacing:2px;text-transform:uppercase}.h p{color:#94a3b8;margin:4px 0 0;font-size:12px}.b{padding:28px 32px}.tbl{width:100%;border-collapse:collapse;margin:16px 0}.tbl th{background:#0f1b2d;color:#00d4ff;padding:10px 14px;text-align:left;font-size:12px;text-transform:uppercase}.tbl td{padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#334155}.tot td{font-weight:bold;background:#f8fafc}.totamt{color:#0f1b2d;font-size:18px;font-weight:900}.ft{background:#0f1b2d;padding:16px 32px;text-align:center}.ft p{color:#64748b;font-size:11px;margin:3px 0}</style></head><body><div class='c'><div class='h'><h1>Kraken PFM</h1><p>Properties &amp; Facilities Management</p></div><div class='b'><p style='font-size:15px;color:#1e293b'>${dt.emailGreeting}<br><br>${dt.emailBodyIntro}</p><table class='tbl'><tr><th>${dt.emailThDetail}</th><th>${dt.emailThInfo}</th></tr><tr><td>${dt.emailThClient}</td><td><b>${req.client||'N/A'}</b></td></tr><tr><td>${dt.emailThService}</td><td><b>${req.service||'Facility Management'}</b></td></tr><tr><td>${dt.emailThDate}</td><td><b>${req.date||new Date().toLocaleDateString('de-CH')}</b></td></tr><tr><td>${dt.emailThPriority}</td><td><b>${req.priority||'Standard'}</b></td></tr><tr class='tot'><td><b>${dt.emailThTotal}</b></td><td><span class='totamt'>CHF ${req.amount||'0.00'}</span></td></tr></table><p style='font-size:12px;color:#64748b'>${dt.emailReplyPrompt}</p></div><div class='ft'><p style='color:#94a3b8;font-size:13px;font-weight:bold'>Kraken Properties &amp; Facilities Management</p><p>kai@krakenpfm.ch | krakenpfm.ch</p></div></div></body></html>`;
+    const bHtml = `<!DOCTYPE html><html><head><meta charset='utf-8'><style>body{font-family:Arial,sans-serif;background:#f0f4f8;margin:0;padding:0}.c{max-width:600px;margin:20px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1)}.h{background:#0f1b2d;padding:28px 32px;text-align:center}.h h1{color:#00d4ff;margin:0;font-size:22px;letter-spacing:2px;text-transform:uppercase}.h p{color:#94a3b8;margin:4px 0 0;font-size:12px}.b{padding:28px 32px}.tbl{width:100%;border-collapse:collapse;margin:16px 0}.tbl th{background:#0f1b2d;color:#00d4ff;padding:10px 14px;text-align:left;font-size:12px;text-transform:uppercase}.tbl td{padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#334155}.tot td{font-weight:bold;background:#f8fafc}.totamt{color:#0f1b2d;font-size:18px;font-weight:900}.ft{background:#0f1b2d;padding:16px 32px;text-align:center}.ft p{color:#64748b;font-size:11px;margin:3px 0}</style></head><body><div class='c'><div class='h'><h1>Kraken PFM</h1><p>${homeText(language,'Reinigung und kleine Umzüge.')}</p></div><div class='b'><p style='font-size:15px;color:#1e293b'>${dt.emailGreeting}<br><br>${dt.emailBodyIntro}</p><table class='tbl'><tr><th>${dt.emailThDetail}</th><th>${dt.emailThInfo}</th></tr><tr><td>${dt.emailThClient}</td><td><b>${req.client||'N/A'}</b></td></tr><tr><td>${dt.emailThService}</td><td><b>${req.service||'—'}</b></td></tr><tr><td>${dt.emailThDate}</td><td><b>${req.date||'—'}</b></td></tr><tr><td>${dt.emailThPriority}</td><td><b>${req.priority||'Standard'}</b></td></tr><tr class='tot'><td><b>${dt.emailThTotal}</b></td><td><span class='totamt'>CHF ${req.amount||'0.00'}</span></td></tr></table><p style='font-size:12px;color:#64748b'>${dt.emailReplyPrompt}</p></div><div class='ft'><p style='color:#94a3b8;font-size:13px;font-weight:bold'>Kraken ${homeText(language,'Reinigung und kleine Umzüge.')}</p><p>kai@krakenpfm.ch | krakenpfm.ch</p></div></div></body></html>`;
     setSelectedEmailRequest(req);
     setEmailTo(req.email || '');
     setEmailCC('');
@@ -846,12 +585,15 @@ const Dashboard: React.FC = () => {
   };
 
   const handleScheduleService = async (req: MaintenanceRequest) => {
+    const scope=identity.current;
+    if(!user?.staff)return;
       try {
           await updateDoc(doc(db, 'maintenance_requests', req.id), {
               status: 'In Progress',
               scheduledAt: serverTimestamp(),
               updatedAt: serverTimestamp()
           });
+          if(identity.current!==scope)return;
 
           setRequests(prev => prev.map(r => r.id === req.id ? { ...r, status: 'In Progress' } : r));
 
@@ -866,22 +608,24 @@ const Dashboard: React.FC = () => {
       setTimeout(() => setActionAlert(null), 5000);
   };
 
-  const handleGenerateInvoice = (req: MaintenanceRequest) => {
+  const handleGenerateInvoice = (rawRequest: MaintenanceRequest) => {
+      const req = escapedDocumentRecord(rawRequest);
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
-          setActionAlert("WARNING: Por favor permita las ventanas emergentes para ver/guardar la factura PDF.");
+          setActionAlert(documentPreviewBlocked(language));
           return;
       }
 
       const invoiceNum = `INV-${req.id.substring(0, 8).toUpperCase()}`;
-      const dateStr = new Date().toLocaleDateString(language === 'es' ? 'es-ES' : language === 'de' || language === 'de-CH' ? 'de-CH' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const dateStr = documentPreviewDate(language);
       const logoUrl = 'https://krakenpfm.ch/logo-kraken-azul.webp';
 
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-          <title>${dt.pdfInvoiceTitle} ${invoiceNum} - Kraken PFM</title>
+          <meta http-equiv="Content-Security-Policy" content="${DOCUMENT_PREVIEW_CSP}" />
+          <title>${documentDraftLabel(language)} · ${dt.pdfInvoiceTitle} ${invoiceNum} - Kraken PFM</title>
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; color: #1e293b; max-width: 800px; margin: 0 auto; }
             .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0284c7; padding-bottom: 20px; margin-bottom: 30px; }
@@ -901,22 +645,22 @@ const Dashboard: React.FC = () => {
           </style>
         </head>
         <body>
-          <button class="btn-print" onclick="window.print()">${dt.pdfPrintSave}</button>
+          <button class="btn-print" data-print-invoice>${dt.pdfPrintSave}</button>
           
           <div class="header">
             <div class="brand">
               <img src="${logoUrl}" alt="Kraken Logo" class="brand-logo" />
-              <div class="brand-sub">Properties and Facilities Management</div>
+              <div class="brand-sub">${dt.pdfPropertyMaint}</div>
             </div>
-            <div class="inv-title">${dt.pdfServiceInvoice}<br><span style="font-size:14px; color:#64748b;">${invoiceNum}</span></div>
+            <p style="font-size:14px;font-weight:700">${documentDraftLabel(language)}</p><div class="inv-title">${dt.pdfServiceInvoice}<br><span style="font-size:14px; color:#64748b;">${invoiceNum}</span></div>
           </div>
 
           <div class="details">
             <div class="box">
               <strong>${dt.pdfIssuer}:</strong><br>
-              Kraken Properties & Facilities Management<br>
-              Bahnhofstrasse 42, 8001 Zürich<br>
-              Schweiz • CHE-109.823.411 TVA<br>
+              Kraken PFM<br>
+              Seewadelstrasse 3, 8203 Schaffhausen<br>
+              Schweiz<br>
               kai@krakenpfm.ch
             </div>
             <div class="box">
@@ -957,28 +701,23 @@ const Dashboard: React.FC = () => {
         </html>
       `);
       printWindow.document.close();
-      setActionAlert(`SUCCESS: Factura PDF generada e interactivamente lista para guardar o imprimir.`);
+      connectPreviewPrint(printWindow);
+      setActionAlert(documentDraftLabel(language) + ' · PDF');
       setTimeout(() => setActionAlert(null), 4000);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    const scope=identity.current;
       e.preventDefault();
       if (!user) return;
 
       const newDocId = doc(collection(db, 'maintenance_requests')).id;
       const requestRef = doc(db, 'maintenance_requests', newDocId);
 
-      // Default estimate logic
-      const servicePricing: { [key: string]: number } = {
-        'End of Tenancy': 1400,
-        'Deep Cleaning': 2200,
-        'Maintenance': 600,
-        'Consultation': 350,
-        'B2B Premium Complex': 4500,
-        'Office Routine': 850
-      };
-      
-      const parsedAmount = Number(newRequest.amount) || servicePricing[newRequest.service] || 600;
+      const parsedAmount = Number(newRequest.amount);
+      if (!newRequest.amount.trim() || !Number.isFinite(parsedAmount) || parsedAmount < 0 || !newRequest.service.trim()) {
+        setActionAlert(safetyCopy[2]); return;
+      }
 
       // Handle media links
       const mediaUrlsInput: string[] = [];
@@ -1003,16 +742,16 @@ const Dashboard: React.FC = () => {
 
       const payload = {
           id: newDocId,
-          client: isStaff ? (newRequest.client || 'Direct Client Lookup') : user.name,
-          email: isStaff ? (newRequest.email || 'staff@krakenpfm.ch') : user.email,
-          phone: newRequest.phone || '+41 44 000 00 00',
-          address: newRequest.address || 'Switzerland',
-          service: newRequest.service || 'FACILITY MAINTENANCE',
-          date: newRequest.date || new Date().toISOString().split('T')[0],
+          client: isStaff ? newRequest.client.trim() : user.name,
+          email: isStaff ? newRequest.email.trim() : user.email,
+          phone: newRequest.phone.trim(),
+          address: newRequest.address.trim(),
+          service: newRequest.service.trim(),
+          date: newRequest.date,
           status: 'Pending' as const,
           priority: newRequest.priority,
           amount: parsedAmount,
-          notes: newRequest.notes || 'Manually registered booking.',
+          notes: newRequest.notes,
           mediaUrls: mediaUrlsInput,
           mediaNames: mediaNamesInput,
           userId: user.uid,
@@ -1022,6 +761,7 @@ const Dashboard: React.FC = () => {
 
       try {
           await setDoc(requestRef, sanitizeFirestoreData(payload));
+          if(identity.current!==scope)return;
           
           const localRequest: MaintenanceRequest = {
               id: newDocId,
@@ -1082,51 +822,17 @@ const Dashboard: React.FC = () => {
       return matchStatus && matchSearch;
   });
 
-  const doSendEmail = async () => {
-    if (!selectedEmailRequest || !emailTo) return;
-    setEmailSending(true);
-    const entry = {
-      id: Date.now().toString(),
-      requestId: selectedEmailRequest.id,
-      clientName: selectedEmailRequest.client || 'Unknown',
-      clientEmail: emailTo,
-      subject: emailSubject,
-      sentAt: new Date().toISOString(),
-      status: 'pending' as 'sent' | 'pending' | 'error',
-      amount: selectedEmailRequest.amount || '0',
-    };
-    try {
-      await fetch('https://hook.eu1.make.com/uc1q47ys3jwjkl3bm9cxpvbdgp9i1u37', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'cost_confirmation_email',
-          to: emailTo, cc: emailCC, subject: emailSubject,
-          html: emailBody,
-          requestId: selectedEmailRequest.id,
-          client: selectedEmailRequest.client,
-          amount: selectedEmailRequest.amount,
-          service: selectedEmailRequest.service,
-          sentAt: entry.sentAt,
-        }),
-      });
-      entry.status = 'sent';
-      setActionAlert('SUCCESS: Cost confirmation email sent to ' + emailTo);
-    } catch {
-      entry.status = 'error';
-      setActionAlert('ERROR: Email delivery failed. Check network and try again.');
-    }
-    const newHist = [entry, ...emailHistory];
-    setEmailHistory(newHist);
-    localStorage.setItem('kraken_email_history', JSON.stringify(newHist));
-    setEmailSending(false);
-    setEmailModalOpen(false);
+  const doSendEmail = () => {
+    if(!isStaff || !selectedEmailRequest || !emailTo)return;
+    const body=emailBody.replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+    try { window.location.assign(emailDraftHref(emailTo.trim(),emailCC.trim(),emailSubject,body));setActionAlert(safetyCopy[1]); }
+    catch { setActionAlert(safetyCopy[2]); }
   };
 
   const markConfirmed = (requestId: string, status: 'confirmed' | 'pending' | 'none') => {
     const n = { ...confirmationStatuses, [requestId]: status };
     setConfirmationStatuses(n);
-    localStorage.setItem('kraken_confirm_status', JSON.stringify(n));
+
   };
 
   const doResendEmail = (entry: { requestId: string }) => {
@@ -1148,6 +854,7 @@ const Dashboard: React.FC = () => {
     confirmed: Object.values(confirmationStatuses).filter(s => s === 'confirmed').length,
   };
 
+  if(displayIdentity!==activeIdentity)return <main id="main" aria-busy="true" />;
   return (
     <main className="bg-slate-55 min-h-screen pt-24 sm:pt-28 pb-20 font-sans text-slate-800 relative overflow-x-clip bg-slate-50 [&_input]:text-base [&_textarea]:text-base [&_select]:text-base [&_label]:text-sm [&_button]:min-h-11">
       {/* Background Radial Ambiance */}
@@ -1174,7 +881,7 @@ const Dashboard: React.FC = () => {
                     </div>
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight break-words mb-2 text-slate-900">
                         {isStaff ? 'Worker' : dt.myFacilities.split(' ')[0]}{' '}
-                        <span className="text-blue-600">{isStaff ? 'Dashboard' : (dt.myFacilities.split(' ').slice(1).join(' ') || 'Facilities')}</span>
+                        <span className="text-blue-600">{isStaff ? 'Dashboard' : (dt.myFacilities.split(' ').slice(1).join(' ') || 'Aufträge')}</span>
                     </h1>
                     <p className="text-slate-500 font-semibold text-sm leading-relaxed break-words">
                         {dt.welcomeBack} {user ? user.name : 'Authorized Partner'} 
@@ -1771,12 +1478,7 @@ const Dashboard: React.FC = () => {
                                       required
                                   >
                                       <option value="">{dt.selectLineOfWork}</option>
-                                      <option value="End of Tenancy Deluxe">End of Tenancy Deluxe (+ Handover Guarantee)</option>
-                                      <option value="B2B Commercial Cleaning">B2B Commercial Cleaning (Office/Enterprise)</option>
-                                      <option value="Regular Deep Cleaning">Regular Deep Cleaning (Residential)</option>
-                                      <option value="Professional Car Detailing">Professional Car Detailing (Mobile Dry-Soap)</option>
-                                      <option value="Facade & Glass Restoration">Facade & Glass Restoration (Facility)</option>
-                                      <option value="Emergency Rapid Cleanup">Emergency Rapid Cleanup</option>
+                                      {['Umzugsreinigung','Fensterreinigung','Regelmässige Reinigung','Grundreinigung','Kleine Umzüge'].map(service => <option key={service} value={service}>{homeText(language,service)}</option>)}
                                   </select>
                               </div>
 
@@ -2305,18 +2007,18 @@ const Dashboard: React.FC = () => {
                 ) : (
                   <div className="border border-slate-200 rounded-xl overflow-hidden">
                     <div className="bg-slate-100 px-4 py-2 text-xs text-slate-500 font-medium border-b border-slate-200">{dt.preview}</div>
-                    <iframe srcDoc={emailBody} className="w-full" style={{height:'420px',border:'none'}} title="Email Preview" sandbox="allow-same-origin"/>
+                    <iframe srcDoc={emailPreviewDocument(emailBody)} className="w-full" style={{height:'420px',border:'none'}} title="Email Preview" sandbox=""/>
                   </div>
                 )}
               </div>
               <div className="border-t border-slate-100 px-6 py-4 flex items-center justify-between bg-slate-50 flex-shrink-0">
                 <div className="flex items-center gap-2 text-xs text-slate-400">
-                  <CheckCircle size={12} className="text-green-400"/> Via Kraken PFM Dispatch
+                  <CheckCircle size={12} className="text-green-400"/> {safetyCopy[1]}
                 </div>
                 <div className="flex gap-3">
                   <button onClick={() => setEmailModalOpen(false)} className="px-4 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">{dt.cancel}</button>
                   <button onClick={doSendEmail} disabled={emailSending || !emailTo} className="px-5 py-2 rounded-lg bg-[#0f1b2d] text-white text-sm font-bold uppercase tracking-wider hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-                    {emailSending ? <><Clock size={13} className="animate-spin"/> {dt.sending}</> : <><Send size={13}/> {dt.sendEmail}</>}
+                    {emailSending ? <><Clock size={13} className="animate-spin"/> {dt.sending}</> : <><Send size={13}/> {safetyCopy[0]}</>}
                   </button>
                 </div>
               </div>

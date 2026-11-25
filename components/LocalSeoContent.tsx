@@ -1,10 +1,15 @@
+import "../src/styles/route-utilities.css";
 import React from 'react';
 import {
   getLocalRoutePlace, getLocalSeoDescriptor, getLocalService, LOCAL_ADDRESS_CONFIRMATION,
   LOCAL_CITIES, LOCAL_SCOPE, LOCAL_SERVICES, localHref, type LocalSeoRoute,
 } from '../src/seo/local-content';
+import { getServicePageFaqs } from '../src/seo/page-faqs';
 import { localText } from '../src/seo/local-translations';
 import { LocalRegionalContent } from './LocalRegionalContent';
+import { EndOfTenancyLanding } from './EndOfTenancyLanding';
+import { SelectedServicePrice } from './SelectedServicePrice';
+import { calculatorCta } from '../src/home/cta';
 import './local-seo.css';
 
 interface LocalSeoContentProps {
@@ -19,28 +24,10 @@ function routePath(route: LocalSeoRoute): string {
   return LOCAL_CITIES.find(city => city.regionId === route.regionId)?.regionPath || '/einsatzgebiete';
 }
 
-const faqAnswers = {
-  windows: {
-    question: 'Welche Fensterseiten können gereinigt werden?',
-    answer: 'Das hängt von der sicheren Zugänglichkeit ab. Nennen Sie Anzahl, ungefähre Grösse, Öffnungsart und Stockwerk. Fotos helfen, Innen- und Aussenseiten sowie Rahmen und Fensterbänke vorab abzustimmen.',
-  },
-  end: {
-    question: 'Wie bereite ich die Wohnungsabgabe vor?',
-    answer: 'Nennen Sie Reinigungs- und Übergabetermin sowie die Anforderungen Ihrer Verwaltung. Teilen Sie mit, welche Räume leer sind und welche Geräte, Fenster oder Nebenräume gereinigt werden sollen. Den Leistungsumfang vereinbaren wir vorab.',
-  },
-  regular: {
-    question: 'Was unterscheidet regelmässige Reinigung und Grundreinigung?',
-    answer: 'Bei regelmässiger Reinigung vereinbaren wir wiederkehrende Aufgaben und einen Rhythmus. Eine Grundreinigung konzentriert sich einmalig intensiver auf die besprochenen Bereiche und Verschmutzungen. Nennen Sie Ihre Prioritäten, damit wir die passende Leistung planen.',
-  },
-  moving: {
-    question: 'Passt mein Umzug in eine Fahrt?',
-    answer: 'Der Ford Transit hat innen 255,5 cm Bodenlänge, maximal 177,5 cm Breite und 140,6 cm Höhe. Zwischen den Radkästen sind es 139 cm. Türöffnungen, Möbelmasse und Packweise bestimmen mit, was passt; senden Sie eine Liste und Masse oder Fotos zur Planung.',
-  },
-};
-
 /** Pure content: the server renderer and interactive routes use this same component. */
 export function LocalSeoContent({ route, language }: LocalSeoContentProps) {
   if (route.kind === 'region' || route.kind === 'coverage') return <LocalRegionalContent route={route} language={language} />;
+  if (route.kind === 'service' && route.serviceId === 'end-of-tenancy' && ['zurich', 'zuerich', 'schaffhausen', 'winterthur'].includes(route.cityId)) return <EndOfTenancyLanding cityId={route.cityId} language={language} />;
   return <LegacyLocalSeoContent route={route} language={language} />;
 }
 
@@ -63,13 +50,7 @@ function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
       : city?.id === 'winterthur'
         ? 'Für einen Auftrag in Winterthur helfen uns genaue Angaben zu Räumen und Zugängen. Beim Umzug nennen Sie Start und Ziel, Möbelmasse, Stockwerke und Lift; bei Reinigung die betroffenen Räume und Ihren gewünschten Schwerpunkt.'
         : 'Der Einsatz wird für Ihre konkrete Adresse abgestimmt. Für Orte ausserhalb der drei genannten Städte fragen Sie bitte mit vollständiger Adresse und gewünschtem Termin an.';
-  const selectedFaq = service?.calculatorService === 'deep' ? faqAnswers.regular
-    : service ? faqAnswers[service.calculatorService as keyof typeof faqAnswers] : undefined;
-  const faqs = [
-    ...(selectedFaq ? [selectedFaq] : [faqAnswers.end, faqAnswers.moving]),
-    { question: 'Kann ich Reinigung und kleinen Umzug zusammen anfragen?', answer: 'Ja. Geben Sie beide Aufgaben, die Adressen und die gewünschten Termine an. Wir klären den Umfang und ob sich die Reihenfolge für Ihren Auftrag abstimmen lässt.' },
-    { question: 'Wo ist Kraken PFM ansässig?', answer: 'Kraken PFM ist an der Seewadelstrasse 3, 8203 Schaffhausen ansässig. Von dort planen wir Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur.' },
-  ];
+  const faqs = getServicePageFaqs(service?.calculatorService, language);
 
   return (
     <main id="main" className="local-seo" data-local-page={route.kind}>
@@ -89,11 +70,11 @@ function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
               {isAddressRequest && <p className="local-seo-address-note">{t(LOCAL_ADDRESS_CONFIRMATION)}</p>}
               {route.kind === 'service' && !service && <p>{t('Für andere Aufgaben besprechen wir zuerst, ob sie zu unserem Angebot für Privathaushalte passen. Die fünf aktuellen Leistungen finden Sie hier.')}</p>}
               <div className="local-seo-actions">
-                <a className="local-seo-button" href={href(quotePath)}>{t('Meinen Auftrag berechnen')}</a>
+                <a className="local-seo-button" href={href(quotePath)}>{calculatorCta(language,service?.calculatorService)}</a>
                 <a className="local-seo-text-link" href="#local-services">{t('Leistungen für Ihr Zuhause')} <span aria-hidden="true">↓</span></a>
               </div>
             </div>
-            <img className="local-seo-hero-image" src={imagePath} alt="" aria-hidden="true" width="1254" height="1254" fetchPriority="high" />
+            <img className="local-seo-hero-image" src={imagePath} alt={isConfirmedService ? `${t(service.title)} · ${name} · Kraken` : ''} aria-hidden={isConfirmedService ? undefined : true} width="1254" height="1254" fetchPriority="high" />
           </div>
         </div>
       </section>
@@ -125,19 +106,21 @@ function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
               <h3>{t(item.title)}</h3>
               <p>{t(item.description)}</p>
               <div className="local-seo-preparation"><h4>{t('Welche Angaben braucht meine Anfrage?')}</h4><p>{t(item.preparation)}</p></div>
-              {item.calculatorService === 'moving' && <details className="local-seo-cargo"><summary>{t('So viel Platz hat der Laderaum.')}</summary><p>{t(faqAnswers.moving.answer)}</p></details>}
+              {item.calculatorService === 'moving' && <details className="local-seo-cargo"><summary>{t('So viel Platz hat der Laderaum.')}</summary><p>{t(getServicePageFaqs('moving', language)[0].answer)}</p></details>}
               <a className="local-seo-text-link" href={href(isConfirmedService ? `/quote?service=${item.calculatorService}` : city ? `/services/${city.id}/${item.id}` : `/leistungen#${item.anchor}`)}>
-                {t(isConfirmedService ? 'Meinen Auftrag berechnen' : 'Leistungsdetails ansehen')} <span aria-hidden="true">→</span>
+                {isConfirmedService ? calculatorCta(language,item.calculatorService) : t('Leistungsdetails ansehen')} <span aria-hidden="true">→</span>
               </a>
             </article>)}
           </div>
         </section>
 
+        {isConfirmedService && <SelectedServicePrice service={service.calculatorService as 'regular' | 'windows' | 'end' | 'deep' | 'moving'} language={language} />}
+
         <section className="local-seo-section local-seo-price-plan" aria-labelledby="local-price-plan-title">
           <h2 id="local-price-plan-title">{t('Umfang, Preis und Termin planen')}</h2>
           <p>{t('Preise und die Angaben zu Ihrem Auftrag finden Sie im Rechner. Der Aufwand hängt von Umfang, Zustand, Zugängen und beim Umzug auch von Strecke und Umzugsgut ab.')}</p>
           <p>{t('Eine Anfrage ist noch keine Terminbestätigung. Besondere Anforderungen besprechen wir vor dem Auftrag.')}</p>
-          <a className="local-seo-button" href={href(quotePath)}>{t('Meinen Auftrag berechnen')}</a>
+          <a className="local-seo-button" href={href(quotePath)}>{calculatorCta(language,service?.calculatorService)}</a>
         </section>
 
         <section className="local-seo-section" aria-labelledby="local-faq-title">

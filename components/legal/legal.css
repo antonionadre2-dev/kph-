@@ -1,0 +1,28 @@
+@import '../home/design-system.css';
+
+.kraken-legal-page {
+  font-family:Manrope,Arial,sans-serif;
+  font-size:var(--kr-text-base);
+  line-height:1.75;
+  color:var(--kr-ink);
+}
+.kraken-legal-page h1 { font-size:var(--kr-text-h1); line-height:1.12; text-transform:none; }
+.kraken-legal-page h2 { font-size:var(--kr-text-h3); line-height:1.4; text-transform:none; }
+.kraken-legal-page p,
+.kraken-legal-page li,
+.kraken-legal-page .text-xs,
+.kraken-legal-page .text-sm { font-size:var(--kr-text-base); line-height:1.75; }
+.kraken-legal-page h2 span { font-size:var(--kr-text-sm); }
+.kraken-legal-page .kr-button { margin-top:10px; }
+.kraken-legal-page a:focus-visible { outline:var(--kr-focus); outline-offset:4px; }
+@media(max-width:540px){
+  .kraken-legal-page .p-8 { padding:20px; }
+  .kraken-legal-page .p-10 { padding:24px; }
+  .kraken-legal-page .pl-11 { padding-left:0; }
+  .kraken-legal-page .pt-48 { padding-top:48px; }
+  .kraken-legal-page.pt-32 { padding-top:40px; }
+  .kraken-legal-page h1 { overflow-wrap:anywhere; }
+}
+@media(prefers-reduced-motion:reduce){
+  .kraken-legal-page .animate-fade-in-up { animation:none; }
+}

@@ -1,7 +1,14 @@
-@import "tailwindcss";
-
+@import "tailwindcss" source(none);
+/* First paint: Home, shared navigation and cookie controls only. */
+@source "./index.html";
+@source "./index.tsx";
+@source "./components/App.tsx";
+@source "./components/Header.tsx";
+@source "./components/Footer.tsx";
+@source "./components/CookieConsent.tsx";
+@source "./components/home";
 @theme {
-  --font-handwriting: "Caveat", cursive;
+  --font-handwriting: "Manrope", sans-serif;
 }
 
 @layer base {

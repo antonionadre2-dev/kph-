@@ -1,8 +1,11 @@
+import "../src/styles/route-utilities.css";
 
 import React from 'react';
 import { useTranslation } from '../i18n';
 import { ShieldCheckIcon, DocumentTextIcon, GlobeIcon } from './icons';
-import { getGDPRTranslation } from './docTranslations';
+import { getGDPRTranslation } from './legal/privacy';
+import { publicHref } from '../src/routing/site-paths';
+import './legal/legal.css';
 
 const GDPRPage: React.FC = () => {
   const { language } = useTranslation();
@@ -22,7 +25,7 @@ const GDPRPage: React.FC = () => {
   );
 
   return (
-    <main id="main" className="bg-slate-50 pt-32 pb-24 min-h-screen">
+    <main id="main" className="kraken-legal-page bg-slate-50 pt-32 pb-24 min-h-screen">
       <div className="container mx-auto px-6 max-w-4xl">
         
         {/* Header Area */}
@@ -46,6 +49,7 @@ const GDPRPage: React.FC = () => {
         {/* Section 1: Privacy Policy */}
         <Section title={gTrans.introTitle} icon={<GlobeIcon className="w-6 h-6" />}>
            <p className="text-gray-700 leading-relaxed font-medium">{gTrans.introP1}</p>
+           <a className="kr-button kr-button--quiet" href={publicHref('/impressum',language)}>{gTrans.controllerLink}</a>
         </Section>
 
         <Section title={gTrans.collectTitle}>
@@ -87,6 +91,10 @@ const GDPRPage: React.FC = () => {
                   <p className="text-gray-700 text-sm font-medium">{gTrans.retentionTime}</p>
                </div>
             </div>
+        </Section>
+
+        <Section title={gTrans.browserStorageTitle}>
+           <p className="text-gray-700 leading-relaxed">{gTrans.browserStorageText}</p>
         </Section>
 
         <Section title={gTrans.rightsTitle}>

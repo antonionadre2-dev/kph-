@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { toLegacyPath } from '../src/routing/site-paths.ts';
 import test from 'node:test';
 import { BASE_URL } from '../seoConfig.ts';
 import { INDEXABLE_PATHS, isIndexablePath, isPrivatePath, isPrivateUrl, renderRobotsTxt } from '../src/seo/crawl-policy.ts';
@@ -71,11 +72,11 @@ test('the sitemap contains unique reviewed canonical routes that agree with resp
   const urls = getSitemapUrls();
   assert.equal(urls.length, 144);
   assert.equal(new Set(urls).size, urls.length);
-  assert.equal(urls.filter(url => new URL(url).pathname.startsWith('/services/')).length, 90);
+  assert.equal(urls.filter(url => toLegacyPath(url).startsWith('/services/')).length, 90);
   for (const url of urls) {
     const parsed = new URL(url);
     assert.equal(parsed.origin, BASE_URL);
-    assert.ok(parsed.search === '' || /^\?lang=(?:en|es|pt|it|fr)$/.test(parsed.search));
+    assert.equal(parsed.search, '');
     assert.equal(parsed.hash, '');
     assert.equal(isIndexablePath(parsed.pathname), true);
     assert.equal(isPrivateUrl(url), false);
@@ -100,7 +101,7 @@ test('the sitemap contains unique reviewed canonical routes that agree with resp
 });
 
 test('sitemap generation rejects unknown, duplicate, alias, private and unreviewed routes', () => {
-  for (const route of ['/missing-page', '/quote-demo', '/quote?booking=private', '/quote#draft', '/ueber-kraken', '/services', '/services/zurich/pest-control', '/reinigung/thayngen']) {
+  for (const route of ['/missing-page', '/quote-demo', '/quote?booking=private', '/quote#draft', '/ueber-kraken', '/services', '/services/zurich/pest-control', '/reinigung/missing-town']) {
     assert.throws(() => renderSitemap([route]), /public canonical path|differs from its canonical|must be indexable/, route);
   }
   assert.throws(() => renderSitemap(['/', '/']), /Duplicate/);

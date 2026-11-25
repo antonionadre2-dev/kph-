@@ -3,7 +3,7 @@ import { normalizeHomeLanguage } from '../../components/home/homeTranslations';
 type CopyRow = [string, string, string, string, string, string];
 const languageIndex = { de: 0, en: 1, es: 2, pt: 3, it: 4, fr: 5 } as const;
 const rows = {
-  title: ['Preise, die Sie einordnen können.', 'Prices you can plan around.', 'Precios claros para planificar.', 'Preços claros para planear.', 'Prezzi chiari per organizzarsi.', 'Des prix clairs pour vous organiser.'],
+  title: ['Was kostet Ihre Reinigung?', 'How much does your cleaning cost?', '¿Cuánto cuesta su limpieza?', 'Quanto custa a sua limpeza?', 'Quanto costa la sua pulizia?', 'Combien coûte votre nettoyage ?'],
   intro: ['Die Einstiegspreise gelten für den beschriebenen Umfang. Ihren Auftrag und gewählte Extras berechnen Sie im Rechner.', 'Starting prices apply to the scope described. Calculate your own service and selected extras in the calculator.', 'Los precios desde corresponden a las condiciones indicadas. Calcule su servicio y los extras elegidos en el calculador.', 'Os preços desde correspondem às condições indicadas. Calcule o seu serviço e os extras escolhidos na calculadora.', 'I prezzi a partire da si riferiscono alle condizioni indicate. Calcoli il suo servizio e gli extra scelti nel calcolatore.', 'Les prix de départ correspondent aux conditions indiquées. Calculez votre prestation et les options choisies dans le calculateur.'],
   from: ['ab {price}', 'from {price}', 'desde {price}', 'desde {price}', 'da {price}', 'dès {price}'],
   perHour: ['pro Arbeitsstunde', 'per person-hour', 'por hora de trabajo', 'por hora de trabalho', 'per ora di lavoro', 'par heure de travail'],

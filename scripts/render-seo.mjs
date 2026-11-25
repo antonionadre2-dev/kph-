@@ -24,9 +24,9 @@ export async function renderSeoHtml(root) {
   try {
     await build({
       stdin: { contents: `
-        import React from 'react'; import {renderToStaticMarkup} from 'react-dom/server';
+        import React from 'react'; import {renderToStaticMarkup,renderToString} from 'react-dom/server';
         import {I18nProvider} from './i18n.ts';
-        import ApprovedHome from './components/home/ApprovedHome.tsx';
+        import Application from './components/Application.tsx';
         import ApprovedHeader from './components/home/ApprovedHeader.tsx';
         import Footer from './components/Footer.tsx';
         import ImpressumPage from './components/ImpressumPage.tsx';
@@ -35,20 +35,26 @@ export async function renderSeoHtml(root) {
         import {LocalSeoContent} from './components/LocalSeoContent.tsx';
         import {resolveLocalSeoRoute,LOCAL_SERVICES} from './src/seo/local-content.ts';
         import {INDEXABLE_PATHS} from './src/seo/crawl-policy.ts';
-        import {seoFragmentName,LEGAL_DOCUMENT_PATHS} from './src/seo/render-contract.ts';
+        import {seoFragmentName,LEGAL_DOCUMENT_PATHS,HOME_APP_SSR_MARKER} from './src/seo/render-contract.ts';
         import {bookingText} from './src/booking/uiCopy.ts';
+        import {publicHref} from './src/routing/site-paths.ts';
+        import {HERO_DAY,heroImage} from './src/home/hero-media.ts';
         export const routes=[...INDEXABLE_PATHS,...LEGAL_DOCUMENT_PATHS]; export const filename=seoFragmentName;
         const noop=()=>{};
         const wrap=(language,child)=>renderToStaticMarkup(<I18nProvider initialLanguage={language}>{child}</I18nProvider>);
         export const header=language=>wrap(language,<div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div>);
         export const footer=language=>wrap(language,<Footer onNavigate={noop}/>);
-        export const home=language=>wrap(language,<><ApprovedHome onNavigate={noop}/><Footer onNavigate={noop}/></>);
+        export const home=language=>{
+          const image=heroImage(HERO_DAY).source;
+          const preload=image?renderToStaticMarkup(<link rel="preload" as="image" type={image.type} imageSrcSet={image.srcSet} imageSizes={image.sizes} fetchPriority="high"/>):'';
+          return HOME_APP_SSR_MARKER+preload+renderToString(<Application initialLanguage={language==='de'?'de-CH':language}/>);
+        };
         export const local=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div><LocalSeoContent route={resolveLocalSeoRoute(pathname)} language={language}/><Footer onNavigate={noop}/></>);
         export const legal=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div>{pathname==='/impressum'?<ImpressumPage onNavigate={noop}/>:pathname==='/gdpr'?<GDPRPage/>:<TermsPage onNavigate={noop}/>}<Footer onNavigate={noop}/></>);
         export const quote=language=>{const t=key=>bookingText(language,key);return wrap(language,<>
           <div className="kraken-home"><ApprovedHeader onNavigate={noop} page="calculator"/></div>
           <main id="main" className="kr-service-calculator" lang={language}><div className="kr-calc-shell"><header className="kr-calc-intro"><p className="kr-calc-eyebrow">{t('eyebrow')}</p><h1>{t('titleStart')} <span>{t('titleAccent')}</span></h1><p className="kr-calc-lead">{t('intro')}</p></header>
-          <section className="kr-calc-card"><h2>{t('configureTitle')}</h2><nav className="kr-calc-services" aria-label={t('serviceTitle')}>{LOCAL_SERVICES.map(service=><a className="kr-calc-secondary" key={service.id} href={'/quote?lang='+language+'&service='+service.calculatorService}>{t(service.calculatorService==='end'?'endOfTenancy':service.calculatorService)}</a>)}</nav><p>{t('personal')}</p><p><a href={'/kontakt?lang='+language}>{t('contactPage')}</a> · <a href="tel:+41774505705">+41 77 450 57 05</a> · <a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></p></section></div></main><Footer onNavigate={noop}/></>);};
+          <section className="kr-calc-card"><h2>{t('configureTitle')}</h2><nav className="kr-calc-services" aria-label={t('serviceTitle')}>{LOCAL_SERVICES.map(service=><a className="kr-calc-secondary" key={service.id} href={publicHref('/offerte?service='+service.calculatorService,language)}>{t(service.calculatorService==='end'?'endOfTenancy':service.calculatorService)}</a>)}</nav><p>{t('personal')}</p><p><a href={publicHref('/kontakt',language)}>{t('contactPage')}</a> · <a href="tel:+41774505705">+41 77 450 57 05</a> · <a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></p></section></div></main><Footer onNavigate={noop}/></>);};
       `, resolveDir: root, loader: 'tsx' },
       outfile, bundle: true, platform: 'node', format: 'cjs', packages: 'external',
       loader: { '.css': 'empty' }, logLevel: 'warning',
@@ -61,12 +67,12 @@ export async function renderSeoHtml(root) {
       for (const pathname of render.routes) {
         let body, styles = baseStyles;
         if (pathname === '/') body = render.home(language);
-        else if (['/leistungen', '/about', '/kontakt'].includes(pathname)) {
-          const kind = ({ '/leistungen': 'services', '/about': 'about', '/kontakt': 'contact' })[pathname];
+        else if (['/leistungen', '/ueber-uns', '/kontakt'].includes(pathname)) {
+          const kind = ({ '/leistungen': 'services', '/ueber-uns': 'about', '/kontakt': 'contact' })[pathname];
           const fragment = readFileSync(path.join(root, `dist/${kind}-content-${language}.html`), 'utf8');
           const extra = fragment.match(/<link rel="stylesheet" href="[^"]+">/g) || [];
           styles += extra.join(''); body = header + fragment.replace(/<link rel="stylesheet" href="[^"]+">/g, '') + footer;
-        } else if (pathname === '/quote') {
+        } else if (pathname === '/offerte') {
           styles += stylesFor('components/calculator/CalculatorRoute.tsx'); body = render.quote(language);
         } else if (['/impressum','/gdpr','/terms'].includes(pathname)) {
           // The existing legal documents must be readable before JavaScript too.

@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef, lazy, Suspense, Component, ReactNode } from 'react';
 import { useTranslation } from '../i18n';
-import { parsePath } from '../seoConfig';
+import { parsePath } from '../src/routing/router';
+import { toLegacyPath } from '../src/routing/site-paths';
+import { readPrivateCart, writePrivateCart } from '../src/booking/privateStorage';
 import Header from './Header';
 import ApprovedHome from './home/ApprovedHome';
 import ApprovedHeader from './home/ApprovedHeader';
-import { getPageSeo } from '../src/seo/metadata';
+import { createClientSeoScheduler } from '../src/seo/client-state';
 import { LOCALE_LOCATION_EVENT, languageFromSearch, localizedNavigationUrl, type SiteLanguage } from '../src/locale';
 import Footer from './Footer';
 import { useAuth } from './Auth';
+import NotFoundPage from './NotFoundPage';
 
 // Helper for lazy loading modules with auto-retry on chunk load failures (e.g., stale bundle hashes)
 const lazyWithRetry = <T extends { default: React.ComponentType<any> }>(
@@ -31,9 +34,7 @@ const lazyWithRetry = <T extends { default: React.ComponentType<any> }>(
   });
 
 
-const Clients = lazyWithRetry(() => import('./Clients'));
 const FloatingMascot = lazyWithRetry(() => import('./FloatingMascot'));
-const FloatingCTA = lazyWithRetry(() => import('./FloatingCTA'));
 const CookieConsent = lazyWithRetry(() => import('./CookieConsent'));
 
 // Lazy imports for subpages to reduce initial bundle size and enable route-based code splitting
@@ -41,27 +42,17 @@ const CalculatorRoute = lazyWithRetry(() => import('./calculator/CalculatorRoute
 const CustomerAccessRoute = lazyWithRetry(() => import('./calculator/CustomerAccessRoute'));
 const SeoServiceCityPage = lazyWithRetry(() => import('./SeoServiceCityPage'));
 const AboutPage = lazyWithRetry(() => import('./about/ApprovedAbout'));
-const ComicPage = lazyWithRetry(() => import('./ComicPage'));
-const ServicesPage = lazyWithRetry(() => import('./ServicesPage'));
 const ApprovedServices = lazyWithRetry(() => import('./services/ApprovedServices'));
-const CommercialServicesPage = lazyWithRetry(() => import('./CommercialServicesPage'));
 const LoginPage = lazyWithRetry(() => import('./LoginPage'));
 const RegisterPage = lazyWithRetry(() => import('./RegisterPage'));
 const Dashboard = lazyWithRetry(() => import('./Dashboard'));
 const GDPRPage = lazyWithRetry(() => import('./GDPRPage'));
-const HSEPage = lazyWithRetry(() => import('./HSEPage'));
 const TermsPage = lazyWithRetry(() => import('./TermsPage'));
-const SustainabilityPage = lazyWithRetry(() => import('./SustainabilityPage'));
-const CareersPage = lazyWithRetry(() => import('./CareersPage'));
-const OurStoryPage = lazyWithRetry(() => import('./OurStoryPage'));
 const ImpressumPage = lazyWithRetry(() => import('./ImpressumPage'));
 const KontaktPage = lazyWithRetry(() => import('./KontaktPage'));
-const ComicShopPage = lazyWithRetry(() => import('./ComicShopPage'));
-const BlogPage = lazyWithRetry(() => import('./BlogPage'));
 const CommercialQuotePage = lazyWithRetry(() => import('./CommercialQuotePage'));
 const ReviewInvitePage = lazyWithRetry(() => import('./ReviewInvitePage'));
 const RegionHubPage = lazyWithRetry(() => import('./RegionHubPage').then(m => ({ default: m.RegionHubPage })));
-const MunicipalityPage = lazyWithRetry(() => import('./MunicipalityPage').then(m => ({ default: m.MunicipalityPage })));
 const CoverageHubPage = lazyWithRetry(() => import('./CoverageHubPage'));
 
 interface ChunkErrorBoundaryProps {
@@ -123,13 +114,6 @@ const PageLoader = () => (
     <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
   </div>
 );
-
-// --- Firebase Configuration (Modular v9+) ---
-import { auth as firebaseAuth } from './firebase';
-export const auth = firebaseAuth;
-// ------------------------------
-
-const CART_STORAGE_KEY = 'kraken_cart_persistent';
 
 function changeLocation(target: string, language: SiteLanguage, replace = false) {
   const destination = localizedNavigationUrl(target, window.location.href, language);
@@ -231,10 +215,10 @@ const App: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   
   const [mounted, setMounted] = useState(false);
-  const cartLoadedRef = useRef(false);
   
   // Persistent Cart State
-  const [cart, setCart] = useState<any[]>([]);
+  const [cart, setCart] = useState<any[]>(() => readPrivateCart());
+  const persistedCartRef = useRef(JSON.stringify(cart));
 
   // Load cart, set mounted state and force scroll to top on mount
   useEffect(() => {
@@ -245,22 +229,14 @@ const App: React.FC = () => {
       }
       if (!window.location.hash) window.scrollTo(0, 0);
     }
-    try {
-      const saved = localStorage.getItem(CART_STORAGE_KEY);
-      if (saved) {
-        setCart(JSON.parse(saved));
-      }
-    } catch (e) {
-      console.error('Failed to load cart', e);
-    }
-    cartLoadedRef.current = true;
   }, []);
 
-  // Sync Cart to LocalStorage
+  // Persist only changed anonymous service choices; a reload does not extend retention.
   useEffect(() => {
-    if (cartLoadedRef.current) {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    }
+    const snapshot = JSON.stringify(cart);
+    if (snapshot === persistedCartRef.current) return;
+    writePrivateCart(cart);
+    persistedCartRef.current = snapshot;
   }, [cart]);
 
   // Synchronize state with URL on popstate and initial load
@@ -275,9 +251,7 @@ const App: React.FC = () => {
       setSeoServiceId(parsed.serviceId);
       
       const isReviewUser = typeof window !== 'undefined' && localStorage.getItem('kraken_review_user') === 'true';
-      const isStaff = user?.email?.toLowerCase().trim().endsWith('@krakenpfm.ch') || 
-                      user?.email?.toLowerCase().trim() === 'kai@krakenpfm.ch' || 
-                      user?.email?.toLowerCase().trim() === 'antonio.nadre@anotherstar.com';
+      const isStaff = user?.staff === true;
 
       // Guard dashboard access
       if (targetPage === 'dashboard') {
@@ -329,9 +303,7 @@ const App: React.FC = () => {
 
   const handleNavigate = (targetPage: string) => {
     const isReviewUser = typeof window !== 'undefined' && localStorage.getItem('kraken_review_user') === 'true';
-    const isStaff = user?.email?.toLowerCase().trim().endsWith('@krakenpfm.ch') || 
-                    user?.email?.toLowerCase().trim() === 'kai@krakenpfm.ch' || 
-                    user?.email?.toLowerCase().trim() === 'antonio.nadre@anotherstar.com';
+    const isStaff = user?.staff === true;
 
     if (targetPage.startsWith('/')) {
       const destination = changeLocation(targetPage, language);
@@ -367,85 +339,14 @@ const App: React.FC = () => {
     if (!window.location.hash) window.scrollTo(0, 0);
   };
 
-  // --- Dynamic SEO: per-page <title> and meta description (DE primary, fully localized) ---
+  // The server head is authoritative on arrival; load page metadata only for a stale SPA head.
+  const seoScheduler=useRef<ReturnType<typeof createClientSeoScheduler>|null>(null);
+  if(!seoScheduler.current)seoScheduler.current=createClientSeoScheduler(()=>import('../src/seo/client'),()=>window.location.pathname+window.location.search);
   React.useEffect(() => {
-    const meta = getPageSeo(seoUrl, language);
-
-    document.documentElement.lang = meta.language;
-    const robots = document.querySelector('meta[name="robots"]');
-    if (robots) {
-      const publicHost = ['krakenpfm.ch', 'www.krakenpfm.ch'].includes(window.location.hostname);
-      robots.setAttribute('content', publicHost ? meta.robots : 'noindex, nofollow');
-    }
-
-    document.title = meta.title;
-    let desc = document.querySelector('meta[name="description"]');
-    if (!desc) {
-      desc = document.createElement('meta');
-      desc.setAttribute('name', 'description');
-      document.head.appendChild(desc);
-    }
-    desc.setAttribute('content', meta.description);
-
-    // Canonical link
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute('href', meta.canonical);
-
-    // Keep the same reciprocal language links as the initial server response.
-    const alternates = document.querySelectorAll('link[rel="alternate"][hreflang]');
-    alternates.forEach(el => el.remove());
-    meta.hreflangs.forEach(({ lang, href }) => {
-      const alternate = document.createElement('link');
-      alternate.setAttribute('rel', 'alternate');
-      alternate.setAttribute('hreflang', lang);
-      alternate.setAttribute('href', href);
-      document.head.appendChild(alternate);
-    });
-
-    // Synchronize OG and Twitter tags dynamically
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute('content', meta.title);
-
-    const ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) ogDesc.setAttribute('content', meta.description);
-    const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) ogUrl.setAttribute('content', meta.canonical);
-    const syncMeta = (attribute: 'name' | 'property', key: string, value: string) => {
-      let element = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
-      if (!element) {
-        element = document.createElement('meta');
-        element.setAttribute(attribute, key);
-        document.head.appendChild(element);
-      }
-      element.content = value;
-    };
-    syncMeta('property', 'og:image', meta.ogImage);
-    syncMeta('property', 'og:image:width', meta.ogImageWidth);
-    syncMeta('property', 'og:image:height', meta.ogImageHeight);
-    syncMeta('property', 'og:image:type', meta.ogImageType);
-    syncMeta('property', 'og:locale', ({ de: 'de_CH', en: 'en_US', es: 'es_ES', pt: 'pt_PT', it: 'it_IT', fr: 'fr_FR' } as Record<string, string>)[meta.language.slice(0, 2)] || 'de_CH');
-    syncMeta('name', 'twitter:image', meta.ogImage);
-    let schema = document.querySelector<HTMLScriptElement>('#kraken-page-schema');
-    if (!schema) {
-      document.head.querySelectorAll('script[type="application/ld+json"]').forEach(element => element.remove());
-      schema = document.createElement('script');
-      schema.id = 'kraken-page-schema'; schema.type = 'application/ld+json';
-      document.head.appendChild(schema);
-    }
-    schema.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': meta.structuredData });
-
-    const twTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twTitle) twTitle.setAttribute('content', meta.title);
-
-    const twDesc = document.querySelector('meta[name="twitter:description"]');
-    if (twDesc) twDesc.setAttribute('content', meta.description);
-  }, [page, language, seoCityId, seoServiceId, seoUrl]);
-
+    const path=window.location.pathname+window.location.search;
+    const publicHost=['krakenpfm.ch','www.krakenpfm.ch'].includes(window.location.hostname);
+    return seoScheduler.current!.synchronize(path,language,document,publicHost);
+  },[page,language,seoCityId,seoServiceId,seoUrl]);
 
   const renderPage = () => {
     return (
@@ -455,14 +356,8 @@ const App: React.FC = () => {
           switch (page) {
             case 'about':
               return <AboutPage onNavigate={handleNavigate} />;
-            case 'comic-page':
-              return <ComicPage onNavigate={handleNavigate} />;
             case 'approved-services':
               return <ApprovedServices onNavigate={handleNavigate} />;
-            case 'services-page':
-              return <ServicesPage onNavigate={handleNavigate} />;
-            case 'commercial-services':
-              return <CommercialServicesPage onNavigate={handleNavigate} />;
             case 'commercial-quote':
               return <CommercialQuotePage onNavigate={handleNavigate} />;
             case 'review-invite':
@@ -482,7 +377,7 @@ const App: React.FC = () => {
                 </div>
               );
             case 'clients':
-              return <Clients onNavigate={handleNavigate} />;
+              return <LoginPage onNavigate={handleNavigate} />;
             case 'dashboard':
               if (authLoading) {
                 return (
@@ -497,7 +392,7 @@ const App: React.FC = () => {
                 );
               }
               if (!user) {
-                return <Clients onNavigate={handleNavigate} />;
+                return <LoginPage onNavigate={handleNavigate} />;
               }
               return <Dashboard />;
             case 'login':
@@ -512,110 +407,20 @@ const App: React.FC = () => {
               return <CustomerAccessRoute onNavigate={handleNavigate} />;
             case 'gdpr':
               return <GDPRPage />;
-            case 'hse':
-              return <HSEPage />;
             case 'terms':
               return <TermsPage onNavigate={handleNavigate} />;
             case 'impressum':
               return <ImpressumPage onNavigate={handleNavigate} />;
             case 'kontakt':
               return <KontaktPage onNavigate={handleNavigate} />;
-            case 'sustainability-page':
-              return <SustainabilityPage onNavigate={handleNavigate} />;
-            case 'careers':
-              return <CareersPage onNavigate={handleNavigate} />;
-            case 'our-story':
-              return <OurStoryPage onNavigate={handleNavigate} />;
-            case 'comic-shop':
-              return <ComicShopPage onNavigate={handleNavigate} cart={cart} setCart={setCart} />;
-            case 'blog':
-              return <BlogPage onNavigate={handleNavigate} />;
             case 'region-hub':
               return <RegionHubPage regionId={seoCityId as any} onNavigate={handleNavigate} />;
-            case 'municipality-page':
-              return <MunicipalityPage municipalitySlug={seoCityId} onNavigate={handleNavigate} />;
             case 'seo-landing':
               return <SeoServiceCityPage cityId={seoCityId} serviceId={seoServiceId} onNavigate={handleNavigate} />;
             case 'coverage-hub':
               return <CoverageHubPage onNavigate={handleNavigate} />;
             case '404':
-              return (
-                <div id="404-not-found-screen" className="flex flex-col items-center justify-center min-h-[85vh] bg-slate-950 text-white p-8 text-center relative overflow-hidden font-sans">
-                  {/* Visual Background Accent */}
-                  <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
-                  
-                  <div className="relative z-10 max-w-xl mx-auto">
-                    {/* Animated Mascot / Badge */}
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-white/5 border border-white/10 text-blue-500 text-3xl font-black mb-8 shadow-2xl animate-pulse">
-                      🐙
-                    </div>
-                    
-                    <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-white">
-                      Hoppla! Seite nicht gefunden
-                    </h1>
-                    
-                    <p className="text-sm md:text-base text-slate-400 mb-10 leading-relaxed max-w-md mx-auto">
-                      Die gesuchte Seite existiert nicht oder wurde verschoben. Finden Sie schnell den richtigen Weg mit unseren Direktlinks:
-                    </p>
-
-                    {/* Quick Navigation Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10 text-left">
-                      <button
-                        onClick={() => handleNavigate('/einsatzgebiete')}
-                        className="flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-blue-600/15 border border-white/10 hover:border-blue-500/50 transition-all group"
-                      >
-                        <div>
-                          <div className="text-xs font-black uppercase text-blue-400 tracking-wider mb-0.5">{t('nav.coverage')}</div>
-                          <div className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">{t('footer.allLocations')}</div>
-                        </div>
-                        <span className="text-blue-500 text-lg group-hover:translate-x-1 transition-transform">→</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleNavigate('/quote')}
-                        className="flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-blue-600/15 border border-white/10 hover:border-blue-500/50 transition-all group"
-                      >
-                        <div>
-                          <div className="text-xs font-black uppercase text-blue-400 tracking-wider mb-0.5">Sofort-Offerte</div>
-                          <div className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">Preis berechnen (CHF)</div>
-                        </div>
-                        <span className="text-blue-500 text-lg group-hover:translate-x-1 transition-transform">→</span>
-                      </button>
-
-                      <button
-                        onClick={() => handleNavigate('/reinigung/region-zuerich')}
-                        className="flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-blue-600/15 border border-white/10 hover:border-blue-500/50 transition-all group sm:col-span-2"
-                      >
-                        <div>
-                          <div className="text-xs font-black uppercase text-blue-400 tracking-wider mb-0.5">Regional-Hub Zürich</div>
-                          <div className="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">Umzugs- &amp; Facility Services in Zürich</div>
-                        </div>
-                        <span className="text-blue-500 text-lg group-hover:translate-x-1 transition-transform">→</span>
-                      </button>
-                    </div>
-
-                    {/* Support Channels */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 border-t border-white/5 pt-8">
-                      <button
-                        onClick={() => handleNavigate('/')}
-                        className="w-full sm:w-auto px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-black uppercase tracking-widest rounded-full transition-all text-white"
-                      >
-                        Zur Startseite
-                      </button>
-
-                      <a
-                        href="https://wa.me/41774505705"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full sm:w-auto px-6 py-3 bg-[#25D366] hover:bg-[#20ba56] text-xs font-black uppercase tracking-widest rounded-full transition-all text-slate-950 inline-flex items-center justify-center gap-2 shadow-lg"
-                      >
-                        <span>Live-Support via WhatsApp</span>
-                        <span className="inline-block w-2 h-2 bg-slate-950 rounded-full animate-ping" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              );
+              return <NotFoundPage />;
             case 'home':
             default:
               return <ApprovedHome onNavigate={handleNavigate} />;
@@ -636,9 +441,6 @@ const App: React.FC = () => {
         <Suspense fallback={null}>
           <FloatingMascot currentPage={page} cart={cart} onNavigate={handleNavigate} seoCityId={seoCityId} />
         </Suspense>
-      )}
-      {mounted && !isReviewPage && !isApprovedHome && (
-        <Suspense fallback={null}><FloatingCTA onNavigate={handleNavigate} currentPage={page} /></Suspense>
       )}
       
       {!isReviewPage && !isApprovedHome && <Header onNavigate={handleNavigate} currentPage={page as any} />}

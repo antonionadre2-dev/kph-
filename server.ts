@@ -1,16 +1,19 @@
 import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import compression from "compression";
+import { securityHeaders, sameOriginCors, isImmutableAsset } from "./server/security.ts";
 import fs from "fs";
-import { isRouteValid, VALID_CITIES } from "./seoConfig.ts";
+import { isRouteValid } from "./seoConfig.ts";
 import { getPageSeo, normalizeCanonicalPath } from "./src/seo/metadata.ts";
 import { injectPageSeo, escapeSeoHtml } from "./src/seo/html.ts";
-import { seoFragmentName } from "./src/seo/render-contract.ts";
-import { MUNICIPALITIES } from "./src/data/locations.ts";
+import { seoFragmentName, HOME_APP_SSR_MARKER } from "./src/seo/render-contract.ts";
+import { startHomeAfterPaint } from "./src/home/paint-start.ts";
+import { pathLanguage, toLegacyPath } from "./src/routing/site-paths.ts";
+import { getRouteDisposition } from "./src/routing/route-policy.ts";
+import { publicHref } from "./src/routing/site-paths.ts";
+import { renderStatusPage } from "./server/statusPage.ts";
 import { createHomeWeatherHandler } from "./server/homeWeather.ts";
-import { normalizeSiteLanguage } from "./src/locale.ts";
 import { createKaiAssistantHandler } from "./server/kaiAssistant.ts";
 import { createContactRoutingHandlers } from "./src/contact/routing-server.ts";
 import { createBookingHandlers } from "./server/booking.ts";
@@ -25,6 +28,8 @@ const isDev = process.env.NODE_ENV === "development";
 // Vercel owns the listener. Every request waits for the same initialization,
 // including when local Vite middleware needs asynchronous setup.
 const app = express();
+app.disable("x-powered-by");
+app.use(securityHeaders);
 export default app;
 app.use((_req, _res, next) => { appReady.then(() => next(), next); });
 
@@ -37,7 +42,7 @@ async function configureApplication() {
     } else if ((!path.extname(req.path) || req.path.startsWith('/api/')) && !getPageSeo(req.originalUrl).indexable) {
       res.setHeader("X-Robots-Tag", "noindex, follow");
     }
-    if (['/quote', '/quote-demo', '/customer-access'].includes(req.path)) {
+    if (['/quote', '/quote-demo', '/customer-access'].includes(toLegacyPath(req.path))) {
       res.setHeader('Referrer-Policy', 'no-referrer');
       res.setHeader('Cache-Control', 'private, no-store');
     }
@@ -45,7 +50,7 @@ async function configureApplication() {
   });
 
   app.use(compression());
-  app.use(cors());
+  app.use(sameOriginCors);
   const booking = createBookingHandlers();
   app.post('/api/booking/payrexx/webhook', express.raw({ type: 'application/json', limit: '32kb' }), booking.webhook);
   app.post('/api/booking/email/webhook', express.raw({ type: 'application/json', limit: '32kb' }), booking.emailWebhook);
@@ -73,15 +78,8 @@ async function configureApplication() {
   app.get("/api/contact/config", contactRouting.config);
   app.post("/api/contact/geocode", contactRouting.geocode);
   app.post("/api/contact/route", contactRouting.route);
-
-  app.get("/api/download-zip", (req, res) => {
-    const zipPath = path.join(process.cwd(), "public", "sitio-web-completo.zip");
-    if (fs.existsSync(zipPath)) {
-      res.download(zipPath, "sitio-web-completo.zip");
-    } else {
-      res.status(404).send("File not found");
-    }
-  });
+  // Retired legacy endpoint. Public requests use the current, validated workflows.
+  app.get('/api/download-zip', (_req, res) => { res.setHeader('Cache-Control', 'no-store'); res.status(410).json({ code: 'ARCHIVE_UNAVAILABLE' }); });
 
   // Retired service checkout accepted a browser-supplied amount and cannot
   // authorize a payment. Bookings now own prices, references and verification.
@@ -89,279 +87,10 @@ async function configureApplication() {
     res.setHeader('Cache-Control', 'private, no-store');
     res.status(410).json({ code: 'BOOKING_CHECKOUT_REQUIRED' });
   });
+  // Retired legacy endpoint. Public requests use the current, validated workflows.
+  app.post('/api/chat', (_req, res) => { res.setHeader('Cache-Control', 'no-store'); res.status(410).json({ code: 'USE_KAI_ASSIST' }); });
 
-  const FALLBACK_LANGS: Record<string, Record<string, string>> = {
-    de: {
-      greet: "Hallo! Ich bin Kai, dein virtueller Assistent von Kraken Properties & Facilities Management. 🐙 Wie kann ich dir heute helfen?\n\nDu kannst mich nach unseren Dienstleistungen fragen (Gebäudereinigung, Hauswartung, Gartenpflege) oder direkt ein Beratungsgespräch anfordern!",
-      cleaning: "Bei Kraken Properties bieten wir professionelle **Gebäudereinigung**, **Unterhaltsreinigung**, **Fensterreinigung** und **Sonderreinigung** für Firmen und Privatpersonen an.\n\nGerne erstellen wir ein passendes Konzept. Möchtest du eine Offerte berechnen lassen?",
-      maintenance: "Unsere umfassende **Hauswartung** sorgt für den Werterhalt deiner Liegenschaft. Wir kümmern uns um die Haustechnik, kleine Reparaturen, Haustechnik-Kontrollen und die allgemeine Sicherheit.\n\nMöchtest du, dass wir deine Liegenschaft betreuen? Lass es uns wissen!",
-      garden: "Unsere **Gartenpflege** hält deine Grünflächen das ganze Jahr über in Top-Zustand. Wir übernehmen Rasenmähen, Heckenschnitt, Unkrautbeseitigung und saisonale Pflege.\n\nMöchtest du ein unverbindliches Angebot für deinen Garten erhalten?",
-      quote: "Gerne erstellen wir dir eine massgeschneiderte Offerte! Nutze am besten unseren interaktiven Offertenrechner auf der Seite oder gib mir kurz an, um welche Dienstleistung (z.B. Reinigung) und welche Flächengrösse es geht.",
-      contact: "Du erreichst unser Team telefonisch unter **+41 44 123 45 67** oder per E-Mail unter **info@kraken-properties.ch**.\n\nAlternativ kannst du auch das Kontaktformular unten auf der Seite ausfüllen.",
-      booking: "Gerne reservieren wir einen Beratungstermin für dich! Klicke einfach auf 'Termin buchen' oder nutze das Buchungsformular auf unserer Webseite.\n\n```json\n{\n  \"trigger\": \"SUBMIT_BOOKING\",\n  \"action\": \"BOOK_RESERVATION\",\n  \"data\": {\n    \"service\": \"Consultation\",\n    \"notes\": \"Automatisch gebucht über Assistenten-Backup\"\n  }\n}\n```",
-      thanks: "Sehr gerne! Wenn du weitere Fragen hast oder Unterstützung benötigst, bin ich jederzeit für dich da. Ich wünsche dir einen erfolgreichen Tag!",
-      default: "Dabei helfe ich dir gerne weiter! Als dein digitaler Assistent Kai bin ich für alle Fragen rund um Gebäubeservice, Hauswartung und Reinigung da.\n\nDa der Live-Modus im Demo-Modus gerade ausgelastet ist, kannst du uns auch direkt unter **info@kraken-properties.ch** kontaktieren."
-    },
-    en: {
-      greet: "Hello! I'm Kai, your digital assistant for Kraken Properties & Facilities Management. 🐙 How can I assist you today?\n\nYou can ask me about our services (building cleaning, facility maintenance, garden care) or directly request a consultation!",
-      cleaning: "At Kraken Properties, we provide professional **building cleaning**, **regular maintenance cleaning**, **window cleaning**, and **specialized cleaning** for commercial and residential properties.\n\nWould you like to calculate an estimate or request a quote?",
-      maintenance: "Our **facility maintenance** and caretaker services ensure that your property remains in top-tier condition. We cover building systems, minor repairs, inspections, and waste management.\n\nWould you like us to look after your property? Let's discuss!",
-      garden: "Our **garden care** keeps your green spaces beautiful all year round. We do lawn mowing, hedge trimming, weeding, and seasonal gardening.\n\nWould you like a free estimate for your garden?",
-      quote: "We would be glad to send you a customized quote! You can use our interactive quote generator on the page, or let me know the service you need and the approximate size of the area.",
-      contact: "You can contact our team via phone at **+41 44 123 45 67** or email us at **info@kraken-properties.ch**.\n\nWe look forward to hearing from you!",
-      booking: "I can help you book a free consultation! You can schedule one directly using the 'Book Consultation' form on the site.\n\n```json\n{\n  \"trigger\": \"SUBMIT_BOOKING\",\n  \"action\": \"BOOK_RESERVATION\",\n  \"data\": {\n    \"service\": \"Consultation\",\n    \"notes\": \"Booked automatically via backup chat assistant\"\n  }\n}\n```",
-      thanks: "You're very welcome! If you need any more information or assistance, feel free to ask. Have an amazing day!",
-      default: "I would be happy to help with that! As your assistant Kai, I support you with all aspects of facility management, cleaning, and maintenance.\n\nSince the live AI system is in backup mode right now, please feel free to drop us an email at **info@kraken-properties.ch** for a personal response!"
-    },
-    fr: {
-      greet: "Bonjour ! Je suis Kai, votre assistant virtuel pour Kraken Properties & Facilities Management. 🐙 Comment puis-je vous aider aujourd'hui ?\n\nVous pouvez me poser des questions sur nos services (nettoyage de bâtiment, entretien, jardinage) ou demander directement une consultation !",
-      cleaning: "Chez Kraken Properties, nous proposons des services professionnels de **nettoyage de bâtiments**, **nettoyage d'entretien**, **nettoyage de vitres** et **nettoyages spéciaux** pour les entreprises et les particuliers.\n\nSouhaitez-vous calculer une estimation ou demander un devis ?",
-      maintenance: "Notre service d'**entretien d'immeubles** et de conciergerie garantit le maintien en parfait état de votre propriété. Nous gérons la technique du bâtiment, les petites réparations et les contrôles.\n\nSouhaitez-vous que nous prenions soin de votre propriété ? Discutons-en !",
-      garden: "Notre service d'**entretien de jardin** maintient vos espaces verts magnifiques toute l'année. Nous nous occupons de la tonte de pelouse, de la taille des haies et du désherbage.\n\nSouhaitez-vous une estimation gratuite pour votre jardin ?",
-      quote: "Nous serions ravis de vous envoyer un devis personnalisé ! Vous pouvez utiliser notre générateur de devis interactif sur la page, ou m'indiquer le service souhaité et la surface approximative.",
-      contact: "Vous pouvez contacter notre équipe par téléphone au **+41 44 123 45 67** ou par e-mail à **info@kraken-properties.ch**.\n\nNous nous réjouissons de vous entendre !",
-      booking: "Je peux vous aider à réserver une consultation gratuite ! Vous pouvez planifier cela directement en utilisant le formulaire sur le site.\n\n```json\n{\n  \"trigger\": \"SUBMIT_BOOKING\",\n  \"action\": \"BOOK_RESERVATION\",\n  \"data\": {\n    \"service\": \"Consultation\",\n    \"notes\": \"Réserve automatique par l'assistant de secours\"\n  }\n}\n```",
-      thanks: "De rien ! Si vous avez besoin de plus d'informations ou d'aide, n'hésitez pas à demander. Passez une excellente journée !",
-      default: "Je serais ravi de vous aider ! En tant qu'assistant Kai, je vous accompagne pour le nettoyage, l'entretien et la conciergerie.\n\nLe système d'IA étant en mode de secours, n'hésitez pas à nous envoyer un e-mail à **info@kraken-properties.ch** !"
-    },
-    es: {
-      greet: "¡Hola! Soy Kai, su asistente virtual de Kraken Properties & Facilities Management. 🐙 ¿Cómo le puedo ayudar hoy?\n\n¡Puede preguntarme sobre nuestros servicios (limpieza de edificios, mantenimiento de instalaciones, cuidado de jardines) o solicitar directamente una consulta!",
-      cleaning: "En Kraken Properties, ofrecemos servicios profesionales de **limpieza de edificios**, **limpieza de mantenimiento regular**, **limpieza de ventanas** y **limpiezas especiales** para propiedades comerciales y residenciales.\n\n¿Le gustaría calcular una estimación o solicitar un presupuesto?",
-      maintenance: "Nuestro servicio de **mantenimiento de instalaciones** y conserjería garantiza que su propiedad se mantenga en excelentes condiciones. Cubrimos sistemas del edificio, pequeñas reparaciones e inspecciones.\n\n¿Le gustaría que cuidemos de su propiedad? ¡Hablemos!",
-      garden: "Nuestro servicio de **cuidado de jardines** mantiene sus áreas verdes hermosas todo el año. Realizamos corte de césped, poda de setos, deshierbe y jardinería estacional.\n\n¿Le gustaría una estimación gratuita para su jardín?",
-      quote: "¡Estaremos encantados de enviarle un presupuesto personalizado! Puede utilizar nuestro generador interactivo de presupuestos en la página, o indicarme el servicio que necesita y el tamaño aproximado de la superficie.",
-      contact: "Puede ponerse en contacto con nuestro equipo por teléfono al **+41 44 123 45 67** o por correo electrónico a **info@kraken-properties.ch**.\n\n¡Esperamos tener noticias suyas!",
-      booking: "¡Puedo ayudarle a reservar una consulta gratuita! Puede programar una directamente utilizando el formulario en el sitio.\n\n```json\n{\n  \"trigger\": \"SUBMIT_BOOKING\",\n  \"action\": \"BOOK_RESERVATION\",\n  \"data\": {\n    \"service\": \"Consultation\",\n    \"notes\": \"Reservado automáticamente a través del asistente de respaldo\"\n  }\n}\n```",
-      thanks: "¡De nada! Si necesita más información o ayuda, no dude en preguntar. ¡Que tenga un día excelente!",
-      default: "¡Estaría encantado de ayudarle con eso! Como su asistente Kai, le apoyo con el mantenimiento de instalaciones, limpieza y cuidado.\n\nDado que el sistema de IA está en modo de respaldo, no dude en enviarnos un correo electrónico a **info@kraken-properties.ch**."
-    },
-    it: {
-      greet: "Ciao! Sono Kai, il tuo assistente virtuale per Kraken Properties & Facilities Management. 🐙 Come posso aiutarti oggi?\n\nPuoi chiedermi informazioni sui nostri servizi (pulizia di edifici, manutenzione impianti, cura del giardino) o richiedere direttamente una consulenza!",
-      cleaning: "Presso Kraken Properties, offriamo servizi professionali di **pulizia di edifici**, **pulizia di manutenzione regolare**, **pulizia di vetri** e **pulizie speciali** per proprietà commerciali e residenziali.\n\nDesideri calcolare una stima o richiedere un preventivo?",
-      maintenance: "Il nostro servizio di **manutenzione impianti** e portineria garantisce che la tua proprietà rimanga in condizioni eccellenti. Copriamo impianti, piccole riparazioni e ispezioni.\n\nDesideri che ci prendiamo cura della tua proprietà? Parliamone!",
-      garden: "Il nostro servizio di **cura del giardino** mantiene i tuoi spazi verdi bellissimi tutto l'anno. Eseguiamo taglio del prato, potatura siepi, diserbo e giardinaggio stagionale.\n\nDesideri un preventivo gratuito per il tuo giardino?",
-      quote: "Saremmo lieti di inviarti un preventivo personalizzato! Puoi utilizzare il nostro generatore di preventivi interattivo sulla pagina, o indicarmi il servizio di cui hai bisogno e la dimensione approssimativa dell'area.",
-      contact: "Puoi contattare il nostro team telefonicamente al **+41 44 123 45 67** o via e-mail all'indirizzo **info@kraken-properties.ch**.\n\nNon vediamo l'ora di sentirti!",
-      booking: "Posso aiutarti a prenotare una consulenza gratuita! Puoi pianificarla direttamente utilizzando il modulo sul sito.\n\n```json\n{\n  \"trigger\": \"SUBMIT_BOOKING\",\n  \"action\": \"BOOK_RESERVATION\",\n  \"data\": {\n    \"service\": \"Consultation\",\n    \"notes\": \"Prenotato automaticamente tramite l'assistente di backup\"\n  }\n}\n```",
-      thanks: "Prego! Se hai bisogno di ulteriori informazioni o assistenza, non esitare a chiedere. Buona giornata!",
-      default: "Sarei felice di aiutarti! Come tuo assistente Kai, ti supporto in tutti gli aspetti di gestione impianti, pulizia e manutenzione.\n\nPoiché il sistema di IA è in modalità di backup, non esitare a inviarci un'e-mail a **info@kraken-properties.ch**."
-    },
-    pt: {
-      greet: "Olá! Sou o Kai, o seu assistente virtual da Kraken Properties & Facilities Management. 🐙 Como posso ajudar hoje?\n\nPode perguntar-me sobre os nossos serviços (limpeza de edifícios, manutenção de instalações, jardinagem) ou solicitar diretamente uma consulta!",
-      cleaning: "Na Kraken Properties, oferecemos serviços profissionais de **limpeza de edifícios**, **limpeza de manutenção regular**, **limpeza de janelas** e **limpezas especiais** para propriedades comerciais e residenciais.\n\nGostaria de calcular uma estimativa ou solicitar um orçamento?",
-      maintenance: "O nosso serviço de **manutenção de instalações** e zeladoria garante que a sua propriedade permaneça em excelentes condições. Cobrimos sistemas do edifício, pequenas reparações e inspeções.\n\nGostaria que cuidássemos da sua propriedade? Vamos conversar!",
-      garden: "O nosso serviço de **jardinagem** mantém as suas áreas verdes bonitas todo o ano. Realizamos corte de relva, poda de sebes, remoção de ervas daninhas e jardinagem sazonal.\n\nGostaria de uma estimativa gratuita para o seu jardim?",
-      quote: "Teremos todo o gosto em enviar-lhe um orçamento personalizado! Pode utilizar o nosso gerador de orçamentos interativo na página, ou indicar-me o serviço que necessita e o tamanho aproximado da área.",
-      contact: "Pode contactar a nossa equipa por telefone através do **+41 44 123 45 67** ou por e-mail para **info@kraken-properties.ch**.\n\nAguardamos o seu contacto!",
-      booking: "Posso ajudar a reservar uma consulta gratuita! Pode agendar diretamente através do formulário no site.\n\n```json\n{\n  \"trigger\": \"SUBMIT_BOOKING\",\n  \"action\": \"BOOK_RESERVATION\",\n  \"data\": {\n    \"service\": \"Consultation\",\n    \"notes\": \"Agendado automaticamente através do assistente de backup\"\n  }\n}\n```",
-      thanks: "De nada! Se precisar de mais informações ou assistência, não hesite em perguntar. Tenha um excelente dia!",
-      default: "Terei todo o gosto em ajudar com isso! Como seu assistente Kai, apoio-o em todos os aspetos de gestão de instalações, limpeza e manutenção.\n\nComo o sistema de IA está em modo de segurança, não hesite em enviar-nos um e-mail para **info@kraken-properties.ch**."
-    }
-  };
-
-  function detectLanguage(userText: string, bodyLanguage?: string): string {
-    if (bodyLanguage) {
-      const clean = bodyLanguage.substring(0, 2).toLowerCase();
-      if (['de', 'en', 'fr', 'es', 'it', 'pt'].includes(clean)) {
-        return clean;
-      }
-    }
-
-    const text = (userText || "").toLowerCase();
-    
-    // German keywords
-    if (text.includes("reinigung") || text.includes("haus") || text.includes("garten") || text.includes("offerte") || text.includes("buchen") || text.includes("schweiz") || text.includes("danke")) {
-      return 'de';
-    }
-    // French keywords
-    if (text.includes("nettoyage") || text.includes("entretien") || text.includes("jardin") || text.includes("bonjour") || text.includes("merci") || text.includes("devis")) {
-      return 'fr';
-    }
-    // Spanish keywords
-    if (text.includes("limpieza") || text.includes("mantenimiento") || text.includes("jardín") || text.includes("jardin") || text.includes("hola") || text.includes("gracias") || text.includes("presupuesto")) {
-      return 'es';
-    }
-    // Italian keywords
-    if (text.includes("pulizia") || text.includes("manutenzione") || text.includes("giardino") || text.includes("ciao") || text.includes("grazie") || text.includes("preventivo")) {
-      return 'it';
-    }
-    // Portuguese keywords
-    if (text.includes("limpeza") || text.includes("manutenção") || text.includes("jardinagem") || text.includes("olá") || text.includes("obrigado") || text.includes("orçamento")) {
-      return 'pt';
-    }
-
-    return 'en';
-  }
-
-  // Fallback chatbot response generator in case Gemini is offline or spending cap is exhausted
-  function getFallbackResponse(userText: string, bodyLanguage?: string): string {
-    const lang = detectLanguage(userText, bodyLanguage);
-    const text = (userText || "").toLowerCase();
-    const dict = FALLBACK_LANGS[lang] || FALLBACK_LANGS['en'];
-
-    // 1. Greet
-    if (
-      text.includes("hallo") || text.includes("hi") || text.includes("guten tag") || text.includes("servus") ||
-      text.includes("hello") || text.includes("hey") ||
-      text.includes("bonjour") || text.includes("salut") ||
-      text.includes("hola") || text.includes("buenos") ||
-      text.includes("ciao") || text.includes("salve") ||
-      text.includes("olá") || text.includes("tudo")
-    ) {
-      return dict.greet;
-    }
-
-    // 2. Cleaning
-    if (
-      text.includes("reinigung") || text.includes("putz") || text.includes("sauber") ||
-      text.includes("cleaning") || text.includes("clean") || text.includes("wash") ||
-      text.includes("nettoyage") || text.includes("nettoyer") ||
-      text.includes("limpieza") || text.includes("limpiar") ||
-      text.includes("pulizia") || text.includes("pulire") ||
-      text.includes("limpeza") || text.includes("limpar")
-    ) {
-      return dict.cleaning;
-    }
-
-    // 3. Maintenance
-    if (
-      text.includes("hauswart") || text.includes("wartung") || text.includes("hausmeister") || text.includes("technik") ||
-      text.includes("maintenance") || text.includes("facility") || text.includes("janitor") || text.includes("technic") ||
-      text.includes("concierge") || text.includes("entretien d'immeuble") ||
-      text.includes("mantenimiento") || text.includes("conserjería") ||
-      text.includes("manutenzione") || text.includes("portineria") ||
-      text.includes("zeladoria")
-    ) {
-      return dict.maintenance;
-    }
-
-    // 4. Garden
-    if (
-      text.includes("garten") || text.includes("rasen") || text.includes("hecke") || text.includes("pflanz") ||
-      text.includes("garden") || text.includes("lawn") || text.includes("hedge") || text.includes("yard") ||
-      text.includes("jardin") || text.includes("pelouse") ||
-      text.includes("jardín") || text.includes("césped") ||
-      text.includes("giardino") || text.includes("prato") ||
-      text.includes("jardinagem") || text.includes("relva")
-    ) {
-      return dict.garden;
-    }
-
-    // 5. Offer/Quote
-    if (
-      text.includes("angebot") || text.includes("offerte") || text.includes("preis") || text.includes("kosten") ||
-      text.includes("quote") || text.includes("price") || text.includes("cost") || text.includes("offer") || text.includes("estimate") ||
-      text.includes("devis") || text.includes("tarif") || text.includes("estimation") ||
-      text.includes("presupuesto") || text.includes("precio") || text.includes("costo") ||
-      text.includes("preventivo") || text.includes("prezzo") ||
-      text.includes("orçamento") || text.includes("preço")
-    ) {
-      return dict.quote;
-    }
-
-    // 6. Contact
-    if (
-      text.includes("kontakt") || text.includes("telefon") || text.includes("email") || text.includes("e-mail") || text.includes("adresse") ||
-      text.includes("contact") || text.includes("phone") || text.includes("address") ||
-      text.includes("téléphone") ||
-      text.includes("contacto") || text.includes("teléfono") ||
-      text.includes("contatto") ||
-      text.includes("contacto") || text.includes("telefone")
-    ) {
-      return dict.contact;
-    }
-
-    // 7. Booking
-    if (
-      text.includes("buchen") || text.includes("termin") || text.includes("beratung") || text.includes("reservier") ||
-      text.includes("book") || text.includes("appointment") || text.includes("consult") || text.includes("reserve") ||
-      text.includes("réserver") || text.includes("consultation") ||
-      text.includes("reservar") || text.includes("consulta") ||
-      text.includes("prenotare") || text.includes("consulenza") ||
-      text.includes("consultoria")
-    ) {
-      return dict.booking;
-    }
-
-    // 8. Thanks
-    if (
-      text.includes("danke") || text.includes("vielen dank") || text.includes("merci") ||
-      text.includes("thank") || text.includes("thanks") || text.includes("awesome") ||
-      text.includes("gracias") ||
-      text.includes("grazie") ||
-      text.includes("obrigado")
-    ) {
-      return dict.thanks;
-    }
-
-    // 9. Default
-    return dict.default;
-  }
-
-  // Secure Server-Side Gemini API Chat Route
-  app.post("/api/chat", async (req, res) => {
-    try {
-      const { messages, systemInstruction, language } = req.body;
-
-      if (!messages || !Array.isArray(messages) || messages.length === 0) {
-        return res.status(400).json({ success: false, error: "Messages array is required." });
-      }
-
-      const lastMessage = messages[messages.length - 1];
-      const userText = lastMessage ? lastMessage.text : "";
-
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        console.warn("GEMINI_API_KEY environment variable is not configured. Using high-fidelity local response generator.");
-        return res.json({
-          success: true,
-          text: getFallbackResponse(userText, language)
-        });
-      }
-
-      try {
-        const { GoogleGenAI } = await (specifier => import(specifier))("@google/genai") as any;
-        const ai = new GoogleGenAI({ apiKey });
-
-        // Format the history for the SDK by filtering out system messages and formatting roles matching gemini format
-        // Gemini chats format expects role: 'user' | 'model'
-        const history = messages.slice(0, -1).map((m: any) => ({
-          role: m.role || 'user',
-          parts: [{ text: m.text || '' }]
-        }));
-
-        const chat = ai.chats.create({
-          model: 'gemini-2.5-flash',
-          config: {
-            systemInstruction: systemInstruction || undefined,
-          },
-          history: history
-        });
-
-        const response = await chat.sendMessage({ message: userText || '' });
-
-        res.json({
-          success: true,
-          text: response.text
-        });
-      } catch (geminiError: any) {
-        console.error("Gemini API error, activating fallback assistant:", geminiError);
-        // Fallback to local response if spending limit, 429, or quota exceeded
-        res.json({
-          success: true,
-          text: getFallbackResponse(userText, language)
-        });
-      }
-    } catch (error: any) {
-      console.error("Unexpected error in chat endpoint:", error);
-      res.status(500).json({
-        success: false,
-        error: "An unexpected error occurred during raw model generation."
-      });
-    }
-  });
-
-  const injectSeoMeta = (html: string, pathname: string, language?: string) => injectPageSeo(html, pathname, language);
+  const injectSeoMeta = (html: string, pathname: string, language?: string, allowIndexing=true) => injectPageSeo(html, pathname, language, {allowIndexing});
 
   const handleHtmlRequest = async (req: express.Request, res: express.Response) => {
     try {
@@ -386,7 +115,7 @@ async function configureApplication() {
         }
 
         // One deterministic default URL in Swiss German; explicit locale sessions remain available.
-        const detectedLang = normalizeSiteLanguage(req.query.lang || req.query.hl) || 'de-CH';
+        const detectedLang = pathLanguage(req.originalUrl) || 'de-CH';
         const locale = detectedLang.slice(0, 2);
         const valid = isRouteValid(req.path);
         if (!valid) res.status(404);
@@ -410,16 +139,44 @@ async function configureApplication() {
           const shell = path.join(distPath, `seo-shell-${locale}.html`);
           if (isProd && fs.existsSync(shell)) content = fs.readFileSync(shell, 'utf8').replace('<!-- seo-route-content -->', () => content);
         }
-        const styles = content.match(/<link rel="stylesheet" href="[^"]+">/g) || [];
-        html = html.replace('</head>', () => [...new Set(styles)].join('') + '</head>');
-        const body = content.replace(/<link rel="stylesheet" href="[^"]+">/g, '');
+        const hydratableHome=isProd&&normalizeCanonicalPath(req.path)==='/'&&content.includes(HOME_APP_SSR_MARKER);
+        content=content.replace(HOME_APP_SSR_MARKER,'');
+        const resourcePattern=hydratableHome?/<link\b(?=[^>]*\brel=["'](?:stylesheet|preload)["'])[^>]*\/?>/gi:/<link rel="stylesheet" href="[^"]+">/g;
+        const styles = content.match(resourcePattern) || [];
+        // Vite already places shared styles in the head. Attribute differences
+        // (notably crossorigin) must not make a second render-blocking request.
+        // Responsive image preloads may intentionally omit href. Their srcset
+        // is the resource identity; dropping them delays discovery until <img>.
+        const resourceKey = (tag: string) => {
+          const href=tag.match(/\bhref=["']([^"']+)["']/i)?.[1];
+          if(href)return href;
+          const sources=tag.match(/\bimagesrcset=["']([^"']+)["']/i)?.[1];
+          return sources ? 'srcset:'+sources+'|'+(tag.match(/\bimagesizes=["']([^"']+)["']/i)?.[1] || '') : null;
+        };
+        const resourceHrefs = new Set([...html.matchAll(/<link\b(?=[^>]*\brel=["'](?:stylesheet|preload)["'])[^>]*>/gi)].map(match => resourceKey(match[0])).filter(Boolean));
+        const additionalResources = styles.filter(tag => {
+          const href = resourceKey(tag);
+          if (!href || resourceHrefs.has(href)) return false;
+          resourceHrefs.add(href); return true;
+        });
+        const imageHints = additionalResources.filter(tag => /\brel=["']preload["']/i.test(tag) && /\bas=["']image["']/i.test(tag));
+        const otherResources = additionalResources.filter(tag => !imageHints.includes(tag));
+        // Discover the LCP image before the stylesheet or metadata graph.
+        // These are React's own srcset/sizes hints, matching the real visible image.
+        // Mobile srcset selection needs the real viewport before its preload;
+        // otherwise the browser can fetch both a desktop and a mobile candidate.
+        const viewport=/<meta\b(?=[^>]*\bname=["']viewport["'])[^>]*>/i;
+        html = html.replace(viewport.test(html)?viewport:/<head\b[^>]*>/i, opening => opening + imageHints.join(''));
+        html = html.replace('</head>', () => otherResources.join('') + '</head>');
+        if (hydratableHome) html=startHomeAfterPaint(html);
+        const body = content.replace(resourcePattern, '');
         const rootPattern = html.includes('<!-- kraken-root-end -->')
           ? /<div id="root">[\s\S]*?<\/div>(?=\s*<!-- kraken-root-end -->)/
           : /<div id="root">[\s\S]*?<\/div>/;
-        html = html.replace(rootPattern, () => `<div id="root">${body}</div>`);
+        html = html.replace(rootPattern, () => `<div id="root"${hydratableHome?' data-kraken-home-ssr="true"':''}>${body}</div>`);
         // The apartment illustration is requested only by the real homepage.
         if (req.path !== '/') html = html.replace(/<link rel="preload" as="image" href="\/home-approved\/assets\/hero-room-day-v4\.webp"[^>]*>/, '');
-        html = injectSeoMeta(html, req.originalUrl, detectedLang);
+        html = injectSeoMeta(html, req.originalUrl, detectedLang, ['krakenpfm.ch','www.krakenpfm.ch'].includes(req.hostname.toLowerCase()));
         res.setHeader("Content-Type", "text/html; charset=utf-8");
         return res.send(html);
       }
@@ -430,13 +187,39 @@ async function configureApplication() {
     res.status(500).send("Internal Server Error - HTML template not found");
   };
 
+  // Runtime templates and source diagnostics must never bypass route policy via static middleware.
+  app.get('/.well-known/security.txt', (_req, res) => {
+    const filename = path.join(process.cwd(), 'public/.well-known/security.txt');
+    if (!fs.existsSync(filename)) return res.status(404).type('text/plain').send('Not found');
+    res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+    return res.type('text/plain').sendFile(filename, { dotfiles: 'allow' });
+  });
+  app.use((req, res, next) => {
+    let pathname: string;
+    try { pathname = decodeURIComponent(req.path).toLowerCase(); }
+    catch { return res.status(400).type('text/plain').send('Bad request'); }
+    if (/\.(?:map|zip|tar|tgz|sql|sqlite|bak|log|pem|key)$/.test(pathname) || /(?:^|\/)(?:server\.(?:cjs|mjs|js)|stats\.html|index-spa\.html|(?:seo-page|seo-shell|services-content|about-content|contact-content|why-content)-[a-z0-9-]+\.html)$/.test(pathname)) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+      return res.status(404).type('text/plain').send('Not found');
+    }
+    if (/^\/(?:en\/|es\/|pt\/|it\/|fr\/)?index\.html$/.test(pathname)) {
+      const query = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+      return res.redirect(301, publicHref('/' + query, pathLanguage(req.originalUrl) || 'de'));
+    }
+    if (pathname.endsWith('.html')) {
+      res.setHeader('X-Robots-Tag', 'noindex, follow');
+      return res.status(410).type('html').send(renderStatusPage(410, pathLanguage(req.originalUrl) || 'de'));
+    }
+    next();
+  });
+
   // Vite middleware for development (with graceful fallback if not installed/present)
   let viteInstance: any = null;
   if (isDev) {
     try {
       const { createServer: createViteServer } = await (specifier => import(specifier))("vite") as any;
       viteInstance = await createViteServer({
-        server: { middlewareMode: true },
+        server: { middlewareMode: true, hmr: process.env.KRAKEN_DEV_HMR === 'false' ? false : undefined },
         appType: "custom",
       });
       app.use(viteInstance.middlewares);
@@ -453,23 +236,12 @@ async function configureApplication() {
 
   const publicPath = path.join(process.cwd(), "public");
 
-  // Local builds also contain a Node bundle and diagnostics. They are never
-  // public files, including requests with encoded dots in the filename.
-  app.use((req, res, next) => {
-    let pathname: string;
-    try { pathname = decodeURIComponent(req.path).toLowerCase(); }
-    catch { return res.status(400).type("text/plain").send("Bad request"); }
-    if (pathname.endsWith(".map") || /(?:^|\/)(?:server\.(?:cjs|mjs|js)|stats\.html|index-spa\.html|(?:seo-page|seo-shell|services-content|about-content|contact-content|why-content)-[a-z0-9-]+\.html)$/.test(pathname)) {
-      return res.status(404).type("text/plain").send("Not found");
-    }
-    next();
-  });
-
   if (fs.existsSync(publicPath)) {
     app.use(express.static(publicPath, {
       maxAge: "1d",
-      setHeaders: (res) => {
-        res.setHeader("Cache-Control", "public, max-age=604800");
+      setHeaders: (res, filePath) => {
+        const asset = "/" + path.relative(publicPath, filePath).split(path.sep).join("/");
+        res.setHeader("Cache-Control", isImmutableAsset(asset) ? "public, max-age=31536000, immutable" : "public, max-age=3600, must-revalidate");
       }
     }));
   }
@@ -478,7 +250,7 @@ async function configureApplication() {
     index: false,
     maxAge: "1d",
     setHeaders: (res, filePath) => {
-      if (filePath.includes("/assets/") || filePath.match(/\.[0-9a-f]{8,}\./)) {
+      if (isImmutableAsset("/" + path.relative(distPath, filePath).split(path.sep).join("/"))) {
         res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
       } else if (filePath.endsWith(".html")) {
         res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
@@ -496,95 +268,11 @@ async function configureApplication() {
       return next();
     }
 
-    const canonicalPath = normalizeCanonicalPath(req.path);
-    if (canonicalPath !== req.path && isRouteValid(canonicalPath)) {
-      const query = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
-      return res.redirect(301, canonicalPath + query);
-    }
-
-    // 301 Redirect for legacy /consultation, /contact, /contacto URLs
-    const lowerPath = req.path.toLowerCase().replace(/\/$/, "");
-    if (lowerPath === '/ueber-kraken' || (lowerPath === '/about' && req.path !== '/about')) {
-      const queryStr = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
-      return res.redirect(301, `/about${queryStr}`);
-    }
-    if (lowerPath === "/consultation") {
-      const queryStr = req.url.includes("?") ? req.url.substring(req.url.indexOf("?")) : "";
-      return res.redirect(301, `/quote${queryStr}`);
-    }
-    if (lowerPath === "/contact" || lowerPath === "/contacto") {
-      const queryStr = req.url.includes("?") ? req.url.substring(req.url.indexOf("?")) : "";
-      return res.redirect(301, `/kontakt${queryStr}`);
-    }
-    if (lowerPath === "/reinigung/uhwiesen") {
-      const queryStr = req.url.includes("?") ? req.url.substring(req.url.indexOf("?")) : "";
-      return res.redirect(301, `/reinigung/laufen-uhwiesen${queryStr}`);
-    }
-
-    // 301 Redirect for Tier 3 municipality URLs to parent region hub
-    const munMatch = req.path.match(/^\/reinigung\/([a-zA-Z0-9_-]+)$/i);
-    if (munMatch) {
-      const slug = munMatch[1].toLowerCase();
-      const mun = MUNICIPALITIES.find(m => m.slug === slug);
-      if (mun && mun.tier === 3) {
-        const queryStr = req.url.includes("?") ? req.url.substring(req.url.indexOf("?")) : "";
-        const parentHub = mun.region === "zuerich" ? "/reinigung/region-zuerich" : mun.region === "winterthur" ? "/reinigung/region-winterthur" : "/reinigung/kanton-schaffhausen";
-        return res.redirect(301, `${parentHub}${queryStr}`);
-      }
-    }
-
-    // 301 Redirect for legacy /reinigung-* URLs
-    const deRegex = /^\/reinigung-(schaffhausen|zurich|winterthur|neuhausen|thayngen|stein-am-rhein|feuerthalen|kloten|buelach|dietikon|uster)-([a-zA-Z0-9_-]+)$/i;
-    const deMatch = req.path.match(deRegex);
-    if (deMatch) {
-      const city = deMatch[1].toLowerCase();
-      const service = deMatch[2].toLowerCase();
-      const normCity = city === "zuerich" ? "zurich" : city === "neuhausen-am-rheinfall" ? "neuhausen" : city;
-      if (VALID_CITIES.includes(normCity)) {
-        return res.redirect(301, `/services/${normCity}/${service}`);
-      } else {
-        const mun = MUNICIPALITIES.find(m => m.slug === city || m.slug === normCity);
-        if (mun && mun.tier === 2) {
-          return res.redirect(301, `/reinigung/${mun.slug}#${service}`);
-        }
-        return res.redirect(301, `/reinigung/kanton-schaffhausen#${service}`);
-      }
-    }
-
-    // 301 Redirect for legacy /seo/* URLs
-    const seoRegex = /^\/seo\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9_-]+)$/i;
-    const seoMatch = req.path.match(seoRegex);
-    if (seoMatch) {
-      const city = seoMatch[1].toLowerCase();
-      const service = seoMatch[2].toLowerCase();
-      const normCity = city === "zuerich" ? "zurich" : city === "neuhausen-am-rheinfall" ? "neuhausen" : city;
-      if (VALID_CITIES.includes(normCity)) {
-        return res.redirect(301, `/services/${normCity}/${service}`);
-      } else {
-        const mun = MUNICIPALITIES.find(m => m.slug === city || m.slug === normCity);
-        if (mun && mun.tier === 2) {
-          return res.redirect(301, `/reinigung/${mun.slug}#${service}`);
-        }
-        return res.redirect(301, `/reinigung/kanton-schaffhausen#${service}`);
-      }
-    }
-
-    // 301 Redirect for Level 3 service pages on non-Tier 1 cities
-    const srvMatch = req.path.match(/^\/services\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9_-]+)$/i);
-    if (srvMatch) {
-      const citySlug = srvMatch[1].toLowerCase();
-      const serviceId = srvMatch[2].toLowerCase();
-      const normCity = citySlug === "zuerich" ? "zurich" : citySlug === "neuhausen-am-rheinfall" ? "neuhausen" : citySlug;
-      
-      if (!VALID_CITIES.includes(normCity)) {
-        const mun = MUNICIPALITIES.find(m => m.slug === citySlug || m.slug === normCity);
-        const queryStr = req.url.includes("?") ? req.url.substring(req.url.indexOf("?")) : "";
-        if (mun && mun.tier === 2) {
-          return res.redirect(301, `/reinigung/${mun.slug}#${serviceId}${queryStr}`);
-        }
-        const parentHub = mun?.region === "zuerich" ? "/reinigung/region-zuerich" : mun?.region === "winterthur" ? "/reinigung/region-winterthur" : "/reinigung/kanton-schaffhausen";
-        return res.redirect(301, `${parentHub}#${serviceId}${queryStr}`);
-      }
+    const disposition = getRouteDisposition(req.originalUrl);
+    if (disposition.status === 301) return res.redirect(301, disposition.location!);
+    if (disposition.status === 410) {
+      res.setHeader('X-Robots-Tag', 'noindex, follow');
+      return res.status(410).type('html').send(renderStatusPage(410, pathLanguage(req.originalUrl) || 'de'));
     }
 
     return handleHtmlRequest(req, res);

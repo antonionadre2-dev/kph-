@@ -96,10 +96,10 @@ test('price guide renders real prices, conditions and language-preserving native
       const offer = getPublicPriceOffers().find(item => item.service === service);
       assert.ok(body.includes(homeText(language, offer.title)));
       const link = new URL(decode(body.match(/href="([^"]+)"/)[1]), 'https://krakenpfm.ch');
-      assert.equal(link.pathname, '/quote');
-      assert.equal(link.searchParams.get('lang'), language);
+      assert.equal(link.pathname, (language === 'de' ? '' : '/' + language) + '/offerte');
+      assert.equal(link.searchParams.get('lang'), null);
       assert.equal(link.searchParams.get('service'), service);
-      assert.ok(body.includes(publicPriceText(language, service === 'moving' ? 'askMoving' : 'calculate')));
+      assert.ok(body.includes(homeText(language, service === 'end' ? 'Umzugsreinigung berechnen' : 'Offerte berechnen')));
       if (service === 'moving') {
         assert.ok(body.includes(publicPriceText(language, 'movingPrice')));
         assert.doesNotMatch(body.replace(/<[^>]+>/g, ''), /CHF|[0-9]/);
@@ -121,12 +121,13 @@ test('homepage and services expose the shared price guide, with a direct hero CT
     assert.ok(services.includes('id="services-prices-title"'));
     assert.equal((home.match(/data-public-price-service=/g) || []).length, 5);
     assert.equal((services.match(/data-public-price-service=/g) || []).length, 5);
-    const action = home.match(/<a class="[^"]*hero-primary-action[^"]*" href="([^"]+)">([\s\S]*?)<\/a>/);
+    const action = home.match(/<a class="[^"]*hero-primary-action[^"]*" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/);
     assert.ok(action);
-    assert.ok(action[2].includes(homeText(language, 'Meine Offerte berechnen')));
+    assert.ok(action[2].includes(homeText(language, 'Umzugsreinigung berechnen')));
     assert.ok(home.indexOf('hero-primary-action') < home.indexOf('id="sceneOpen"'));
     const url = new URL(decode(action[1]), 'https://krakenpfm.ch');
-    assert.equal(url.pathname, '/quote');
-    assert.equal(url.searchParams.get('lang'), language);
+    assert.equal(url.pathname, (language === 'de' ? '' : '/' + language) + '/offerte');
+    assert.equal(url.searchParams.get('lang'), null);
+    assert.equal(url.searchParams.get('service'), 'end');
   }
 });

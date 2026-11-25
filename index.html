@@ -2,50 +2,7 @@
 <!DOCTYPE html>
 <html lang="de-CH">
   <head>
-    <script>
-      // Gracefully silence benign Vite HMR WebSocket connection errors in dev mode
-      window.addEventListener('unhandledrejection', function(event) {
-        try {
-          var reason = event.reason;
-          if (reason) {
-            var msg = typeof reason === 'string' 
-              ? reason 
-              : (reason.message || (reason.toString && reason.toString()) || '');
-            if (
-              /websocket|ws|vite|hmr/i.test(msg) ||
-              msg.indexOf('WebSocket closed without opened') !== -1 ||
-              msg.indexOf('failed to connect') !== -1
-            ) {
-              console.warn('Prevented unhandled rejection from development WebSocket:', reason);
-              event.preventDefault();
-              event.stopPropagation();
-            }
-          }
-        } catch (e) {
-          // Keep resilient
-        }
-      });
-      window.addEventListener('error', function(event) {
-        try {
-          var msg = event.message || (event.error && event.error.message) || '';
-          if (
-            /websocket|ws|vite|hmr/i.test(msg) ||
-            msg.indexOf('WebSocket closed without opened') !== -1 ||
-            msg.indexOf('failed to connect') !== -1
-          ) {
-            console.warn('Prevented error event from development WebSocket:', msg);
-            event.preventDefault();
-            event.stopPropagation();
-          }
-        } catch (e) {
-          // Keep resilient
-        }
-      }, true);
-    </script>
     <meta charset="UTF-8" />    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://i.ibb.co">
-    <link rel="dns-prefetch" href="https://i.ibb.co">
-    <link rel="preconnect" href="https://api.payrexx.com">
     
     <title>Kraken PFM – Reinigung & kleine Umzüge in Zürich, Schaffhausen und Winterthur</title>
     <meta property="og:type" content="website">
@@ -57,11 +14,11 @@
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:locale" content="de_CH">
-    <meta property="og:locale:alternate" content="en_US">
-    <meta property="og:locale:alternate" content="fr_FR">
-    <meta property="og:locale:alternate" content="it_IT">
-    <meta property="og:locale:alternate" content="es_ES">
-    <meta property="og:locale:alternate" content="pt_PT">
+    <meta property="og:locale:alternate" content="en">
+    <meta property="og:locale:alternate" content="fr_CH">
+    <meta property="og:locale:alternate" content="it_CH">
+    <meta property="og:locale:alternate" content="es">
+    <meta property="og:locale:alternate" content="pt">
     <meta property="og:site_name" content="Kraken PFM">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Kraken PFM – Reinigung & kleine Umzüge in Zürich, Schaffhausen und Winterthur">
@@ -86,16 +43,7 @@
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#002d5b">
         
-    <!-- Approved homepage apartment layer; all device layouts use the complete scene. -->
-    <link rel="preload" as="image" href="/home-approved/assets/hero-room-day-v4.webp" fetchpriority="high" type="image/webp">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Manrope:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Manrope:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Manrope:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap">
-    </noscript>
+    <link rel="preload" href="/fonts/manrope-latin.8bd97e6bbbc1.woff2" as="font" type="font/woff2" crossorigin>
     
     <style>
       html {
@@ -103,7 +51,7 @@
         background-color: #032B59;
       }
       body {
-        font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+        font-family: 'Manrope', system-ui, -apple-system, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         margin: 0;
@@ -206,16 +154,16 @@
       <!-- Essential homepage content remains available while the application loads. -->
       <main id="home-loading" lang="de-CH" style="background:#e4f3ff;color:#002d5b;padding:4rem 1.5rem;font-family:Manrope,Arial,sans-serif;">
         <div style="max-width:64rem;margin:0 auto;">
-          <p style="font-weight:700;margin-bottom:1rem;">Kraken Properties and Facilities Management</p>
-          <h1 style="font-size:clamp(2.5rem,6vw,5rem);font-weight:800;line-height:1.05;max-width:10em;">Ihr Zuhause in guten Armen.</h1>
+          <p style="font-weight:700;margin-bottom:1rem;">Kraken PFM</p>
+          <h1 style="font-size:clamp(2.5rem,6vw,5rem);font-weight:800;line-height:1.05;max-width:10em;">Umzugsreinigung Zürich mit klarer Offerte.</h1>
           <p style="font-size:1.125rem;max-width:42rem;">Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur.</p>
           <p style="margin-top:1rem;max-width:44rem;">Fensterreinigung, Umzugsreinigung, regelmässige Reinigung, Grundreinigung und kleine Umzüge.</p>
-          <p style="margin-top:1.5rem;"><a href="/quote" style="display:inline-block;background:#002d5b;color:white;padding:0.875rem 1.5rem;border-radius:0.875rem;font-weight:700;">Zum Service-Rechner</a></p>
+          <p style="margin-top:1.5rem;"><a href="/offerte?service=end" style="display:inline-block;background:#002d5b;color:white;padding:0.875rem 1.5rem;border-radius:0.875rem;font-weight:700;">Umzugsreinigung berechnen</a></p>
         </div>
       </main>
     </div>
 
     <!-- kraken-root-end -->
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" fetchpriority="low" src="/index.tsx"></script>
   </body>
 </html>

@@ -68,7 +68,7 @@ export const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({ cities
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `${SITE_IDENTITY.origin}/#business`,
-    "name": SITE_IDENTITY.name,
+    "name": SITE_IDENTITY.shortName,
     "image": SITE_IDENTITY.origin + SITE_IDENTITY.imagePath,
     "telephone": SITE_IDENTITY.telephone,
     "email": SITE_IDENTITY.email,

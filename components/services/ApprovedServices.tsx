@@ -1,3 +1,4 @@
+import "../../src/styles/route-utilities.css";
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '../../i18n';
 import ApprovedHeader from '../home/ApprovedHeader';
@@ -6,6 +7,8 @@ import { serviceInformationSections, serviceInformationTarget } from '../../src/
 import { requestKaiOpen } from '../../src/kai/open';
 import { servicesText } from './servicesTranslations';
 import PublicPriceGuide from '../PublicPriceGuide';
+import { mediaAsset, responsiveImage } from '../../src/media/images';
+import { publicHref } from '../../src/routing/site-paths';
 import '../home/approved-home.css';
 import '../home/responsive-fixes.css';
 import '../home/home-language.css';
@@ -29,8 +32,9 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
   const [activeService, setActiveService] = useState<HomeService>('windows');
   const [openService, setOpenService] = useState<HomeService | null>('windows');
   const framesRef = useRef(new Set<number>());
-  const quoteHref = '/quote?lang=' + encodeURIComponent(language);
-  const homeHref = '/?lang=' + encodeURIComponent(language);
+  const quoteHref = publicHref('/quote', language);
+  const serviceHref = (service: HomeService) => publicHref('/quote?service=' + service, language);
+  const homeHref = publicHref('/', language);
   function scrollToService(service: HomeService) {
     const id = requestAnimationFrame(() => {
       framesRef.current.delete(id);
@@ -55,7 +59,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
     const service = supportedService(control.dataset.service) ? control.dataset.service : null;
     event.preventDefault();
     if (control.hasAttribute('data-open-kai')) requestKaiOpen(service, control);
-    else openHomeCalculator(service, onNavigate);
+    else openHomeCalculator(service, path => onNavigate(publicHref(path, language)));
   }
   useEffect(() => {
     const openHashTarget = () => {
@@ -120,12 +124,12 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
             <p className="eyebrow">{t("Leistungen für Privathaushalte")}</p>
             <h1 id="page-title">{t("Reinigung und")}<br />{t("kleine Umzüge.")}<br /><span>{t("Passend zu Ihnen.")}</span></h1>
             <p className="services-hero-description">{t("Von einzelnen Fenstern bis zur Wohnung mit 1–4 Zimmern. Persönliche Unterstützung in")}{" "}<strong>{t("Zürich, Schaffhausen und Winterthur.")}</strong></p>
-            <div className="services-hero-actions"><a className="button button-navy" href={quoteHref} data-calculator="">{t("Meinen Auftrag berechnen")}</a><button className="services-kai-link" type="button" data-open-kai="" aria-haspopup="dialog"><svg className="icon" aria-hidden="true"><use href="#i-message"></use></svg>{t("Mit Kai planen")}</button></div>
-            <p className="services-hero-note"><svg className="icon" aria-hidden="true"><use href="#i-check"></use></svg>{t("Auch kleine Aufträge sind willkommen.")}</p>
+            <div className="services-hero-actions"><a className="button button-navy" href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a><button className="services-kai-link" type="button" data-open-kai="" aria-haspopup="dialog"><svg className="icon" aria-hidden="true"><use href="#i-message"></use></svg>{t("Mit Kai planen")}</button></div>
+            <a className="kr-button kr-button--quiet" href={publicHref('/umzugsreinigung/zuerich', language)}>{t("Umzugsreinigung in Zürich entdecken")}</a><p className="services-hero-note"><svg className="icon" aria-hidden="true"><use href="#i-check"></use></svg>{t("Auch kleine Aufträge sind willkommen.")}</p>
           </div>
           <div className="services-hero-art">
-            <img className="services-hero-image" src="/home-approved/assets/services-hero-v5.webp" alt={t("Reinigungsutensilien, Mikrofasertücher und Umzugskartons für die Unterstützung im Privathaushalt.")} width="1254" height="1254" fetchPriority="high" decoding="async" />
-            <svg className="service-brand-overlay" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false"><g transform="translate(690 580)"><svg width="300" height="130" viewBox="0 280 1024 445" overflow="hidden"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g><g transform="translate(675 319)"><svg width="178" height="77" viewBox="0 280 1024 445" overflow="hidden"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g></svg>
+            <img className="services-hero-image" {...responsiveImage('/home-approved/assets/services-hero-v5.webp','(max-width:760px) 100vw, 50vw')} alt={t("Reinigungsutensilien, Mikrofasertücher und Umzugskartons für die Unterstützung im Privathaushalt.")} width="1254" height="1254" fetchPriority="high" decoding="async" />
+            <svg className="service-brand-overlay" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false"><g transform="translate(690 580)"><svg width="300" height="130" viewBox="0 280 1024 445" overflow="hidden"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g><g transform="translate(675 319)"><svg width="178" height="77" viewBox="0 280 1024 445" overflow="hidden"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g></svg>
             <span className="services-glass-label"><svg className="icon" aria-hidden="true"><use href="#i-home"></use></svg>{t("Ihr Zuhause. In guten Armen.")}</span>
           </div>
         </div>
@@ -150,11 +154,11 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
         <div className="service-scene-column">
           <div className="service-scene-stage" id="serviceSceneStage" aria-hidden="true" data-active-service={activeService}>
             <div className="service-scene-media">
-            <div className="service-scene-image service-scene-windows" data-service-scene="windows" hidden={activeService !== "windows"}><img src="/home-approved/assets/service-windows-v5.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
-            <div className="service-scene-image service-scene-end" data-service-scene="end" hidden={activeService !== "end"}><img src="/home-approved/assets/service-end-v5.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
-            <div className="service-scene-image service-scene-regular" data-service-scene="regular" hidden={activeService !== "regular"}><img src="/home-approved/assets/service-regular-v5.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
-            <div className="service-scene-image service-scene-deep" data-service-scene="deep" hidden={activeService !== "deep"}><img src="/home-approved/assets/service-deep-v5.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
-            <div className="service-scene-image service-scene-moving" data-service-scene="moving" hidden={activeService !== "moving"}><img src="/home-approved/assets/service-moving-v6.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /><svg className="service-brand-overlay" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false"><g transform="translate(780 457) skewY(3.8) scale(1 0.92)"><svg width="220" height="95" viewBox="0 280 1024 445" overflow="hidden"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g><g transform="translate(340 756) skewY(-6) scale(1 1)"><svg width="43" height="19" viewBox="0 280 1024 445" overflow="hidden"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g><g transform="translate(345 835) skewY(-6) scale(1 1)"><svg width="60" height="26" viewBox="0 280 1024 445" overflow="hidden"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g></svg></div>
+            <div className="service-scene-image service-scene-windows" data-service-scene="windows" hidden={activeService !== "windows"}><img {...responsiveImage('/home-approved/assets/service-windows-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
+            <div className="service-scene-image service-scene-end" data-service-scene="end" hidden={activeService !== "end"}><img {...responsiveImage('/home-approved/assets/service-end-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
+            <div className="service-scene-image service-scene-regular" data-service-scene="regular" hidden={activeService !== "regular"}><img {...responsiveImage('/home-approved/assets/service-regular-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
+            <div className="service-scene-image service-scene-deep" data-service-scene="deep" hidden={activeService !== "deep"}><img {...responsiveImage('/home-approved/assets/service-deep-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
+            <div className="service-scene-image service-scene-moving" data-service-scene="moving" hidden={activeService !== "moving"}><img {...responsiveImage('/home-approved/assets/service-moving-v6.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /><svg className="service-brand-overlay" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false"><g transform="translate(780 457) skewY(3.8) scale(1 0.92)"><svg width="220" height="95" viewBox="0 280 1024 445" overflow="hidden"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g><g transform="translate(340 756) skewY(-6) scale(1 1)"><svg width="43" height="19" viewBox="0 280 1024 445" overflow="hidden"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g><g transform="translate(345 835) skewY(-6) scale(1 1)"><svg width="60" height="26" viewBox="0 280 1024 445" overflow="hidden"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g></svg></div>
             </div>
             <div className="service-scene-caption"><span id="serviceSceneKicker">{t(scenes[activeService].kicker)}</span><p id="serviceSceneCaption">{t(scenes[activeService].lines[0])}<br />{t(scenes[activeService].lines[1])}</p></div>
           </div>
@@ -165,47 +169,47 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
           <details className="service-detail" name="kraken-services" id="fensterreinigung" data-service-detail="windows" open={openService === "windows"} onToggle={event => toggleService("windows", event.currentTarget.open)}>
             <summary><h3><span className="service-glyph"><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#window"></use></svg></span><span className="service-summary-text"><span>{t("Fensterreinigung")}</span><span className="service-benefit">{t("Klare Sicht. Ein helleres Zuhause.")}</span></span><span className="service-detail-toggle"><svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></h3></summary>
             <div className="service-detail-body">
-              <div className="service-inline-scene service-scene-windows" aria-hidden="true"><img src="/home-approved/assets/service-windows-v5.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
+              <div className="service-inline-scene service-scene-windows" aria-hidden="true"><img {...responsiveImage('/home-approved/assets/service-windows-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
               <p>{t("Einzelne Fenster oder die ganze Wohnung: Wir helfen Ihnen, wieder freie Sicht zu bekommen. Unsere Fensterreinigung für Privathaushalte richtet sich auch an kleine Aufträge. Glasflächen, Rahmen und Fensterbänke stimmen wir auf Ihren Bedarf ab. Welche Innen- und Aussenseiten gereinigt werden können, klären wir anhand der Zugänglichkeit.")}</p>
               <ul className="service-scope"><li>{t("Einzelne Fenster oder mehrere Räume")}</li><li>{t("Glas, Rahmen und Fensterbänke nach Absprache")}</li><li>{t("Umfang und Erreichbarkeit vorab klären")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Anzahl, Grösse und Zugänglichkeit der Fenster.")}</p>
-              <a className="button button-navy" data-service="windows" data-calculator="" href={quoteHref + '&service=windows'}>{t("Fensterreinigung berechnen")}</a>
+              <a className="button button-navy" data-service="windows" data-calculator="" href={serviceHref('windows')}>{t("Fensterreinigung berechnen")}</a>
             </div>
           </details>
           <details className="service-detail" name="kraken-services" id="umzugsreinigung" data-service-detail="end" open={openService === "end"} onToggle={event => toggleService("end", event.currentTarget.open)}>
             <summary><h3><span className="service-glyph"><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#end"></use></svg></span><span className="service-summary-text"><span>{t("Umzugsreinigung")}</span><span className="service-benefit">{t("Eine Aufgabe weniger vor der Abgabe.")}</span></span><span className="service-detail-toggle"><svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></h3></summary>
             <div className="service-detail-body">
-              <div className="service-inline-scene service-scene-end" aria-hidden="true"><img src="/home-approved/assets/service-end-v5.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
+              <div className="service-inline-scene service-scene-end" aria-hidden="true"><img {...responsiveImage('/home-approved/assets/service-end-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
               <p>{t("Der Auszug steht an? Wir übernehmen die Endreinigung Ihrer Wohnung mit 1–4 Zimmern und besprechen, was für die Wohnungsabgabe gereinigt werden soll. Küche, Bad, Böden und weitere Bereiche planen wir nach dem vereinbarten Umfang. Anforderungen Ihrer Verwaltung und besondere Verschmutzungen können Sie bei der Anfrage angeben.")}</p>
               <ul className="service-scope"><li>{t("Endreinigung für private Mietwohnungen")}</li><li>{t("Küche, Bad und Wohnräume nach Vereinbarung")}</li><li>{t("Anforderungen zur Wohnungsabgabe berücksichtigen")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Zimmerzahl, Zustand und gewünschter Reinigungstermin.")}</p>
-              <a className="button button-navy" data-service="end" data-calculator="" href={quoteHref + '&service=end'}>{t("Umzugsreinigung berechnen")}</a>
+              <a className="button button-navy" data-service="end" data-calculator="" href={serviceHref('end')}>{t("Umzugsreinigung berechnen")}</a>
             </div>
           </details>
           <details className="service-detail" name="kraken-services" id="regelmaessige-reinigung" data-service-detail="regular" open={openService === "regular"} onToggle={event => toggleService("regular", event.currentTarget.open)}>
             <summary><h3><span className="service-glyph"><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#regular"></use></svg></span><span className="service-summary-text"><span>{t("Regelmässige Reinigung")}</span><span className="service-benefit">{t("Weniger auf der Liste. Mehr vom Tag.")}</span></span><span className="service-detail-toggle"><svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></h3></summary>
             <div className="service-detail-body">
-              <div className="service-inline-scene service-scene-regular" aria-hidden="true"><img src="/home-approved/assets/service-regular-v5.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
+              <div className="service-inline-scene service-scene-regular" aria-hidden="true"><img {...responsiveImage('/home-approved/assets/service-regular-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
               <p>{t("Ein gepflegtes Zuhause, auch wenn der Alltag voll ist. Unsere regelmässige Wohnungsreinigung entlastet Sie bei wiederkehrenden Aufgaben. Wir besprechen Ihre Prioritäten, die Räume und den gewünschten Rhythmus. Ob Küche, Bad, Böden oder Oberflächen: Sie bestimmen mit, welche Arbeiten Ihnen im Haushalt am meisten helfen.")}</p>
               <ul className="service-scope"><li>{t("Haushaltsreinigung für Wohnungen mit 1–4 Zimmern")}</li><li>{t("Aufgaben und Reinigungsrhythmus nach Absprache")}</li><li>{t("Unterstützung passend zu Ihrem Alltag")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Wohnungsgrösse, gewünschte Häufigkeit und Prioritäten.")}</p>
-              <a className="button button-navy" data-service="regular" data-calculator="" href={quoteHref + '&service=regular'}>{t("Regelmässige Reinigung berechnen")}</a>
+              <a className="button button-navy" data-service="regular" data-calculator="" href={serviceHref('regular')}>{t("Regelmässige Reinigung berechnen")}</a>
             </div>
           </details>
           <details className="service-detail" name="kraken-services" id="grundreinigung" data-service-detail="deep" open={openService === "deep"} onToggle={event => toggleService("deep", event.currentTarget.open)}>
             <summary><h3><span className="service-glyph"><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#deep"></use></svg></span><span className="service-summary-text"><span>{t("Grundreinigung")}</span><span className="service-benefit">{t("Ein frischer Anfang für Ihre Räume.")}</span></span><span className="service-detail-toggle"><svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></h3></summary>
             <div className="service-detail-body">
-              <div className="service-inline-scene service-scene-deep" aria-hidden="true"><img src="/home-approved/assets/service-deep-v5.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
+              <div className="service-inline-scene service-scene-deep" aria-hidden="true"><img {...responsiveImage('/home-approved/assets/service-deep-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
               <p>{t("Manchmal braucht Ihr Zuhause mehr Aufmerksamkeit als bei der üblichen Reinigung. Mit einer Grundreinigung gehen wir die vereinbarten Bereiche intensiver an – etwa Küche, Bad oder häufig genutzte Oberflächen. Für einen Frühlingsputz, eine einmalige Auffrischung oder gezielte Unterstützung: Beschreiben Sie uns, was gründlicher gereinigt werden soll.")}</p>
               <ul className="service-scope"><li>{t("Intensivreinigung einzelner Bereiche oder der Wohnung")}</li><li>{t("Schwerpunkte und Verschmutzungen vorab besprechen")}</li><li>{t("Einmalige Hilfe passend zu Ihrem Bedarf")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Betroffene Räume, Zustand und gewünschte Schwerpunkte.")}</p>
-              <a className="button button-navy" data-service="deep" data-calculator="" href={quoteHref + '&service=deep'}>{t("Grundreinigung berechnen")}</a>
+              <a className="button button-navy" data-service="deep" data-calculator="" href={serviceHref('deep')}>{t("Grundreinigung berechnen")}</a>
             </div>
           </details>
           <details className="service-detail" name="kraken-services" id="kleine-umzuege" data-service-detail="moving" open={openService === "moving"} onToggle={event => toggleService("moving", event.currentTarget.open)}>
             <summary><h3><span className="service-glyph"><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving"></use></svg></span><span className="service-summary-text"><span>{t("Kleine Umzüge")}</span><span className="service-benefit">{t("Ein paar Möbel. Ein neuer Anfang.")}</span></span><span className="service-detail-toggle"><svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></h3></summary>
             <div className="service-detail-body">
-              <div className="service-inline-scene service-scene-moving" aria-hidden="true"><img src="/home-approved/assets/service-moving-v6.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async" /><svg className="service-brand-overlay" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false"><g transform="translate(780 457) skewY(3.8) scale(1 0.92)"><svg width="220" height="95" viewBox="0 280 1024 445" overflow="hidden"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g><g transform="translate(340 756) skewY(-6) scale(1 1)"><svg width="43" height="19" viewBox="0 280 1024 445" overflow="hidden"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g><g transform="translate(345 835) skewY(-6) scale(1 1)"><svg width="60" height="26" viewBox="0 280 1024 445" overflow="hidden"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g></svg></div>
+              <div className="service-inline-scene service-scene-moving" aria-hidden="true"><img {...responsiveImage('/home-approved/assets/service-moving-v6.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /><svg className="service-brand-overlay" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false"><g transform="translate(780 457) skewY(3.8) scale(1 0.92)"><svg width="220" height="95" viewBox="0 280 1024 445" overflow="hidden"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g><g transform="translate(340 756) skewY(-6) scale(1 1)"><svg width="43" height="19" viewBox="0 280 1024 445" overflow="hidden"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g><g transform="translate(345 835) skewY(-6) scale(1 1)"><svg width="60" height="26" viewBox="0 280 1024 445" overflow="hidden"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g></svg></div>
               <p>{t("Sie zügeln mit wenig Hausrat oder möchten einzelne Möbel und Kartons transportieren lassen? Für Ihren Kleinumzug nutzen wir einen Ford Transit. Wir stimmen den Möbeltransport auf Start, Ziel und Zugänge ab. Welcher Arbeitsaufwand und wie viele Fahrten nötig sind, klären wir anhand Ihres Umzugsguts.")}</p>
               <ul className="service-scope"><li>{t("Einzelne Möbel, Kartons und kleine Haushalte")}</li><li>{t("Transport mit einem Ford Transit")}</li><li>{t("Strecke, Helferbedarf und Zugänge gemeinsam planen")}</li></ul>
               <section className="service-cargo-specs" aria-labelledby="service-cargo-title">
@@ -219,7 +223,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
                 <p>{t("Die Türöffnungen und die Form Ihrer Möbel berücksichtigen wir bei der Planung.")}</p>
               </section>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Start und Ziel, Möbel, Stockwerke, Lift und Parkmöglichkeiten.")}</p>
-              <a className="button button-navy" data-service="moving" data-calculator="" href={quoteHref + '&service=moving'}>{t("Kleinen Umzug berechnen")}</a>
+              <a className="button button-navy" data-service="moving" data-calculator="" href={serviceHref('moving')}>{t("Kleinen Umzug berechnen")}</a>
             </div>
           </details>
         </div>
@@ -228,7 +232,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
 
     <div className="container services-why-wrap">
       <section className="services-why" id="warum-kraken" aria-labelledby="services-why-title">
-        <div className="services-why-intro"><p className="eyebrow">{t("Warum Kraken?")}</p><h2 id="services-why-title">{t("Auch kleine Aufträge")}<br />{t("sind uns wichtig.")}</h2><p>{t("Persönliche Unterstützung für Ihren Alltag, Ihren Auszug und den nächsten kleinen Umzug.")}</p><a className="button button-mint" href={quoteHref} data-calculator="">{t("Meinen Auftrag berechnen")}</a></div>
+        <div className="services-why-intro"><p className="eyebrow">{t("Warum Kraken?")}</p><h2 id="services-why-title">{t("Auch kleine Aufträge")}<br />{t("sind uns wichtig.")}</h2><p>{t("Persönliche Unterstützung für Ihren Alltag, Ihren Auszug und den nächsten kleinen Umzug.")}</p><a className="button button-mint" href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a></div>
         <div className="services-reasons">
           <article><svg className="icon" aria-hidden="true"><use href="#i-home"></use></svg><h3>{t("Passend zu Ihrem Zuhause.")}</h3><p>{t("Einzelne Fenster, eine Wohnung mit 1–4 Zimmern oder ein paar Möbel: Auch dafür ist Kraken da.")}</p></article>
           <article><svg className="icon" aria-hidden="true"><use href="#i-team"></use></svg><h3>{t("Erfahrung, die mitarbeitet.")}</h3><p>{t("Unser erfahrenes Team stimmt die vereinbarten Arbeiten auf Ihre Räume und Ihren Bedarf ab.")}</p></article>
@@ -241,7 +245,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
     <section className="faq-section section container" id="fragen" aria-labelledby="faq-title"><div className="faq-intro"><p className="eyebrow">{t("Vor Ihrem Auftrag")}</p><h2 id="faq-title">{t("Gut zu wissen.")}</h2><p>{t("Wir sind auch persönlich für Sie da.")}</p><a href="mailto:kai@krakenpfm.ch" className="text-link">{t("kai@krakenpfm.ch")}</a></div><div className="faq-list">
       <details><summary>{t("Übernehmen Sie auch kleine Aufträge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen mit 1–4 Zimmern und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.")}</p></details>
       <details><summary>{t("Welche Reinigung passt zu meiner Wohnung?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Die regelmässige Wohnungsreinigung unterstützt Sie bei wiederkehrenden Aufgaben. Eine Grundreinigung ist für Bereiche gedacht, die einmalig intensivere Aufmerksamkeit brauchen. Die Umzugsreinigung bereitet Ihre Wohnung auf die Abgabe vor. Fensterreinigung können Sie auch als eigenen Auftrag anfragen. Den gewünschten Umfang stimmen wir anhand Ihrer Angaben ab.")}</p></details>
-      <details><summary>{t("Welche Angaben brauche ich für einen kleinen Umzug?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Hilfreich sind Start und Ziel, eine Liste der Möbel und Kartons sowie Angaben zu Stockwerken, Lift und Parkmöglichkeiten. Arbeitsaufwand, Strecke und Zugänge fliessen in die Planung ein. Den verfügbaren Platz im Ford Transit und die benötigten Fahrten klären wir anhand Ihrer Angaben.")}{" "}<a href={quoteHref + '&service=moving'} data-service="moving" data-calculator="">{t("Kleinen Umzug berechnen")}</a></p></details>
+      <details><summary>{t("Welche Angaben brauche ich für einen kleinen Umzug?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Hilfreich sind Start und Ziel, eine Liste der Möbel und Kartons sowie Angaben zu Stockwerken, Lift und Parkmöglichkeiten. Arbeitsaufwand, Strecke und Zugänge fliessen in die Planung ein. Den verfügbaren Platz im Ford Transit und die benötigten Fahrten klären wir anhand Ihrer Angaben.")}{" "}<a href={serviceHref('moving')} data-service="moving" data-calculator="">{t("Kleinen Umzug berechnen")}</a></p></details>
       <details><summary>{t("Wie plane ich meinen Auftrag?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.")}{" "}<a href={quoteHref} data-calculator="">{t("Zum Service-Rechner")}</a></p></details>
       <details><summary>{t("Wird Mehrwertsteuer verrechnet?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Es wird keine Mehrwertsteuer verrechnet. Die Angaben zu Ihrem Auftrag erhalten Sie im Rechner und in Ihrer persönlichen Bestätigung.")}</p></details>
       <details><summary>{t("In welchen Regionen ist Kraken tätig?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir unterstützen Privathaushalte in Zürich, Schaffhausen und Winterthur. Geben Sie Ihre Postleitzahl an, damit wir Ihren Auftrag und die Anfahrt gemeinsam prüfen können.")}</p></details>

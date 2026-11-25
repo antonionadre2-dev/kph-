@@ -18,7 +18,20 @@ export default defineConfig(({ mode }) => {
       plugins: [
         react(), 
         tailwindcss(),
-        visualizer({
+        {
+          name: 'prioritize-server-rendered-content',
+          apply: 'build',
+          transformIndexHtml: {
+            order: 'post',
+            handler(html) {
+              // Native links and the complete SSR page work while the app loads.
+              // Keep CSS, the local font and the hero ahead of hydration scripts.
+              return html.replace(/<(?:script\b(?=[^>]*\btype="module")|link\b(?=[^>]*\brel="modulepreload"))[^>]*>/g,
+                tag => tag.replace(/\sfetchpriority="[^"]*"/g, '').replace(/>$/, ' fetchpriority="low">'));
+            },
+          },
+        },
+        process.env.ANALYZE_BUNDLE === 'true' && visualizer({
           filename: './dist/stats.html',
           open: false,
           gzipSize: true,
@@ -26,61 +39,14 @@ export default defineConfig(({ mode }) => {
         }),
       ],
       build: {
-        outDir: 'dist',
-        manifest: true,
-        emptyOutDir: true,
-        target: 'esnext',
-        cssCodeSplit: true,
-        rollupOptions: {
-          output: {
-            manualChunks(id) {
-              if (
-                id.includes('i18n.ts') ||
-                id.includes('docTranslations') ||
-                id.includes('seoTranslations') ||
-                id.includes('dashboardTranslations') ||
-                id.includes('locations.ts') ||
-                id.includes('municipalRegimes') ||
-                id.includes('seoData') ||
-                id.includes('seoConfig')
-              ) {
-                return 'data-app-resources';
-              }
-              if (id.includes('node_modules')) {
-                if (
-                  id.includes('react') ||
-                  id.includes('react-dom') ||
-                  id.includes('scheduler') ||
-                  id.includes('react-is') ||
-                  id.includes('use-sync-external-store')
-                ) {
-                  return 'vendor-react';
-                }
-                if (id.includes('firebase') || id.includes('@firebase')) {
-                  if (id.includes('firestore')) {
-                    return 'vendor-firebase-firestore';
-                  }
-                  if (id.includes('storage')) {
-                    return 'vendor-firebase-storage';
-                  }
-                  return 'vendor-firebase-core';
-                }
-                if (id.includes('lucide-react')) {
-                  return 'vendor-icons';
-                }
-                if (id.includes('motion')) {
-                  return 'vendor-motion';
-                }
-                if (id.includes('jspdf') || id.includes('html2canvas') || id.includes('dompurify') || id.includes('purify')) {
-                  return 'vendor-pdf-utils';
-                }
-                if (id.includes('jszip')) {
-                  return 'vendor-zip';
-                }
-              }
-            },
+        outDir: 'dist', manifest: true, emptyOutDir: true, target: 'esnext', cssCodeSplit: true,
+        rollupOptions: { output: {
+          // Do not pull lazy PDF, Firebase, legal or admin dependencies into a shared public chunk.
+          onlyExplicitManualChunks: true,
+          manualChunks(id) {
+            if (/node_modules\/(react|react-dom|scheduler)(?:\/|$)/.test(id)) return 'vendor-react';
           },
-        },
+        } },
       },
       resolve: {
         alias: {

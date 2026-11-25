@@ -123,7 +123,7 @@ test('verify-only rejects missing or changed localized SEO fragments without rep
     const name = seoFragmentName('/services/zurich/window-cleaning', 'it');
     const bundled = path.join(root, '.vercel/output/functions/index.func/dist', name);
     rmSync(bundled);
-    assert.throws(() => prepareVercelOutput(root, { trackedPublicFiles, verifyOnly: true }), /Missing or changed function HTML: dist\/seo-page-services-zurich-window-cleaning-it\.html/);
+    assert.throws(() => prepareVercelOutput(root, { trackedPublicFiles, verifyOnly: true }), /Missing or changed function HTML: dist\/seo-page-fensterreinigung-zuerich-it\.html/);
     assert.equal(existsSync(bundled), false);
     write('.vercel/output/functions/index.func/dist/' + name, readFileSync(path.join(root, 'dist', name), 'utf8'));
     write('.vercel/output/functions/index.func/dist/seo-shell-es.html', 'STALE_SHELL');
@@ -145,5 +145,17 @@ test('preflight rejects missing legal content before publication', () => {
   try {
     rmSync(path.join(root, 'dist', seoFragmentName('/terms', 'es')));
     assert.throws(() => prepareVercelOutput(root, { trackedPublicFiles }), /Missing or invalid built HTML: seo-page-terms-es\.html/);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test('security.txt is published without exposing other hidden files', () => {
+  const { root, trackedPublicFiles, write } = fixture();
+  try {
+    write('public/.well-known/security.txt', 'Contact: mailto:kai@krakenpfm.ch\n');
+    write('public/.well-known/private.json', 'PRIVATE');
+    const files = [...trackedPublicFiles, 'public/.well-known/security.txt', 'public/.well-known/private.json'];
+    prepareVercelOutput(root, { trackedPublicFiles: files });
+    assert.equal(readFileSync(path.join(root, '.vercel/output/static/.well-known/security.txt'), 'utf8'), 'Contact: mailto:kai@krakenpfm.ch\n');
+    assert.equal(existsSync(path.join(root, '.vercel/output/static/.well-known/private.json')), false);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });

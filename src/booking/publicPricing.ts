@@ -1,4 +1,4 @@
-import { calculatePrice, defaultSelection, END_OF_TENANCY_TIERS, REGULAR_MINIMUM_HOURS, type BookingSelection, type PriceQuote } from './pricing';
+import { calculatePrice, defaultSelection, END_OF_TENANCY_TIERS, REGULAR_MINIMUM_HOURS, type BookingSelection, type PriceQuote } from './pricing.ts';
 
 export type PublicPriceService = 'regular' | 'windows' | 'end' | 'deep' | 'moving';
 export interface PublicPriceOffer {

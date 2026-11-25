@@ -1,3 +1,5 @@
+import { PUBLIC_BASE_PATHS } from '../routing/route-policy.ts';
+import { toPublicPath } from '../routing/site-paths.ts';
 /** Shared exclusions for search crawlers and route metadata. */
 export const PRIVATE_PATH_PREFIXES = [
   '/api',
@@ -16,24 +18,18 @@ export const PRIVATE_PATH_PREFIXES = [
   '/dejar-opinion',
 ] as const;
 
-const SERVICE_CITIES = ['schaffhausen', 'zurich', 'winterthur'];
-const PUBLIC_SERVICES = ['end-of-tenancy', 'daily-cleaning', 'deep-cleaning', 'moving-furniture', 'window-cleaning'];
-
 /** Reviewed public pages; do not derive this list from every routable legacy URL. */
-export const INDEXABLE_PATHS = [
-  '/', '/leistungen', '/about', '/kontakt', '/quote', '/einsatzgebiete',
-  '/reinigung/kanton-schaffhausen', '/reinigung/region-winterthur', '/reinigung/region-zuerich',
-  ...SERVICE_CITIES.flatMap(city => PUBLIC_SERVICES.map(service => `/services/${city}/${service}`)),
-] as const;
+export const INDEXABLE_PATHS = PUBLIC_BASE_PATHS;
 
 export function isIndexablePath(pathname: string): boolean {
-  return INDEXABLE_PATHS.includes(pathname.split(/[?#]/, 1)[0]);
+  return INDEXABLE_PATHS.includes(toPublicPath(pathname));
 }
 
 /** Accepts a request path, including an optional query string or fragment. */
 export function isPrivatePath(pathname: string): boolean {
   let path = pathname.split(/[?#]/, 1)[0];
   try { path = decodeURIComponent(path); } catch { return true; }
+  path = toPublicPath(path);
   path = path.toLowerCase();
   return PRIVATE_PATH_PREFIXES.some(prefix => path.startsWith(prefix));
 }
@@ -58,7 +54,7 @@ export function renderRobotsTxt(origin: string): string {
     'User-agent: OAI-SearchBot',
     'User-agent: ChatGPT-User',
     'Allow: /',
-    ...PRIVATE_PATH_PREFIXES.map(prefix => `Disallow: ${prefix}`),
+    ...['', '/en', '/es', '/pt', '/it', '/fr'].flatMap(locale => PRIVATE_PATH_PREFIXES.map(prefix => `Disallow: ${locale}${prefix}`)),
     ...[...PRIVATE_QUERY_KEYS].map(key => `Disallow: /*?*${key}=`),
     '',
     `Sitemap: ${origin.replace(/\/$/, '')}/sitemap.xml`,

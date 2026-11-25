@@ -8,6 +8,7 @@ import { kaiText, kaiFieldLabel, kaiServiceLabel, type KaiTextKey } from '../src
 import { getKaiTransferPreview, prepareKaiTransfer } from '../src/kai/draft';
 import { subscribeKaiOpen } from '../src/kai/open';
 import './KaiAssistant.css';
+import { responsiveImage } from '../src/media/images';
 
 const SESSION_KEY = 'kraken_kai_request_v1';
 const MAX_MESSAGE = 1200;
@@ -203,11 +204,11 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
   return <>
     <button className="kai-assistant-launcher" ref={launcher} hidden={!showLauncher || open} aria-label={kt('open')} aria-haspopup="dialog" aria-controls="kai-assistant" type="button"
       onClick={event => { opener.current = event.currentTarget; setOpen(true); }}>
-      <img src="/home-approved/assets/kai.webp" alt="" width="48" height="48" /><span>{kt('open')}</span>
+      <img {...responsiveImage('/home-approved/assets/kai.webp','64px')} alt="" aria-hidden="true" width="48" height="48" /><span>{kt('open')}</span>
     </button>
     <dialog ref={dialog} id="kai-assistant" className="kai-assistant" lang={locale} aria-labelledby="kai-assistant-title" onKeyDown={keepTabInPanel} onCancel={event => { event.preventDefault(); close(); }} onClose={() => setOpen(false)}>
       <header className="kai-assistant-header">
-        <img src="/home-approved/assets/kai.webp" alt="" width="40" height="40" />
+        <img {...responsiveImage('/home-approved/assets/kai.webp','96px')} alt="" aria-hidden="true" width="40" height="40" />
         <div><h2 id="kai-assistant-title" ref={title} tabIndex={-1}>{kt('title')}</h2><p>{kt(mode === 'ai' ? 'aiLabel' : 'guidedLabel')}</p></div>
         <button type="button" className="kai-icon-button" onClick={close} aria-label={kt('minimize')} title={kt('minimize')}>−</button>
         <button type="button" className="kai-icon-button" onClick={close} aria-label={kt('close')} title={kt('close')}>×</button>

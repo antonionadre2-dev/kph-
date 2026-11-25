@@ -3,11 +3,11 @@ import type { HomeService } from '../../src/home/calculator';
 export type AboutTranslator = (source: string) => string;
 
 export const aboutHelpServices: Record<HomeService, { title: string; description: string; button: string }> = {
-  windows: { title: 'Klare Sicht. Ein gutes Gefühl.', description: 'Einzelne Fenster oder Ihre ganze Wohnung: Beschreiben Sie uns im Rechner, wo Sie klare Sicht wünschen.', button: 'Fensterreinigung planen' },
-  end: { title: 'Bereit für die Wohnungsabgabe.', description: 'Teilen Sie uns mit, welche Wohnung Sie abgeben. Wir planen die Reinigung und besprechen den Umfang persönlich.', button: 'Umzugsreinigung planen' },
-  regular: { title: 'Mehr Zeit für Ihren Alltag.', description: 'Ein gepflegtes Zuhause in Ihrem Rhythmus. Erzählen Sie uns von Ihrer Wohnung und der gewünschten Regelmässigkeit.', button: 'Regelmässige Reinigung planen' },
-  deep: { title: 'Sorgfalt bis ins Detail.', description: 'Wenn Ihr Zuhause mehr Aufmerksamkeit braucht: Beschreiben Sie uns die Räume und Ihre besonderen Wünsche.', button: 'Grundreinigung planen' },
-  moving: { title: 'Kleine Umzüge. Gut vorbereitet.', description: 'Ein paar Möbel oder eine kleine Wohnung? Planen Sie Abholort, Ziel und was mitkommen soll direkt im Rechner.', button: 'Kleinen Umzug planen' },
+  windows: { title: 'Klare Sicht. Ein gutes Gefühl.', description: 'Einzelne Fenster oder Ihre ganze Wohnung: Beschreiben Sie uns im Rechner, wo Sie klare Sicht wünschen.', button: 'Fensterreinigung berechnen' },
+  end: { title: 'Bereit für die Wohnungsabgabe.', description: 'Teilen Sie uns mit, welche Wohnung Sie abgeben. Wir planen die Reinigung und besprechen den Umfang persönlich.', button: 'Umzugsreinigung berechnen' },
+  regular: { title: 'Mehr Zeit für Ihren Alltag.', description: 'Ein gepflegtes Zuhause in Ihrem Rhythmus. Erzählen Sie uns von Ihrer Wohnung und der gewünschten Regelmässigkeit.', button: 'Regelmässige Reinigung berechnen' },
+  deep: { title: 'Sorgfalt bis ins Detail.', description: 'Wenn Ihr Zuhause mehr Aufmerksamkeit braucht: Beschreiben Sie uns die Räume und Ihre besonderen Wünsche.', button: 'Grundreinigung berechnen' },
+  moving: { title: 'Kleine Umzüge. Gut vorbereitet.', description: 'Ein paar Möbel oder eine kleine Wohnung? Planen Sie Abholort, Ziel und was mitkommen soll direkt im Rechner.', button: 'Kleinen Umzug berechnen' },
 };
 
 const isService = (key: unknown): key is HomeService => typeof key === 'string' && Object.hasOwn(aboutHelpServices, key);
@@ -165,7 +165,7 @@ export function initAboutInteractions(root: HTMLElement, t: AboutTranslator): ()
         description!.textContent = t(aboutHelpServices[key].description);
         calculator!.textContent = t(aboutHelpServices[key].button);
         calculator!.dataset.service = key;
-        const href = new URL(calculator!.getAttribute('href') || '/quote', window.location.href);
+        const href = new URL(calculator!.getAttribute('href') || '/offerte', window.location.href);
         href.searchParams.set('service', key);
         calculator!.setAttribute('href', href.pathname + href.search + href.hash);
       }

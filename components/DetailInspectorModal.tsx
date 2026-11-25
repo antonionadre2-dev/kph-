@@ -1,3 +1,4 @@
+import { escapedDocumentRecord, DOCUMENT_PREVIEW_CSP, documentDraftLabel, documentPreviewBlocked, documentPreviewDate, connectPreviewPrint } from '../src/security/documentPreview';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from '../i18n';
@@ -129,13 +130,7 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
   const { language } = useTranslation();
   const dt = getDashboardTranslation(language);
   const [teamNotes, setTeamNotes] = useState<TeamNote[]>([]);
-  const [noteAuthor, setNoteAuthor] = useState(() => {
-    try {
-      return localStorage.getItem('kraken_last_author') || '';
-    } catch {
-      return '';
-    }
-  });
+  const [noteAuthor, setNoteAuthor] = useState('');
   const [newNoteText, setNewNoteText] = useState('');
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
@@ -201,11 +196,7 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
       });
       setRequests(updatedList);
 
-      try {
-        localStorage.setItem(`kraken_team_notes_${selectedRequest.id}`, JSON.stringify(updatedNotes));
-      } catch (e) {
-        console.warn('LocalStorage save error:', e);
-      }
+      // Team notes stay in memory until the existing Firestore write succeeds; no new local copy.
 
       try {
         await setDoc(doc(db, 'maintenance_requests', selectedRequest.id), sanitizeFirestoreData({
@@ -215,6 +206,7 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
         }), { merge: true });
       } catch (dbErr) {
         console.warn('Firestore sync note warning:', dbErr);
+        throw dbErr; // Do not report a server-saved note when persistence failed.
       }
 
       setActionAlert(successMsg);
@@ -244,11 +236,6 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
       return;
     }
 
-    try {
-      localStorage.setItem('kraken_last_author', cleanAuthor);
-    } catch (e) {
-      // ignore
-    }
 
     const nowStr = new Date().toLocaleString('es-ES', {
       day: '2-digit',
@@ -374,21 +361,23 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
       setTimeout(() => setActionAlert(null), 5000);
   };
 
-  const handleGenerateInvoice = (req: MaintenanceRequest) => {
+  const handleGenerateInvoice = (rawRequest: MaintenanceRequest) => {
+      const req = escapedDocumentRecord(rawRequest);
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
-          setActionAlert("WARNING: Por favor permita las ventanas emergentes para ver/guardar la factura PDF.");
+          setActionAlert(documentPreviewBlocked(language));
           return;
       }
 
       const invoiceNum = `INV-${req.id.substring(0, 8).toUpperCase()}`;
-      const dateStr = new Date().toLocaleDateString(language.startsWith('de') ? 'de-CH' : language.startsWith('fr') ? 'fr-CH' : language.startsWith('it') ? 'it-CH' : language.startsWith('es') ? 'es-ES' : 'en-CH', { year: 'numeric', month: 'long', day: 'numeric' });
+      const dateStr = documentPreviewDate(language);
 
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-          <title>${dt.pdfInvoiceTitle} ${invoiceNum} - Kraken PFM</title>
+          <meta http-equiv="Content-Security-Policy" content="${DOCUMENT_PREVIEW_CSP}" />
+          <title>${documentDraftLabel(language)} · ${dt.pdfInvoiceTitle} ${invoiceNum} - Kraken PFM</title>
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; color: #1e293b; max-width: 800px; margin: 0 auto; }
             .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0284c7; padding-bottom: 20px; margin-bottom: 30px; }
@@ -407,19 +396,19 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
           </style>
         </head>
         <body>
-          <button class="btn-print" onclick="window.print()">${dt.pdfPrintBtn}</button>
+          <button class="btn-print" data-print-invoice>${dt.pdfPrintBtn}</button>
           
           <div class="header">
             <div class="logo">KRAKEN <span>PFM</span></div>
-            <div class="inv-title">${dt.pdfInvoiceHeader}<br><span style="font-size:14px; color:#64748b;">${invoiceNum}</span></div>
+            <p style="font-size:14px;font-weight:700">${documentDraftLabel(language)}</p><div class="inv-title">${dt.pdfInvoiceHeader}<br><span style="font-size:14px; color:#64748b;">${invoiceNum}</span></div>
           </div>
 
           <div class="details">
             <div class="box">
               <strong>${dt.pdfIssuer}</strong><br>
-              Kraken Properties & Facilities Management<br>
-              Bahnhofstrasse 42, 8001 Zürich<br>
-              Suiza • CHE-109.823.411 TVA<br>
+              Kraken PFM<br>
+              Seewadelstrasse 3<br>
+              8203 Schaffhausen<br>
               kai@krakenpfm.ch
             </div>
             <div class="box">
@@ -460,7 +449,8 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
         </html>
       `);
       printWindow.document.close();
-      setActionAlert(`SUCCESS: Invoice PDF generated and ready to print/save.`);
+      connectPreviewPrint(printWindow);
+      setActionAlert(documentDraftLabel(language) + ' · PDF');
       setTimeout(() => setActionAlert(null), 4000);
   };
 
@@ -828,7 +818,7 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
                                 <div>
                                     <span className="text-[9px] text-slate-400 uppercase tracking-wider block">{dt.gatewayProvider}</span>
                                     <span className="text-slate-600 block mt-0.5 uppercase font-bold">
-                                        {selectedRequest.payment?.gateway || 'Payrexx AG'}
+                                        {selectedRequest.payment?.gateway || '—'}
                                     </span>
                                 </div>
                             </div>

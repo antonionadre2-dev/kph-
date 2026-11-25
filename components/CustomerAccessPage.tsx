@@ -1,3 +1,4 @@
+import "../src/styles/route-utilities.css";
 import React, { useEffect, useRef, useState } from 'react';
 import { browserSessionPersistence, isSignInWithEmailLink, onAuthStateChanged, setPersistence, signInWithEmailLink, signOut, type User } from 'firebase/auth';
 import { auth } from './firebase';

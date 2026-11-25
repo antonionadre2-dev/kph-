@@ -1,11 +1,13 @@
+/// <reference types="vite/client" />
+import './src/styles/fonts.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './components/App';
-import { I18nProvider } from './i18n';
-import { AuthProvider } from './components/Auth';
+import Application from './components/Application';
+import { homeHydrationLanguage } from './src/routing/hydration';
+import { LANGUAGE_STORAGE_KEY } from './src/locale';
 
 // Suppress and handle benign development WebSocket errors from the Vite HMR client in sandboxed preview environments
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && import.meta.env.DEV) {
   window.addEventListener('unhandledrejection', (event) => {
     try {
       const reason = event.reason;
@@ -51,15 +53,13 @@ if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
-const appEl = (
-  <React.StrictMode>
-    <I18nProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </I18nProvider>
-  </React.StrictMode>
-);
+let preferredLanguage:string|null=null;
+try{preferredLanguage=window.localStorage.getItem(LANGUAGE_STORAGE_KEY);}catch{/* Explicit URL language still works without storage. */}
+const hydrationLanguage=homeHydrationLanguage({
+  marked:rootElement.getAttribute('data-kraken-home-ssr'),pathname:window.location.pathname,search:window.location.search,
+  saved:preferredLanguage,browserLanguage:navigator.language,ssrLanguage:document.documentElement.lang,
+});
+const appEl = <Application initialLanguage={hydrationLanguage||undefined} />;
 
-const root = ReactDOM.createRoot(rootElement);
-root.render(appEl);
+if(hydrationLanguage)ReactDOM.hydrateRoot(rootElement,appEl);
+else ReactDOM.createRoot(rootElement).render(appEl);

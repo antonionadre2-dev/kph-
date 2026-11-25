@@ -38,9 +38,9 @@ test('all footer service links are native information destinations with real ser
       const [, before, href, after, label] = links[index];
       const expected = serviceInformationLinks[index];
       const url = new URL(decode(href), 'https://krakenpfm.ch');
-      assert.equal(url.pathname, '/leistungen');
+      assert.equal(url.pathname, (language === 'de' ? '' : '/' + language) + '/leistungen');
       assert.equal(url.hash, '#' + expected.section);
-      assert.equal(url.searchParams.get('lang'), language === 'de' ? null : language);
+      assert.equal(url.searchParams.get('lang'), null);
       assert.ok(label.includes(homeText(language, expected.label)));
       assert.doesNotMatch(before + after, /data-(?:calculator|service|open-kai)|onclick|target=/);
       assert.match(servicesHtml, new RegExp('<details[^>]*id="' + expected.section + '"[^>]*data-service-detail="' + expected.service + '"'));
@@ -71,7 +71,7 @@ test('information targets retain native query and fragment order and can reopen 
   const current = 'https://krakenpfm.ch/leistungen?lang=es#fensterreinigung';
   for (const {section,service} of serviceInformationLinks) {
     const href = footerInformationHref('/leistungen#'+section,'es');
-    assert.equal(href, '/leistungen?lang=es#'+section);
+    assert.equal(href, '/es/leistungen#'+section);
     assert.equal(serviceInformationTarget(href,current),service);
   }
   assert.equal(serviceInformationTarget(current,current),'windows');

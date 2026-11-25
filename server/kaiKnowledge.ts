@@ -3,7 +3,7 @@ import type { KaiField, KaiService } from '../src/kai/types.ts';
 
 /** Approved public-site facts. No price catalogue or unverified vehicle capacity. */
 export const KAI_KNOWLEDGE = Object.freeze({
-  company: 'Kraken Properties & Facilities Management',
+  company: 'Kraken PFM – Reinigung & kleine Umzüge',
   regions: ['Zürich', 'Schaffhausen', 'Winterthur'],
   email: 'kai@krakenpfm.ch',
   phone: '+41 77 450 57 05',
@@ -11,7 +11,7 @@ export const KAI_KNOWLEDGE = Object.freeze({
   vehicle: 'Ford Transit; exact dimensions, capacity and number of trips require personal confirmation.',
   vat: 'Es wird keine Mehrwertsteuer verrechnet.',
   services: {
-    windows: 'Window cleaning: quantity, window type and accessibility; scope clarified personally. No standalone online estimate is configured.',
+    windows: 'Window cleaning: quantity, window type and accessibility; scope clarified personally. Prices are calculated in the service calculator; Kai does not quote prices.',
     end: 'End-of-tenancy cleaning: home size, condition, handover date and agreed scope.',
     regular: 'Regular household cleaning: home size, frequency and priority tasks.',
     deep: 'Deep household cleaning: rooms, areas needing attention and priorities.',

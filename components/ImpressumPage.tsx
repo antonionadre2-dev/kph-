@@ -1,3 +1,4 @@
+import "../src/styles/route-utilities.css";
 import React from 'react';
 import { motion } from 'motion/react';
 import { useTranslation } from '../i18n';

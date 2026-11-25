@@ -7,7 +7,7 @@ type WhyKrakenSectionProps = {
 };
 
 /** Personal introduction and the actual request/confirmation process. */
-export default function WhyKrakenSection({ t, quoteHref = '/quote' }: WhyKrakenSectionProps) {
+export default function WhyKrakenSection({ t, quoteHref = '/offerte' }: WhyKrakenSectionProps) {
   return (
     <section className="why-section" id="warum-kraken" aria-labelledby="why-title">
       <span id="ueber-uns" className="why-legacy-anchor" aria-hidden="true">
@@ -16,16 +16,14 @@ export default function WhyKrakenSection({ t, quoteHref = '/quote' }: WhyKrakenS
       <div className="why-editorial">
       <div className="why-introduction">
       <p className="why-eyebrow">{t("Warum Kraken?")}</p>
-      <h2 id="why-title">{' '}{t("Sie wissen,")}<br />
-      <span>{t("wer sich kümmert.")}</span>
-      </h2>
+      <h2 id="why-title">{t("Warum Kraken für Ihre Reinigung?")}</h2>
       <p className="why-intro">{' '}{t("Ich bin Antonio, Ihr Ansprechpartner bei Kraken. Gemeinsam klären wir, was Sie brauchen. Unser erfahrenes Team übernimmt die vereinbarten Arbeiten – sorgfältig und passend zu Ihrem Zuhause.")}{' '}</p>
       <div className="why-signature">
       <strong>{t("Antonio")}</strong>
       <span>{t("Inhaber & Ihr Ansprechpartner")}</span>
       </div>
       <div className="why-primary-action">
-      <a className="why-button" href={quoteHref} data-calculator="">{' '}{t("Auftrag im Rechner planen")}{' '}</a>
+      <a className="why-button kr-button kr-button--primary" href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a>
       <p>{t("Die nächsten Schritte besprechen wir persönlich.")}</p>
       </div>
       <div className="why-private-benefit">

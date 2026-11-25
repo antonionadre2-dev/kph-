@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
+import { publicHref } from '../src/routing/site-paths.ts';
+import { getApprovedPageMetadata } from '../src/seo/local-metadata.ts';
 import { getMetadataForPath } from '../seoConfig.ts';
 import { getPageSeo, SEO_LANGUAGES } from '../src/seo/metadata.ts';
 import { getLocalSeoDescriptor } from '../src/seo/local-content.ts';
@@ -13,8 +15,8 @@ test('the nine approved German pages preserve supplied metadata and resolve prod
   assert.equal(approvedPages.length, 9);
   for (const approved of approvedPages) {
     const meta = getPageSeo(approved.path);
-    assert.equal(meta.title, approved.title, approved.path);
-    assert.equal(meta.description, approved.description, approved.path);
+    assert.equal(meta.title, approved.path === '/' ? getApprovedPageMetadata('/','de')!.title : approved.title, approved.path);
+    assert.equal(meta.description, approved.path === '/' ? getApprovedPageMetadata('/','de')!.description : approved.description, approved.path);
     const imagePath = approved.productionImage || approved.image.replace('/assets/', '/home-approved/assets/');
     assert.equal(meta.ogImage, 'https://krakenpfm.ch' + imagePath);
     assert.equal(meta.ogImageType, 'image/webp');
@@ -32,7 +34,7 @@ test('all six versions publish translated copy and matching initial HTML without
     const titles = new Set<string>();
     const descriptions = new Set<string>();
     for (const language of SEO_LANGUAGES) {
-      const canonical = 'https://krakenpfm.ch' + approved.path + (language === 'de' ? '' : `?lang=${language}`);
+      const canonical = 'https://krakenpfm.ch' + publicHref(approved.path,language);
       const meta = getPageSeo(canonical);
       titles.add(meta.title);
       descriptions.add(meta.description);
@@ -54,7 +56,7 @@ test('all six versions publish translated copy and matching initial HTML without
       assert.equal(businesses[0]['@id'], 'https://krakenpfm.ch/#business');
       assert.equal(businesses[0].address.streetAddress, 'Seewadelstrasse 3');
       assert.equal(businesses[0].address.addressLocality, 'Schaffhausen');
-      assert.doesNotMatch(JSON.stringify(graph), /aggregateRating|ratingValue|reviewCount|GeoCoordinates/);
+      assert.doesNotMatch(JSON.stringify(graph), /aggregateRating|ratingValue|reviewCount/);
     }
     assert.equal(titles.size, 6, approved.path);
     assert.equal(descriptions.size, 6, approved.path);

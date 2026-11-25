@@ -6,6 +6,9 @@ import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getLocalSeoDescriptor, LOCAL_CITIES, LOCAL_SERVICES, localHref } from '../src/seo/local-content.ts';
+import { getRouteDisposition } from '../src/routing/route-policy.ts';
+import { publicHref, pathLanguage } from '../src/routing/site-paths.ts';
+import { getEndOfTenancyIntro } from '../src/seo/end-of-tenancy-copy.ts';
 import { localText, localTranslationSources } from '../src/seo/local-translations.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -32,13 +35,14 @@ test('all 19 local landing pages expose substantive, factual HTML before JavaScr
     assert.equal(descriptor.indexable, true, pathname);
     assert.equal((html.match(/<h1\b/g) || []).length, 1, pathname);
     assert.ok(html.includes(descriptor.h1), pathname);
-    assert.match(html, /1–4/);
+    if (!pathname.endsWith('/end-of-tenancy')) assert.match(html, /1–4/);
     assert.match(html, /Seewadelstrasse 3/);
     assert.match(html, /8203 Schaffhausen/);
     assert.match(html, /href="tel:\+41774505705"/);
     assert.match(html, /href="mailto:kai@krakenpfm.ch"/);
     assert.match(html, /09:00–19:00/);
-    assert.doesNotMatch(html, /(?:CHF|EUR)\s*\d|99\.4%|zertifizier|GAV-konform|CO2|10 Millionen|offerCount|AggregateOffer/);
+    if (!pathname.startsWith('/services/')) assert.doesNotMatch(html, /(?:CHF|EUR)\s*\d/);
+    assert.doesNotMatch(html, /99\.4%|zertifizier|GAV-konform|CO2|10 Millionen|offerCount|AggregateOffer/);
     assert.doesNotMatch(html, /<script|<button|Reaktionszeit|Schweizer Meisterklasse/);
     if (html.includes('Abnahmegarantie')) assert.match(html, /vertraglich vereinbarten Reinigungsleistungen|mit vereinbarter Abnahmegarantie/);
     assert.ok(html.replace(/<[^>]+>/g, ' ').length > 1800, pathname);
@@ -49,11 +53,13 @@ test('service selections and language survive native calculator links without br
   for (const language of languages) {
     for (const service of LOCAL_SERVICES) {
       const html = render(`/services/zurich/${service.id}`, language);
-      assert.ok(html.includes(localText(language, service.description)), language + ': ' + service.id);
-      const quoteLinks = [...html.matchAll(/href="(\/quote[^"#]*)"/g)].map(match => new URL(match[1].replaceAll('&amp;', '&'), 'https://krakenpfm.ch'));
+      const copy = service.id === 'end-of-tenancy' ? getEndOfTenancyIntro('zurich', language)[0] : localText(language, service.description);
+      assert.ok(html.includes(copy.replaceAll('&', '&amp;').replaceAll("'", '&#x27;')), language + ': ' + service.id);
+      const quoteLinks = [...html.matchAll(/href="([^"#]*)"/g)].map(match => new URL(match[1].replaceAll('&amp;', '&'), 'https://krakenpfm.ch')).filter(url => url.pathname.endsWith('/offerte'));
       assert.ok(quoteLinks.length >= 2);
       for (const url of quoteLinks) {
-        assert.equal(url.searchParams.get('lang'), language);
+        assert.equal(pathLanguage(url.href) || 'de', language);
+        assert.equal(url.searchParams.has('lang'), false);
         assert.equal(url.searchParams.get('service'), service.calculatorService);
       }
       assert.doesNotMatch(html, /localStorage|kraken_consultation_data/);
@@ -67,23 +73,25 @@ test('region hubs contain real service fragments and crawlable paths for the con
     for (const service of LOCAL_SERVICES) {
       assert.ok(html.includes(`id="${service.id}"`), city.id + ': ' + service.id);
       assert.ok(html.includes(`href="#${service.id}"`));
-      assert.ok(html.includes(`/services/${city.id}/${service.id}?lang=en`));
+      assert.ok(html.includes(publicHref(`/services/${city.id}/${service.id}`, 'en')));
     }
-    assert.match(html, /href="\/einsatzgebiete\?lang=en"/);
-    assert.match(html, /href="\/leistungen\?lang=en"/);
+    assert.ok(html.includes('href="' + publicHref('/einsatzgebiete', 'en') + '"'));
+    assert.ok(html.includes('href="' + publicHref('/leistungen', 'en') + '"'));
   }
-  assert.equal(localHref('/leistungen#kleine-umzuege', 'fr'), '/leistungen?lang=fr#kleine-umzuege');
+  assert.equal(localHref('/leistungen#kleine-umzuege', 'fr'), '/fr/leistungen#kleine-umzuege');
 });
 
-test('secondary municipalities and obsolete service routes request confirmation without inventing local availability', () => {
-  for (const pathname of ['/reinigung/neuhausen-am-rheinfall', '/reinigung/stein-am-rhein', '/services/neuhausen/window-cleaning', '/services/zurich/pest-control']) {
-    const descriptor = getLocalSeoDescriptor(pathname, 'en');
-    const html = render(pathname, 'en');
-    assert.equal(descriptor.indexable, false, pathname);
-    assert.match(html, /This location page does not confirm an available appointment/);
-    assert.doesNotMatch(html, /(?:CHF|EUR)\s*\d|certified|guarantee|local crew|branch|office in/i);
-    for (const service of LOCAL_SERVICES) assert.ok(html.includes(`id="${service.id}"`));
+test('historical municipalities redirect to real regions and retired services are gone', () => {
+  for (const [pathname, target] of [
+    ['/reinigung/neuhausen-am-rheinfall', '/reinigung/kanton-schaffhausen'],
+    ['/reinigung/stein-am-rhein', '/reinigung/kanton-schaffhausen'],
+    ['/services/neuhausen/window-cleaning', '/reinigung/kanton-schaffhausen'],
+  ]) {
+    const disposition = getRouteDisposition(pathname);
+    assert.equal(disposition.status, 301, pathname);
+    assert.equal(disposition.location, target, pathname);
   }
+  assert.equal(getRouteDisposition('/services/zurich/pest-control').status, 410);
 });
 
 test('all local planning and FAQ copy has six complete language variants', () => {

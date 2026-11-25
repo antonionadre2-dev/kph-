@@ -13,6 +13,9 @@ export const SITE_IDENTITY = {
     addressCountry: 'CH',
   },
   openingHours: { opens: '09:00', closes: '19:00' },
+  // Official Swiss building address register 102196962, checked 25 November 2026.
+  // https://api3.geo.admin.ch/rest/services/ech/MapServer/ch.swisstopo.amtliches-gebaeudeadressverzeichnis/102196962?sr=4326&geometryFormat=geojson
+  geo: { latitude: 47.699447, longitude: 8.655662 },
   logoPath: '/home-approved/assets/logo.webp',
   imagePath: '/home-approved/assets/hero-room-day-v4.webp',
   areas: ['Zürich', 'Schaffhausen', 'Winterthur'],

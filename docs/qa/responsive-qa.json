@@ -1,0 +1,34 @@
+{
+  "checks": [
+    {
+      "heading": "Limpieza de fin de alquiler en Zúrich",
+      "path": "/es/",
+      "price": "desde 450 CHF",
+      "scrollWidth": 320,
+      "width": 320
+    },
+    {
+      "path": "/es/",
+      "scrollWidth": 390,
+      "width": 390
+    },
+    {
+      "path": "/es/",
+      "scrollWidth": 768,
+      "width": 768
+    },
+    {
+      "path": "/es/",
+      "paused": "false",
+      "scrollWidth": 1440,
+      "width": 1440
+    }
+  ],
+  "manualChecks": {
+    "languagePrefix": true,
+    "nativeServiceAndContactNavigation": true,
+    "contactGalleryEscapeRestoresFocus": true,
+    "scenePauseResume": true
+  },
+  "errors": []
+}

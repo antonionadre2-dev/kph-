@@ -7,6 +7,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {aboutTranslationRows,aboutText} from '../components/about/aboutTranslations.ts';
 import {whyTranslationRows,whyTranslations} from '../components/home/whyTranslations.ts';
+import {publicHref} from '../src/routing/site-paths.ts';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const languages=['de','en','es','pt','it','fr'];
@@ -42,7 +43,7 @@ test('About initial HTML contains the complete story, comic and working links be
     assert.match(about,/kai-comic-cover\.webp/);assert.match(about,/kai-rheinfall-awakening\.webp/);assert.match(about,/kai-evolution\.webp/);
     assert.equal((about.match(/data-help-scene="/g)||[]).length,5);
     assert.equal((about.match(/data-help-choice/g)||[]).length,5);
-    assert.match(about,new RegExp('/quote\\?lang='+lang));
+    assert.ok(about.includes('href="'+publicHref('/quote',lang)+'"'));
     assert.doesNotMatch(about,/<iframe|kraken-codex-source|data:image\//);
     assert.doesNotMatch(about,/kraken_consultation_data_v2|(?:CHF|EUR)\s*\d/);
     if(lang!=='de') assert.ok(!about.includes('Die Menschen. Die Idee. Der Kraken.'));
@@ -58,7 +59,7 @@ test('Warum explains confirmation and scope without a hypothetical tax saving',(
   assert.equal((why.match(/<details\b/g)||[]).length,2);
   assert.equal((why.match(/id="warum-kraken"/g)||[]).length,1);
   assert.equal((why.match(/id="ueber-uns"/g)||[]).length,1);
-  assert.match(why,/href="\/quote"/);assert.match(why,/data-calculator/);
+  assert.match(why,/href="\/offerte"/);assert.match(why,/data-calculator/);
   assert.doesNotMatch(why,/<img|<iframe|8,1 % günstiger|0 % MwSt\.|steuerfrei/);
 });
 
@@ -73,8 +74,8 @@ test('native commercial links retain service and language when opened in another
         const service=/data-service="([^"]+)"/.exec(anchor)[1];
         const href=/href="([^"]+)"/.exec(anchor)[1].replaceAll('&amp;','&');
         const url=new URL(href,'https://krakenpfm.ch');
-        assert.equal(url.pathname,'/quote');
-        assert.equal(url.searchParams.get('lang'),lang);
+        assert.equal(url.pathname,(lang==='de'?'':'/'+lang)+'/offerte');
+        assert.equal(url.searchParams.get('lang'),null);
         assert.equal(url.searchParams.get('service'),service);
       }
     }

@@ -1,0 +1,111 @@
+{
+  "date": "2026-11-25",
+  "baselineCommit": "d299da3",
+  "branch": "codex/umzugsreinigung-audit-2026-11-25",
+  "lighthouseVersion": "13.6.0",
+  "method": "Three serial cold-profile default simulated mobile runs; median independently for each metric; compiled local Express, not deployed",
+  "urlBefore": "http://127.0.0.1:3017/",
+  "urlAfter": "http://127.0.0.1:3019/",
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "screenEmulation": {
+    "mobile": true,
+    "width": 412,
+    "height": 823,
+    "deviceScaleFactor": 1.75,
+    "disabled": false
+  },
+  "before": {
+    "runs": [
+      {
+        "file": "lighthouse-before.report.json",
+        "performance": 38,
+        "lcpMs": 15857.599375000002,
+        "fcpMs": 4692.30125,
+        "tbtMs": 1175.3017499999996,
+        "cls": 0,
+        "transferBytes": 2961187
+      },
+      {
+        "file": "lighthouse-before-2.json",
+        "performance": 61,
+        "lcpMs": 12603.91745,
+        "fcpMs": 1219.1893999999998,
+        "tbtMs": 562.4053000000008,
+        "cls": 0,
+        "transferBytes": 2961070
+      },
+      {
+        "file": "lighthouse-before-3.json",
+        "performance": 73,
+        "lcpMs": 12707.407775000001,
+        "fcpMs": 1362.9107499999998,
+        "tbtMs": 131,
+        "cls": 0.0008485340600135997,
+        "transferBytes": 2961070
+      }
+    ],
+    "median": {
+      "performance": 61,
+      "lcpMs": 12707.407775000001,
+      "fcpMs": 1362.9107499999998,
+      "tbtMs": 562.4053000000008,
+      "cls": 0,
+      "transferBytes": 2961070
+    }
+  },
+  "after": {
+    "runs": [
+      {
+        "file": "lighthouse-delivery-1.report.json",
+        "performance": 91,
+        "lcpMs": 3158.5995999999996,
+        "fcpMs": 1083.2998,
+        "tbtMs": 174.00000000000045,
+        "cls": 0.0006994689893212326,
+        "transferBytes": 551446
+      },
+      {
+        "file": "lighthouse-delivery-2.json",
+        "performance": 91,
+        "lcpMs": 3194.6666,
+        "fcpMs": 2191.8333000000002,
+        "tbtMs": 63,
+        "cls": 0.0006670578961878059,
+        "transferBytes": 551446
+      },
+      {
+        "file": "lighthouse-delivery-3.json",
+        "performance": 93,
+        "lcpMs": 2866.4943000000003,
+        "fcpMs": 2159.9962,
+        "tbtMs": 14,
+        "cls": 0.0006670578961878059,
+        "transferBytes": 551446
+      }
+    ],
+    "median": {
+      "performance": 91,
+      "lcpMs": 3158.5995999999996,
+      "fcpMs": 2159.9962,
+      "tbtMs": 63,
+      "cls": 0.0006670578961878059,
+      "transferBytes": 551446
+    }
+  },
+  "targets": {
+    "performanceAtLeast90": true,
+    "lcpUnder2500": false
+  },
+  "cssResourceBytes": {
+    "before": 402653,
+    "after": 222678
+  },
+  "productionDeployment": false
+}

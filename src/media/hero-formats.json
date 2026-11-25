@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "generator": "sharp-avif-60-444-v1",
+  "assets": {
+    "/home-approved/assets/hero-room-day-v4.webp": {
+      "type": "image/avif",
+      "width": 1536,
+      "height": 1024,
+      "variants": [
+        {
+          "src": "/media/hero-room-day-v4-320-258d13a4b0d8.avif",
+          "width": 320,
+          "height": 213,
+          "bytes": 8124
+        },
+        {
+          "src": "/media/hero-room-day-v4-640-a0701572a2d0.avif",
+          "width": 640,
+          "height": 427,
+          "bytes": 20857
+        },
+        {
+          "src": "/media/hero-room-day-v4-768-26fc137e6b42.avif",
+          "width": 768,
+          "height": 512,
+          "bytes": 28399
+        },
+        {
+          "src": "/media/hero-room-day-v4-960-877bf2e090d7.avif",
+          "width": 960,
+          "height": 640,
+          "bytes": 36551
+        },
+        {
+          "src": "/media/hero-room-day-v4-1536-e42e777e4a60.avif",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 76376
+        }
+      ]
+    },
+    "/home-approved/assets/hero-room-night-v4.webp": {
+      "type": "image/avif",
+      "width": 1536,
+      "height": 1024,
+      "variants": [
+        {
+          "src": "/media/hero-room-night-v4-320-d7f1de47a6df.avif",
+          "width": 320,
+          "height": 213,
+          "bytes": 6896
+        },
+        {
+          "src": "/media/hero-room-night-v4-640-5d49b8fe26d9.avif",
+          "width": 640,
+          "height": 427,
+          "bytes": 17656
+        },
+        {
+          "src": "/media/hero-room-night-v4-768-a50a5824afe3.avif",
+          "width": 768,
+          "height": 512,
+          "bytes": 23407
+        },
+        {
+          "src": "/media/hero-room-night-v4-960-430899cbaa7f.avif",
+          "width": 960,
+          "height": 640,
+          "bytes": 30570
+        },
+        {
+          "src": "/media/hero-room-night-v4-1536-4307658a0c56.avif",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 65941
+        }
+      ]
+    }
+  }
+}

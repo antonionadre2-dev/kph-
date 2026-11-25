@@ -1,0 +1,923 @@
+{
+  "date": "2026-11-25",
+  "method": "Isolated local Lighthouse layout audit; separate from performance runs. Opaque bounds use alpha envelope of original room.",
+  "allWidths": [
+    {
+      "name": "hero-320-es",
+      "score": 1,
+      "type": "debugdata",
+      "width": 320,
+      "height": 740,
+      "scrollWidth": 320,
+      "image": {
+        "left": -78.015625,
+        "right": 304,
+        "top": 885.890625,
+        "bottom": 1140.5625,
+        "width": 382.015625,
+        "height": 254.671875
+      },
+      "copy": {
+        "left": 20,
+        "right": 300,
+        "top": 210,
+        "bottom": 885.890625,
+        "width": 280,
+        "height": 675.890625
+      },
+      "hero": {
+        "left": 0,
+        "right": 320,
+        "top": 186,
+        "bottom": 1875.359375,
+        "width": 320,
+        "height": 1689.359375
+      },
+      "dock": {
+        "left": 16,
+        "right": 304,
+        "top": 1160.5625,
+        "bottom": 1724.359375,
+        "width": 288,
+        "height": 563.796875
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-640-a0701572a2d0.avif",
+      "reducedMotion": false,
+      "motionPaused": true,
+      "motionToggleHidden": false,
+      "hotspots": [
+        {
+          "name": "Elegir limpieza de ventanas",
+          "left": 81.34375,
+          "right": 129.34375,
+          "top": 925.546875,
+          "bottom": 973.546875
+        },
+        {
+          "name": "Elegir limpieza a fondo",
+          "left": 113.8125,
+          "right": 161.8125,
+          "top": 1050.34375,
+          "bottom": 1098.34375
+        },
+        {
+          "name": "Elegir una peque\u00f1a mudanza",
+          "left": 237.96875,
+          "right": 285.96875,
+          "top": 1088.546875,
+          "bottom": 1136.546875
+        }
+      ],
+      "house": {
+        "left": 15.99603271484375,
+        "right": 304,
+        "top": 911.5070343017578,
+        "bottom": 1131.3604888916016
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true
+    },
+    {
+      "name": "hero-390-es",
+      "score": 1,
+      "type": "debugdata",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "image": {
+        "left": -100.875,
+        "right": 374,
+        "top": 780.34375,
+        "bottom": 1096.921875,
+        "width": 474.875,
+        "height": 316.578125
+      },
+      "copy": {
+        "left": 20,
+        "right": 370,
+        "top": 210,
+        "bottom": 780.34375,
+        "width": 350,
+        "height": 570.34375
+      },
+      "hero": {
+        "left": 0,
+        "right": 390,
+        "top": 186,
+        "bottom": 1790.4375,
+        "width": 390,
+        "height": 1604.4375
+      },
+      "dock": {
+        "left": 16,
+        "right": 374,
+        "top": 1116.921875,
+        "bottom": 1639.4375,
+        "width": 358,
+        "height": 522.515625
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-640-a0701572a2d0.avif",
+      "reducedMotion": false,
+      "motionPaused": false,
+      "motionToggleHidden": false,
+      "hotspots": [
+        {
+          "name": "Elegir limpieza de ventanas",
+          "left": 103.0625,
+          "right": 151.0625,
+          "top": 835.484375,
+          "bottom": 883.484375
+        },
+        {
+          "name": "Elegir limpieza a fondo",
+          "left": 143.421875,
+          "right": 191.421875,
+          "top": 990.609375,
+          "bottom": 1038.609375
+        },
+        {
+          "name": "Elegir una peque\u00f1a mudanza",
+          "left": 297.75,
+          "right": 345.75,
+          "top": 1038.09375,
+          "bottom": 1086.09375
+        }
+      ],
+      "house": {
+        "left": 15.98876953125,
+        "right": 374,
+        "top": 812.1870574951172,
+        "bottom": 1085.4830169677734
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true
+    },
+    {
+      "name": "hero-768-es",
+      "score": 1,
+      "type": "debugdata",
+      "width": 768,
+      "height": 1024,
+      "scrollWidth": 768,
+      "image": {
+        "left": -211.078125,
+        "right": 744,
+        "top": 690.8125,
+        "bottom": 1327.53125,
+        "width": 955.078125,
+        "height": 636.71875
+      },
+      "copy": {
+        "left": 32,
+        "right": 712,
+        "top": 163,
+        "bottom": 702.8125,
+        "width": 680,
+        "height": 539.8125
+      },
+      "hero": {
+        "left": 0,
+        "right": 768,
+        "top": 131,
+        "bottom": 1765.859375,
+        "width": 768,
+        "height": 1634.859375
+      },
+      "dock": {
+        "left": 32,
+        "right": 736,
+        "top": 1347.53125,
+        "bottom": 1681.46875,
+        "width": 704,
+        "height": 333.9375
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-960-877bf2e090d7.avif",
+      "reducedMotion": false,
+      "motionPaused": false,
+      "motionToggleHidden": false,
+      "hotspots": [
+        {
+          "name": "Elegir limpieza de ventanas",
+          "left": 176.546875,
+          "right": 318.171875,
+          "top": 819.625,
+          "bottom": 867.625
+        },
+        {
+          "name": "Elegir limpieza a fondo",
+          "left": 242.328125,
+          "right": 414.734375,
+          "top": 1125.25,
+          "bottom": 1173.25
+        },
+        {
+          "name": "Elegir una peque\u00f1a mudanza",
+          "left": 537.296875,
+          "right": 740.578125,
+          "top": 1188.921875,
+          "bottom": 1236.921875
+        }
+      ],
+      "house": {
+        "left": 23.96063232421875,
+        "right": 744,
+        "top": 754.8574523925781,
+        "bottom": 1304.5248107910156
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true
+    },
+    {
+      "name": "hero-1024-es",
+      "score": 1,
+      "type": "debugdata",
+      "width": 1024,
+      "height": 900,
+      "scrollWidth": 1024,
+      "image": {
+        "left": -294.65625,
+        "right": 1000,
+        "top": 761,
+        "bottom": 1624.09375,
+        "width": 1294.65625,
+        "height": 863.09375
+      },
+      "copy": {
+        "left": 32,
+        "right": 712,
+        "top": 171,
+        "bottom": 773,
+        "width": 680,
+        "height": 602
+      },
+      "hero": {
+        "left": 0,
+        "right": 1024,
+        "top": 139,
+        "bottom": 1998.65625,
+        "width": 1024,
+        "height": 1859.65625
+      },
+      "dock": {
+        "left": 48,
+        "right": 976,
+        "top": 1644.09375,
+        "bottom": 1911.65625,
+        "width": 928,
+        "height": 267.5625
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-1536-e42e777e4a60.avif",
+      "reducedMotion": false,
+      "motionPaused": false,
+      "motionToggleHidden": false,
+      "hotspots": [
+        {
+          "name": "Elegir limpieza de ventanas",
+          "left": 255.953125,
+          "right": 397.578125,
+          "top": 944.140625,
+          "bottom": 992.140625
+        },
+        {
+          "name": "Elegir limpieza a fondo",
+          "left": 350.609375,
+          "right": 523.015625,
+          "top": 1358.421875,
+          "bottom": 1406.421875
+        },
+        {
+          "name": "Elegir una peque\u00f1a mudanza",
+          "left": 755.9375,
+          "right": 959.21875,
+          "top": 1444.734375,
+          "bottom": 1492.734375
+        }
+      ],
+      "house": {
+        "left": 23.9505615234375,
+        "right": 1000,
+        "top": 847.8150939941406,
+        "bottom": 1592.9077453613281
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true
+    },
+    {
+      "name": "hero-1090-es",
+      "score": 1,
+      "type": "debugdata",
+      "width": 1090,
+      "height": 900,
+      "scrollWidth": 1090,
+      "image": {
+        "left": -316.203125,
+        "right": 1066,
+        "top": 767.4375,
+        "bottom": 1688.90625,
+        "width": 1382.203125,
+        "height": 921.46875
+      },
+      "copy": {
+        "left": 32,
+        "right": 712,
+        "top": 171,
+        "bottom": 779.4375,
+        "width": 680,
+        "height": 608.4375
+      },
+      "hero": {
+        "left": 0,
+        "right": 1090,
+        "top": 139,
+        "bottom": 2063.46875,
+        "width": 1090,
+        "height": 1924.46875
+      },
+      "dock": {
+        "left": 48,
+        "right": 1042,
+        "top": 1708.90625,
+        "bottom": 1976.46875,
+        "width": 994,
+        "height": 267.5625
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-1536-e42e777e4a60.avif",
+      "reducedMotion": false,
+      "motionPaused": false,
+      "motionToggleHidden": false,
+      "hotspots": [
+        {
+          "name": "Elegir limpieza de ventanas",
+          "left": 276.4375,
+          "right": 418.0625,
+          "top": 964.578125,
+          "bottom": 1012.578125
+        },
+        {
+          "name": "Elegir limpieza a fondo",
+          "left": 378.53125,
+          "right": 550.9375,
+          "top": 1406.890625,
+          "bottom": 1454.890625
+        },
+        {
+          "name": "Elegir una peque\u00f1a mudanza",
+          "left": 812.3125,
+          "right": 1015.59375,
+          "top": 1499.03125,
+          "bottom": 1547.03125
+        }
+      ],
+      "house": {
+        "left": 23.94842529296875,
+        "right": 1066,
+        "top": 860.1242980957031,
+        "bottom": 1655.6109924316406
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true
+    },
+    {
+      "name": "hero-1920-es",
+      "score": 1,
+      "type": "debugdata",
+      "width": 1920,
+      "height": 1080,
+      "scrollWidth": 1920,
+      "image": {
+        "left": 648,
+        "right": 1656,
+        "top": 219,
+        "bottom": 891,
+        "width": 1008,
+        "height": 672
+      },
+      "copy": {
+        "left": 320,
+        "right": 880,
+        "top": 139,
+        "bottom": 835.71875,
+        "width": 560,
+        "height": 696.71875
+      },
+      "hero": {
+        "left": 0,
+        "right": 1920,
+        "top": 139,
+        "bottom": 1224.78125,
+        "width": 1920,
+        "height": 1085.78125
+      },
+      "dock": {
+        "left": 352,
+        "right": 1568,
+        "top": 879,
+        "bottom": 1137.78125,
+        "width": 1216,
+        "height": 258.78125
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-1536-e42e777e4a60.avif",
+      "reducedMotion": false,
+      "motionPaused": false,
+      "motionToggleHidden": false,
+      "hotspots": [
+        {
+          "name": "Elegir limpieza de ventanas",
+          "left": 1061.015625,
+          "right": 1202.640625,
+          "top": 356.265625,
+          "bottom": 404.265625
+        },
+        {
+          "name": "Elegir limpieza a fondo",
+          "left": 1131.3125,
+          "right": 1303.71875,
+          "top": 678.828125,
+          "bottom": 726.828125
+        },
+        {
+          "name": "Elegir una peque\u00f1a mudanza",
+          "left": 1443.46875,
+          "right": 1646.75,
+          "top": 746.03125,
+          "bottom": 794.03125
+        }
+      ],
+      "house": {
+        "left": 896.0625,
+        "right": 1656,
+        "top": 286.59375,
+        "bottom": 866.71875
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true
+    },
+    {
+      "name": "hero-390-de-reduced",
+      "score": 1,
+      "type": "debugdata",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "image": {
+        "left": -100.875,
+        "right": 374,
+        "top": 736.953125,
+        "bottom": 1053.53125,
+        "width": 474.875,
+        "height": 316.578125
+      },
+      "copy": {
+        "left": 20,
+        "right": 370,
+        "top": 210,
+        "bottom": 736.953125,
+        "width": 350,
+        "height": 526.953125
+      },
+      "hero": {
+        "left": 0,
+        "right": 390,
+        "top": 186,
+        "bottom": 1769.4375,
+        "width": 390,
+        "height": 1583.4375
+      },
+      "dock": {
+        "left": 16,
+        "right": 374,
+        "top": 1073.53125,
+        "bottom": 1618.4375,
+        "width": 358,
+        "height": 544.90625
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-640-a0701572a2d0.avif",
+      "reducedMotion": true,
+      "motionPaused": true,
+      "motionToggleHidden": true,
+      "hotspots": [
+        {
+          "name": "Fensterreinigung ausw\u00e4hlen",
+          "left": 103.0625,
+          "right": 151.0625,
+          "top": 792.09375,
+          "bottom": 840.09375
+        },
+        {
+          "name": "Grundreinigung ausw\u00e4hlen",
+          "left": 143.421875,
+          "right": 191.421875,
+          "top": 947.21875,
+          "bottom": 995.21875
+        },
+        {
+          "name": "Kleinen Umzug ausw\u00e4hlen",
+          "left": 297.75,
+          "right": 345.75,
+          "top": 994.703125,
+          "bottom": 1042.703125
+        }
+      ],
+      "house": {
+        "left": 15.98876953125,
+        "right": 374,
+        "top": 768.7964324951172,
+        "bottom": 1042.0923919677734
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true
+    }
+  ],
+  "finalInteractionAndContrast": [
+    {
+      "name": "release-hero-320-es",
+      "score": 1,
+      "type": "debugdata",
+      "interaction": true,
+      "actionContrast": [
+        {
+          "name": "Calcular mi presupuesto",
+          "color": "rgb(5, 41, 75)",
+          "background": "rgb(164, 245, 209)",
+          "ratio": 11.61930103766682
+        },
+        {
+          "name": "Empezar con Kai",
+          "color": "rgb(255, 255, 255)",
+          "background": "rgba(0, 0, 0, 0)",
+          "ratio": 11.226170542028497
+        }
+      ],
+      "width": 320,
+      "height": 740,
+      "scrollWidth": 320,
+      "image": {
+        "left": -78.015625,
+        "right": 304,
+        "top": 885.890625,
+        "bottom": 1140.5625,
+        "width": 382.015625,
+        "height": 254.671875
+      },
+      "copy": {
+        "left": 20,
+        "right": 300,
+        "top": 210,
+        "bottom": 885.890625,
+        "width": 280,
+        "height": 675.890625
+      },
+      "hero": {
+        "left": 0,
+        "right": 320,
+        "top": 186,
+        "bottom": 1875.359375,
+        "width": 320,
+        "height": 1689.359375
+      },
+      "dock": {
+        "left": 16,
+        "right": 304,
+        "top": 1160.5625,
+        "bottom": 1724.359375,
+        "width": 288,
+        "height": 563.796875
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-640-a0701572a2d0.avif",
+      "reducedMotion": false,
+      "motionPaused": true,
+      "motionToggleHidden": false,
+      "hotspots": [
+        {
+          "name": "Elegir limpieza de ventanas",
+          "left": 81.34375,
+          "right": 129.34375,
+          "top": 925.546875,
+          "bottom": 973.546875
+        },
+        {
+          "name": "Elegir limpieza a fondo",
+          "left": 113.8125,
+          "right": 161.8125,
+          "top": 1050.34375,
+          "bottom": 1098.34375
+        },
+        {
+          "name": "Elegir una peque\u00f1a mudanza",
+          "left": 237.96875,
+          "right": 285.96875,
+          "top": 1088.546875,
+          "bottom": 1136.546875
+        }
+      ],
+      "house": {
+        "left": 15.99603271484375,
+        "right": 304,
+        "top": 911.5070343017578,
+        "bottom": 1131.3604888916016
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true,
+      "floorClear": true,
+      "contrast": true
+    },
+    {
+      "name": "release-hero-390-es",
+      "score": 1,
+      "type": "debugdata",
+      "interaction": true,
+      "actionContrast": [
+        {
+          "name": "Calcular mi presupuesto",
+          "color": "rgb(5, 41, 75)",
+          "background": "rgb(164, 245, 209)",
+          "ratio": 11.61930103766682
+        },
+        {
+          "name": "Empezar con Kai",
+          "color": "rgb(255, 255, 255)",
+          "background": "rgba(0, 0, 0, 0)",
+          "ratio": 11.226170542028497
+        }
+      ],
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "image": {
+        "left": -100.875,
+        "right": 374,
+        "top": 780.34375,
+        "bottom": 1096.921875,
+        "width": 474.875,
+        "height": 316.578125
+      },
+      "copy": {
+        "left": 20,
+        "right": 370,
+        "top": 210,
+        "bottom": 780.34375,
+        "width": 350,
+        "height": 570.34375
+      },
+      "hero": {
+        "left": 0,
+        "right": 390,
+        "top": 186,
+        "bottom": 1790.4375,
+        "width": 390,
+        "height": 1604.4375
+      },
+      "dock": {
+        "left": 16,
+        "right": 374,
+        "top": 1116.921875,
+        "bottom": 1639.4375,
+        "width": 358,
+        "height": 522.515625
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-640-a0701572a2d0.avif",
+      "reducedMotion": false,
+      "motionPaused": false,
+      "motionToggleHidden": false,
+      "hotspots": [
+        {
+          "name": "Elegir limpieza de ventanas",
+          "left": 103.0625,
+          "right": 151.0625,
+          "top": 835.484375,
+          "bottom": 883.484375
+        },
+        {
+          "name": "Elegir limpieza a fondo",
+          "left": 143.421875,
+          "right": 191.421875,
+          "top": 990.609375,
+          "bottom": 1038.609375
+        },
+        {
+          "name": "Elegir una peque\u00f1a mudanza",
+          "left": 297.75,
+          "right": 345.75,
+          "top": 1038.09375,
+          "bottom": 1086.09375
+        }
+      ],
+      "house": {
+        "left": 15.98876953125,
+        "right": 374,
+        "top": 812.1870574951172,
+        "bottom": 1085.4830169677734
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true,
+      "floorClear": true,
+      "contrast": true
+    },
+    {
+      "name": "release-hero-1440-es",
+      "score": 1,
+      "type": "debugdata",
+      "interaction": true,
+      "actionContrast": [
+        {
+          "name": "Calcular mi presupuesto",
+          "color": "rgb(5, 41, 75)",
+          "background": "rgb(164, 245, 209)",
+          "ratio": 11.61930103766682
+        },
+        {
+          "name": "Empezar con Kai",
+          "color": "rgb(255, 255, 255)",
+          "background": "rgba(0, 0, 0, 0)",
+          "ratio": 11.226170542028497
+        }
+      ],
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "image": {
+        "left": 408,
+        "right": 1416,
+        "top": 219,
+        "bottom": 891,
+        "width": 1008,
+        "height": 672
+      },
+      "copy": {
+        "left": 80,
+        "right": 640,
+        "top": 139,
+        "bottom": 835.71875,
+        "width": 560,
+        "height": 696.71875
+      },
+      "hero": {
+        "left": 0,
+        "right": 1440,
+        "top": 139,
+        "bottom": 1224.78125,
+        "width": 1440,
+        "height": 1085.78125
+      },
+      "dock": {
+        "left": 112,
+        "right": 1328,
+        "top": 879,
+        "bottom": 1137.78125,
+        "width": 1216,
+        "height": 258.78125
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-1536-e42e777e4a60.avif",
+      "reducedMotion": false,
+      "motionPaused": false,
+      "motionToggleHidden": false,
+      "hotspots": [
+        {
+          "name": "Elegir limpieza de ventanas",
+          "left": 821.015625,
+          "right": 962.640625,
+          "top": 356.265625,
+          "bottom": 404.265625
+        },
+        {
+          "name": "Elegir limpieza a fondo",
+          "left": 891.3125,
+          "right": 1063.71875,
+          "top": 678.828125,
+          "bottom": 726.828125
+        },
+        {
+          "name": "Elegir una peque\u00f1a mudanza",
+          "left": 1203.46875,
+          "right": 1406.75,
+          "top": 746.03125,
+          "bottom": 794.03125
+        }
+      ],
+      "house": {
+        "left": 656.0625,
+        "right": 1416,
+        "top": 286.59375,
+        "bottom": 866.71875
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true,
+      "floorClear": true,
+      "contrast": true
+    },
+    {
+      "name": "release-hero-390-de-reduced",
+      "score": 1,
+      "type": "debugdata",
+      "interaction": true,
+      "actionContrast": [
+        {
+          "name": "Offerte berechnen",
+          "color": "rgb(5, 41, 75)",
+          "background": "rgb(164, 245, 209)",
+          "ratio": 11.61930103766682
+        },
+        {
+          "name": "Mit Kai starten",
+          "color": "rgb(255, 255, 255)",
+          "background": "rgba(0, 0, 0, 0)",
+          "ratio": 11.226170542028497
+        }
+      ],
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "image": {
+        "left": -100.875,
+        "right": 374,
+        "top": 736.953125,
+        "bottom": 1053.53125,
+        "width": 474.875,
+        "height": 316.578125
+      },
+      "copy": {
+        "left": 20,
+        "right": 370,
+        "top": 210,
+        "bottom": 736.953125,
+        "width": 350,
+        "height": 526.953125
+      },
+      "hero": {
+        "left": 0,
+        "right": 390,
+        "top": 186,
+        "bottom": 1769.4375,
+        "width": 390,
+        "height": 1583.4375
+      },
+      "dock": {
+        "left": 16,
+        "right": 374,
+        "top": 1073.53125,
+        "bottom": 1618.4375,
+        "width": 358,
+        "height": 544.90625
+      },
+      "currentSource": "http://127.0.0.1:3019/media/hero-room-day-v4-640-a0701572a2d0.avif",
+      "reducedMotion": true,
+      "motionPaused": true,
+      "motionToggleHidden": true,
+      "hotspots": [
+        {
+          "name": "Fensterreinigung ausw\u00e4hlen",
+          "left": 103.0625,
+          "right": 151.0625,
+          "top": 792.09375,
+          "bottom": 840.09375
+        },
+        {
+          "name": "Grundreinigung ausw\u00e4hlen",
+          "left": 143.421875,
+          "right": 191.421875,
+          "top": 947.21875,
+          "bottom": 995.21875
+        },
+        {
+          "name": "Kleinen Umzug ausw\u00e4hlen",
+          "left": 297.75,
+          "right": 345.75,
+          "top": 994.703125,
+          "bottom": 1042.703125
+        }
+      ],
+      "house": {
+        "left": 15.98876953125,
+        "right": 374,
+        "top": 768.7964324951172,
+        "bottom": 1042.0923919677734
+      },
+      "inside": true,
+      "controls": true,
+      "copyClear": true,
+      "dockClear": true,
+      "floorClear": true,
+      "contrast": true
+    }
+  ]
+}

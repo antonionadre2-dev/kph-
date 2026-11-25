@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 import { getMetadataForPath } from '../seoConfig.ts';
 import { getApprovedPageMetadata } from '../src/seo/local-metadata.ts';
 import { contactText } from '../components/contact/contactTranslations.ts';
+import { homeText } from '../components/home/homeTranslations.ts';
+import { publicHref } from '../src/routing/site-paths.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
@@ -36,9 +38,9 @@ test('Contact initial HTML keeps verified contact information and localized calc
     assert.match(html, /09:00/);
     assert.match(html, /19:00/);
     assert.match(html, /Europe\/Zurich/);
-    assert.match(html, new RegExp(`/quote\\?lang=${language}`));
+    assert.ok(html.includes('href="'+publicHref('/quote',language)+'"'));
     assert.ok(html.includes(contactText(language, 'Konzeptbilder · keine Fotos des Standorts')), language);
-    assert.match(html, /Properties &amp; Facilities Management/);
+    assert.ok(html.includes(homeText(language,'Reinigung & kleine Umzüge').replace(/&/g,'&amp;')));
     assert.match(html, /swisstopo/);
     assert.match(html, /OpenStreetMap/);
     assert.match(html, /openrouteservice/);

@@ -2,6 +2,7 @@ import React from 'react';
 import { homeText, normalizeHomeLanguage } from './home/homeTranslations';
 import { getPublicPriceOffers, type PublicPriceOffer } from '../src/booking/publicPricing';
 import { publicPriceText } from '../src/booking/publicPricingCopy';
+import { publicHref } from '../src/routing/site-paths';
 import './public-price-guide.css';
 
 export default function PublicPriceGuide({ language, id = 'public-prices' }: { language: string; id?: string }) {
@@ -19,12 +20,12 @@ export default function PublicPriceGuide({ language, id = 'public-prices' }: { l
   return <section className="kr-public-prices" aria-labelledby={`${id}-title`}>
     <div className="kr-public-prices-heading"><h2 id={`${id}-title`}>{text('title')}</h2><p>{text('intro')}</p></div>
     <div className="kr-public-price-grid">
-      {getPublicPriceOffers().map(offer => <article className="kr-public-price-card" key={offer.service} data-public-price-service={offer.service}>
+      {getPublicPriceOffers().sort((a,b)=>Number(b.service==='end')-Number(a.service==='end')).map(offer => <article className="kr-public-price-card" key={offer.service} data-public-price-service={offer.service}>
         <h3>{homeText(locale, offer.title)}</h3>
         <p className="kr-public-price-amount">{offer.minimumCents === null ? text('movingPrice') : text('from', { price: money(offer.hourlyRateCents ?? offer.minimumCents, offer.quote.currency) })}</p>
         {offer.hourlyRateCents !== null && <p className="kr-public-price-unit">{text('perHour')}<br />{text('perVisit', { price: money(offer.minimumCents!, offer.quote.currency) })}</p>}
         <p className="kr-public-price-condition">{description(offer)}</p>
-        <a href={`/quote?lang=${encodeURIComponent(locale)}&service=${offer.service}`}>{text(offer.service === 'moving' ? 'askMoving' : 'calculate')}</a>
+        <a className="kr-button kr-button--secondary" href={publicHref(`/quote?service=${offer.service}`, locale)}>{homeText(locale, offer.service === 'end' ? 'Umzugsreinigung berechnen' : 'Offerte berechnen')}</a>
       </article>)}
     </div>
     <p className="kr-public-price-included">{text('included')}</p>
