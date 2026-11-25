@@ -6,7 +6,7 @@ type WhyKrakenSectionProps = {
   t: (source: string, params?: Record<string, string | number>) => string;
 };
 
-/** Owner-approved personal introduction and conditional VAT comparison. */
+/** Personal introduction and the actual request/confirmation process. */
 export default function WhyKrakenSection({ t, quoteHref = '/quote' }: WhyKrakenSectionProps) {
   return (
     <section className="why-section" id="warum-kraken" aria-labelledby="why-title">
@@ -32,7 +32,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/quote' }: WhyKrakenS
       <svg className="why-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="M5 3l2 1.5L9 3l3 1.5L15 3l2 1.5L19 3v18l-2-1.5-2 1.5-3-1.5L9 21l-2-1.5L5 21V3ZM9 9h6M9 13h6M9 17h3" />
       </svg>
-      <p>{' '}{t("Für private Haushaltsleistungen können Sie die MwSt. nicht als Vorsteuer abziehen.")}{' '}<strong>{t("Deshalb zählt der Endpreis.")}</strong>
+      <p>{t("Sie sehen, welche Arbeiten und Extras zu Ihrem Auftrag gehören.")}{' '}<strong>{t("Erst prüfen, dann bestätigen.")}</strong>
       </p>
       </div>
       <div className="why-local">
@@ -47,42 +47,27 @@ export default function WhyKrakenSection({ t, quoteHref = '/quote' }: WhyKrakenS
       </div>
       </div>
       <div className="why-promise-panel">
-      <p className="why-panel-label">{' '}{t("Ihr Vorteil als Privathaushalt")}{' '}</p>
+      <p className="why-panel-label">{t("Gut zu wissen")}</p>
       <h3 className="why-tax-title">
-      <span>{t("Keine MwSt.")}</span>{' '}{t("auf Ihrer Rechnung.")}{' '}</h3>
-      <p className="why-tax-intro">{' '}{t("Kraken ist nicht mehrwertsteuerpflichtig. Deshalb stellen wir Ihnen keine Mehrwertsteuer in Rechnung.")}{' '}</p>
-      <p className="why-tax-condition" id="why-tax-condition">{' '}{t("Vergleich bei gleichem Nettopreis und Leistungsumfang")}{' '}</p>
-      <dl className="why-tax-comparison" aria-describedby="why-tax-condition">
+      <span>{t("Ihr Auftrag.")}</span>{' '}{t("Vorher klar.")}</h3>
+      <p className="why-tax-intro">{t("Vor der Bestätigung kennen Sie den vereinbarten Umfang, den Preis und den Termin.")}</p>
+      <dl className="why-tax-comparison">
       <div className="why-tax-company why-tax-kraken">
-      <dt>{t("Kraken")}</dt>
+      <dt>{t("Leistungsumfang")}</dt>
       <dd>
-      <strong>{t("Ohne MwSt.")}</strong>
-      <span>{t("Ihr vereinbarter Preis.")}</span>
+      <strong>{t("Nach Ihrer Auswahl")}</strong>
+      <span>{t("Zusätze werden vorab vereinbart.")}</span>
       </dd>
       </div>
       <div className="why-tax-company">
-      <dt>{t("MwSt.-pflichtiger Anbieter")}</dt>
+      <dt>{t("Termin")}</dt>
       <dd>
-      <strong>{t("Mit 8,1 % MwSt.")}</strong>
-      <span>{' '}{t("Gleicher Nettopreis; MwSt. im Endpreis enthalten.")}{' '}</span>
+      <strong>{t("Persönlich bestätigt")}</strong>
+      <span>{t("Ihr Wunschtermin ist noch keine bestätigte Buchung.")}</span>
       </dd>
       </div>
       </dl>
-      <p className="why-tax-saving">{' '}{t("Bei gleichem Nettopreis zahlen Sie")}{' '}<strong>{t("rund 7,5 % weniger")}</strong>{' '}{t("als beim Vergleichsangebot inklusive MwSt.")}{' '}</p>
-      <p className="why-tax-note">{' '}{t("Ihre tatsächliche Ersparnis hängt von den verglichenen Gesamtangeboten ab.")}{' '}</p>
-      <details className="why-tax-detail">
-      <summary>{' '}{t("Wie entsteht der Preisvorteil?")}{' '}<span className="why-disclosure" aria-hidden="true">
-      <svg className="why-icon" viewBox="0 0 24 24" focusable="false">
-      <path d="M12 5v14M5 12h14" />
-      </svg>
-      </span>
-      </summary>
-      <div>
-      <p>{' '}{t("Der Vergleich setzt denselben Nettopreis und Leistungsumfang voraus. Bei 8,1 % MwSt. beträgt der Steueranteil am Preis inklusive MwSt. rund 7,49 %:")}{' '}</p>
-      <p className="why-tax-formula">{' '}{t("8,1 ÷ 108,1 × 100 ≈ 7,49 %")}{' '}</p>
-      <p>{' '}{t("Gerundet ergibt das einen Preisunterschied von 7,5 % zum Vergleichsangebot inklusive MwSt. Vergleichen Sie deshalb immer den gesamten Leistungsumfang und die Endpreise.")}{' '}</p>
-      </div>
-      </details>
+      <p className="why-tax-note">{t("Die nächsten Schritte besprechen wir persönlich.")}</p>
       </div>
       </div>
       <div className="why-promises" aria-label={t("Weitere Vorteile für Ihren Haushalt")}>
@@ -143,7 +128,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/quote' }: WhyKrakenS
       <svg className="why-icon why-assurance-symbol" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="m5 12 4 4L19 6" />
       </svg>
-      <span className="why-assurance-title">{' '}{t("Betriebshaftpflichtversichert")}{' '}<span>{t("Persönlich klären, was Ihnen wichtig ist")}</span>
+      <span className="why-assurance-title">{' '}{t("Fragen zum Versicherungsschutz")}{' '}<span>{t("Persönlich klären, was Ihnen wichtig ist")}</span>
       </span>
       <span className="why-disclosure" aria-hidden="true">
       <svg className="why-icon" viewBox="0 0 24 24" focusable="false">
@@ -151,7 +136,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/quote' }: WhyKrakenS
       </svg>
       </span>
       </summary>
-      <p>{' '}{t("Kraken verfügt über eine Betriebs­haftpflicht­versicherung. Fragen zum Versicherungs­schutz klären wir persönlich mit Ihnen.")}{' '}</p>
+      <p>{t("Wenn Sie einen Versicherungsnachweis benötigen, kontaktieren Sie Antonio vor der Buchung. Massgeblich sind die schriftlich bestätigten Angaben zum Auftrag und die geltenden Versicherungsbedingungen.")}</p>
       </details>
       </div>
       <div className="why-process" aria-labelledby="why-process-title">

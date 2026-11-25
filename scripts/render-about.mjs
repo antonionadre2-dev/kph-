@@ -26,7 +26,7 @@ export async function renderAboutHtml(root) {
       if ((body.match(/<h1\b/g)||[]).length!==1 || !body.includes('id="kai-help"') || !body.includes('id="story-switzerland"')) throw new Error('Incomplete About HTML.');
       writeFileSync(path.join(root,`dist/about-content-${language}.html`),`${styles(about)}<div class="kraken-home kraken-about about-page" lang="${language==='de'?'de-CH':language}">${body}</div>`);
       const why=renderWhy(language);
-      if (!why.includes('id="warum-kraken"') || (why.match(/<details\b/g)||[]).length!==3) throw new Error('Incomplete Warum Kraken HTML.');
+      if (!why.includes('id="warum-kraken"') || (why.match(/<details\b/g)||[]).length!==2) throw new Error('Incomplete Warum Kraken HTML.');
       writeFileSync(path.join(root,`dist/why-content-${language}.html`),`${styles(home)}<div class="kraken-home" lang="${language==='de'?'de-CH':language}">${why}</div>`);
     }
   } finally {rmSync(temporary,{recursive:true,force:true});}

@@ -34,6 +34,12 @@ export default function ApprovedHeader({ servicesPage = false, page }: { onNavig
   return <>
     <a className="skip-link" href="#main">{t('Zum Inhalt')}</a>
     <header className="site-header">
+      <nav className="header-contact-bar" aria-label={t('Direkter Kontakt')}>
+        <div className="header-contact-inner container">
+          <a href="tel:+41774505705"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16.5v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.8 2 2 0 0 1 3.1 1.6h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1L7 9.5a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5 12.8 12.8 0 0 0 2.8.7 2 2 0 0 1 1.8 2.1Z" /></svg><span className="sr-only">{t('Anrufen')}{' '}</span><span>+41 77 450 57 05</span></a>
+          <a href="https://wa.me/41774505705" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-9 8.5 10 10 0 0 1-4-1l-6 2 2-6a10 10 0 0 1-1-4A8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z" /><path d="M8 11h.01M12 11h.01M16 11h.01" /></svg><span>WhatsApp</span></a>
+        </div>
+      </nav>
       <div className="header-inner container">
         <a className="brand-lockup" href={href('/')} aria-label={t('Kraken Properties and Facilities Management – Startseite')}>
           <span className="brand-logo"><img src="/home-approved/assets/logo.webp" alt="Kraken" width="1024" height="1024" /></span>

@@ -25,6 +25,46 @@
 }
 .kraken-home .site-header .header-actions { flex: none; }
 
+/* Personal contact stays visible without crowding the logo or menu. */
+.kraken-home .header-contact-bar {
+  color: var(--navy, #002d5b);
+  background: #f1f8fc;
+  border-bottom: 1px solid #e1edf4;
+}
+.kraken-home .header-contact-inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+}
+.kraken-home .header-contact-bar a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  max-width: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.kraken-home .header-contact-bar a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.kraken-home .header-contact-bar svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (max-width: 760px) {
+  .kraken-home .header-contact-inner { width: calc(100% - 40px); justify-content: space-between; gap: 0 12px; }
+  .kraken-home .header-contact-bar a { min-height: 44px; font-size: 14px; gap: 6px; }
+}
+
 /* A native select must not impose its widest option on both grid columns. */
 .kraken-home .scene-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .kraken-home .scene-control,

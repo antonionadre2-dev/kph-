@@ -29,6 +29,8 @@ const rows = [
   ['Kraken Properties and Facilities Management – Startseite', 'Kraken Properties and Facilities Management – Home', 'Kraken Properties and Facilities Management – Inicio', 'Kraken Properties and Facilities Management – Início', 'Kraken Properties and Facilities Management – Home', 'Kraken Properties and Facilities Management – Accueil'],
   same('Kraken'), same('Properties and Facilities'), same('Management'),
   ['Hauptnavigation', 'Main navigation', 'Navegación principal', 'Navegação principal', 'Navigazione principale', 'Navigation principale'],
+  ['Direkter Kontakt', 'Direct contact', 'Contacto directo', 'Contacto direto', 'Contatto diretto', 'Contact direct'],
+  ['Anrufen', 'Call us', 'Llamar', 'Ligar', 'Chiama', 'Appeler'],
   ['Leistungen', 'Services', 'Servicios', 'Serviços', 'Servizi', 'Prestations'],
   ['Kleine Umzüge', 'Small moves', 'Pequeñas mudanzas', 'Pequenas mudanças', 'Piccoli traslochi', 'Petits déménagements'],
   ['Über Kraken', 'About Kraken', 'Sobre Kraken', 'Sobre a Kraken', 'Chi è Kraken', 'À propos de Kraken'],

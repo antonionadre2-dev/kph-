@@ -12,7 +12,7 @@ test('unavailable email never turns queued requests or receipts into a preparati
     assert.equal(bookingMailStatusKey(undefined, receipt, true), null);
   }
   assert.match(bookingText('es', 'mailUnavailable'), /no está disponible.*solicitud sigue guardada.*referencia/s);
-  assert.match(bookingText('es', 'emailUnavailableBeforeRequest'), /Puedes enviar tu solicitud.*guarda la referencia/s);
+  assert.match(bookingText('es', 'emailUnavailableBeforeRequest'), /Puede enviar su solicitud.*guarde la referencia/s);
 });
 
 test('a previous sent or uncertain delivery remains tied to its real provider status', () => {
@@ -24,7 +24,7 @@ test('a previous sent or uncertain delivery remains tied to its real provider st
       assert.equal(bookingMailStatusKey(state, true, ready), 'mailFailed');
     }
   }
-  assert.match(bookingText('es', 'mailFailed'), /no está confirmado.*Contacta.*antes de intentar otro envío/s);
+  assert.match(bookingText('es', 'mailFailed'), /no está confirmado.*Contacte.*antes de intentar otro envío/s);
 });
 
 test('saved quote recovery requires both explicit recovery enablement and email readiness', () => {
@@ -68,7 +68,7 @@ test('recovery availability loader uses GET only and fails closed on HTTP, JSON 
 
 test('lost access guidance supports people who never received an email', () => {
   const copy = bookingText('es', 'returnMissing');
-  assert.match(copy, /enlace personal si lo tienes/);
-  assert.match(copy, /contacta con Kraken indicando tu referencia/);
+  assert.match(copy, /enlace personal si lo tiene/);
+  assert.match(copy, /contacte con Kraken indicando su referencia/);
   assert.doesNotMatch(copy, /Abre el enlace personal de tu correo/);
 });

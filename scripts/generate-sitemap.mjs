@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BASE_URL, isRouteValid } from '../seoConfig.ts';
-import { getPageSeo } from '../src/seo/metadata.ts';
+import { getPageSeo, SEO_LANGUAGES } from '../src/seo/metadata.ts';
 import { INDEXABLE_PATHS, isPrivatePath, renderRobotsTxt } from '../src/seo/crawl-policy.ts';
 
 // Promote a route only after its public content and canonical have been reviewed.
@@ -14,19 +14,22 @@ const escapeXml = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;'
 
 /** @param {readonly string[]} paths */
 export function getSitemapUrls(paths = SITEMAP_PATHS) {
-  const urls = paths.map(route => {
+  const urls = paths.flatMap(route => {
     if (route.includes('?') || route.includes('#') || !isRouteValid(route) || isPrivatePath(route)) {
       throw new Error(`Sitemap route must be a public canonical path: ${route}`);
     }
-    const metadata = getPageSeo(route, 'de');
-    const canonical = new URL(metadata.canonical);
-    if (canonical.origin !== BASE_URL || canonical.pathname !== route || canonical.search || canonical.hash) {
-      throw new Error(`Sitemap route differs from its canonical URL: ${route}`);
-    }
-    if (metadata.indexable === false || metadata.noindex === true || /noindex/i.test(metadata.robots || '')) {
-      throw new Error(`Sitemap route must be indexable: ${route}`);
-    }
-    return canonical.href;
+    return SEO_LANGUAGES.map(language => {
+      const metadata = getPageSeo(route, language);
+      const canonical = new URL(metadata.canonical);
+      const languageSearch = language === 'de' ? '' : `?lang=${language}`;
+      if (canonical.origin !== BASE_URL || canonical.pathname !== route || canonical.search !== languageSearch || canonical.hash) {
+        throw new Error(`Sitemap route differs from its canonical URL: ${route}`);
+      }
+      if (metadata.indexable === false || metadata.noindex === true || /noindex/i.test(metadata.robots || '')) {
+        throw new Error(`Sitemap route must be indexable: ${route}`);
+      }
+      return canonical.href;
+    });
   });
   if (new Set(urls).size !== urls.length) throw new Error('Duplicate sitemap canonical URL.');
   return urls;
@@ -36,8 +39,12 @@ export function getSitemapUrls(paths = SITEMAP_PATHS) {
 export function renderSitemap(paths = SITEMAP_PATHS) {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ...getSitemapUrls(paths).map(url => `  <url><loc>${escapeXml(url)}</loc></url>`),
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    ...getSitemapUrls(paths).map(url => {
+      const metadata = getPageSeo(url);
+      const links = metadata.hreflangs.map(({ lang, href }) => `    <xhtml:link rel="alternate" hreflang="${escapeXml(lang)}" href="${escapeXml(href)}"/>`);
+      return [`  <url><loc>${escapeXml(url)}</loc>`, ...links, '  </url>'].join('\n');
+    }),
     '</urlset>',
     '',
   ].join('\n');
@@ -64,5 +71,5 @@ export function generateSitemap(root = rootPath, { check = false, includeDist = 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const check = process.argv.includes('--check');
   const urls = generateSitemap(rootPath, { check });
-  console.log(`${check ? 'Verified' : 'Generated'} robots.txt and sitemap.xml (${urls.length} reviewed canonical URLs).`);
+  console.log(`${check ? 'Verified' : 'Generated'} robots.txt and sitemap.xml (${urls.length} canonical language URLs across ${SITEMAP_PATHS.length} reviewed pages).`);
 }

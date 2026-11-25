@@ -6,11 +6,7 @@ import {
   MapPin, 
   Mail, 
   Phone, 
-  User, 
-  FileCheck, 
-  ShieldCheck, 
   ArrowLeft, 
-  Globe, 
   FileText 
 } from 'lucide-react';
 
@@ -43,19 +39,24 @@ const impressumTranslations: Record<string, {
   backHome: string;
   secAddress: string;
   badgeLegal: string;
+  legalFormValue: string;
+  country: string;
+  registryTitle: string;
+  registryLookup: string;
+  contactIntro: string;
 }> = {
   'en': {
-    title: 'Legal Notice / Imprint',
-    badge: 'Compliance & Transparency',
-    subtitle: 'Official and legal company details according to Swiss registration guidelines.',
+    title: "Legal notice",
+    badge: "Company information",
+    subtitle: "Who operates this website and how to contact Kraken.",
     companyName: 'Company Name',
-    legalRepresentative: 'Legal Form',
-    owner: 'Owner / General Manager',
+    legalRepresentative: "Legal form",
+    owner: "Owner",
     commercialRegistry: 'Commercial Register',
-    registryOffice: 'Registry Office',
+    registryOffice: "Commercial Register Office of the Canton of Schaffhausen",
     uidNumber: 'Company ID (UID)',
     vatNumber: 'VAT / MWST Status',
-    vatText: 'Not VAT-registered (Einzelunternehmen / Sole Proprietorship)',
+    vatText: "No VAT is charged.",
     contactHeader: 'Contact Information',
     email: 'Email',
     phone: 'Phone',
@@ -68,20 +69,25 @@ const impressumTranslations: Record<string, {
     copyrightText: 'The content and works created by the site operators on these pages are subject to Swiss copyright law. Duplication, processing, distribution, and any kind of exploitation outside the limits of copyright law require the written consent of the respective author or creator.',
     backHome: 'Back to Home',
     secAddress: 'Postal Address',
-    badgeLegal: 'Impressum / Imprint'
+    badgeLegal: "Company details",
+    legalFormValue: "Sole proprietorship",
+    country: "Switzerland",
+    registryTitle: "Registration and VAT",
+    registryLookup: "Look up the UID in the official register",
+    contactIntro: "Contact us for questions about the business, invoices or this website.",
   },
   'de': {
-    title: 'Impressum',
-    badge: 'Konformität & Transparenz',
-    subtitle: 'Offizielle rechtliche Angaben gemäss den schweizerischen Richtlinien.',
+    title: "Impressum",
+    badge: "Unternehmensangaben",
+    subtitle: "Wer diese Website betreibt und wie Sie Kraken erreichen.",
     companyName: 'Firmenname',
-    legalRepresentative: 'Rechtsform',
-    owner: 'Inhaber / Geschäftsführer',
+    legalRepresentative: "Rechtsform",
+    owner: "Inhaber",
     commercialRegistry: 'Handelsregister',
-    registryOffice: 'Handelsregisteramt',
+    registryOffice: "Handelsregisteramt des Kantons Schaffhausen",
     uidNumber: 'Unternehmens-Identifikationsnummer (UID)',
     vatNumber: 'MWST-Status',
-    vatText: 'Nicht MWST-pflichtig (Einzelunternehmen)',
+    vatText: "Es wird keine MWST berechnet.",
     contactHeader: 'Kontaktangaben',
     email: 'E-Mail',
     phone: 'Telefon',
@@ -94,20 +100,25 @@ const impressumTranslations: Record<string, {
     copyrightText: 'Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem schweizerischen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung ausserhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.',
     backHome: 'Zurück zur Startseite',
     secAddress: 'Geschäftsadresse',
-    badgeLegal: 'Impressum'
+    badgeLegal: "Unternehmensangaben",
+    legalFormValue: "Einzelunternehmen",
+    country: "Schweiz",
+    registryTitle: "Register und MWST",
+    registryLookup: "UID im offiziellen Register nachschlagen",
+    contactIntro: "Kontaktieren Sie uns bei Fragen zum Unternehmen, zu Rechnungen oder zu dieser Website.",
   },
   'es': {
-    title: 'Impressum / Aviso Legal',
-    badge: 'Cumplimiento y Transparencia',
-    subtitle: 'Datos legales oficiales de la empresa de acuerdo con las directrices suizas.',
+    title: "Aviso legal",
+    badge: "Información de la empresa",
+    subtitle: "Quién opera este sitio web y cómo contactar con Kraken.",
     companyName: 'Razón Social',
-    legalRepresentative: 'Forma Legal',
-    owner: 'Propietario / Conservador',
+    legalRepresentative: "Forma jurídica",
+    owner: "Titular",
     commercialRegistry: 'Registro Mercantil',
-    registryOffice: 'Oficina de registro',
+    registryOffice: "Oficina del Registro Mercantil del cantón de Schaffhausen",
     uidNumber: 'Número de Identificación (UID)',
     vatNumber: 'Estado del IVA (MWST)',
-    vatText: 'No registrado para el IVA (Einzelunternehmen / Empresa unipersonal)',
+    vatText: "No se cobra IVA.",
     contactHeader: 'Datos de Contacto',
     email: 'Correo electrónico',
     phone: 'Teléfono',
@@ -120,20 +131,25 @@ const impressumTranslations: Record<string, {
     copyrightText: 'Los contenidos y obras creados por los administradores del sitio en estas páginas están sujetos a la legislación suiza sobre derechos de autor. La reproducción, procesamiento, distribución y cualquier tipo de explotación fuera de los límites de la ley de derechos de autor requieren el consentimiento por escrito del respectivo autor o creador.',
     backHome: 'Volver al Inicio',
     secAddress: 'Dirección Comercial',
-    badgeLegal: 'Impressum'
+    badgeLegal: "Datos de la empresa",
+    legalFormValue: "Empresa unipersonal",
+    country: "Suiza",
+    registryTitle: "Registro e IVA",
+    registryLookup: "Consultar el UID en el registro oficial",
+    contactIntro: "Contacte con nosotros si tiene preguntas sobre la empresa, sus facturas o este sitio web.",
   },
   'fr': {
-    title: 'Mentions Légales / Impressum',
-    badge: 'Conformité & Transparence',
-    subtitle: 'Informations juridiques officielles de l’entreprise conformément aux directives suisses.',
+    title: "Mentions légales",
+    badge: "Informations sur l’entreprise",
+    subtitle: "L’exploitant de ce site et les coordonnées de Kraken.",
     companyName: 'Raison Sociale',
-    legalRepresentative: 'Forme Juridique',
-    owner: 'Propriétaire / Directeur',
+    legalRepresentative: "Forme juridique",
+    owner: "Titulaire",
     commercialRegistry: 'Registre du Commerce',
-    registryOffice: 'Office du registre',
+    registryOffice: "Office du registre du commerce du canton de Schaffhouse",
     uidNumber: 'Numéro d’identification (IDE/UID)',
     vatNumber: 'Statut de la TVA',
-    vatText: 'Non assujetti à la TVA (Raison individuelle / Einzelunternehmen)',
+    vatText: "Aucune TVA n’est facturée.",
     contactHeader: 'Informations de Contact',
     email: 'E-mail',
     phone: 'Téléphone',
@@ -146,20 +162,25 @@ const impressumTranslations: Record<string, {
     copyrightText: 'Le contenu et les œuvres créés par les exploitants du site sur ces pages sont soumis au droit d’auteur suisse. La reproduction, le traitement, la diffusion et tout type d’exploitation en dehors des limites du droit d’auteur nécessitent l’accord écrit préalable de l’auteur ou du créateur concerné.',
     backHome: 'Retour à l\'Accueil',
     secAddress: 'Adresse Commerciale',
-    badgeLegal: 'Mentions Légales'
+    badgeLegal: "Coordonnées de l’entreprise",
+    legalFormValue: "Entreprise individuelle",
+    country: "Suisse",
+    registryTitle: "Registre et TVA",
+    registryLookup: "Consulter l’IDE dans le registre officiel",
+    contactIntro: "Contactez-nous pour toute question sur l’entreprise, les factures ou ce site.",
   },
   'it': {
-    title: 'Note Legali / Impressum',
-    badge: 'Conformità & Trasparenza',
-    subtitle: 'Dettagli aziendali ufficiali e legali secondo le linee guida di registrazione svizzere.',
+    title: "Note legali",
+    badge: "Informazioni sull’impresa",
+    subtitle: "Chi gestisce questo sito e come contattare Kraken.",
     companyName: 'Ragione Sociale',
-    legalRepresentative: 'Forma Giuridica',
-    owner: 'Titolare / Amministratore',
+    legalRepresentative: "Forma giuridica",
+    owner: "Titolare",
     commercialRegistry: 'Registro di Commercio',
-    registryOffice: 'Ufficio del registro',
+    registryOffice: "Ufficio del registro di commercio del Canton Sciaffusa",
     uidNumber: 'Numero di Identificazione (UID)',
     vatNumber: 'Stato IVA',
-    vatText: 'Non assoggettato all’IVA (Ditta individuale / Einzelunternehmen)',
+    vatText: "Non viene addebitata l’IVA.",
     contactHeader: 'Informazioni di Contatto',
     email: 'E-mail',
     phone: 'Telefono',
@@ -172,20 +193,25 @@ const impressumTranslations: Record<string, {
     copyrightText: 'I contenuti e le opere realizzate dai gestori del sito su queste pagine sono soggetti alla legge svizzera sul diritto d’autore. La riproduzione, l’elaborazione, la distribuzione e qualsiasi tipo di sfruttamento al di fuori dei limiti del diritto d’autore richiedono il consenso scritto dell’autore o del creatore.',
     backHome: 'Torna alla Home',
     secAddress: 'Indirizzo Commerciale',
-    badgeLegal: 'Note Legali'
+    badgeLegal: "Dati dell’impresa",
+    legalFormValue: "Ditta individuale",
+    country: "Svizzera",
+    registryTitle: "Registro e IVA",
+    registryLookup: "Consultare l’IDI nel registro ufficiale",
+    contactIntro: "Ci contatti per domande sull’impresa, sulle fatture o su questo sito.",
   },
   'pt': {
-    title: 'Menções Legais / Impressum',
-    badge: 'Conformidade & Transparência',
-    subtitle: 'Detalhes legais e oficiais da empresa de acordo com os regulamentos de registo suíços.',
+    title: "Aviso legal",
+    badge: "Informações da empresa",
+    subtitle: "Quem gere este website e como contactar a Kraken.",
     companyName: 'Razão Social',
-    legalRepresentative: 'Forma Jurídica',
-    owner: 'Proprietário / Gerente',
+    legalRepresentative: "Forma jurídica",
+    owner: "Titular",
     commercialRegistry: 'Registo Comercial',
-    registryOffice: 'Conservatória do Registo',
+    registryOffice: "Conservatória do registo comercial do cantão de Schaffhausen",
     uidNumber: 'Número de Identificação (UID)',
     vatNumber: 'Estado do IVA',
-    vatText: 'Não registado para o IVA (Empresa em nome individual / Einzelunternehmen)',
+    vatText: "Não é cobrado IVA.",
     contactHeader: 'Informações de Contactos',
     email: 'E-mail',
     phone: 'Telefone',
@@ -198,7 +224,12 @@ const impressumTranslations: Record<string, {
     copyrightText: 'Todo o material gráfico e de autoria textual criados neste website estão sujeitos ao enquadramento protetor do Direito de Autor Suíço. Qualquer forma de reutilização, publicação ou uso comercial carece do consentimento prévio formal escrito do detentor da marca.',
     backHome: 'Regressar ao Início',
     secAddress: 'Endereço Comercial',
-    badgeLegal: 'Aviso Legal'
+    badgeLegal: "Dados da empresa",
+    legalFormValue: "Empresa em nome individual",
+    country: "Suíça",
+    registryTitle: "Registo e IVA",
+    registryLookup: "Consultar o UID no registo oficial",
+    contactIntro: "Contacte-nos para esclarecer questões sobre a empresa, as faturas ou este website.",
   }
 };
 
@@ -225,7 +256,7 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
         {/* Header Section */}
         <div className="text-center mb-16 animate-fade-in-up">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/70 text-blue-700 text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm border border-blue-100/50">
-             <ShieldCheck className="w-3.5 h-3.5" />
+             <FileText className="w-3.5 h-3.5" />
              {tLocal.badge}
           </div>
           <h1 className="text-4xl lg:text-5xl font-black text-[#002D5B] mb-4 uppercase tracking-tighter">
@@ -260,7 +291,7 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
 
                 <div>
                   <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">{tLocal.legalRepresentative}</span>
-                  <p className="text-sm font-semibold text-gray-700">Einzelunternehmen / Sole Proprietorship (Swiss Registered)</p>
+                  <p className="text-sm font-semibold text-gray-700">{tLocal.legalFormValue}</p>
                 </div>
 
                 <div>
@@ -275,7 +306,7 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
                     <p className="text-sm font-bold text-gray-800">
                       Seewadelstrasse 3<br />
                       8203 Schaffhausen<br />
-                      Switzerland
+                      {tLocal.country}
                     </p>
                   </div>
                 </div>
@@ -293,9 +324,9 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-emerald-50 p-2.5 rounded-xl text-emerald-700">
-                  <FileCheck className="w-5 h-5" />
+                  <FileText className="w-5 h-5" />
                 </div>
-                <h2 className="text-lg font-black text-emerald-900 uppercase tracking-tight">Registry & Tax</h2>
+                <h2 className="text-lg font-black text-emerald-900 uppercase tracking-tight">{tLocal.registryTitle}</h2>
               </div>
 
               <div className="space-y-5">
@@ -304,11 +335,12 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
                   <p className="text-sm font-black text-emerald-700 bg-emerald-50/50 border border-emerald-100 px-3 py-1.5 rounded-xl inline-block font-mono tracking-tight">
                     CHE-435.882.969
                   </p>
+                  <a href="https://www.uid.admin.ch/" target="_blank" rel="noopener noreferrer" className="block text-xs text-blue-700 underline underline-offset-4 mt-3">{tLocal.registryLookup}</a>
                 </div>
 
                 <div>
                   <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">{tLocal.commercialRegistry}</span>
-                  <p className="text-sm font-semibold text-gray-700">{tLocal.registryOffice} des Kantons Schaffhausen</p>
+                  <p className="text-sm font-semibold text-gray-700">{tLocal.registryOffice}</p>
                 </div>
 
                 <div>
@@ -318,12 +350,6 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
               </div>
             </div>
             
-            <div className="border-t border-gray-100/70 pt-4 mt-6">
-              <span className="text-[9px] font-black text-[#002D5B] uppercase tracking-widest flex items-center gap-1.5">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Fully Verified Swiss Registry Holder
-              </span>
-            </div>
           </motion.div>
 
         </div>
@@ -339,7 +365,7 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1 border-b md:border-b-0 md:border-r border-white/10 pb-6 md:pb-0 pr-0 md:pr-8 flex flex-col justify-center">
               <h3 className="text-lg font-black uppercase tracking-widest mb-1.5 text-blue-300">{tLocal.contactHeader}</h3>
-              <p className="text-xs text-blue-100/70 font-medium">Reach out directly for authorized legal inquiries or billing clarifications.</p>
+              <p className="text-xs text-blue-100/70 font-medium">{tLocal.contactIntro}</p>
             </div>
             <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
               <a href="mailto:kai@krakenpfm.ch" className="flex items-center gap-4 bg-white/5 hover:bg-white/10 p-4 rounded-2xl border border-white/10 transition-all group">
@@ -390,14 +416,6 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
             </h3>
             <p className="text-gray-600 text-sm leading-relaxed font-semibold">{tLocal.copyrightText}</p>
           </div>
-        </div>
-
-        {/* Footer Authority Info Badge */}
-        <div className="text-center mt-16 p-8 border border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
-           <p className="text-gray-400 font-extrabold text-[10px] uppercase tracking-[0.3em] mb-2">Government Compliance Regulatory Status</p>
-           <p className="text-gray-500 font-bold text-xs">
-             UID: CHE-435.882.969 | Active Single Proprietorship Registered in Schaffhausen
-           </p>
         </div>
 
       </div>

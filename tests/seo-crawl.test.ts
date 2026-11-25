@@ -69,17 +69,17 @@ test('the public calculator introduction and private capability URLs have distin
 
 test('the sitemap contains unique reviewed canonical routes that agree with response metadata', () => {
   const urls = getSitemapUrls();
-  assert.equal(urls.length, 24);
+  assert.equal(urls.length, 144);
   assert.equal(new Set(urls).size, urls.length);
-  assert.equal(urls.filter(url => new URL(url).pathname.startsWith('/services/')).length, 15);
+  assert.equal(urls.filter(url => new URL(url).pathname.startsWith('/services/')).length, 90);
   for (const url of urls) {
     const parsed = new URL(url);
     assert.equal(parsed.origin, BASE_URL);
-    assert.equal(parsed.search, '');
+    assert.ok(parsed.search === '' || /^\?lang=(?:en|es|pt|it|fr)$/.test(parsed.search));
     assert.equal(parsed.hash, '');
     assert.equal(isIndexablePath(parsed.pathname), true);
     assert.equal(isPrivateUrl(url), false);
-    const metadata = getPageSeo(parsed.pathname, 'de');
+    const metadata = getPageSeo(url);
     assert.equal(metadata.indexable, true, parsed.pathname);
     assert.equal(metadata.canonical, url);
     assert.doesNotMatch(metadata.robots, /noindex/i);
@@ -87,7 +87,16 @@ test('the sitemap contains unique reviewed canonical routes that agree with resp
   const xml = readFileSync(new URL('../public/sitemap.xml', import.meta.url), 'utf8');
   assert.equal(xml, renderSitemap());
   assert.deepEqual([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]), urls);
-  assert.doesNotMatch(xml, /lastmod|priority|changefreq|hreflang|\?lang=|\/quote-demo|\/services\/neuhausen\//);
+  assert.doesNotMatch(xml, /lastmod|priority|changefreq|\/quote-demo|\/services\/neuhausen\//);
+  assert.match(xml, /xmlns:xhtml="http:\/\/www.w3.org\/1999\/xhtml"/);
+  const entries = [...xml.matchAll(/<url><loc>([^<]+)<\/loc>([\s\S]*?)<\/url>/g)];
+  assert.equal(entries.length, 144);
+  for (const [, url, body] of entries) {
+    const links = [...body.matchAll(/<xhtml:link rel="alternate" hreflang="([^"]+)" href="([^"]+)"\/>/g)].map(([, lang, href]) => ({ lang, href }));
+    assert.deepEqual(links, getPageSeo(url).hreflangs, url);
+    assert.equal(links.length, 7);
+    for (const link of links) assert.equal(isPrivateUrl(link.href), false);
+  }
 });
 
 test('sitemap generation rejects unknown, duplicate, alias, private and unreviewed routes', () => {

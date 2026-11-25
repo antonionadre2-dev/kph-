@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CalendarDays, Check, CheckCircle2, ChevronDown, ClipboardList, CreditCard, Info, LoaderCircle, Mail, MapPin, Minus, Pencil, Phone, Plus, ShieldCheck } from 'lucide-react';
 import { useTranslation } from '../i18n';
-import { calculatePrice, defaultSelection, PricingValidationError, REGULAR_RATES, type BookingSelection, type BookingService, type PriceQuote } from '../src/booking/pricing';
+import { calculatePrice, defaultSelection, PricingValidationError, REGULAR_RATES, REGULAR_MINIMUM_HOURS, type BookingSelection, type BookingService, type PriceQuote } from '../src/booking/pricing';
 import { bookingLanguage, bookingLineLabel, bookingText } from '../src/booking/uiCopy';
 import CalculatorNudges from './CalculatorNudges';
 import KrakenServiceIcon from './KrakenServiceIcon';
@@ -91,7 +91,7 @@ function initialIntent(cart?: ServiceCalculatorPageProps['cart']): EntryIntent {
   return { service: null, raw: '', source: 'none' };
 }
 function selectionFor(choice: ServiceChoice): BookingSelection {
-  return choice === 'deep' ? { ...defaultSelection('regular'), frequency: 'once', hours: 3 } : defaultSelection(choice);
+  return choice === 'deep' ? { ...defaultSelection('regular'), frequency: 'once', hours: REGULAR_MINIMUM_HOURS.once } : defaultSelection(choice);
 }
 function legacySelection(choice: ServiceChoice, item?: NonNullable<ServiceCalculatorPageProps['cart']>[number]): BookingSelection {
   const base = selectionFor(choice);
@@ -195,23 +195,6 @@ function PriceSummary({ quote, text, language, money, hasSelection = false }: { 
       <div><span>{text('subtotal')}</span><b>{money(quote.subtotalCents)}</b></div>
       <div><span>{text('vat')}</span><b>{money(quote.vatCents)}</b></div>
     </div>}
-    {quote && !manual && typeof quote.totalCents === 'number' && <section className="kr-calc-vat-card" aria-label={text('vatCardTitle')}>
-      <div className="kr-calc-vat-card-top">
-        <div><h3>{text('vatCardTitle')}</h3><p>{text('vatCardBody')}</p></div>
-        <img src="/calculator-approved/assets/kai-savings.webp" alt="" width="88" height="98" loading="lazy" aria-hidden="true" />
-      </div>
-      <div className="kr-calc-vat-amount" aria-live="polite" aria-atomic="true"><span>{text('vatComparisonLabel')}</span><strong>{money(quote.vatComparisonCents ?? 0)}</strong></div>
-      <p className="kr-calc-vat-condition">{text('vatComparisonCondition')}</p>
-      <details className="kr-calc-vat-calculation">
-        <summary>{text('vatHowCalculated')}<ChevronDown aria-hidden="true" /></summary>
-        <dl>
-          <div><dt>{text('vatKrakenPrice')}</dt><dd>{money(quote.totalCents)}</dd></div>
-          <div><dt>{text('vatHypotheticalTax')}</dt><dd>+ {money(quote.vatComparisonCents ?? 0)}</dd></div>
-          <div><dt>{text('vatHypotheticalTotal')}</dt><dd>{money(quote.totalCents + (quote.vatComparisonCents ?? 0))}</dd></div>
-        </dl>
-        <p>{text('vatComparisonExplanation')}</p>
-      </details>
-    </section>}
   </>;
 }
 
@@ -744,13 +727,13 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
           <div className="kr-calc-field"><label htmlFor="kr-calc-frequency">{text('frequency')}</label>
             <select id="kr-calc-frequency" value={selection.frequency} onChange={event => {
               const frequency = event.target.value;
-              updateSelection({ frequency, hours: Math.max(selection.hours || 0, frequency === 'once' ? 3 : 2.5) });
+              updateSelection({ frequency, hours: Math.max(selection.hours || 0, REGULAR_MINIMUM_HOURS[frequency]) });
               setChoice(frequency === 'once' ? 'deep' : 'regular');
             }}>
               {(['weekly', 'fortnightly', 'monthly', 'once'] as const).map(value => <option key={value} value={value}>{text(value)} · {money(REGULAR_RATES[value])}/h</option>)}
             </select>
           </div>
-          {number('hours', 'hours', selection.frequency === 'once' ? 3 : 2.5, .25, text('minimumRegular', { hours: selection.frequency === 'once' ? 3 : 2.5 }), 168)}
+          {number('hours', 'hours', REGULAR_MINIMUM_HOURS[selection.frequency], .25, text('minimumRegular', { hours: REGULAR_MINIMUM_HOURS[selection.frequency] }), 168)}
         </div>
         <p className="kr-calc-hint">{text('hoursHint')}</p>
         {extras(<>

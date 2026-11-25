@@ -57,6 +57,7 @@ test('private, unverified and unsupported URLs cannot inherit public indexing or
     assert.equal(meta.robots, 'noindex, follow', pathname);
     assert.equal(meta.indexable, false, pathname);
     assert.deepEqual(meta.structuredData, [], pathname);
+    assert.deepEqual(meta.hreflangs, [], pathname);
   }
 });
 
@@ -73,11 +74,51 @@ test('business schema uses the published daily contact hours and truthful linked
     assert.equal(hours[0].closes, '19:00');
     const catalog = business.hasOfferCatalog as { itemListElement: { name: string; url: string }[] };
     assert.equal(catalog.itemListElement.length, 5);
-    assert.ok(catalog.itemListElement.every(service => service.url.startsWith(SITE_IDENTITY.origin + '/leistungen#')));
+    const servicesUrl = SITE_IDENTITY.origin + '/leistungen' + (language === 'de' ? '' : `?lang=${language}`);
+    assert.ok(catalog.itemListElement.every(service => service.url.startsWith(servicesUrl + '#')));
     assert.doesNotMatch(JSON.stringify(meta.structuredData), /ratingValue|reviewCount|aggregateRating|offerCount|lowPrice|priceCurrency|sameAs|GeoCoordinates/);
     if (language !== 'de') assert.notEqual(catalog.itemListElement[0].name, 'Fensterreinigung');
-    assert.equal(meta.canonical, SITE_IDENTITY.origin + '/leistungen');
-    assert.deepEqual(meta.hreflangs, []);
+    assert.equal(meta.canonical, servicesUrl);
+    assert.equal(meta.hreflangs.length, 7);
+  }
+});
+
+test('every reviewed translation has its own canonical, reciprocal alternates and localized graph URLs', () => {
+  for (const pathname of INDEXABLE_PATHS) {
+    const expected = ['de', 'en', 'es', 'pt', 'it', 'fr'].map(language => ({
+      lang: language === 'de' ? 'de-CH' : language,
+      href: SITE_IDENTITY.origin + pathname + (language === 'de' ? '' : `?lang=${language}`),
+    }));
+    expected.push({ lang: 'x-default', href: SITE_IDENTITY.origin + pathname });
+    for (const alternate of expected) {
+      const meta = getPageSeo(alternate.href);
+      assert.equal(meta.indexable, true, alternate.href);
+      assert.equal(meta.canonical, alternate.href, alternate.href);
+      assert.deepEqual(meta.hreflangs, expected, alternate.href);
+      const page = meta.structuredData.find(item => ['WebPage', 'AboutPage', 'ContactPage'].includes(String(item['@type'])))!;
+      assert.equal(page.url, alternate.href);
+      assert.equal(page['@id'], alternate.href + '#webpage');
+      const business = meta.structuredData.find(item => item['@type'] === 'LocalBusiness')!;
+      assert.equal(business['@id'], SITE_IDENTITY.origin + '/#business');
+      assert.equal(business.url, SITE_IDENTITY.origin + '/');
+      const site = meta.structuredData.find(item => item['@type'] === 'WebSite')!;
+      assert.equal(site['@id'], SITE_IDENTITY.origin + '/#website');
+      assert.equal(site.url, SITE_IDENTITY.origin + '/' + (alternate.lang === 'de-CH' || alternate.lang === 'x-default' ? '' : `?lang=${alternate.lang}`));
+    }
+  }
+});
+
+test('locale aliases and harmless selection queries canonicalize without leaking other parameters', () => {
+  assert.equal(getPageSeo('/?lang=de-CH&utm_source=example').canonical, SITE_IDENTITY.origin + '/');
+  assert.equal(getPageSeo('/leistungen?hl=pt').canonical, SITE_IDENTITY.origin + '/leistungen?lang=pt');
+  assert.equal(getPageSeo('/services?lang=en').canonical, SITE_IDENTITY.origin + '/leistungen?lang=en');
+  assert.equal(getPageSeo('/quote?lang=fr&service=windows&utm_campaign=example').canonical, SITE_IDENTITY.origin + '/quote?lang=fr');
+  for (const key of ['booking', 'draft', 'access', 'accessToken', 'token', 'payment', 'guide', 'oobCode']) {
+    const meta = getPageSeo(`/quote?lang=en&${key}=private-capability`);
+    assert.equal(meta.indexable, false, key);
+    assert.deepEqual(meta.hreflangs, [], key);
+    assert.deepEqual(meta.structuredData, [], key);
+    assert.doesNotMatch(meta.canonical, /private-capability/);
   }
 });
 

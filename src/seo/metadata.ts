@@ -7,6 +7,26 @@ import { CORE_SERVICE_CATALOG, SITE_IDENTITY } from './site-identity.ts';
 export { normalizeCanonicalPath } from '../../seoConfig.ts';
 
 export type StructuredData = Record<string, unknown>;
+export const SEO_LANGUAGES = ['de', 'en', 'es', 'pt', 'it', 'fr'] as const;
+
+/** German keeps its established URL; translated pages retain their existing language URL. */
+export function localizedCanonicalUrl(pathname: string, language: string): string {
+  const url = new URL(normalizeCanonicalPath(pathname), SITE_IDENTITY.origin);
+  const locale = normalizeHomeLanguage(language);
+  if (locale !== 'de') url.searchParams.set('lang', locale);
+  return url.href;
+}
+
+export function localizedAlternates(pathname: string): { lang: string; href: string }[] {
+  return [
+    ...SEO_LANGUAGES.map(language => ({
+      lang: language === 'de' ? 'de-CH' : language,
+      href: localizedCanonicalUrl(pathname, language),
+    })),
+    { lang: 'x-default', href: localizedCanonicalUrl(pathname, 'de') },
+  ];
+}
+
 export type PageSeo = ReturnType<typeof getMetadataForPath> & {
   indexable: boolean;
   robots: 'index, follow' | 'noindex, follow';
@@ -29,9 +49,14 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
   try { url = new URL(pathOrUrl, SITE_IDENTITY.origin); }
   catch { validUrl = false; url = new URL('/', SITE_IDENTITY.origin); }
   const locale = normalizeHomeLanguage(language || languageFromSearch(url.search) || 'de');
-  const meta = getMetadataForPath(url.pathname + url.search, locale);
+  const baseMeta = getMetadataForPath(url.pathname + url.search, locale);
   const canonicalPath = normalizeCanonicalPath(url.pathname);
   const indexable = validUrl && isIndexablePath(canonicalPath) && !isPrivateUrl(url.pathname + url.search);
+  const meta = {
+    ...baseMeta,
+    canonical: indexable ? localizedCanonicalUrl(canonicalPath, locale) : baseMeta.canonical,
+    hreflangs: indexable ? localizedAlternates(canonicalPath) : [],
+  };
   const result: PageSeo = {
     ...meta,
     indexable,
@@ -47,14 +72,14 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
   const serviceCatalog = CORE_SERVICE_CATALOG.map(service => ({
     '@type': 'Service',
     name: homeText(locale, service.name),
-    url: `${origin}/leistungen#${service.anchor}`,
+    url: `${localizedCanonicalUrl('/leistungen', locale)}#${service.anchor}`,
     provider: { '@id': businessId },
   }));
   const website: StructuredData = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': websiteId,
-    url: `${origin}/`,
+    url: localizedCanonicalUrl('/', locale),
     name: SITE_IDENTITY.shortName,
     publisher: { '@id': businessId },
     inLanguage: result.language,
@@ -97,11 +122,11 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
   const schema: StructuredData[] = [website, business, page];
   if (canonicalPath !== '/') {
     const breadcrumbs: { name: string; item: string }[] = [
-      { name: SITE_IDENTITY.shortName, item: `${origin}/` },
+      { name: SITE_IDENTITY.shortName, item: localizedCanonicalUrl('/', locale) },
     ];
     const serviceMatch = /^\/services\/(schaffhausen|zurich|winterthur)\/([^/]+)$/.exec(canonicalPath);
     if (serviceMatch) {
-      breadcrumbs.push({ name: homeText(locale, 'Leistungen'), item: `${origin}/leistungen` });
+      breadcrumbs.push({ name: homeText(locale, 'Leistungen'), item: localizedCanonicalUrl('/leistungen', locale) });
       const service = CORE_SERVICE_CATALOG.find(item => item.slug === serviceMatch[2]);
       if (service) {
         const serviceId = `${meta.canonical}#service`;
@@ -118,7 +143,7 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
         page.mainEntity = { '@id': serviceId };
       }
     } else if (canonicalPath.startsWith('/reinigung/')) {
-      breadcrumbs.push({ name: homeText(locale, 'Reinigung und kleine Umzüge in Zürich, Schaffhausen und Winterthur.'), item: `${origin}/einsatzgebiete` });
+      breadcrumbs.push({ name: homeText(locale, 'Reinigung und kleine Umzüge in Zürich, Schaffhausen und Winterthur.'), item: localizedCanonicalUrl('/einsatzgebiete', locale) });
     }
     breadcrumbs.push({ name: meta.h1, item: meta.canonical });
     const breadcrumbId = `${meta.canonical}#breadcrumb`;

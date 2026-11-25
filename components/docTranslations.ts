@@ -131,48 +131,48 @@ export interface CareersTranslation {
 
 // English Dictionary
 const enGDPR: GDPRTranslation = {
-  title: 'Privacy Policy & GDPR/nFADP Compliance',
-  badge: 'Swiss nFADP Compliant',
-  subtitle: 'Compliance & Intellectual Property',
+  title: "Privacy policy",
+  badge: "Your personal data",
+  subtitle: "How we handle cleaning and moving requests",
   introTitle: 'Introduction',
-  introP1: 'At Kraken Properties and Facilities Management ("Kraken"), we take your privacy seriously. This policy explains how we process personal data in accordance with the Swiss Federal Act on Data Protection (nFADP) and the EU General Data Protection Regulation (GDPR).',
+  introP1: "The controller is Kraken Properties and Facilities Management Gomes Mendes, Seewadelstrasse 3, 8203 Schaffhausen, Switzerland. Contact: kai@krakenpfm.ch. This notice explains how we use personal data for this website and our cleaning and small moving services.",
   collectTitle: 'Data We Collect & Purpose',
-  collectP1: 'We collect data to provide professional property services. This includes:',
+  collectP1: "We use the information needed to prepare quotes, handle requests and carry out cleaning and small moves:",
   collectItems: [
-    'Identification Data: Name, address, email, and phone number (for service execution).',
-    'Property Data: Photos, videos, and square footage (for accurate quoting and validation).',
-    'Financial Data: We use PCI-DSS compliant third-party processors. Kraken does not store full credit card numbers.',
-    'Technical Data: IP addresses and cookies (for website optimization).'
+    "Contact details: name, email, telephone and service address, to respond and organise the work.",
+    "Service details: selected tasks, areas, dates, inventory and any photos or videos you choose to provide.",
+    "Payments: amount, payment status and provider reference. Card details are entered with Payrexx, rather than in the Kraken request form.",
+    "Website data: IP address, necessary cookies, session storage and your cookie preferences, to operate and protect the website.",
   ],
-  basisTitle: 'Legal Basis for Processing',
-  basisP1: 'We process your data based on:',
+  basisTitle: "Why we use your data",
+  basisP1: "We use personal data for these purposes:",
   basisItems: [
-    'Contractual Necessity: To provide the quotes and services you requested.',
-    'Legal Obligation: For tax and accounting purposes in Switzerland.',
-    'Legitimate Interest: To improve our service quality and ensure property security.'
+    "Preparing the quote and handling the service you request.",
+    "Keeping the records required for invoicing and applicable legal obligations.",
+    "Operating and protecting the website. Optional communications use your choices and consent where required.",
   ],
   retentionTitle: 'Data Retention & Third Parties',
   retentionInfrastructure: 'Infrastructure',
   retentionCollaboration: 'Collaboration',
   retentionDuration: 'Duration',
-  retentionStorage: 'Storage: Data is stored on secure servers, prioritizing Swiss or European locations.',
-  retentionSharing: 'Sharing: We only share data with Specialized Partners (e.g. licensed professionals) or cloud service providers. We never sell data.',
-  retentionTime: 'Retention: We keep client data for the duration of the business relationship and for 10 years thereafter (Swiss statutory requirement for accounting).',
+  retentionStorage: "The website uses Vercel for hosting and Google Firebase/Firestore for booking records. The configured booking database is in the United States. Payments use Payrexx in Switzerland.",
+  retentionSharing: "We use service providers for hosting, bookings, communication and payments. If you use Kai’s cloud AI replies, Google also processes your messages. Personal data is not sold.",
+  retentionTime: "We retain data for handling your request, providing the service and necessary follow-up. Accounting records are subject to applicable legal retention duties. Contact us to request a review or deletion of your data.",
   rightsTitle: 'Your Rights',
-  rightsP1: 'You have the right to access, correct, or delete your data. You may also withdraw consent for marketing at any time. To exercise these rights, contact kai@krakenpfm.ch.',
-  disclaimerTitle: 'Legal Disclaimer & Intellectual Property',
-  estimatesTitle: 'Accuracy of Estimates',
-  estimatesP1: 'The "Smart Booking" calculator provides non-binding estimates. A binding contract is only formed upon written confirmation and/or the provision of media (photos/videos). Kraken reserves the right to adjust pricing based on actual on-site conditions.',
-  liabilityTitle: 'Limitation of Liability',
-  liabilityP1: 'While Kraken maintains a CHF 10 Million Liability Insurance, our digital liability is limited. We are not responsible for technical errors on the booking platform, damage caused by external links, or inaccurate information provided by the client.',
+  rightsP1: "You may request information about your personal data and ask for it to be corrected or deleted, subject to legal obligations. You can withdraw optional marketing consent. Write to kai@krakenpfm.ch.",
+  disclaimerTitle: "Service information and website content",
+  estimatesTitle: "Quotes and appointments",
+  estimatesP1: "The calculator uses the service details you enter. Sending a request does not confirm an appointment. Review the scope, confirmed quote and service terms before accepting.",
+  liabilityTitle: "Questions before booking",
+  liabilityP1: "Contact Kraken before booking if you need clarification about the service scope, handover conditions, insurance or the terms that apply to your request.",
   ipTitle: 'Intellectual Property (IP)',
-  ipP1: 'All content, including the Kraken mascot, logo, and "Smart Booking" logic, is the exclusive property of Kraken Properties and Facilities Management.',
+  ipP1: "Original content and third-party material on this website are subject to their respective rights and licences.",
   usageTitle: 'Usage Rights',
-  usageText: 'You may not copy, reproduce, or "frame" our website content for commercial purposes without written consent.',
-  trademarksTitle: 'Trademarks',
-  trademarksText: 'The name "Kraken" and its associated visual brand are protected under Swiss Trademark Law.',
-  verificationTitle: 'Kraken Verification',
-  lastUpdate: 'Last Update: January 2025 | Seewadelstrasse 3, 8203 Schaffhausen'
+  usageText: "Please contact Kraken before commercially reusing its original website content where permission is required. Third-party material remains subject to its own licence.",
+  trademarksTitle: "Brand names",
+  trademarksText: "Kraken is the brand used on this website. Third-party names and logos belong to their respective rights holders.",
+  verificationTitle: "Privacy contact: kai@krakenpfm.ch",
+  lastUpdate: "Updated: 25 November 2026 | Seewadelstrasse 3, 8203 Schaffhausen",
 };
 
 const enTerms: TermsTranslation = {
@@ -192,16 +192,16 @@ const enTerms: TermsTranslation = {
       content: "3.1 All prices are stated in Swiss Francs (CHF). Kraken is not currently registered in the VAT (MWST) register pursuant to Art. 10 MWSTG; therefore, prices do not include VAT and no VAT is invoiced. In the event of a future registration, prices will be adjusted in accordance with the law, subject to the notice period provided in clause 7.4. Extra work due to undisclosed conditions is billed at CHF 90.00/hour/person. Sundays/holidays incur a 50% surcharge; express bookings (<24h notice) incur a 25% surcharge. Third-party costs (landfills, parking) are invoiced at cost."
     },
     {
-      title: "4. Travel Fees & Multi-Service Bundling",
-      content: "A standard travel fee of CHF 45.00 applies per assignment. Bundling discount: CHF 25.00 if booking 1 main + 1 additional or 2+ additional services; CHF 0.00 (free travel) if booking 1 main + 2+ additional or 2+ main services."
+      title: "4. Travel included in the price",
+      content: "Ordinary travel for the selected service is included in the calculator price. Any exceptional travel expense requires prior agreement and must be set out in the written quote."
     },
     {
       title: "5. Payment Terms & Default",
-      content: "Payments are processed via secure Revolut Business links, bank transfer, or QR-bill. Balance is due within 7 days of invoice. Default interest of 5% p.a. applies, plus reminder fees of CHF 20.00 (2nd reminder) and CHF 50.00 (3rd reminder). Collection costs are borne by the client."
+      content: "Payments are processed via Payrexx, bank transfer, or QR-bill. Balance is due within 7 days of invoice. Default interest of 5% p.a. applies, plus reminder fees of CHF 20.00 (2nd reminder) and CHF 50.00 (3rd reminder). Collection costs are borne by the client."
     },
     {
       title: "6. Cancellations, Rescheduling & No-Shows",
-      content: "Cancellations must be in writing. Fees: >48 hours notice: free; <48 hours: 50% of price; <12 hours, no-show, or cancellation at door: 100% of price plus travel fee. One free rescheduling is permitted >24 hours prior, subject to availability."
+      content: "Cancellations must be in writing. Fees: >48 hours notice: free; <48 hours: 50% of price; <12 hours, no-show, or cancellation at door: 100% of price. One free rescheduling is permitted >24 hours prior, subject to availability."
     },
     {
       title: "7. Recurring Services, SLAs & Termination",
@@ -241,7 +241,7 @@ const enTerms: TermsTranslation = {
     },
     {
       title: "16. Liability & Insurance",
-      content: "Kraken maintains business liability insurance up to CHF 10 million. Kraken is liable only for direct damage from proven fault. Liability for indirect/consequential damage, lost profit, or loss of use is excluded. Lost key liability is limited to standard replacement cost."
+      content: "Information about any applicable insurance cover is set out in the relevant policy documentation and written quote. Kraken is liable only for direct damage from proven fault. Liability for indirect/consequential damage, lost profit, or loss of use is excluded. Lost key liability is limited to standard replacement cost."
     },
     {
       title: "17. Subcontractors, Specialized Partners & Right of Refusal",
@@ -268,8 +268,8 @@ const enTerms: TermsTranslation = {
       content: "All contracts are governed exclusively by Swiss substantive law, excluding CISG. Place of jurisdiction is Schaffhausen, Switzerland. Mandatory consumer places of jurisdiction remain reserved."
     }
   ],
-  verificationTitle: 'Verification & Compliance',
-  lastUpdated: 'Version 2.0 — Effective 16.07.26',
+  verificationTitle: "Terms version",
+  lastUpdated: "Terms version: kraken-2026-11-24 · Editorial review: 25.11.2026",
   companyInfo: 'Kraken Properties and Facilities Management Gomes Mendes | Seewadelstrasse 3, 8203 Schaffhausen, Switzerland',
   backHome: 'Back to Home'
 };
@@ -373,48 +373,48 @@ const enCareers: CareersTranslation = {
 
 // Spanish Dictionary
 const esGDPR: GDPRTranslation = {
-  title: 'Política de Privacidad y Cumplimiento de LPD/RGPD',
-  badge: 'Cumple con la nLPD suiza',
-  subtitle: 'Cumplimiento y Propiedad Intelectual',
+  title: "Política de privacidad",
+  badge: "Sus datos personales",
+  subtitle: "Cómo gestionamos las solicitudes de limpieza y mudanzas",
   introTitle: 'Introducción',
-  introP1: 'En Kraken Properties and Facilities Management ("Kraken"), nos tomamos muy en serio su privacidad. Esta política explica cómo procesamos los datos personales de acuerdo con la Ley Federal Suiza sobre Protección de Datos (nLPD) y el Reglamento General de Protección de Datos de la UE (RGPD).',
+  introP1: "El responsable es Kraken Properties and Facilities Management Gomes Mendes, Seewadelstrasse 3, 8203 Schaffhausen, Suiza. Contacto: kai@krakenpfm.ch. Esta política explica cómo utilizamos los datos personales en este sitio web y para nuestros servicios de limpieza y pequeñas mudanzas.",
   collectTitle: 'Datos que recopilamos y su finalidad',
-  collectP1: 'Recopilamos datos para proporcionar servicios inmobiliarios profesionales. Esto incluye:',
+  collectP1: "Utilizamos la información necesaria para preparar presupuestos, gestionar solicitudes y realizar limpiezas y pequeñas mudanzas:",
   collectItems: [
-    'Datos de identificación: nombre, dirección, correo electrónico y número de teléfono (para ejecutar servicios).',
-    'Datos de propiedad: fotos, videos y metros cuadrados (para presupuestos y validación precisos).',
-    'Datos financieros: utilizamos procesadores de pago que cumplen con PCI-DSS. Kraken no almacena números de tarjeta de crédito.',
-    'Datos técnicos: direcciones IP y cookies (para la optimización de la web).'
+    "Datos de contacto: nombre, correo, teléfono y dirección del servicio, para responder y organizar el trabajo.",
+    "Datos del servicio: tareas elegidas, superficies, fechas, inventario y las fotos o vídeos que decida facilitarnos.",
+    "Pagos: importe, estado del pago y referencia del proveedor. Los datos de la tarjeta se introducen en Payrexx, no en el formulario de solicitud de Kraken.",
+    "Datos del sitio web: dirección IP, cookies necesarias, almacenamiento de sesión y sus preferencias de cookies, para el funcionamiento y la seguridad.",
   ],
-  basisTitle: 'Base jurídica del tratamiento',
-  basisP1: 'Procesamos sus datos en función de:',
+  basisTitle: "Para qué utilizamos sus datos",
+  basisP1: "Utilizamos los datos personales con estas finalidades:",
   basisItems: [
-    'Necesidad contractual: para proporcionar los presupuestos y servicios que solicitó.',
-    'Obligación legal: a efectos fiscales y contables en Suiza.',
-    'Interés legítimo: para mejorar la calidad de nuestro servicio y garantizar la seguridad.'
+    "Preparar el presupuesto y gestionar el servicio que solicita.",
+    "Mantener la documentación necesaria para facturas y obligaciones legales aplicables.",
+    "Operar y proteger el sitio web. En las comunicaciones opcionales respetamos sus preferencias y el consentimiento que corresponda.",
   ],
   retentionTitle: 'Retención de datos y terceros',
   retentionInfrastructure: 'Infraestructura',
   retentionCollaboration: 'Colaboración',
   retentionDuration: 'Duración',
-  retentionStorage: 'Almacenamiento: los datos se guardan en servidores seguros, priorizando ubicaciones suizas o europeas.',
-  retentionSharing: 'Intercambio: solo compartimos datos con socios especializados o proveedores de servicios en la nube. Nunca vendemos datos.',
-  retentionTime: 'Retención: conservamos los datos del cliente durante la relación comercial y durante los 10 años siguientes (requisito legal suizo de contabilidad).',
+  retentionStorage: "El sitio utiliza Vercel para el alojamiento y Google Firebase/Firestore para los registros de reservas. La base de datos de reservas configurada está en Estados Unidos. Los pagos utilizan Payrexx en Suiza.",
+  retentionSharing: "Utilizamos proveedores para alojamiento, reservas, comunicación y pagos. Si utiliza las respuestas de IA de Kai en la nube, Google también procesa sus mensajes. No vendemos datos personales.",
+  retentionTime: "Conservamos los datos para gestionar su solicitud, realizar el servicio y atender el seguimiento necesario. Los documentos contables están sujetos a las obligaciones legales de conservación. Puede solicitar la revisión o eliminación de sus datos.",
   rightsTitle: 'Sus derechos',
-  rightsP1: 'Tiene derecho a acceder, corregir o eliminar sus datos personales. También puede retirar el consentimiento para publicidad en cualquier momento. Para ejercer estos derechos, contacte a kai@krakenpfm.ch.',
-  disclaimerTitle: 'Descargo de responsabilidad legal y propiedad intelectual',
-  estimatesTitle: 'Precisión de los presupuestos',
-  estimatesP1: 'La calculadora de "Smart Booking" proporciona estimaciones no vinculantes. Un contrato vinculante solo se formaliza tras la confirmación por escrito y/o la provisión de archivos multimedia. Kraken se reserva el derecho de ajustar los precios en función de las condiciones reales del lugar.',
-  liabilityTitle: 'Limitación de responsabilidad',
-  liabilityP1: 'Aunque Kraken mantiene un seguro de responsabilidad civil por valor de 10 millones de CHF, nuestra responsabilidad digital está limitada. No somos responsables de los errores técnicos en la plataforma, daños por enlaces externos o datos incorrectos facilitados por el cliente.',
+  rightsP1: "Puede solicitar información sobre sus datos personales y pedir su corrección o eliminación, con sujeción a las obligaciones legales. Puede retirar el consentimiento para publicidad opcional. Escriba a kai@krakenpfm.ch.",
+  disclaimerTitle: "Información del servicio y contenido del sitio",
+  estimatesTitle: "Presupuestos y citas",
+  estimatesP1: "El calculador utiliza los datos del servicio que introduce. Enviar una solicitud no confirma una cita. Revise el alcance, el presupuesto confirmado y las condiciones del servicio antes de aceptar.",
+  liabilityTitle: "Preguntas antes de contratar",
+  liabilityP1: "Contacte con Kraken antes de contratar si necesita aclarar el alcance del servicio, las condiciones de entrega, el seguro o las condiciones aplicables a su solicitud.",
   ipTitle: 'Propiedad intelectual (PI)',
-  ipP1: 'Todo el contenido, incluyendo la mascota Kraken, el logotipo y la lógica de "Smart Booking", es propiedad exclusiva de Kraken Properties and Facilities Management.',
+  ipP1: "El contenido original y los materiales de terceros de este sitio están sujetos a sus respectivos derechos y licencias.",
   usageTitle: 'Derechos de uso',
-  usageText: 'No puede copiar, reproducir ni reproducir mediante "marcos" el contenido de nuestro sitio web para fines comerciales sin consentimiento por escrito.',
-  trademarksTitle: 'Marcas registradas',
-  trademarksText: 'El nombre "Kraken" y su marca visual asociada están protegidos por la Ley Suiza de Marcas.',
-  verificationTitle: 'Verificación de Kraken',
-  lastUpdate: 'Última actualización: Enero 2025 | Seewadelstrasse 3, 8203 Schaffhausen'
+  usageText: "Contacte con Kraken antes de reutilizar comercialmente su contenido original cuando sea necesaria una autorización. Los materiales de terceros conservan sus propias licencias.",
+  trademarksTitle: "Nombres de marca",
+  trademarksText: "Kraken es la marca utilizada en este sitio web. Los nombres y logotipos de terceros pertenecen a sus respectivos titulares.",
+  verificationTitle: "Contacto de privacidad: kai@krakenpfm.ch",
+  lastUpdate: "Actualización: 25 de noviembre de 2026 | Seewadelstrasse 3, 8203 Schaffhausen",
 };
 
 const esTerms: TermsTranslation = {
@@ -434,16 +434,16 @@ const esTerms: TermsTranslation = {
       content: "3.1 Todos los precios se indican en francos suizos (CHF). Kraken no está actualmente inscrita en el registro del IVA (MWST) conforme al Art. 10 LIVA; por lo tanto, los precios no incluyen IVA y no se factura IVA. En caso de inscripción futura, los precios se ajustarán conforme a la ley con el preaviso previsto en la cláusula 7.4. Trabajo extra por condiciones no declaradas se cobrará a 90,00 CHF/hora/persona. Domingos/festivos conllevan recargo del 50%; reservas express (<24h de aviso), un 25%. Costes de terceros (vertedero, estacionamiento) se facturan al coste."
     },
     {
-      title: "4. Tasas de Viaje y Paquetes Multiservicio",
-      content: "Se aplica una tarifa estándar de viaje de 45,00 CHF por asignación. Descuento por paquete: 25,00 CHF si contrata 1 servicio principal + 1 adicional o 2+ adicionales; 0,00 CHF (gratis) si contrata 1 principal + 2+ adicionales o 2+ principales."
+      title: "4. Desplazamiento incluido en el precio",
+      content: "El desplazamiento ordinario para el servicio seleccionado está incluido en el precio del calculador. Cualquier gasto extraordinario de desplazamiento requiere acuerdo previo y debe constar en el presupuesto escrito."
     },
     {
       title: "5. Condiciones de Pago y Mora",
-      content: "Pagos vía enlaces de Revolut Business, transferencia o QR-bill. El saldo vence a los 7 días de la factura. Mora automática tras vencer plazo, con un interés anual del 5% y cargos por reclamación de 20,00 CHF (2ª reclamación) y 50,00 CHF (3ª reclamación). Costes de cobro a cargo del cliente."
+      content: "Pagos vía Payrexx, transferencia o QR-bill. El saldo vence a los 7 días de la factura. Mora automática tras vencer plazo, con un interés anual del 5% y cargos por reclamación de 20,00 CHF (2ª reclamación) y 50,00 CHF (3ª reclamación). Costes de cobro a cargo del cliente."
     },
     {
       title: "6. Cancelaciones, Aplazamientos y No Presentación",
-      content: "Cancelaciones por escrito. Tasas: >48 horas de antelación: gratis; <48 horas: 50% del importe; <12 horas, no presentación o cancelación en puerta: 100% del presupuesto más tarifa de viaje. Un aplazamiento gratuito es permitido >24 horas antes, según disponibilidad."
+      content: "Cancelaciones por escrito. Tasas: >48 horas de antelación: gratis; <48 horas: 50% del importe; <12 horas, no presentación o cancelación en puerta: 100% del presupuesto. Un aplazamiento gratuito es permitido >24 horas antes, según disponibilidad."
     },
     {
       title: "7. Servicios Recurrentes, SLAs y Rescisión",
@@ -483,7 +483,7 @@ const esTerms: TermsTranslation = {
     },
     {
       title: "16. Responsabilidad Civil y Seguros",
-      content: "Seguro de responsabilidad civil de hasta 10 millones de CHF. Kraken responde solo de daños directos por culpa probada. Se excluyen daños indirectos, lucro cesante o pérdida de uso. Llaves perdidas limitadas al coste de copia estándar."
+      content: "La documentación de la póliza aplicable y el presupuesto escrito detallan la cobertura de seguro que corresponda. Kraken responde solo de daños directos por culpa probada. Se excluyen daños indirectos, lucro cesante o pérdida de uso. Llaves perdidas limitadas al coste de copia estándar."
     },
     {
       title: "17. Subcontratistas, Socios Especializados y Derecho de Rechazo",
@@ -510,8 +510,8 @@ const esTerms: TermsTranslation = {
       content: "Todos los contratos se rigen por el derecho suizo, excluyendo la CISG. Fuero exclusivo en Schaffhausen, Suiza. Se reservan los fueros de consumo obligatorios."
     }
   ],
-  verificationTitle: 'Verificación y Conformidad',
-  lastUpdated: 'Versión 2.0 — Entrada en vigor: 16.07.26',
+  verificationTitle: "Versión de las condiciones",
+  lastUpdated: "Versión de condiciones: kraken-2026-11-24 · Revisión editorial: 25.11.2026",
   companyInfo: 'Kraken Properties and Facilities Management Gomes Mendes | Seewadelstrasse 3, 8203 Schaffhausen, Suiza',
   backHome: 'Volver al Inicio'
 };
@@ -615,48 +615,48 @@ const esCareers: CareersTranslation = {
 
 // German & Swiss German
 const deGDPR: GDPRTranslation = {
-  title: 'Datenschutzerklärung & DSG/DSGVO-Konformität',
-  badge: 'Schweizer DSG-konform',
-  subtitle: 'Konformität & Geistiges Eigentum',
+  title: "Datenschutzerklärung",
+  badge: "Ihre Personendaten",
+  subtitle: "Wie wir Reinigungs- und Umzugsanfragen bearbeiten",
   introTitle: 'Einleitung',
-  introP1: 'Bei Kraken Properties and Facilities Management ("Kraken") nehmen wir Ihre Privatsphäre sehr ernst. Diese Erklärung erläutert, wie wir personenbezogene Daten gemäss dem Bundesgesetz über den Datenschutz (DSG) sowie der EU-Datenschutz-Grundverordnung (DSGVO) verarbeiten.',
+  introP1: "Verantwortlich ist Kraken Properties and Facilities Management Gomes Mendes, Seewadelstrasse 3, 8203 Schaffhausen, Schweiz. Kontakt: kai@krakenpfm.ch. Diese Erklärung beschreibt die Verwendung von Personendaten auf dieser Website und für unsere Reinigungen und kleinen Umzüge.",
   collectTitle: 'Erhobene Daten & Verwendungszweck',
-  collectP1: 'Wir erheben Daten ausschliesslich zur Erbringung erstklassiger Immobiliendienstleistungen. Dies umfasst:',
+  collectP1: "Wir verwenden die Angaben, die wir für Offerten, Anfragen sowie Reinigungen und kleine Umzüge benötigen:",
   collectItems: [
-    'Identifikationsdaten: Name, Postanschrift, E-Mail-Adresse und Telefonnummer (zur Auftragsabwicklung).',
-    'Objektdaten: Fotos, Grundrisse und Quadratmeterangaben (für präzise Offerten und Prüfung).',
-    'Finanzdaten: Wir nutzen PCI-DSS-konforme Zahlungsdienstleister. Kraken speichert keine Kreditkartennummern auf eigenen Servern.',
-    'Technische Nutzungsdaten: IP-Adressen und Cookies (zur Optimierung und Sicherheit der Website).'
+    "Kontaktdaten: Name, E-Mail, Telefonnummer und Einsatzadresse für Rückfragen und die Organisation des Auftrags.",
+    "Auftragsangaben: gewählte Arbeiten, Flächen, Termine, Inventar sowie freiwillig bereitgestellte Fotos oder Videos.",
+    "Zahlungen: Betrag, Zahlungsstatus und Anbieterreferenz. Kartendaten werden bei Payrexx eingegeben, nicht im Kraken-Anfrageformular.",
+    "Websitedaten: IP-Adresse, notwendige Cookies, Sitzungsspeicher und Ihre Cookie-Auswahl für Betrieb und Sicherheit.",
   ],
-  basisTitle: 'Rechtsgrundlage der Verarbeitung',
-  basisP1: 'Die Datenverarbeitung erfolgt gestützt auf:',
+  basisTitle: "Wofür wir Ihre Daten verwenden",
+  basisP1: "Wir verwenden Personendaten für folgende Zwecke:",
   basisItems: [
-    'Vertragserfüllung: Zur Bereitstellung der von Ihnen angeforderten Kalkulationen und Services.',
-    'Gesetzliche Pflichten: Zur Einhaltung von Steuer- und Buchführungsvorschriften in der Schweiz.',
-    'Berechtigtes Interesse: Zur kontinuierlichen Qualitätsverbesserung und Gewährleistung der Objektsicherheit.'
+    "Erstellen der Offerte und Bearbeiten Ihrer gewünschten Leistung.",
+    "Führen der für Rechnungen und gesetzliche Pflichten erforderlichen Unterlagen.",
+    "Betrieb und Schutz der Website. Für optionale Mitteilungen beachten wir Ihre Auswahl und, soweit erforderlich, Ihre Einwilligung.",
   ],
   retentionTitle: 'Datensicherung & Weitergabe an Dritte',
   retentionInfrastructure: 'Infrastruktur',
   retentionCollaboration: 'Zusammenarbeit',
   retentionDuration: 'Dauer',
-  retentionStorage: 'Speicherung: Daten werden auf hochsicheren Servern mit bevorzugtem Standort Schweiz oder Europa gespeichert.',
-  retentionSharing: 'Weitergabe: Daten fliessen ausschliesslich an verifizierte Partner (z. B. lizensierte Handwerker) oder Hosting-Provider. Ein Verkauf Ihrer Daten findet niemals statt.',
-  retentionTime: 'Aufbewahrungsfrist: Kundendaten werden für die Dauer des Mandats sowie gemäss gesetzlicher Aufbewahrungspflichten für 10 Jahre gesichert (gemäss Schweizer Obligationenrecht).',
+  retentionStorage: "Die Website verwendet Vercel für das Hosting und Google Firebase/Firestore für Buchungsdaten. Die eingerichtete Buchungsdatenbank liegt in den USA. Zahlungen erfolgen über Payrexx in der Schweiz.",
+  retentionSharing: "Wir nutzen Dienstleister für Hosting, Buchungen, Kommunikation und Zahlungen. Wenn Sie Kais KI-Antworten aus der Cloud nutzen, verarbeitet auch Google Ihre Nachrichten. Personendaten werden nicht verkauft.",
+  retentionTime: "Wir bewahren Daten für die Bearbeitung Ihrer Anfrage, den Auftrag und notwendige Rückfragen auf. Für Buchhaltungsunterlagen gelten die gesetzlichen Aufbewahrungspflichten. Kontaktieren Sie uns für eine Prüfung oder Löschung Ihrer Daten.",
   rightsTitle: 'Ihre Rechte',
-  rightsP1: 'Sie haben das Recht auf Auskunft, Berichtigung oder Löschung Ihrer Daten. Sie können Werbe-Einwilligungen jederzeit widerrufen. Verwenden Sie hierfür die E-Mail kai@krakenpfm.ch.',
-  disclaimerTitle: 'Rechtliche Hinweise & Geistiges Eigentum',
-  estimatesTitle: 'Richtigkeit von Schätzungen',
-  estimatesP1: 'Der "Smart Booking" Rechner liefert unverbindliche Richtpreise. Ein verbindlicher Vertrag kommt erst durch schriftliche Bestätigung und/oder die Sichtung von Bildmaterial des Objekts zustande. Kraken behält sich das Recht vor, Preise bei abweichenden Bedingungen vor Ort anzupassen.',
-  liabilityTitle: 'Haftungsbeschränkung',
-  liabilityP1: 'Kraken unterhält eine Betriebshaftpflichtversicherung über CHF 10 Millionen. Die digitale Haftung für Online-Tools ist im gesetzlich zulässigen Rahmen ausgeschlossen. Wir haften nicht für technische Unterbrüche der Plattform oder Falschangaben des Nutzers.',
+  rightsP1: "Sie können Auskunft über Ihre Personendaten sowie deren Berichtigung oder Löschung verlangen, vorbehaltlich gesetzlicher Pflichten. Eine Einwilligung in optionale Werbung können Sie widerrufen. Schreiben Sie an kai@krakenpfm.ch.",
+  disclaimerTitle: "Angaben zu Leistungen und Websiteinhalten",
+  estimatesTitle: "Offerten und Termine",
+  estimatesP1: "Der Rechner verwendet Ihre Angaben zur Leistung. Eine Anfrage bestätigt noch keinen Termin. Prüfen Sie Leistungsumfang, bestätigte Offerte und Vertragsbedingungen vor Ihrer Zusage.",
+  liabilityTitle: "Fragen vor dem Auftrag",
+  liabilityP1: "Kontaktieren Sie Kraken vor der Buchung, wenn Sie Fragen zum Leistungsumfang, zu Abgabebedingungen, zur Versicherung oder zu den Bedingungen Ihrer Anfrage haben.",
   ipTitle: 'Geistiges Eigentum (IP)',
-  ipP1: 'Alle Inhalte, inklusive das Kraken-Maskottchen, die Bildmarke und die Berechnungslogik des "Smart Booking", sind geistiges Eigentum von Kraken Properties and Facilities Management.',
+  ipP1: "Eigene Inhalte und Materialien Dritter auf dieser Website unterliegen den jeweiligen Rechten und Lizenzen.",
   usageTitle: 'Nutzungsrechte',
-  usageText: 'Inhalte dürfen ohne ausdrückliche schriftliche Genehmigung von Kraken weder kopiert, vervielfältigt noch mittels "Frames" auf Drittplattformen eingebunden werden.',
-  trademarksTitle: 'Markenschutz',
-  trademarksText: 'Die Marke "Kraken" und zugehörige Logos sind nach Schweizer Markenrecht geschützt.',
-  verificationTitle: 'Zertifizierung & Prüfung',
-  lastUpdate: 'Letzte Aktualisierung: Januar 2025 | Seewadelstrasse 3, 8203 Schaffhausen'
+  usageText: "Kontaktieren Sie Kraken vor einer gewerblichen Wiederverwendung eigener Websiteinhalte, soweit eine Erlaubnis erforderlich ist. Für Materialien Dritter gelten deren Lizenzen.",
+  trademarksTitle: "Markennamen",
+  trademarksText: "Kraken ist die auf dieser Website verwendete Marke. Namen und Logos Dritter gehören den jeweiligen Rechteinhabern.",
+  verificationTitle: "Datenschutzkontakt: kai@krakenpfm.ch",
+  lastUpdate: "Aktualisiert: 25. November 2026 | Seewadelstrasse 3, 8203 Schaffhausen",
 };
 
 const deTerms: TermsTranslation = {
@@ -676,16 +676,16 @@ const deTerms: TermsTranslation = {
       content: "3.1 Alle Preise verstehen sich in Schweizer Franken (CHF). Kraken ist derzeit nicht im MWST-Register gemäss Art. 10 MWSTG eingetragen; daher verstehen sich die Preise ohne MWST und es wird keine MWST in Rechnung gestellt. Im Falle einer zukünftigen Eintragung werden die Preise gesetzeskonform mit der in Ziffer 7.4 vorgesehenen Frist angepasst. Mehraufwand durch unvollständige Angaben wird mit CHF 90.00/Stunde/Person berechnet. Sonntags- und Feiertagsarbeit unterliegt 50% Zuschlag; Express-Buchungen (<24h Frist) 25% Zuschlag. Drittkosten (Entsorgung, Parken) werden zum Einstandspreis berechnet."
     },
     {
-      title: "4. Fahrkosten & Kombi-Rabatt (Bundling)",
-      content: "Es gilt eine Standard-Anfahrtspauschale von CHF 45.00 pro Auftrag. Kombi-Rabatt: CHF 25.00 bei Buchung von 1 Hauptdienst + 1 Zusatzdienst oder 2+ Zusatzdiensten; CHF 0.00 (kostenlose Anfahrt) bei Buchung von 1 Hauptdienst + 2+ Zusatzdiensten oder 2+ Hauptdiensten."
+      title: "4. Anfahrt im Preis enthalten",
+      content: "Die übliche Anfahrt für die gewählte Leistung ist im Preis des Rechners enthalten. Ausserordentliche Anfahrtskosten bedürfen einer vorherigen Vereinbarung und müssen in der schriftlichen Offerte ausgewiesen sein."
     },
     {
       title: "5. Zahlungsbedingungen & Verzug",
-      content: "Zahlungen erfolgen über Revolut Business Links, Banküberweisung oder QR-Rechnung. Der Restbetrag ist innert 7 Tagen fällig. Bei Zahlungsverzug fallen 5% Verzugszins sowie Mahngebühren von CHF 20.00 (2. Mahnung) und CHF 50.00 (3. Mahnung) an. Inkassokosten gehen zu Lasten des Kunden."
+      content: "Zahlungen erfolgen über Payrexx, Banküberweisung oder QR-Rechnung. Der Restbetrag ist innert 7 Tagen fällig. Bei Zahlungsverzug fallen 5% Verzugszins sowie Mahngebühren von CHF 20.00 (2. Mahnung) und CHF 50.00 (3. Mahnung) an. Inkassokosten gehen zu Lasten des Kunden."
     },
     {
       title: "6. Stornierungen, Terminverschiebungen & Nichterscheinen",
-      content: "Stornierungen müssen schriftlich erfolgen. Gebühren: >48h vor Start: kostenlos; <48h: 50% des Preises; <12h, Nichterscheinen oder Absage vor Ort: 100% des Preises zuzüglich Anfahrtspauschale. Eine kostenlose Verschiebung ist >24h vor Start nach Verfügbarkeit zulässig."
+      content: "Stornierungen müssen schriftlich erfolgen. Gebühren: >48h vor Start: kostenlos; <48h: 50% des Preises; <12h, Nichterscheinen oder Absage vor Ort: 100% des Preises. Eine kostenlose Verschiebung ist >24h vor Start nach Verfügbarkeit zulässig."
     },
     {
       title: "7. Wiederkehrende Dienstleistungen, SLAs & Kündigung",
@@ -725,7 +725,7 @@ const deTerms: TermsTranslation = {
     },
     {
       title: "16. Haftung & Versicherung",
-      content: "Betriebshaftpflichtversicherung mit Deckung von CHF 10 Millionen. Kraken haftet nur für direkte Schäden durch nachweisbares Verschulden. Die Haftung für indirekte Schäden, entgangenen Gewinn oder Nutzungsausfall ist ausgeschlossen. Schlüsselverlusthaftung ist auf Standard-Ersatzkosten begrenzt."
+      content: "Angaben zu einer allfälligen Versicherungsdeckung ergeben sich aus den einschlägigen Versicherungsunterlagen und der schriftlichen Offerte. Kraken haftet nur für direkte Schäden durch nachweisbares Verschulden. Die Haftung für indirekte Schäden, entgangenen Gewinn oder Nutzungsausfall ist ausgeschlossen. Schlüsselverlusthaftung ist auf Standard-Ersatzkosten begrenzt."
     },
     {
       title: "17. Subunternehmer, spezialisierte Partner & Ablehnungsrecht",
@@ -752,8 +752,8 @@ const deTerms: TermsTranslation = {
       content: "Alle Verträge unterliegen ausschliesslich materiellem Schweizer Recht unter Ausschluss des UN-Kaufrechts (CISG). Gerichtsstand ist Schaffhausen, Schweiz. Zwingende gesetzliche Konsumentengerichtsstände bleiben vorbehalten."
     }
   ],
-  verificationTitle: 'Konformität & Compliance',
-  lastUpdated: 'Version 2.0 — Gültig ab 16.07.26',
+  verificationTitle: "Version der Bedingungen",
+  lastUpdated: "Bedingungsversion: kraken-2026-11-24 · Redaktionelle Prüfung: 25.11.2026",
   companyInfo: 'Kraken Properties and Facilities Management Gomes Mendes | Seewadelstrasse 3, 8203 Schaffhausen, Schweiz',
   backHome: 'Zurück zur Startseite'
 };
@@ -857,48 +857,48 @@ const deCareers: CareersTranslation = {
 
 // French Dictionary
 const frGDPR: GDPRTranslation = {
-  title: 'Politique de Confidentialité et Conformité LPD/RGPD',
-  badge: 'Conforme à la LPD suisse',
-  subtitle: 'Conformité & Propriété Intellectuelle',
+  title: "Politique de confidentialité",
+  badge: "Vos données personnelles",
+  subtitle: "Le traitement des demandes de nettoyage et de déménagement",
   introTitle: 'Introduction',
-  introP1: 'Chez Kraken, nous prenons votre vie privée très au sérieux. Cette charte explique comment nous traitons vos données personnelles conformément à la Loi fédérale sur la protection des données (LPD) et au Règlement général sur la protection des données (RGPD) de l\'Union Européenne.',
+  introP1: "Le responsable est Kraken Properties and Facilities Management Gomes Mendes, Seewadelstrasse 3, 8203 Schaffhausen, Suisse. Contact : kai@krakenpfm.ch. Cette politique explique l’utilisation des données personnelles sur ce site et pour nos nettoyages et petits déménagements.",
   collectTitle: 'Données collectées & Finalités',
-  collectP1: 'Nous collectons des informations pour fournir des services immobiliers professionnels. Ces données incluent :',
+  collectP1: "Nous utilisons les informations nécessaires pour préparer les devis, traiter les demandes et réaliser les nettoyages et petits déménagements :",
   collectItems: [
-    'Données d\'identification : Nom, adresse, e-mail et numéro de téléphone (nécessaires à l\'exécution des interventions).',
-    'Données de propriété : Photos, plans et superficie en m² (permettant un chiffrage et une validation exacts).',
-    'Données financières : Nous utilisons des prestataires certifiés PCI-DSS. Kraken ne stocke aucune coordonnée de carte bancaire sur ses propres serveurs.',
-    'Données techniques : Adresses IP et cookies (pour optimiser l\'utilisation du site web).'
+    "Coordonnées : nom, e-mail, téléphone et adresse de la prestation, pour répondre et organiser le travail.",
+    "Informations sur la prestation : tâches, surfaces, dates, inventaire et photos ou vidéos fournies volontairement.",
+    "Paiements : montant, statut et référence du prestataire. Les données de carte sont saisies chez Payrexx, pas dans le formulaire de demande Kraken.",
+    "Données du site : adresse IP, cookies nécessaires, stockage de session et préférences de cookies pour le fonctionnement et la sécurité.",
   ],
-  basisTitle: 'Base légale du traitement',
-  basisP1: 'Le traitement de vos données repose sur :',
+  basisTitle: "Les finalités du traitement",
+  basisP1: "Nous utilisons les données personnelles pour :",
   basisItems: [
-    'L\'exécution contractuelle : Fournir les devis et services que vous sollicitez.',
-    'L\'obligation légale : À des fins comptables et fiscales obligatoires en Suisse.',
-    'L\'intérêt légitime : Afin d\'améliorer la qualité du service client et d\'assurer la sécurité des chantiers.'
+    "Préparer le devis et traiter la prestation demandée.",
+    "Conserver les documents nécessaires à la facturation et aux obligations légales applicables.",
+    "Exploiter et protéger le site. Les communications facultatives respectent vos choix et le consentement requis.",
   ],
   retentionTitle: 'Sécurité, conservation & Transferts',
   retentionInfrastructure: 'Infrastructure',
   retentionCollaboration: 'Collaboration',
   retentionDuration: 'Durée',
-  retentionStorage: 'Stockage : Vos données sont conservées sur des infrastructures sécurisées basées de préférence en Suisse ou au sein de l\'Espace Économique Européen.',
-  retentionSharing: 'Partage : Nous partageons uniquement les données avec des partenaires agréés (ex. électriciens qualifiés) ou des hébergeurs de serveurs. Vos données ne sont jamais vendues.',
-  retentionTime: 'Conservation : Nous archivons les dossiers durant toute la relation commerciale et les conservons pendant 10 ans après la fin du contrat (obligation légale suisse pour la comptabilité).',
+  retentionStorage: "Le site utilise Vercel pour l’hébergement et Google Firebase/Firestore pour les dossiers de réservation. La base de réservation configurée se trouve aux États-Unis. Les paiements utilisent Payrexx en Suisse.",
+  retentionSharing: "Nous utilisons des prestataires pour l’hébergement, les réservations, la communication et les paiements. Si vous utilisez les réponses IA de Kai dans le cloud, Google traite également vos messages. Nous ne vendons pas les données personnelles.",
+  retentionTime: "Nous conservons les données pour traiter votre demande, réaliser la prestation et assurer le suivi nécessaire. Les documents comptables sont soumis aux obligations légales de conservation. Contactez-nous pour demander un examen ou une suppression de vos données.",
   rightsTitle: 'Vos droits',
-  rightsP1: 'Vous bénéficiez d\'un droit d\'accès, de rectification et d\'effacement de vos informations privées. Vous pouvez également refuser l\'utilisation commerciale de vos données par courriel sur kai@krakenpfm.ch.',
-  disclaimerTitle: 'Mentions Légales & Propriété Intellectuelle',
-  estimatesTitle: 'Précision des tarifs estimés',
-  estimatesP1: 'L\'outil "Smart Booking" fournit des approximations de prix non contractuelles. L\'engagement définitif n\'Intervient qu\'à la confirmation écrite de Kraken et/ou après examen de vos visuels. Kraken se réserve d\'ajuster le devis selon la configuration physique constatée.',
-  liabilityTitle: 'Limitation de responsabilité',
-  liabilityP1: 'Kraken possède une couverture responsabilité civile d\'un montant de CHF 10 millions. Notre responsabilité concernant les services numériques est limitée aux dysfonctionnements techniques majeurs. Nous ne répondons pas des erreurs de saisie client.',
+  rightsP1: "Vous pouvez demander des informations sur vos données personnelles ainsi que leur rectification ou suppression, sous réserve des obligations légales. Vous pouvez retirer votre consentement aux publicités facultatives. Écrivez à kai@krakenpfm.ch.",
+  disclaimerTitle: "Informations sur les prestations et le site",
+  estimatesTitle: "Devis et rendez-vous",
+  estimatesP1: "Le calculateur utilise les informations que vous saisissez. L’envoi d’une demande ne confirme pas un rendez-vous. Vérifiez les prestations, le devis confirmé et les conditions avant d’accepter.",
+  liabilityTitle: "Questions avant de réserver",
+  liabilityP1: "Contactez Kraken avant de réserver pour clarifier les prestations, les conditions de remise, l’assurance ou les conditions applicables à votre demande.",
   ipTitle: 'Propriété Intellectuelle (PI)',
-  ipP1: 'Tous les éléments, la mascotte Kraken, la charte graphique et l\'algorithme de chiffrage constituant le site web sont la propriété matérielle exclusive de Kraken Properties and Facilities Management.',
+  ipP1: "Le contenu original et les éléments de tiers sur ce site sont soumis à leurs droits et licences respectifs.",
   usageTitle: 'Droits d\'auteur',
-  usageText: 'Toute reproduction ou copie non agréée par écrit de notre contenu pour un but commercial est strictement interdite.',
-  trademarksTitle: 'Protection des marques',
-  trademarksText: 'La marque verbale et visuelle "Kraken" fait l\'objet d\'une protection légale sous l\'autorité du droit des marques suisse.',
-  verificationTitle: 'Registre et Autorité',
-  lastUpdate: 'Dernière mise à jour : Janvier 2025 | Seewadelstrasse 3, 8203 Schaffhausen'
+  usageText: "Contactez Kraken avant toute réutilisation commerciale de son contenu original lorsqu’une autorisation est nécessaire. Les éléments de tiers conservent leurs propres licences.",
+  trademarksTitle: "Noms de marque",
+  trademarksText: "Kraken est la marque utilisée sur ce site. Les noms et logos de tiers appartiennent à leurs titulaires respectifs.",
+  verificationTitle: "Contact pour la confidentialité : kai@krakenpfm.ch",
+  lastUpdate: "Mise à jour : 25 novembre 2026 | Seewadelstrasse 3, 8203 Schaffhausen",
 };
 
 const frTerms: TermsTranslation = {
@@ -918,16 +918,16 @@ const frTerms: TermsTranslation = {
       content: "3.1 Tous les prix sont indiqués en francs suisses (CHF). Kraken n'est pas actuellement inscrite au registre de la TVA (MWST) conformément à l'art. 10 LTVA ; par conséquent, les prix ne comprennent pas la TVA et aucune TVA n'est facturée. En cas d'inscription future, les prix seront ajustés conformément à la loi avec le préavis prévu à la clause 7.4. Tout surcroît de travail lié à des conditions non déclarées sera facturé CHF 90.00/heure/personne. Le travail dominical et les jours fériés subissent une majoration de 50%; les réservations express (<24h de préavis), une majoration de 25%. Les décharges et stationnements sont facturés au prix coûtant."
     },
     {
-      title: "4. Forfaits de Déplacement & Offres Groupées",
-      content: "Un forfait de transport standard de CHF 45.00 s'applique par intervention. Réduction d'offre groupée: CHF 25.00 pour l'achat d'un service principal + 1 option ou 2+ options; CHF 0.00 (frais de transport offerts) pour l'achat d'un service principal + 2+ options ou 2+ services principaux."
+      title: "4. Déplacement inclus dans le prix",
+      content: "Le déplacement habituel pour la prestation choisie est inclus dans le prix du calculateur. Tout frais de déplacement exceptionnel nécessite un accord préalable et doit figurer dans le devis écrit."
     },
     {
       title: "5. Modalités de Règlement & Retards",
-      content: "Règlements sécurisés via liens Revolut Business, virement ou QR-facture. Le solde est exigible sous 7 jours dès facturation. Tout retard entraîne un intérêt moratoire légal de 5% par an et des frais de sommation de CHF 20.00 (2e rappel) et CHF 50.00 (3e rappel). Les frais de recouvrement incombent au client."
+      content: "Règlements sécurisés via Payrexx, virement ou QR-facture. Le solde est exigible sous 7 jours dès facturation. Tout retard entraîne un intérêt moratoire légal de 5% par an et des frais de sommation de CHF 20.00 (2e rappel) et CHF 50.00 (3e rappel). Les frais de recouvrement incombent au client."
     },
     {
       title: "6. Annulations, Reports & Non-Présentation",
-      content: "Toute annulation doit être formulée par écrit. Indemnités: préavis >48 heures: gratuit; <48 heures: 50% du prix; <12 heures, non-présentation ou annulation sur place: 100% du devis avec le forfait de transport. Un report gratuit est toléré >24 heures avant l'intervention, selon nos disponibilités."
+      content: "Toute annulation doit être formulée par écrit. Indemnités: préavis >48 heures: gratuit; <48 heures: 50% du prix; <12 heures, non-présentation ou annulation sur place: 100% du devis. Un report gratuit est toléré >24 heures avant l'intervention, selon nos disponibilités."
     },
     {
       title: "7. Prestations Récurrentes, SLAs & Résiliation",
@@ -967,7 +967,7 @@ const frTerms: TermsTranslation = {
     },
     {
       title: "16. Responsabilité & Assurances",
-      content: "Assurance responsabilité civile professionnelle couvrant jusqu'à CHF 10 millions. Kraken répond uniquement des dommages directs résultant d'une faute prouvée. Exclut les préjudices indirects, pertes de gain ou privations d'usage. Clés égarées limitées aux seuls frais de reproduction standard."
+      content: "Les éventuelles couvertures d’assurance sont précisées dans les documents de police applicables et le devis écrit. Kraken répond uniquement des dommages directs résultant d'une faute prouvée. Exclut les préjudices indirects, pertes de gain ou privations d'usage. Clés égarées limitées aux seuls frais de reproduction standard."
     },
     {
       title: "17. Sous-traitants, Partenaires Agréés & Droit de Refus",
@@ -994,8 +994,8 @@ const frTerms: TermsTranslation = {
       content: "Tous les contrats sont soumis exclusivement au droit matériel suisse, à l'exclusion de la CIVM. Le for juridique exclusif est à Schaffhouse, en Suisse. Les fors de consommation impératifs sont réservés."
     }
   ],
-  verificationTitle: 'Registre et Conformité',
-  lastUpdated: 'Version 2.0 — Entrée en vigueur : 16.07.26',
+  verificationTitle: "Version des conditions",
+  lastUpdated: "Version des conditions : kraken-2026-11-24 · Révision éditoriale : 25.11.2026",
   companyInfo: 'Kraken Properties and Facilities Management Gomes Mendes | Seewadelstrasse 3, 8203 Schaffhausen, Suisse',
   backHome: 'Retour à l\'Accueil'
 };
@@ -1099,48 +1099,48 @@ const frCareers: CareersTranslation = {
 
 // Italian Dictionary
 const itGDPR: GDPRTranslation = {
-  title: 'Informativa sulla Privacy e Conformità LPD/GDPR',
-  badge: 'Conforme alla LPD svizzera',
-  subtitle: 'Conformità e Proprietà Intellettuale',
+  title: "Informativa sulla privacy",
+  badge: "I suoi dati personali",
+  subtitle: "Come gestiamo le richieste di pulizia e trasloco",
   introTitle: 'Introduzione',
-  introP1: 'In Kraken, trattiamo la vostra privacy con la massima serietà. Questa informativa descrive come elaboriamo i dati personali in conformità con la Legge federale svizzera sulla protezione dei dati (LPD) e il Regolamento generale sulla protezione dei dati (GDPR) dell\'UE.',
+  introP1: "Il responsabile è Kraken Properties and Facilities Management Gomes Mendes, Seewadelstrasse 3, 8203 Schaffhausen, Svizzera. Contatto: kai@krakenpfm.ch. L’informativa descrive l’uso dei dati personali su questo sito e per i servizi di pulizia e piccoli traslochi.",
   collectTitle: 'Dati Raccolti e Finalità',
-  collectP1: 'Raccogliamo informazioni al fine di erogare servizi immobiliari professionali, comprensivi di:',
+  collectP1: "Utilizziamo le informazioni necessarie per preparare preventivi, gestire richieste ed eseguire pulizie e piccoli traslochi:",
   collectItems: [
-    'Dati identificativi: Nome, indirizzo postale, e-mail e numero telefonico (per l\'elaborazione dei contratti).',
-    'Dati dell\'immobile: Immagini e prospetti degli spazi (per preventivi precisi ed ispezioni).',
-    'Dati finanziari: Ci appoggiamo a operatori di pagamento certificati PCI-DSS. Kraken non conserva dati bancari sui propri server.',
-    'Dati di navigazione tecnici: Indirizzi IP e file di cookie (per ottimizzare l\'efficacia del sito web).'
+    "Contatti: nome, email, telefono e indirizzo del servizio, per rispondere e organizzare il lavoro.",
+    "Dati del servizio: attività scelte, superfici, date, inventario e foto o video forniti volontariamente.",
+    "Pagamenti: importo, stato e riferimento del fornitore. I dati della carta sono inseriti presso Payrexx, non nel modulo di richiesta Kraken.",
+    "Dati del sito: indirizzo IP, cookie necessari, memoria di sessione e preferenze sui cookie per funzionamento e sicurezza.",
   ],
-  basisTitle: 'Base Giuridica del Trattamento',
-  basisP1: 'Il trattamento aziendale dei dati personali si fonda su:',
+  basisTitle: "Perché utilizziamo i dati",
+  basisP1: "Utilizziamo i dati personali per:",
   basisItems: [
-    'Adempimenti contrattuali: Per garantire le risposte ai calcoli e alle prenotazioni inoltrate.',
-    'Disposizioni di legge: Per l\'assolvimento di norme fiscali e tributarie obbligatorie in Svizzera.',
-    'Legittimo interesse: Al fine di elevare costantemente gli indici qualitativi e di tutela della sicurezza.'
+    "Preparare il preventivo e gestire il servizio richiesto.",
+    "Conservare la documentazione necessaria per fatture e obblighi legali applicabili.",
+    "Gestire e proteggere il sito. Le comunicazioni facoltative rispettano le sue scelte e il consenso richiesto.",
   ],
   retentionTitle: 'Conservazione Sicura e Trasmissione a Terzi',
   retentionInfrastructure: 'Infrastruttura',
   retentionCollaboration: 'Collaborazione',
   retentionDuration: 'Durata',
-  retentionStorage: 'Conservazione: Le coordinate si trovano memorizzate all\'interno di sistemi protetti situati in Svizzera o in Europa.',
-  retentionSharing: 'Trasmissione: I flussi informativi avvengono solo verso collaboratori specializzati o fornitori di rete. Non vendiamo dati.',
-  retentionTime: 'Durata della conservazione: I registri sono archiviati per la durata del rapporto commerciale e per ulteriori 10 anni successivi (normativa svizzera sulla contabilità).',
+  retentionStorage: "Il sito utilizza Vercel per l’hosting e Google Firebase/Firestore per i dati delle prenotazioni. Il database configurato per le prenotazioni si trova negli Stati Uniti. I pagamenti utilizzano Payrexx in Svizzera.",
+  retentionSharing: "Utilizziamo fornitori per hosting, prenotazioni, comunicazioni e pagamenti. Se utilizza le risposte IA di Kai nel cloud, anche Google tratta i messaggi. Non vendiamo dati personali.",
+  retentionTime: "Conserviamo i dati per gestire la richiesta, eseguire il servizio e il seguito necessario. I documenti contabili sono soggetti agli obblighi legali di conservazione. Può contattarci per richiedere una verifica o la cancellazione dei dati.",
   rightsTitle: 'I Vostri Diritti',
-  rightsP1: 'Avete il pieno diritto di richiedere l\'accesso, la correzione o l\'eliminazione dei vostri dati personali dalle nostre banche dati. Contattate kai@krakenpfm.ch per qualsiasi esercizio dei diritti.',
-  disclaimerTitle: 'Informazioni Legali e Proprietà Intellettuale',
-  estimatesTitle: 'Natura delle stime espresse',
-  estimatesP1: 'Il simulatore "Smart Booking" indica stime commerciali non impegnative. Un accordo contrattuale vincolante si instaura solamente previo riscontro scritto da parte dello staff Kraken e/o dopo la verifica del materiale visivo. Kraken si riserva la rettifica del costo qualora vi siano differenze reali sul campo.',
-  liabilityTitle: 'Esclusioni e Limiti di Responsabilità',
-  liabilityP1: 'Kraken detiene una garanzia assicurativa per la responsabilità civile di CHF 10 milioni. Decliniamo responsabilità per irregolarità derivanti da disservizi informatici e links terzi.',
+  rightsP1: "Può chiedere informazioni sui suoi dati personali e richiederne la correzione o cancellazione, fatti salvi gli obblighi legali. Può revocare il consenso alla pubblicità facoltativa. Scriva a kai@krakenpfm.ch.",
+  disclaimerTitle: "Informazioni sul servizio e contenuti del sito",
+  estimatesTitle: "Preventivi e appuntamenti",
+  estimatesP1: "Il calcolatore utilizza i dati del servizio inseriti. Inviare una richiesta non conferma un appuntamento. Verifichi prestazioni, preventivo confermato e condizioni prima di accettare.",
+  liabilityTitle: "Domande prima di prenotare",
+  liabilityP1: "Contatti Kraken prima di prenotare per chiarimenti sulle prestazioni, sulle condizioni di consegna, sull’assicurazione o sulle condizioni applicabili alla richiesta.",
   ipTitle: 'Diritti di Proprietà Intellettuale (IP)',
-  ipP1: 'Tutti i testi descrittivi, la mascotte Kraken, i marchi visivi d\'identità aziendale ed il calcolatore di prezzi "Smart Booking" appartengono pienamente a Kraken Properties and Facilities Management.',
+  ipP1: "I contenuti originali e i materiali di terzi presenti sul sito sono soggetti ai rispettivi diritti e licenze.",
   usageTitle: 'Termini d\'Uso d\'Autore',
-  usageText: 'È severamente vietata la replicazione, la copia o l\'Integrazione del nostro materiale web senza una formale approvazione scritta da parte di Kraken.',
-  trademarksTitle: 'Marchi e Brevetti',
-  trademarksText: 'La parola e la grafica riferite al logo e al nome "Kraken" sono protette dalle vigenti disposizioni del diritto svizzero sui marchi.',
-  verificationTitle: 'Certificazioni ed Ispezioni',
-  lastUpdate: 'Ultimo aggiornamento: Gennaio 2025 | Seewadelstrasse 3, 8203 Schaffhausen'
+  usageText: "Contatti Kraken prima di riutilizzare commercialmente i contenuti originali quando occorre un’autorizzazione. Ai materiali di terzi si applicano le rispettive licenze.",
+  trademarksTitle: "Nomi dei marchi",
+  trademarksText: "Kraken è il marchio utilizzato su questo sito. Nomi e loghi di terzi appartengono ai rispettivi titolari.",
+  verificationTitle: "Contatto per la privacy: kai@krakenpfm.ch",
+  lastUpdate: "Aggiornato: 25 novembre 2026 | Seewadelstrasse 3, 8203 Schaffhausen",
 };
 
 const itTerms: TermsTranslation = {
@@ -1160,16 +1160,16 @@ const itTerms: TermsTranslation = {
       content: "3.1 Tutti i prezzi sono espressi in franchi svizzeri (CHF). Kraken non è attualmente iscritta nel registro dell'IVA (MWST) ai sensi dell'Art. 10 LIVA; pertanto, i prezzi s'intendono IVA esclusa e non viene fatturata alcuna IVA. In caso di futura iscrizione, i prezzi saranno adeguati a norma di legge con il preaviso previsto alla clausola 7.4. Il lavoro extra dovuto a condizioni non dichiarate sarà fatturato a CHF 90.00/ora/persona. Il lavoro domenicale e festivo è soggetto a una maggiorazione del 50%; le prenotazioni express (<24h di preavviso) a una maggiorazione del 25%. Le spese di discarica e parcheggio sono fatturate al costo."
     },
     {
-      title: "4. Forfait di Trasporto & Pacchetti Multiservizio",
-      content: "Si applica una tariffa standard di trasporto di CHF 45.00 per intervento. Sconto pacchetto: CHF 25.00 in caso di acquisto di 1 servizio principale + 1 opzionale o 2+ opzionali; CHF 0.00 (trasporto gratuito) in caso di acquisto di 1 principale + 2+ opzionali o 2+ servizi principali."
+      title: "4. Trasferta inclusa nel prezzo",
+      content: "La trasferta ordinaria per il servizio scelto è inclusa nel prezzo del calcolatore. Eventuali spese di trasferta eccezionali richiedono un accordo preventivo e devono essere indicate nel preventivo scritto."
     },
     {
       title: "5. Termini di Pagamento & Mora",
-      content: "Pagamenti sicuri tramite link Revolut Business, bonifico o polizza QR. Il saldo è esigibile entro 7 giorni dalla fatturazione. La mora è automatica alla scadenza, con un interesse annuo del 5% e spese di sollecito di CHF 20.00 (2° sollecito) e CHF 50.00 (3° sollecito). Le spese di recupero crediti sono a carico del cliente."
+      content: "Pagamenti sicuri tramite Payrexx, bonifico o polizza QR. Il saldo è esigibile entro 7 giorni dalla fatturazione. La mora è automatica alla scadenza, con un interesse annuo del 5% e spese di sollecito di CHF 20.00 (2° sollecito) e CHF 50.00 (3° sollecito). Le spese di recupero crediti sono a carico del cliente."
     },
     {
       title: "6. Cancellazioni, Rinvii & Mancata Presentazione",
-      content: "Le cancellazioni devono essere formate per iscritto. Penali: preavviso >48 ore: gratuito; <48 ore: 50% del prezzo; <12 ore, mancata presentazione o cancellazione sul posto: 100% del preventivo oltre alla tariffa di trasporto. Un rinvio gratuito è consentito >24 ore prima dell'intervento, previa disponibilità."
+      content: "Le cancellazioni devono essere formate per iscritto. Penali: preavviso >48 ore: gratuito; <48 ore: 50% del prezzo; <12 ore, mancata presentazione o cancellazione sul posto: 100% del preventivo. Un rinvio gratuito è consentito >24 ore prima dell'intervento, previa disponibilità."
     },
     {
       title: "7. Servizi Ricorrenti, SLAs & Risoluzione",
@@ -1209,7 +1209,7 @@ const itTerms: TermsTranslation = {
     },
     {
       title: "16. Responsabilità Civile & Assicurazioni",
-      content: "Assicurazione di responsabilità civile professionale con copertura fino a CHF 10 milioni. Kraken risponde unicamente dei danni diretti derivanti da colpa comprovata. Esclude danni indiretti, perdita di profitto o privazione d'uso. La responsabilità per smarrimento chiavi è limitata alle sole spese di riproduzione standard."
+      content: "Le eventuali coperture assicurative sono descritte nei documenti di polizza applicabili e nel preventivo scritto. Kraken risponde unicamente dei danni diretti derivanti da colpa comprovata. Esclude danni indiretti, perdita di profitto o privazione d'uso. La responsabilità per smarrimento chiavi è limitata alle sole spese di riproduzione standard."
     },
     {
       title: "17. Subappaltatori, Partner Specializzati & Diritto di Rifiuto",
@@ -1236,8 +1236,8 @@ const itTerms: TermsTranslation = {
       content: "Tutti i contratti sono regolati esclusivamente dal diritto svizzero materiale, ad esclusione della CISG. Il foro competente esclusivo è Sciaffusa, Svizzera. Sono fatti salvi i fori di consumo imperativi."
     }
   ],
-  verificationTitle: 'Verifica e Conformità',
-  lastUpdated: 'Version 2.0 — In vigore dal : 16.07.26',
+  verificationTitle: "Versione delle condizioni",
+  lastUpdated: "Versione delle condizioni: kraken-2026-11-24 · Revisione editoriale: 25.11.2026",
   companyInfo: 'Kraken Properties and Facilities Management Gomes Mendes | Seewadelstrasse 3, 8203 Schaffhausen, Svizzera',
   backHome: 'Ritorna alla Home page'
 };
@@ -1341,48 +1341,48 @@ const itCareers: CareersTranslation = {
 
 // Portuguese Dictionary
 const ptGDPR: GDPRTranslation = {
-  title: 'Política de Privacidade & Conformidade nLPD/RGPD',
-  badge: 'Conforme à nLPD suíça',
-  subtitle: 'Conformidade & Propriedade Intelectual',
+  title: "Política de privacidade",
+  badge: "Os seus dados pessoais",
+  subtitle: "Como tratamos os pedidos de limpeza e pequenas mudanças",
   introTitle: 'Introdução',
-  introP1: 'Na Kraken, levamos a sua privacidade muito a sério. Esta política explica como processamos dados pessoais de acordo com a nova Lei Federal Suíça de Proteção de Dados (nLPD) e o Regulamento Geral de Proteção de Dados (RGPD) da UE.',
+  introP1: "O responsável é Kraken Properties and Facilities Management Gomes Mendes, Seewadelstrasse 3, 8203 Schaffhausen, Suíça. Contacto: kai@krakenpfm.ch. Esta política explica a utilização de dados pessoais neste website e nos serviços de limpeza e pequenas mudanças.",
   collectTitle: 'Dados que Recolhemos & Finalidade',
-  collectP1: 'Recolhemos informações para fornecer serviços de manutenção profissional de propriedades. Isto inclui:',
+  collectP1: "Utilizamos as informações necessárias para preparar orçamentos, tratar pedidos e realizar limpezas e pequenas mudanças:",
   collectItems: [
-    'Dados de identificação: Nome, morada, e-mail e número de telefone (necessários para a execução dos serviços).',
-    'Dados da propriedade: Fotografias, plantas e áreas (para orçamentos precisos e validações).',
-    'Dados financeiros: Utilizamos processadores em conformidade com PCI-DSS. A Kraken não armazena números de cartões de crédito nos seus servidores.',
-    'Dados técnicos: Endereços IP e ficheiros de cookies (para otimizar e assegurar o website).'
+    "Contactos: nome, email, telefone e morada do serviço, para responder e organizar o trabalho.",
+    "Dados do serviço: tarefas escolhidas, áreas, datas, inventário e fotografias ou vídeos fornecidos voluntariamente.",
+    "Pagamentos: valor, estado e referência do fornecedor. Os dados do cartão são introduzidos na Payrexx, não no formulário de pedido da Kraken.",
+    "Dados do website: endereço IP, cookies necessários, armazenamento de sessão e preferências de cookies, para funcionamento e segurança.",
   ],
-  basisTitle: 'Base Legal do Tratamento',
-  basisP1: 'Tratamos os dados de acordo com:',
+  basisTitle: "Para que utilizamos os dados",
+  basisP1: "Utilizamos os dados pessoais para:",
   basisItems: [
-    'Necessidade contratual: Para fornecer as simulações e marcações solicitadas por si.',
-    'Obrigações de lei: Para o cumprimento das obrigações fiscais e de contabilidade obrigatórias na Suíça.',
-    'Interesse legítimo: Com vista a garantir a qualidade de excelência e a proteção no trabalho.'
+    "Preparar o orçamento e tratar o serviço solicitado.",
+    "Manter a documentação necessária para faturação e obrigações legais aplicáveis.",
+    "Gerir e proteger o website. As comunicações opcionais respeitam as suas preferências e o consentimento necessário.",
   ],
   retentionTitle: 'Segurança, Armazenamento & Parcerias',
   retentionInfrastructure: 'Infraestrutura',
   retentionCollaboration: 'Colaboração',
   retentionDuration: 'Duração',
-  retentionStorage: 'Armazenamento: Os dados são guardados em servidores seguros, com primazia de locais na Suíça ou Europa.',
-  retentionSharing: 'Partilha: Apenas partilhamos com parceiros validados (ex. canalizadores credenciados) ou provedores de rede. Nunca vendemos dados.',
-  retentionTime: 'Conservação: Os registos são arquivados durante as intervenções e por 10 anos após a data da última fatura, conforme requisição legal suíça.',
+  retentionStorage: "O website utiliza a Vercel para alojamento e Google Firebase/Firestore para os registos de reservas. A base de dados de reservas configurada encontra-se nos Estados Unidos. Os pagamentos utilizam a Payrexx na Suíça.",
+  retentionSharing: "Utilizamos fornecedores para alojamento, reservas, comunicação e pagamentos. Se utilizar as respostas de IA do Kai na nuvem, a Google também processa as mensagens. Não vendemos dados pessoais.",
+  retentionTime: "Conservamos os dados para tratar o pedido, realizar o serviço e prestar o acompanhamento necessário. Os documentos contabilísticos estão sujeitos às obrigações legais de conservação. Contacte-nos para solicitar a revisão ou eliminação dos seus dados.",
   rightsTitle: 'Os Seus Direitos',
-  rightsP1: 'Tem o direito de requerer o acesso, a alteração ou a remoção total dos seus dados. Poderá anular as inscrições de publicidade a qualquer momento por e-mail no endereço kai@krakenpfm.ch.',
-  disclaimerTitle: 'Informações Legais & Propriedade Intelectual',
-  estimatesTitle: 'Cálculos de Preço',
-  estimatesP1: 'O estimador "Smart Booking" indica custos aproximados não contratuais. O contrato definitivo formaliza-se após concordância escrita e/ou envio de material visual. A Kraken reserva o direito de adaptar custos se as realidades físicas locais diferirem.',
-  liabilityTitle: 'Limitação de Responsabilidade',
-  liabilityP1: 'Muito embora a Kraken possua um seguro de responsabilidade civil de CHF 10 milhões, a nossa responsabilidade no ambiente digital está salvaguardada em limites. Não respondemos por anomalias de rede externa.',
+  rightsP1: "Pode solicitar informações sobre os seus dados pessoais e pedir a correção ou eliminação, sem prejuízo das obrigações legais. Pode retirar o consentimento para publicidade opcional. Escreva para kai@krakenpfm.ch.",
+  disclaimerTitle: "Informações do serviço e conteúdos do website",
+  estimatesTitle: "Orçamentos e marcações",
+  estimatesP1: "A calculadora utiliza os dados do serviço introduzidos. O envio de um pedido não confirma uma marcação. Verifique o serviço, o orçamento confirmado e as condições antes de aceitar.",
+  liabilityTitle: "Questões antes de contratar",
+  liabilityP1: "Contacte a Kraken antes de contratar para esclarecer o âmbito do serviço, as condições de entrega, o seguro ou as condições aplicáveis ao pedido.",
   ipTitle: 'Direitos Intelectuais (IP)',
-  ipP1: 'Todos os textos, a mascotte Kraken, o design visual e o simulador "Smart Booking" são propriedade sob direito exclusivo de Kraken Properties and Facilities Management.',
+  ipP1: "Os conteúdos originais e os materiais de terceiros neste website estão sujeitos aos respetivos direitos e licenças.",
   usageTitle: 'Termos de Utilização',
-  usageText: 'É expressamente interdito efetuar cópias do material do nosso website com intenções de lucro ou publicidade sem concordância e autorização escrita.',
-  trademarksTitle: 'Marcas de Proteção',
-  trademarksText: 'A designação textual e imagem gráfica representadas pela logo "Kraken" são marcas protegidas sob termo da Lei de Marcas Suíça.',
-  verificationTitle: 'Zertificação e Controlos',
-  lastUpdate: 'Última atualização: Janeiro 2025 | Seewadelstrasse 3, 8203 Schaffhausen'
+  usageText: "Contacte a Kraken antes de reutilizar comercialmente os conteúdos originais quando for necessária autorização. Os materiais de terceiros mantêm as respetivas licenças.",
+  trademarksTitle: "Nomes das marcas",
+  trademarksText: "Kraken é a marca utilizada neste website. Os nomes e logótipos de terceiros pertencem aos respetivos titulares.",
+  verificationTitle: "Contacto de privacidade: kai@krakenpfm.ch",
+  lastUpdate: "Atualização: 25 de novembro de 2026 | Seewadelstrasse 3, 8203 Schaffhausen",
 };
 
 const ptTerms: TermsTranslation = {
@@ -1402,16 +1402,16 @@ const ptTerms: TermsTranslation = {
       content: "3.1 Todos os preços são expressos em francos suíços (CHF). A Kraken não está atualmente inscrita no registo do IVA (MWST) em conformidade com o Art. 10 LIVA; portanto, os preços não incluem IVA e não é faturado IVA. No caso de uma inscrição futura, os preços serão ajustados em conformidade com a lei, com o aviso prévio previsto na cláusula 7.4. Trabalho extra devido a condições não declaradas será faturado a CHF 90.00/hora/pessoa. O trabalho aos domingos e feriados está sujeito a um acréscimo de 50%; as reservas express (<24h de aviso prévio) têm um acréscimo de 25%. Os custos de lixeira e estacionamento são faturados ao preço de custo."
     },
     {
-      title: "4. Taxas de Deslocação & Pacotes Multiservício",
-      content: "Aplica-se uma taxa padrão de deslocação de CHF 45.00 por intervenção. Desconto de pacote: CHF 25.00 na contratação de 1 serviço principal + 1 complementar ou 2+ complementares; CHF 0.00 (deslocação gratuita) na contratação de 1 principal + 2+ complementares ou 2+ serviços principais."
+      title: "4. Deslocação incluída no preço",
+      content: "A deslocação habitual para o serviço escolhido está incluída no preço da calculadora. Qualquer despesa de deslocação excecional exige acordo prévio e deve constar do orçamento escrito."
     },
     {
       title: "5. Condições de Pagamento & Mora",
-      content: "Pagamentos seguros via links Revolut Business, transferência ou fatura QR. O saldo restante vence 7 dias após a fatura. A mora é automática após o vencimento, com juros anuais de 5% e taxas de cobrança de CHF 20.00 (2º aviso) e CHF 50.00 (3º aviso). Os custos de cobrança judicial são suportados pelo cliente."
+      content: "Pagamentos seguros via Payrexx, transferência ou fatura QR. O saldo restante vence 7 dias após a fatura. A mora é automática após o vencimento, com juros anuais de 5% e taxas de cobrança de CHF 20.00 (2º aviso) e CHF 50.00 (3º aviso). Os custos de cobrança judicial são suportados pelo cliente."
     },
     {
       title: "6. Cancelamentos, Adiamentos & Não-Comparência",
-      content: "Os cancelamentos devem ser feitos por escrito. Taxas: aviso >48 horas: gratuito; <48 horas: 50% do valor; <12 horas, não-comparência ou cancelamento no local: 100% do orçamento mais taxa de deslocação. É permitido um adiamento gratuito com aviso >24 horas, sujeito a disponibilidade."
+      content: "Os cancelamentos devem ser feitos por escrito. Taxas: aviso >48 horas: gratuito; <48 horas: 50% do valor; <12 horas, não-comparência ou cancelamento no local: 100% do orçamento. É permitido um adiamento gratuito com aviso >24 horas, sujeito a disponibilidade."
     },
     {
       title: "7. Serviços Recorrentes, SLAs & Rescisão",
@@ -1451,7 +1451,7 @@ const ptTerms: TermsTranslation = {
     },
     {
       title: "16. Responsabilidade Civil & Seguros",
-      content: "Seguro de responsabilidade civil profissional com cobertura de até CHF 10 milhões. A Kraken responde apenas por danos diretos por culpa provada. Excluem-se lucros cessantes, danos indiretos ou perda de uso. Perda de chaves limitada ao custo de cópia padrão."
+      content: "As coberturas de seguro eventualmente aplicáveis constam da documentação da apólice e do orçamento escrito. A Kraken responde apenas por danos diretos por culpa provada. Excluem-se lucros cessantes, danos indiretos ou perda de uso. Perda de chaves limitada ao custo de cópia padrão."
     },
     {
       title: "17. Subempreiteiros, Parceiros Especializados & Direito de Recusa",
@@ -1478,8 +1478,8 @@ const ptTerms: TermsTranslation = {
       content: "Todos os contratos são regidos exclusivamente pelo direito suíço material, excluindo a CISG. O foro exclusivo é em Schaffhausen, Suíça. Salvaguardam-se os foros de consumo obrigatórios."
     }
   ],
-  verificationTitle: 'Verificações e Conformidade',
-  lastUpdated: 'Versão 2.0 — Entrada em vigor: 16.07.26',
+  verificationTitle: "Versão das condições",
+  lastUpdated: "Versão das condições: kraken-2026-11-24 · Revisão editorial: 25.11.2026",
   companyInfo: 'Kraken Properties and Facilities Management Gomes Mendes | Seewadelstrasse 3, 8203 Schaffhausen, Suíça',
   backHome: 'Regressar à Página de Início'
 };

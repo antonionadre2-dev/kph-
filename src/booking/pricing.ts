@@ -10,6 +10,7 @@ export const REFERENCE_VAT_BASIS_POINTS = 810;
 export const PRICING_LIMITS = Object.freeze({ count: 1_000, areaM2: 10_000, personHours: 168, rooms: 100 });
 
 export type RegularFrequency = 'weekly' | 'fortnightly' | 'monthly' | 'once';
+export const REGULAR_MINIMUM_HOURS: Readonly<Record<RegularFrequency, number>> = Object.freeze({ weekly: 2.5, fortnightly: 2.5, monthly: 2.5, once: 3 });
 export interface RegularSelection {
   service: 'regular'; frequency: RegularFrequency; hours: number;
   materials: boolean; oven: boolean; fridge: boolean; ironingHours: number;
@@ -153,7 +154,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
     case 'regular': {
       const s = selection as RegularSelection;
       const frequency = choice(s.frequency, 'frequency', ['weekly', 'fortnightly', 'monthly', 'once'] as const);
-      const cleaningHours = hours(s.hours, 'hours', frequency === 'once' ? 3 : 2.5);
+      const cleaningHours = hours(s.hours, 'hours', REGULAR_MINIMUM_HOURS[frequency]);
       const ironingHours = hours(s.ironingHours ?? 0, 'ironingHours', 0);
       add('regular-labour', `Unterhaltsreinigung – ${FREQUENCY_LABELS[frequency]}`, cleaningHours, 'hour', REGULAR_RATES[frequency], { frequency });
       if (flag(s.materials, 'materials')) {
@@ -278,7 +279,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
 
 export function defaultSelection<S extends BookingService>(service: S): SelectionFor<S> {
   const selections: { [K in BookingService]: SelectionFor<K> } = {
-    regular: { service: 'regular', frequency: 'weekly', hours: 2.5, materials: false, oven: false, fridge: false, ironingHours: 0 },
+    regular: { service: 'regular', frequency: 'weekly', hours: REGULAR_MINIMUM_HOURS.weekly, materials: false, oven: false, fridge: false, ironingHours: 0 },
     endOfTenancy: { service: 'endOfTenancy', mode: 'fixed', propertyType: 'apartment', rooms: 2.5, areaM2: 65, hours: 3, bathrooms: 1, guestWcs: 0, slatBlinds: 0, rollerShutters: 0, smallBalconies: 0, largeBalconies: 0, storageRooms: 0, garages: 0, carpetRooms: 0, heavySoiling: false },
     construction: { service: 'construction', mode: 'area', level: 'light', areaM2: 50, hours: 4, cementM2: 0, filmWindows: 0, slatBlinds: 0, extraArea: false },
     windows: { service: 'windows', standard: 4, double: 2, balconyDoors: 0, roof: 0, slatBlinds: 0, rollerShutters: 0, difficultAccess: false, winterGarden: false },

@@ -49,18 +49,17 @@ test('About initial HTML contains the complete story, comic and working links be
   }
 });
 
-test('Warum preserves the qualified VAT comparison, native disclosures and calculator path',()=>{
+test('Warum explains confirmation and scope without a hypothetical tax saving',()=>{
   const {why}=render('de');
   const text=why.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
-  assert.match(text,/Keine MwSt\. auf Ihrer Rechnung\./);
-  assert.match(text,/Vergleich bei gleichem Nettopreis und Leistungsumfang/);
-  assert.match(why,/7,5/);assert.match(why,/7,49/);assert.match(why,/8,1/);
-  assert.equal((why.match(/<details\b/g)||[]).length,3);
+  assert.match(text,/Vor der Bestätigung kennen Sie den vereinbarten Umfang, den Preis und den Termin/);
+  assert.match(text,/Ihr Wunschtermin ist noch keine bestätigte Buchung/);
+  assert.doesNotMatch(why,/7,5|7,49|8,1|Betriebshaftpflichtversichert/);
+  assert.equal((why.match(/<details\b/g)||[]).length,2);
   assert.equal((why.match(/id="warum-kraken"/g)||[]).length,1);
   assert.equal((why.match(/id="ueber-uns"/g)||[]).length,1);
   assert.match(why,/href="\/quote"/);assert.match(why,/data-calculator/);
   assert.doesNotMatch(why,/<img|<iframe|8,1 % günstiger|0 % MwSt\.|steuerfrei/);
-  assert.ok(Math.abs(8.1/108.1*100-7.49)<0.01);
 });
 
 

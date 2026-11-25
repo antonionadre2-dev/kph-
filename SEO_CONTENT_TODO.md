@@ -58,4 +58,4 @@ Please verify that the listed landmarks are factually correct, locally resonant,
 2. Locate the corresponding municipality object (by its `slug` or `name`).
 3. Under the `localContext` object, review the `landmark` field.
 4. Replace the value (and the `[TODO: verify]` comment if in comments) with the verified local landmark.
-5. Set `indexable: true` once the entire municipality object has been reviewed to allow the page to be indexed in the sitemap and crawled by search engines.
+5. Confirm actual service coverage and useful, distinct visible local content with Kraken before proposing indexing. Setting the legacy municipality object's `indexable` flag alone does not add a route to the public sitemap: the reviewed manifest in `src/seo/crawl-policy.ts` controls eligibility. Add a verified page there only after checking its rendered content, canonical, language versions and indexing headers. Do not reintroduce legacy prices or unsupported service, branch or guarantee claims merely to recover a historical URL.

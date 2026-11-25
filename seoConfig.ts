@@ -960,7 +960,7 @@ export function getMetadataForPath(
   // Authoritative canonical URL
   const canonical = `${BASE_URL}${cleanPath}`;
 
-  // Multi-language hreflangs (Disabled per SEO requirements)
+  // Legacy metadata draft; getPageSeo supplies public-language canonicals and alternates.
   const hreflangs: { lang: string; href: string }[] = [];
 
   return {

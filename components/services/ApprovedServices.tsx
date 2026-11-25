@@ -4,6 +4,7 @@ import ApprovedHeader from '../home/ApprovedHeader';
 import { openHomeCalculator, type HomeService } from '../../src/home/calculator';
 import { requestKaiOpen } from '../../src/kai/open';
 import { servicesText } from './servicesTranslations';
+import PublicPriceGuide from '../PublicPriceGuide';
 import '../home/approved-home.css';
 import '../home/responsive-fixes.css';
 import '../home/home-language.css';
@@ -127,6 +128,8 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
         </nav>
       </div>
     </section>
+
+    <div className="container services-price-guide"><PublicPriceGuide language={language} id="services-prices" /></div>
 
     <section className="services-section service-explorer section container" id="leistungen" aria-labelledby="services-title">
       <div className="service-intro">

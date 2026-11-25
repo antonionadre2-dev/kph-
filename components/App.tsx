@@ -371,7 +371,7 @@ const App: React.FC = () => {
   React.useEffect(() => {
     const meta = getPageSeo(seoUrl, language);
 
-    document.documentElement.lang = language;
+    document.documentElement.lang = meta.language;
     const robots = document.querySelector('meta[name="robots"]');
     if (robots) {
       const publicHost = ['krakenpfm.ch', 'www.krakenpfm.ch'].includes(window.location.hostname);
@@ -396,9 +396,16 @@ const App: React.FC = () => {
     }
     canonical.setAttribute('href', meta.canonical);
 
-    // Hreflang links (Disabled per SEO requirements)
+    // Keep the same reciprocal language links as the initial server response.
     const alternates = document.querySelectorAll('link[rel="alternate"][hreflang]');
     alternates.forEach(el => el.remove());
+    meta.hreflangs.forEach(({ lang, href }) => {
+      const alternate = document.createElement('link');
+      alternate.setAttribute('rel', 'alternate');
+      alternate.setAttribute('hreflang', lang);
+      alternate.setAttribute('href', href);
+      document.head.appendChild(alternate);
+    });
 
     // Synchronize OG and Twitter tags dynamically
     const ogTitle = document.querySelector('meta[property="og:title"]');

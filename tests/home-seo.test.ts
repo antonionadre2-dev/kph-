@@ -2,23 +2,25 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { getMetadataForPath, HOME_METADATA } from '../seoConfig.ts';
+import { getPageSeo } from '../src/seo/metadata.ts';
 import { homeText, normalizeHomeLanguage } from '../components/home/homeTranslations.ts';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 
-test('the approved homepage localizes metadata while keeping the public canonical across language sessions', () => {
+test('the approved homepage exposes each translated page at its own public canonical', () => {
   for (const language of ['de', 'de-CH', 'en', 'es', 'fr', 'it', 'pt']) {
-    const metadata = getMetadataForPath('/?lang=' + language, language);
+    const metadata = getPageSeo('/?lang=' + language, language);
     const locale = normalizeHomeLanguage(language);
     assert.equal(metadata.title, homeText(locale, HOME_METADATA.title));
     assert.equal(metadata.description, homeText(locale, HOME_METADATA.description));
     assert.equal(getMetadataForPath('/?lang=' + language).title, metadata.title);
-    assert.equal(metadata.canonical, 'https://krakenpfm.ch/');
+    assert.equal(metadata.canonical, 'https://krakenpfm.ch/' + (locale === 'de' ? '' : `?lang=${locale}`));
     assert.equal(metadata.pageType, 'home');
     assert.equal(metadata.h1, homeText(locale, 'Ihr Zuhause in guten Armen.'));
     assert.equal(metadata.h2, homeText(locale, 'Reinigung und kleine Umzüge in Zürich, Schaffhausen und Winterthur.'));
     assert.equal(metadata.bodyText, metadata.description);
-    assert.deepEqual(metadata.hreflangs, []);
+    assert.equal(metadata.hreflangs.length, 7);
+    assert.ok(metadata.hreflangs.some(item => item.lang === metadata.language && item.href === metadata.canonical));
     assert.match(metadata.description, /Zürich|Zurich|Zúrich|Zurique|Zurigo/);
     assert.match(metadata.description, /Schaffhausen|Schaffhouse/);
     assert.match(metadata.description, /Winterthur|Winterthour/);
@@ -33,16 +35,17 @@ test('the approved homepage localizes metadata while keeping the public canonica
 });
 
 test('calculator metadata follows the integrated design and informational routes retain their canonicals', () => {
-  const quote = getMetadataForPath('/quote?lang=es', 'es');
-  assert.equal(quote.title, 'Prepara tu presupuesto. · Kraken PFM');
-  assert.equal(quote.canonical, 'https://krakenpfm.ch/quote');
+  const quote = getPageSeo('/quote?lang=es', 'es');
+  assert.equal(quote.title, 'Prepare su presupuesto. · Kraken PFM');
+  assert.equal(quote.canonical, 'https://krakenpfm.ch/quote?lang=es');
   assert.equal(quote.pageType, 'consultation');
-  assert.equal(getMetadataForPath('/quote-demo', 'es').canonical, quote.canonical);
-  assert.equal(getMetadataForPath('/quote-demo', 'es').pageType, 'calculator-demo');
-  const about = getMetadataForPath('/about', 'en');
+  assert.equal(getPageSeo('/quote-demo', 'es').canonical, 'https://krakenpfm.ch/quote');
+  assert.equal(getPageSeo('/quote-demo', 'es').pageType, 'calculator-demo');
+  assert.equal(getPageSeo('/quote-demo', 'es').indexable, false);
+  const about = getPageSeo('/about', 'en');
   assert.equal(about.title, 'About Kraken & Kai · Personal help for your home');
-  assert.equal(about.canonical, 'https://krakenpfm.ch/about');
-  assert.equal(getMetadataForPath('/ueber-kraken', 'en').canonical, about.canonical);
+  assert.equal(about.canonical, 'https://krakenpfm.ch/about?lang=en');
+  assert.equal(getPageSeo('/ueber-kraken', 'en').canonical, about.canonical);
 });
 
 test('the initial HTML exposes the approved five services without fabricated prices, ratings or opening hours', () => {

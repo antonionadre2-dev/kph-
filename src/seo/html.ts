@@ -30,5 +30,6 @@ export function injectPageSeo(html: string, pathWithQuery: string, language?: st
   result = result.replace(/<link\b(?=[^>]*\brel=["']alternate["'])(?=[^>]*\bhreflang=)[^>]*>/gi, '');
   result = result.replace(/<script\b(?=[^>]*\btype=["']application\/ld\+json["'])[^>]*>[\s\S]*?<\/script>/gi, '');
   const schema = { '@context': 'https://schema.org', '@graph': meta.structuredData };
-  return result.replace('</head>', () => `<link rel="canonical" href="${escapeSeoHtml(meta.canonical)}"><script id="kraken-page-schema" type="application/ld+json">${safeSchemaJson(schema)}</script></head>`);
+  const alternates = meta.hreflangs.map(({ lang, href }) => `<link rel="alternate" hreflang="${escapeSeoHtml(lang)}" href="${escapeSeoHtml(href)}">`).join('');
+  return result.replace('</head>', () => `<link rel="canonical" href="${escapeSeoHtml(meta.canonical)}">${alternates}<script id="kraken-page-schema" type="application/ld+json">${safeSchemaJson(schema)}</script></head>`);
 }

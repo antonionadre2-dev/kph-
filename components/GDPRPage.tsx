@@ -28,7 +28,7 @@ const GDPRPage: React.FC = () => {
         {/* Header Area */}
         <div className="relative rounded-[3rem] overflow-hidden mb-16 bg-[#001D3D] text-white min-h-[30vh] flex items-center p-8 md:p-12 shadow-xl">
           <div className="absolute inset-0 z-0">
-            <img src="/kai privacy.webp" alt="Privacy at Kraken" className="w-full h-full object-cover opacity-35 object-center" referrerPolicy="no-referrer" />
+            <img src="/kai privacy.webp" alt="" aria-hidden="true" className="w-full h-full object-cover opacity-35 object-center" referrerPolicy="no-referrer" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#001D3D] via-[#001D3D]/80 to-transparent" />
           </div>
           <div className="relative z-10 max-w-2xl text-left">

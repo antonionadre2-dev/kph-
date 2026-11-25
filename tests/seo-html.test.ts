@@ -18,6 +18,11 @@ test('HTTP metadata matches the actual local page, with escaped attributes and o
   assert.match(html, /<html lang="fr"/);
   assert.doesNotMatch(html, /AggregateRating|invalid\.example|Old title/);
   assert.ok(html.includes('<main>Actual content</main>'));
+  assert.equal(meta.canonical, 'https://krakenpfm.ch/services/zurich/window-cleaning?lang=fr');
+  const alternates = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)">/g)].map(([, lang, href]) => ({ lang, href }));
+  assert.deepEqual(alternates, meta.hreflangs);
+  assert.equal(alternates.length, 7);
+  assert.equal(injectPageSeo(html, path), html);
 });
 
 test('saved booking and account pages cannot acquire an indexable head or leak capabilities into schema', () => {
@@ -26,8 +31,18 @@ test('saved booking and account pages cannot acquire an indexable head or leak c
     assert.match(html, /name="robots" content="noindex, follow"/);
     const schema = JSON.parse(html.match(/<script id="kraken-page-schema" type="application\/ld\+json">([\s\S]*?)<\/script>/)![1]);
     assert.deepEqual(schema['@graph'], []);
+    assert.doesNotMatch(html, /hreflang=/);
     assert.doesNotMatch(html, /private-example/);
   }
+});
+
+test('language switches replace stale alternate links with the same reciprocal set as SSR', () => {
+  const old = template.replace('</head>', '<link rel="alternate" hreflang="xx" href="https://invalid.example/"></head>');
+  const html = injectPageSeo(old, '/leistungen?lang=es');
+  assert.doesNotMatch(html, /invalid\.example|hreflang="xx"/);
+  const links = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)">/g)].map(([, lang, href]) => ({ lang, href }));
+  assert.deepEqual(links, getPageSeo('/leistungen?lang=fr').hreflangs);
+  assert.ok(html.includes('rel="canonical" href="https://krakenpfm.ch/leistungen?lang=es"'));
 });
 
 test('SEO text cannot terminate attributes or inject HTML', () => {

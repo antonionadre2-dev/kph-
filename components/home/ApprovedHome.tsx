@@ -5,6 +5,7 @@ import { homeLanguages, homeText, normalizeHomeLanguage } from './homeTranslatio
 import ApprovedHeader from './ApprovedHeader';
 import TransitSection from './TransitSection';
 import WhyKrakenSection from './WhyKrakenSection';
+import PublicPriceGuide from '../PublicPriceGuide';
 import { whyTranslations } from './whyTranslations';
 import { initApprovedHome } from './app';
 import { initApartmentScene } from './scene';
@@ -138,6 +139,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
           <h1 id="hero-title"><span>{t("Ihr Zuhause")}</span> <span>{t("in guten")}</span> <span>{t("Armen.")}</span></h1>
           <p className="hero-description">{t("Reinigung und kleine Umzüge in Zürich, Schaffhausen und Winterthur.")}</p>
           <p className="hero-personal">{t("Persönlich. Erfahren. Für Sie da.")}</p>
+          <a className="button button-navy hero-primary-action" href={quoteHref}>{homeText(homeLanguage, 'Meine Offerte berechnen')}</a>
           <button className="scene-open" id="sceneOpen" type="button" aria-haspopup="dialog" aria-controls="sceneDialog">
             <span className="scene-open-weather" aria-hidden="true"><svg id="sceneWeatherIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg></span>
             <span className="scene-open-copy"><strong id="sceneCityTime">{t("Zürich · Ortszeit")}</strong><span id="sceneShortStatus">{t("Szene entdecken")}</span></span><svg className="scene-open-settings icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h7m4 0h5M4 17h3m4 0h9"></path><circle cx="13" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>
@@ -195,6 +197,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
         <article className="service-card end-card"><div className="card-art atlas-panel panel-apartment" role="img" aria-label={t("Illustration einer leeren Wohnung mit Schlüsseln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Ein Kapitel endet. Ein neues beginnt.")}</span><h3>{t("Bereit für die")}<br />{t("Wohnungsabgabe.")}</h3><p>{t("Wir kümmern uns um die Reinigung.")}<br />{t("Sie um das Ankommen.")}</p><a className="button button-mint" data-service="end" href={quoteHref + '&service=end'} data-calculator="">{t("Umzugsreinigung berechnen")}</a></div></article>
       </div>
       <div className="service-note"><svg className="icon" aria-hidden="true"><use href="#i-check"></use></svg><p>{t("Einmalig oder regelmässig: Wir vereinbaren den Umfang passend zu Ihrer Wohnung und Ihrem Alltag.")}</p></div>
+      <PublicPriceGuide language={homeLanguage} id="home-prices" />
     </section>
 
     <TransitSection t={t} quoteHref={quoteHref + '&service=moving'} />
