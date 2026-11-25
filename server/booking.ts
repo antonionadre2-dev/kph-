@@ -141,6 +141,14 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         if(next.recoveryId && recoveryService)await recoveryService.stopDraft(next.recoveryId,'paid');
       }
       if(recoveryService)await recoveryService.recordBookingEvent({bookingId:id,revision:next.revision,status:next.scheduling.status==='confirmed'?'confirmed':next.status,mode:next.mode,paymentStatus:next.payment.status,service:next.quote.service,region:['Zürich','Schaffhausen','Winterthur'].find(region=>next.customer.city.toLowerCase()===region.toLowerCase()),occurredAt:new Date(next.confirmedAt||clock()).toISOString(),draftId:next.recoveryId});
+      if(['paid','test_paid'].includes(next.payment.status)) {
+        try {
+          await service.runDue({jobId:`${id}:receipt:${next.checkout.reference}`,limit:1});
+          return await store.get(id) || next;
+        } catch {
+          console.warn('[booking:email-dispatch]',{phase:'receipt'});
+        }
+      }
       return next;
     },
     /** Server-only operation. Invoke after an authorized person actually checks availability. */
@@ -166,10 +174,15 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       const record=await store.get(id);if(!record || record.customer.email!==email)return null;
       return {bookingId:id,publicToken:token(id),email,mode:record.mode,status:record.status,canCheckout:canCheckout(record),paymentStatus:record.payment.status,holdExpiresAt:record.scheduling.holdExpiresAt};
     },
-    async runDue() {
+    async runDue({jobId,limit=20,deadlineAt=Infinity}:{jobId?:string;limit?:number;deadlineAt?:number}={}) {
       if(!sendEmail)return {sent:0,unknown:0,disabled:true};
-      await store.markStaleMail(clock());let sent=0,unknown=0;
-      for(const pending of await store.listDueMail(clock())) {
+      const batch=Math.max(0,Math.min(20,Math.floor(limit)));let sent=0,unknown=0;
+      if(!batch || performance.now()>=deadlineAt)return {sent,unknown};
+      // Targeted request dispatch never scans or drains another customer's queue.
+      if(!jobId)await store.markStaleMail(clock(),{limit:batch,deadlineAt});
+      const pendingJobs=jobId?[{id:jobId}]:await store.listDueMail(clock(),batch);
+      for(const pending of pendingJobs.slice(0,batch)) {
+        if(performance.now()+15000>=deadlineAt)break;
         const job=await store.claimMail(pending.id,clock());if(!job)continue;
         if(job.kind==='customer_access' && (!job.message || job.expiresAt<=clock())) {await store.finishMail(job.id,'cancelled',null);continue;}
         const record=job.bookingId?await store.get(job.bookingId):null;
@@ -183,8 +196,14 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
           if(job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:'sent'}}));
           sent++;
         } catch(cause:any) {
-          const status=cause.definitelyNotSent?'failed':'delivery_unknown';await store.finishMail(job.id,status,null);
-          if(job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:status}}));unknown++;
+          const definitive=cause?.definitelyNotSent===true;
+          const attempts=Number.isSafeInteger(job.attempts)?job.attempts:1;
+          const retry=definitive&&cause?.retryable===true&&attempts<3;
+          const status=retry?'queued':definitive?'failed':'delivery_unknown';
+          const retryAfterMs=Number.isSafeInteger(cause?.retryAfterMs)&&cause.retryAfterMs>=0?cause.retryAfterMs:0;
+          await store.finishMail(job.id,status,null,retry?clock()+Math.max(15*60000,retryAfterMs):undefined);
+          if(job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:status}}));
+          if(status==='delivery_unknown')unknown++;
         }
       }
       return {sent,unknown};
@@ -238,7 +257,8 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       const providerEmail=emailReady?createResendEmailAdapter(env.RESEND_API_KEY!,fetcher):null;
       const sendEmail=providerEmail?async(message:any)=>{if(await store.isEmailSuppressed(message.to)){const error:any=new BookingError('EMAIL_SUPPRESSED');error.definitelyNotSent=true;throw error;}return providerEmail(message);}:null;
       const service=createBookingService({store,tokenSecret:secret,origin,mode,payment,sendEmail,sender:env.BOOKING_EMAIL_FROM,clock});
-      const recovery=emailReady&&(env.RECOVERY_TOKEN_SECRET||'').length>=32?createRecoveryService({store:createFirestoreRecoveryStore(db),calculatePrice,sendEmail,resolveBookingForRecovery:service.resolveBookingForRecovery,publicBaseUrl:origin,sender:env.BOOKING_EMAIL_FROM!,tokenSecret:env.RECOVERY_TOKEN_SECRET!,clock}):null;
+      const remindersEnabled=env.BOOKING_RECOVERY_REMINDERS_ENABLED==='true'&&(env.RESEND_WEBHOOK_SECRET||'').length>=32;
+      const recovery=emailReady&&(env.RECOVERY_TOKEN_SECRET||'').length>=32&&(env.CRON_SECRET||'').length>=32?createRecoveryService({store:createFirestoreRecoveryStore(db),calculatePrice,sendEmail,resolveBookingForRecovery:service.resolveBookingForRecovery,publicBaseUrl:origin,sender:env.BOOKING_EMAIL_FROM!,tokenSecret:env.RECOVERY_TOKEN_SECRET!,remindersEnabled,clock}):null;
       const customerAccess=env.BOOKING_CUSTOMER_ACCESS_ENABLED==='true'&&emailReady&&Boolean(recovery);
       let auth=null;
       if(customerAccess){
@@ -262,6 +282,19 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
     if(!/^\/api\/(?:booking(?:\/|$)|bookings\/activity|recovery\/|customer\/)/.test(req.path)&&req.path!=='/recovery/unsubscribe')return next();
     privateResponse(res);
     try {
+      if(req.path==='/api/booking/maintenance') {
+        res.set('X-Robots-Tag','noindex, nofollow');
+        if(req.method!=='GET'){res.set('Allow','GET');throw new BookingError('METHOD_NOT_ALLOWED',405);}
+        const cronSecret=env.CRON_SECRET||'';
+        if(cronSecret.length<32)throw new BookingError('MAINTENANCE_NOT_CONFIGURED',503);
+        if(!timingEqual(digest(req.get('Authorization')||''),digest(`Bearer ${cronSecret}`)))throw new BookingError('UNAUTHORIZED',401);
+        const runtime=await initialize();
+        if(!runtime.service || !runtime.emailReady)throw new BookingError('EMAIL_NOT_CONFIGURED',503);
+        const deadlineAt=performance.now()+180000;
+        const booking=await runtime.service.runDue({limit:6,deadlineAt});
+        const recovery=await runtime.recovery?.runDue({limit:6,deadlineAt})||{sent:0,cancelled:0,deferred:0,failed:0,unknown:0};
+        return res.json({booking:{sent:booking.sent,unknown:booking.unknown},recovery});
+      }
       const runtime=await initialize();
       if(req.method!=='GET') {
         if(req.get('Origin')!==runtime.origin)throw new BookingError('ORIGIN_NOT_ALLOWED',403);
@@ -289,7 +322,17 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       if(req.method!=='GET' && !session)throw new BookingError('SESSION_REQUIRED',403);
       const remote=digest(req.socket.remoteAddress||'unknown');
       if(req.method!=='GET' && !await runtime.store.consumeRate(`request:${remote}`,clock(),3600000,30))throw new BookingError('TOO_MANY_REQUESTS',429);
-      if(req.path==='/api/booking/requests'&&req.method==='POST')return res.status(201).json(await runtime.service.create(req.body));
+      if(req.path==='/api/booking/requests'&&req.method==='POST') {
+        const created=await runtime.service.create(req.body);
+        let result=created;
+        try {
+          await runtime.service.runDue({jobId:`${created.bookingId}:request:1`,limit:1});
+          result=runtime.service.view(await runtime.service.authenticated(created.bookingId,created.publicToken),true);
+        } catch {
+          console.warn('[booking:email-dispatch]',{phase:'request'});
+        }
+        return res.status(201).json(result);
+      }
       const match=/^\/api\/booking\/requests\/([A-Za-z0-9_-]{1,128})(\/checkout)?$/.exec(req.path);
       if(match) {
         if(req.method==='GET'&&!match[2])return res.json(await runtime.service.read(match[1],bearer(req)));
@@ -356,7 +399,7 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       return res.json({received:true});
     }catch(cause){return res.status(cause instanceof BookingError?cause.status:503).json({code:cause instanceof BookingError?cause.code:'EMAIL_WEBHOOK_UNAVAILABLE'});}
   };
-  return {middleware:middleware as RequestHandler,webhook,emailWebhook,initialize,async runDue(){const runtime=await initialize();return {booking:await runtime.service?.runDue()||{disabled:true},recovery:await runtime.recovery?.runDue()||{disabled:true}};}};
+  return {middleware:middleware as RequestHandler,webhook,emailWebhook,initialize,async runDue(){const runtime=await initialize();const deadlineAt=performance.now()+180000;return {booking:await runtime.service?.runDue({limit:6,deadlineAt})||{disabled:true},recovery:await runtime.recovery?.runDue({limit:6,deadlineAt})||{disabled:true}};}};
 }
 
 function cookieSession(header:string,secret:string,now:number) {

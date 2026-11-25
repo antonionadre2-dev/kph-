@@ -31,7 +31,18 @@ export function createResendEmailAdapter(apiKey:string, fetcher:typeof fetch=fet
     try { response=await fetcher('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json','Idempotency-Key':message.idempotencyKey},body:JSON.stringify({from:message.from,to:[message.to],subject:message.subject,html:message.html,text:message.text}),signal:AbortSignal.timeout(10000)}); }
     catch { throw new BookingError('EMAIL_OUTCOME_UNKNOWN',503); }
     const parsed=await response.json().catch(()=>null);
-    if(!response.ok) {const error:any=new BookingError('EMAIL_PROVIDER_REJECTED',503);error.definitelyNotSent=response.status>=400 && response.status<500 && ![408,409,429].includes(response.status);throw error;}
+    if(!response.ok) {
+      const error:any=new BookingError('EMAIL_PROVIDER_REJECTED',503);
+      const retryable=response.status===429 && ['rate_limit_exceeded','daily_quota_exceeded','monthly_quota_exceeded'].includes(parsed?.name);
+      error.definitelyNotSent=retryable || (response.status>=400 && response.status<500 && ![408,409,429].includes(response.status));
+      if(retryable) {
+        const header=response.headers.get('retry-after')?.trim()||'';
+        const delay=/^\d+$/.test(header)?Number(header)*1000:0;
+        error.retryable=true;
+        error.retryAfterMs=Number.isSafeInteger(delay)&&delay>=0?delay:0;
+      }
+      throw error;
+    }
     if(typeof parsed?.id!=='string')throw new BookingError('EMAIL_OUTCOME_UNKNOWN',503);
     return {id:parsed.id};
   };

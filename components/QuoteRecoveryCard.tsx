@@ -1,7 +1,7 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { calculatePrice, type BookingSelection, type PriceQuote } from '../src/booking/pricing';
 import { bookingLineLabel, bookingText } from '../src/booking/uiCopy';
-import { fetchRecoveryEmailAvailability } from '../src/booking/emailAvailability';
+import { fetchRecoveryEmailSettings, recoveryReminderFeedbackKey } from '../src/booking/emailAvailability';
 import { recoveryCopy, recoveryLanguage, type RecoveryEmailKind } from '../src/booking/recoveryCopy';
 import { type GuidePreferences } from '../src/booking/movingGuide';
 import { journeyCopy, LANGUAGE_NAMES } from '../src/booking/journeyCopy';
@@ -27,6 +27,7 @@ type SaveState = 'idle' | 'saving' | 'preview' | 'queued' | 'sent' | 'deliveryUn
 interface RecoveryDraftResponse {
   id: string; accessToken: string; expiresAt: string;
   mailStatus: 'queued' | 'sending' | 'sent' | 'failed' | 'delivery_unknown';
+  remindersEnabled?: boolean;
 }
 const CONSENT_VERSION = 'recovery-2026-11-24';
 const EMAIL_KINDS: RecoveryEmailKind[] = ['saved', 'first', 'last'];
@@ -53,7 +54,8 @@ function validDraftResponse(value: unknown): value is RecoveryDraftResponse {
   return typeof data.id === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(data.id)
     && typeof data.accessToken === 'string' && /^[A-Za-z0-9_-]{20,512}$/.test(data.accessToken)
     && typeof data.expiresAt === 'string' && Number.isFinite(Date.parse(data.expiresAt))
-    && typeof data.mailStatus === 'string' && MAIL_STATUSES.has(data.mailStatus);
+    && typeof data.mailStatus === 'string' && MAIL_STATUSES.has(data.mailStatus)
+    && (data.remindersEnabled === undefined || typeof data.remindersEnabled === 'boolean');
 }
 
 export default function QuoteRecoveryCard({ preview, language, selection, selectedService, email, onEmailAccepted, onDraftSaved, openSignal = 0, onContinueSaved, guide, guidePreferences }: QuoteRecoveryCardProps) {
@@ -70,6 +72,7 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
   const [error, setError] = useState<'invalidEmail' | 'chooseService' | 'unavailable' | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [recoveryReady, setRecoveryReady] = useState<boolean | null>(null);
+  const [remindersReady, setRemindersReady] = useState(false);
   const [availabilityAttempt, setAvailabilityAttempt] = useState(0);
   const [emailKind, setEmailKind] = useState<RecoveryEmailKind>('saved');
   const [demoNotice, setDemoNotice] = useState(false);
@@ -90,7 +93,7 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
   previewRef.current = preview;
 
   const normalizedEmail = emailValue.trim();
-  const payload = { email: normalizedEmail, selection, language: locale, reminderConsent, consentVersion: CONSENT_VERSION, ...(guidePreferences?{guidePreferences}:{}) };
+  const payload = { email: normalizedEmail, selection, language: locale, reminderConsent: reminderConsent && (preview || remindersReady), consentVersion: CONSENT_VERSION, ...(guidePreferences?{guidePreferences}:{}) };
   const fingerprint = canonicalJson(payload);
   const fingerprintRef = useRef(fingerprint);
   fingerprintRef.current = fingerprint;
@@ -106,13 +109,15 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
   const tabLabels = [copy.savedTab, copy.firstTab, copy.lastTab];
   const isSaved = !['idle', 'saving', 'error'].includes(saveState);
   const canSave = preview || recoveryReady === true;
+  const reminderFeedbackKey = recoveryReminderFeedbackKey(preview, reminderConsent, savedRef.current?.remindersEnabled);
 
   useEffect(() => {
-    if (preview) { setRecoveryReady(null); return; }
+    if (preview) { setRecoveryReady(null); setRemindersReady(false); return; }
     const controller = new AbortController();
     setRecoveryReady(null);
-    void fetchRecoveryEmailAvailability(fetch, controller.signal).then(ready => {
-      if (!controller.signal.aborted) setRecoveryReady(ready);
+    setRemindersReady(false);
+    void fetchRecoveryEmailSettings(fetch, controller.signal).then(settings => {
+      if (!controller.signal.aborted) { setRecoveryReady(settings.available); setRemindersReady(settings.remindersEnabled); }
     });
     return () => controller.abort();
   }, [preview, availabilityAttempt]);
@@ -261,13 +266,13 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
           aria-describedby={`${identity}-privacy${error ? ` ${identity}-error` : ''}`}
           onChange={event => { setEmailValue(event.target.value); setReminderConsent(false); setAccountOptIn(false); setDemoAccount(null); setAccountOpen(false); }}
           onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); void saveQuote(); } }} />
-        <label className="kr-recovery-consent"><input type="checkbox" checked={reminderConsent} onChange={event => setReminderConsent(event.target.checked)} /><span>{copy.consent}</span></label>
+        {(preview || remindersReady) && <label className="kr-recovery-consent"><input type="checkbox" checked={reminderConsent} onChange={event => setReminderConsent(event.target.checked)} /><span>{copy.consent}</span></label>}
         <p className="kr-recovery-privacy" id={`${identity}-privacy`}>{copy.privacy}</p>
         {preview && <div className="kr-recovery-account-option"><p className="kr-space-badge">{journey.accountDemo}</p><label className="kr-recovery-consent"><input type="checkbox" checked={accountOptIn} aria-describedby={`${identity}-account-hint`} onChange={event => { setAccountOptIn(event.target.checked); if (!event.target.checked) { setDemoAccount(null); setAccountOpen(false); } }} /><span>{journey.accountOptIn}</span></label><p id={`${identity}-account-hint`}>{journey.accountHint}</p></div>}
         <button type="button" className="kr-recovery-save" disabled={saveState === 'saving'} onClick={() => void saveQuote()}>{saveState === 'saving' ? copy.saving : journey.saveProgress}</button>
         {error && <p className="kr-recovery-error" role="alert" id={`${identity}-error`}>{copy[error]}{error === 'unavailable' ? ` ${copy.retry}` : ''}</p>}
         <div aria-live="polite" aria-atomic="true">
-          {isSaved && <div className="kr-recovery-feedback"><strong>{saveState === 'preview' ? copy.previewSaved : copy[saveState as 'queued' | 'sent' | 'deliveryUnknown' | 'savedNoDelivery']}</strong><p>{preview ? (reminderConsent ? copy.previewWithReminders : copy.previewNoReminders) : (reminderConsent ? copy.liveReminderNote : copy.liveNoReminderNote)}</p>{preview && demoAccount && <p>{journey.accountDemoSaved}</p>}</div>}
+          {isSaved && <div className="kr-recovery-feedback"><strong>{saveState === 'preview' ? copy.previewSaved : copy[saveState as 'queued' | 'sent' | 'deliveryUnknown' | 'savedNoDelivery']}</strong><p>{copy[reminderFeedbackKey]}</p>{preview && demoAccount && <p>{journey.accountDemoSaved}</p>}</div>}
         </div>
         {!preview && isSaved && savedRef.current && <CustomerAccessRequest language={locale} email={normalizedEmail} recovery={savedRef.current} />}
         {preview && isSaved && demoAccount && <button type="button" className="kr-recovery-account-open" aria-haspopup="dialog" onClick={() => setAccountOpen(true)}>{journey.accountOpen}</button>}

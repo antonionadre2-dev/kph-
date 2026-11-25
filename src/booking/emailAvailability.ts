@@ -15,12 +15,29 @@ export function recoveryEmailAvailable(value: unknown): boolean {
   return config.enabled === true && config.emailReady === true;
 }
 
-export async function fetchRecoveryEmailAvailability(fetcher: typeof fetch = fetch, signal?: AbortSignal): Promise<boolean> {
+export interface RecoveryEmailSettings { available: boolean; remindersEnabled: boolean; }
+
+/** Requested quote delivery remains available independently of optional reminders. */
+export function recoveryEmailSettings(value: unknown): RecoveryEmailSettings {
+  const available = recoveryEmailAvailable(value);
+  return { available, remindersEnabled: available && (value as Record<string, unknown>).remindersEnabled === true };
+}
+
+export function recoveryReminderFeedbackKey(preview: boolean, selected: boolean, effectiveRemindersEnabled: unknown): 'previewWithReminders' | 'previewNoReminders' | 'liveReminderNote' | 'liveNoReminderNote' {
+  if (preview) return selected ? 'previewWithReminders' : 'previewNoReminders';
+  return effectiveRemindersEnabled === true ? 'liveReminderNote' : 'liveNoReminderNote';
+}
+
+export async function fetchRecoveryEmailSettings(fetcher: typeof fetch = fetch, signal?: AbortSignal): Promise<RecoveryEmailSettings> {
   try {
     const response = await fetcher('/api/recovery/config', {
       method: 'GET', credentials: 'same-origin', headers: { Accept: 'application/json' }, signal,
     });
-    if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) return false;
-    return recoveryEmailAvailable(await response.json());
-  } catch { return false; }
+    if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) return { available: false, remindersEnabled: false };
+    return recoveryEmailSettings(await response.json());
+  } catch { return { available: false, remindersEnabled: false }; }
+}
+
+export async function fetchRecoveryEmailAvailability(fetcher: typeof fetch = fetch, signal?: AbortSignal): Promise<boolean> {
+  return (await fetchRecoveryEmailSettings(fetcher, signal)).available;
 }

@@ -63,17 +63,19 @@ export function createFirestoreBookingStore(db:Firestore) {
     async addMail(job:any) {
       return db.runTransaction(async tx=>{const ref=outbox.doc(digest(job.id));if((await tx.get(ref)).exists)return false;tx.create(ref,clean(job));return true;});
     },
-    async listDueMail(now:number) {
-      return (await outbox.where('status','==','queued').where('dueAt','<=',now).orderBy('dueAt').limit(20).get()).docs.map(doc=>doc.data());
+    async listDueMail(now:number,limit=20) {
+      return (await outbox.where('status','==','queued').where('dueAt','<=',now).orderBy('dueAt').limit(Math.max(1,Math.min(20,Math.floor(limit)))).get()).docs.map(doc=>doc.data());
     },
     async claimMail(id:string, now:number):Promise<any> {
-      return db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(!current || current.status!=='queued' || current.dueAt>now)return null;const next={...current,status:'sending',leaseUntil:now+60000};tx.set(ref,next);return next;});
+      return db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(!current || current.status!=='queued' || current.dueAt>now)return null;const attempts=Number.isSafeInteger(current.attempts)&&current.attempts>=0?current.attempts:0;const next={...current,status:'sending',attempts:attempts+1,leaseUntil:now+60000};tx.set(ref,next);return next;});
     },
-    async finishMail(id:string, status:string, providerId:string|null) {
-      await db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(current?.status==='sending')tx.update(ref,{status,providerId,leaseUntil:null,...(current.kind==='customer_access'?{message:null}:{})});});
+    async finishMail(id:string, status:string, providerId:string|null, retryAt?:number) {
+      await db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(current?.status==='sending')tx.update(ref,{status,providerId,leaseUntil:null,...(status==='queued'&&Number.isSafeInteger(retryAt)?{dueAt:retryAt}:{}),...(current.kind==='customer_access'&&status!=='queued'?{message:null}:{})});});
     },
-    async markStaleMail(now:number) {
-      for(const doc of (await outbox.where('status','==','sending').where('leaseUntil','<=',now).limit(50).get()).docs) await db.runTransaction(async tx=>{
+    async markStaleMail(now:number,{limit=20,deadlineAt=Infinity}={}) {
+      for(const doc of (await outbox.where('status','==','sending').where('leaseUntil','<=',now).limit(Math.max(1,Math.min(20,Math.floor(limit)))).get()).docs) {
+        if(performance.now()+15000>=deadlineAt)break;
+        await db.runTransaction(async tx=>{
         const current=(await tx.get(doc.ref)).data();
         const bookingRef=current?.bookingId?bookings.doc(current.bookingId):null;
         const booking=bookingRef?(await tx.get(bookingRef)).data():null;
@@ -81,7 +83,8 @@ export function createFirestoreBookingStore(db:Firestore) {
           tx.update(doc.ref,{status:'delivery_unknown',...(current.kind==='customer_access'?{message:null}:{})});
           if(bookingRef&&booking&&current.kind!=='customer_access')tx.update(bookingRef,{email:{...booking.email,[current.kind]:'delivery_unknown'}});
         }
-      });
+        });
+      }
     },
     async consumeRate(key:string, now:number, windowMs:number, limit:number) {
       return db.runTransaction(async tx=>{const ref=rate.doc(digest(key)), current=(await tx.get(ref)).data();const next=current && current.expiresAt>now ? {...current,count:current.count+1} : {count:1,expiresAt:now+windowMs};tx.set(ref,next);return next.count<=limit;});

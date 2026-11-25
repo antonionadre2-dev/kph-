@@ -33,7 +33,7 @@ test('each SDK import phase logs only category booleans and permitted Node codes
       });
       diagnostics.length=0;
       const {createBookingHandlers}=require(outfile);
-      const handlers=createBookingHandlers({env:{BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'PRIVATE_TOKEN_CANARY_more-than-thirty-two-characters',FIREBASE_SERVICE_ACCOUNT_JSON:'{"private_key":"PRIVATE_CREDENTIAL_CANARY"}',BOOKING_CUSTOMER_ACCESS_ENABLED:'true',RESEND_API_KEY:'synthetic-key',BOOKING_EMAIL_FROM:'test@example.test',RECOVERY_TOKEN_SECRET:'synthetic-recovery-secret-more-than-thirty-two-characters'}});
+      const handlers=createBookingHandlers({env:{BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'PRIVATE_TOKEN_CANARY_more-than-thirty-two-characters',FIREBASE_SERVICE_ACCOUNT_JSON:'{"private_key":"PRIVATE_CREDENTIAL_CANARY"}',BOOKING_CUSTOMER_ACCESS_ENABLED:'true',RESEND_API_KEY:'synthetic-key',BOOKING_EMAIL_FROM:'test@example.test',RECOVERY_TOKEN_SECRET:'synthetic-recovery-secret-more-than-thirty-two-characters',CRON_SECRET:'PRIVATE_CRON_CANARY_more-than-thirty-two-characters'}});
       const [first,second]=await Promise.all([handlers.initialize(),handlers.initialize()]);
       assert.equal(first,second);assert.equal(first.service,null);await handlers.initialize();
       assert.deepEqual(diagnostics,[['[booking:initialize]',{
@@ -65,13 +65,14 @@ test('booking avoids Auth loading unless customer access has every prerequisite,
       }}],
     });
     const {createBookingHandlers}=require(outfile);
-    const base={BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'synthetic-booking-secret-more-than-thirty-two-characters',FIREBASE_SERVICE_ACCOUNT_JSON:'{}',RESEND_API_KEY:'synthetic-key',BOOKING_EMAIL_FROM:'test@example.test',RECOVERY_TOKEN_SECRET:'synthetic-recovery-secret-more-than-thirty-two-characters',PAYREXX_INSTANCE:'synthetic-test',PAYREXX_API_SECRET:'synthetic-provider-secret',PAYREXX_MODE:'live'};
+    const base={BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'synthetic-booking-secret-more-than-thirty-two-characters',FIREBASE_SERVICE_ACCOUNT_JSON:'{}',RESEND_API_KEY:'synthetic-key',BOOKING_EMAIL_FROM:'test@example.test',RECOVERY_TOKEN_SECRET:'synthetic-recovery-secret-more-than-thirty-two-characters',CRON_SECRET:'synthetic-cron-secret-more-than-thirty-two-characters',PAYREXX_INSTANCE:'synthetic-test',PAYREXX_API_SECRET:'synthetic-provider-secret',PAYREXX_MODE:'live'};
     for(const override of [
       {BOOKING_CUSTOMER_ACCESS_ENABLED:'false'},
       {},
       {BOOKING_CUSTOMER_ACCESS_ENABLED:'TRUE'},
       {BOOKING_CUSTOMER_ACCESS_ENABLED:'true',RECOVERY_TOKEN_SECRET:undefined},
       {BOOKING_CUSTOMER_ACCESS_ENABLED:'true',RESEND_API_KEY:undefined},
+      {BOOKING_CUSTOMER_ACCESS_ENABLED:'true',CRON_SECRET:undefined},
     ]){
       diagnostics.length=0;
       const handlers=createBookingHandlers({env:{...base,...override},fetcher:async()=>{throw new Error('Network is forbidden in this test');}});

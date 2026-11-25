@@ -11,12 +11,15 @@ export function createFirestoreRecoveryStore(db) {
   const activity = db.collection('kraken_booking_activity');
   const indexes = db.collection('kraken_recovery_idempotency');
   const getDraft = async id => data(await drafts.doc(id).get());
-  async function updateQuery(query, transform) {
+  async function updateQuery(query, transform, deadlineAt=Infinity) {
     const result = await query.get();
-    for (const doc of result.docs) await db.runTransaction(async tx => {
+    for (const doc of result.docs) {
+      if(performance.now()+15000>=deadlineAt)break;
+      await db.runTransaction(async tx => {
       const current = await tx.get(doc.ref);
       if (current.exists) { const fields=transform(current.data()); if(Object.keys(fields).length)tx.update(doc.ref,fields); }
-    });
+      });
+    }
   }
   return {
     getDraft,
@@ -78,7 +81,7 @@ export function createFirestoreRecoveryStore(db) {
       await db.runTransaction(async tx => {const ref=jobs.doc(key(id)), job=data(await tx.get(ref));if(job?.status===expectedStatus) tx.update(ref,next);});
     },
     async cancelQueued(id, remindersOnly=false) { await updateQuery(jobs.where('draft_id','==',id),job=>job.status==='queued' && (!remindersOnly || job.kind!=='saved') ? {status:'cancelled'} : {}); },
-    async markStaleSending(now) { await updateQuery(jobs.where('status','==','sending').where('lease_until','<=',now),()=>({status:'delivery_unknown',last_error_code:'DISPATCH_INTERRUPTED'})); },
+    async markStaleSending(now,{limit=20,deadlineAt=Infinity}={}) { await updateQuery(jobs.where('status','==','sending').where('lease_until','<=',now).limit(Math.max(1,Math.min(20,Math.floor(limit)))),job=>job.status==='sending'&&job.lease_until<=now?{status:'delivery_unknown',last_error_code:'DISPATCH_INTERRUPTED'}:{},deadlineAt); },
     async upsertActivity(event) {
       return db.runTransaction(async tx => {
         const ref=activity.doc(event.bookingKey), current=data(await tx.get(ref));
@@ -90,15 +93,23 @@ export function createFirestoreRecoveryStore(db) {
       const result=await activity.where('visible','==',true).where('occurred_at','<=',now).orderBy('occurred_at').orderBy('id').startAfter(after.time,after.id).limit(limit).get();
       return result.docs.map(doc=>doc.data()).filter(row=>row.expires_at>now && row.occurred_at<=now && (row.occurred_at>after.time || row.id>after.id)).sort((a,b)=>a.occurred_at-b.occurred_at || a.id.localeCompare(b.id)).slice(0,limit);
     },
-    async purge(now) {
-      const expired=await drafts.where('expiresAt','<=',now).limit(100).get();
+    async purge(now,{limit=20,deadlineAt=Infinity}={}) {
+      const batchLimit=Math.max(1,Math.min(20,Math.floor(limit)));
+      if(performance.now()+15000>=deadlineAt)return;
+      const expired=await drafts.where('expiresAt','<=',now).limit(batchLimit).get();
       for(const draft of expired.docs) {
+        if(performance.now()+15000>=deadlineAt)return;
         const pending=await jobs.where('draft_id','==',draft.id).get();
         const batch=db.batch();for(const job of pending.docs)batch.delete(job.ref);
         batch.delete(indexes.doc(key(draft.data().idempotencyKey)));batch.delete(draft.ref);await batch.commit();
       }
-      for(const doc of (await rates.where('expires_at','<=',now).limit(100).get()).docs) await doc.ref.delete();
-      await updateQuery(activity.where('visible','==',true).where('expires_at','<=',now),()=>({visible:false,service:null,region:null}));
+      if(performance.now()+15000>=deadlineAt)return;
+      for(const doc of (await rates.where('expires_at','<=',now).limit(batchLimit).get()).docs) {
+        if(performance.now()+15000>=deadlineAt)return;
+        await doc.ref.delete();
+      }
+      if(performance.now()+15000>=deadlineAt)return;
+      await updateQuery(activity.where('visible','==',true).where('expires_at','<=',now).limit(batchLimit),()=>({visible:false,service:null,region:null}),deadlineAt);
     }
   };
 }

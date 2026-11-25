@@ -40,7 +40,7 @@ export function createRecoveryHandler({service=null,publicBaseUrl,authorizeCaptu
     const url=new URL(request.url);
     if(!url.pathname.startsWith('/api/recovery/') && url.pathname!=='/api/bookings/activity' && url.pathname!=='/recovery/unsubscribe') return null;
     try {
-      if(url.pathname==='/api/recovery/config' && request.method==='GET') return json(service ? {...service.config,enabled:typeof authorizeCapture==='function'} : {enabled:false,emailReady:false,socialProofReady:false,consentVersion:CONSENT_VERSION});
+      if(url.pathname==='/api/recovery/config' && request.method==='GET') return json(service ? {...service.config,enabled:typeof authorizeCapture==='function'} : {enabled:false,emailReady:false,socialProofReady:false,remindersEnabled:false,consentVersion:CONSENT_VERSION});
       if(url.pathname==='/api/bookings/activity' && request.method==='GET') {
         if(!service) return json({events:[],cursor:null});
         const cursor=url.searchParams.get('cursor');
@@ -58,7 +58,11 @@ export function createRecoveryHandler({service=null,publicBaseUrl,authorizeCaptu
         if(headerKey && headerKey!==body.idempotencyKey) throw new RecoveryError('IDEMPOTENCY_MISMATCH');
         const context=await authorizeCapture(request,body);
         if(!context) throw new RecoveryError('CAPTURE_VERIFICATION_REQUIRED',403);
-        return json(await service.capture(body,context),201);
+        const captured=await service.capture(body,context);
+        let mailStatus=['queued','sending','sent','failed','delivery_unknown'].includes(captured.mailStatus)?captured.mailStatus:'queued';
+        try {mailStatus=await service.sendSaved(captured.id);}
+        catch {console.warn('[recovery:email-dispatch]',{phase:'saved'});}
+        return json({...captured,mailStatus},201);
       }
       if(url.pathname==='/api/recovery/unsubscribe' && request.method==='POST') {
         const body=await readBody(request); return json(await service.unsubscribe(body.id,body.token));

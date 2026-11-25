@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { bookingMailStatusKey, fetchRecoveryEmailAvailability, recoveryEmailAvailable } from '../src/booking/emailAvailability.ts';
+import { bookingMailStatusKey, fetchRecoveryEmailAvailability, fetchRecoveryEmailSettings, recoveryEmailAvailable, recoveryEmailSettings, recoveryReminderFeedbackKey } from '../src/booking/emailAvailability.ts';
 import { bookingText } from '../src/booking/uiCopy.ts';
 
 test('unavailable email never turns queued requests or receipts into a preparation or sent notice', () => {
@@ -36,6 +36,42 @@ test('saved quote recovery requires both explicit recovery enablement and email 
   assert.equal(recoveryEmailAvailable({ enabled: true, emailReady: true }), true);
   // A configured booking mail provider with no recovery secret is still blocked.
   assert.equal(recoveryEmailAvailable({ available: true, emailReady: true, enabled: false }), false);
+});
+
+test('requested quote email remains available independently of optional reminder enablement', () => {
+  for (const remindersEnabled of [undefined, false, null, 'true', 1]) {
+    assert.deepEqual(recoveryEmailSettings({ enabled: true, emailReady: true, remindersEnabled }), { available: true, remindersEnabled: false });
+  }
+  assert.deepEqual(recoveryEmailSettings({ enabled: true, emailReady: true, remindersEnabled: true }), { available: true, remindersEnabled: true });
+  for (const config of [null, {}, [], { enabled: false, emailReady: true, remindersEnabled: true }, { enabled: true, emailReady: false, remindersEnabled: true }]) {
+    assert.deepEqual(recoveryEmailSettings(config), { available: false, remindersEnabled: false });
+  }
+});
+
+test('live reminder feedback trusts the captured result rather than stale checkbox selection', () => {
+  for (const selected of [false, true]) {
+    for (const effective of [undefined, false, null, 'true', 1]) {
+      assert.equal(recoveryReminderFeedbackKey(false, selected, effective), 'liveNoReminderNote');
+    }
+    assert.equal(recoveryReminderFeedbackKey(false, selected, true), 'liveReminderNote');
+  }
+  assert.equal(recoveryReminderFeedbackKey(true, true, false), 'previewWithReminders');
+  assert.equal(recoveryReminderFeedbackKey(true, false, true), 'previewNoReminders');
+});
+
+test('recovery configuration loader retains requested email access while reminders are disabled', async () => {
+  let calls = 0;
+  const fetcher = (async (input, options) => {
+    calls++;
+    assert.equal(input, '/api/recovery/config');
+    assert.equal(options?.method, 'GET');
+    assert.equal(options?.body, undefined);
+    return Response.json({ enabled: true, emailReady: true, remindersEnabled: false });
+  }) as typeof fetch;
+  assert.deepEqual(await fetchRecoveryEmailSettings(fetcher), { available: true, remindersEnabled: false });
+  assert.equal(await fetchRecoveryEmailAvailability(fetcher), true, 'existing Boolean callers still see requested quote email as available');
+  assert.equal(calls, 2);
+  assert.deepEqual(await fetchRecoveryEmailSettings((async () => new Response('', { status: 503 })) as typeof fetch), { available: false, remindersEnabled: false });
 });
 
 test('recovery availability loader uses GET only and fails closed on HTTP, JSON and network errors', async () => {

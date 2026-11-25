@@ -23,7 +23,7 @@ function checkedQuote(quote) {
 }
 
 /** No provider or database is configured implicitly. This module never calls an external API by itself. */
-export function createRecoveryService({ store, sendEmail, calculatePrice, resolveBookingForRecovery, publicBaseUrl, sender, tokenSecret, clock=Date.now, requirePaidSocialProof=true }) {
+export function createRecoveryService({ store, sendEmail, calculatePrice, resolveBookingForRecovery, publicBaseUrl, sender, tokenSecret, clock=Date.now, requirePaidSocialProof=true, remindersEnabled=false }) {
   if (!store || typeof sendEmail !== 'function' || typeof calculatePrice !== 'function') throw new Error('RECOVERY_ADAPTERS_REQUIRED');
   const origin = new URL(publicBaseUrl).origin;
   if (!origin.startsWith('https://') || typeof sender !== 'string' || /[\r\n]/.test(sender) || !sender.includes('@')) throw new Error('VERIFIED_HTTPS_ORIGIN_AND_SENDER_REQUIRED');
@@ -53,7 +53,7 @@ export function createRecoveryService({ store, sendEmail, calculatePrice, resolv
   }
   function exposed(draft) {
     return { id:draft.id,email:draft.email,language:draft.language,selection:draft.selection,guidePreferences:cleanGuidePreferences(draft.guidePreferences),quote:draft.quote,
-      stage:draft.stage,bookingId:draft.bookingId || null,reminderConsent:draft.reminderConsent,expiresAt:new Date(draft.expiresAt).toISOString() };
+      stage:draft.stage,bookingId:draft.bookingId || null,reminderConsent:remindersEnabled===true && draft.reminderConsent,expiresAt:new Date(draft.expiresAt).toISOString() };
   }
   async function capture(input, context) {
     const value=normaliseCapture(input);
@@ -73,10 +73,10 @@ export function createRecoveryService({ store, sendEmail, calculatePrice, resolv
       try { quote=checkedQuote(await calculatePrice(value.selection)); }
       catch(cause) { if(cause instanceof RecoveryError) throw cause; throw new RecoveryError('INVALID_SELECTION'); }
       const id=randomId(); const accessToken=await accessFor(id);
-      const reminderConsent=value.reminderConsent && !suppressed;
+      const reminderConsent=remindersEnabled===true && value.reminderConsent && !suppressed;
       const record={id,idempotencyKey,fingerprint,emailHash,email:value.email,language:value.language,selection:value.selection,guidePreferences:value.guidePreferences,quote,
         accessHash:await hash(accessToken),createdAt:now,expiresAt:now+DRAFT_TTL_MS,status:'active',stage:'quote',lastActivityAt:now,
-        reminderConsent,consentVersion:value.consentVersion,consentedAt:value.reminderConsent ? now : null,
+        reminderConsent,consentVersion:reminderConsent ? value.consentVersion : null,consentedAt:reminderConsent ? now : null,
         consentSource:'quote-save-explicit',requestedEmailAt:now,version:1};
       const jobs=[{id:`${id}:saved`,kind:'saved',dueAt:now}];
       if(reminderConsent) for(const kind of ['reminder1','reminder2']) jobs.push({id:`${id}:${kind}`,kind,dueAt:reminderDue(kind,now)});
@@ -84,7 +84,7 @@ export function createRecoveryService({ store, sendEmail, calculatePrice, resolv
       if(!equal(draft.fingerprint,fingerprint)) throw new RecoveryError('IDEMPOTENCY_CONFLICT',409);
     }
     const job=await store.getJob(`${draft.id}:saved`);
-    return {id:draft.id,accessToken:await accessFor(draft.id),expiresAt:new Date(draft.expiresAt).toISOString(),mailStatus:job?.status || 'failed',remindersEnabled:draft.reminderConsent};
+    return {id:draft.id,accessToken:await accessFor(draft.id),expiresAt:new Date(draft.expiresAt).toISOString(),mailStatus:job?.status || 'failed',remindersEnabled:remindersEnabled===true && draft.reminderConsent};
   }
   async function resolveBooking(draft) {
     if(!draft.bookingId) return {draft,resumeBooking:null};
@@ -186,16 +186,22 @@ export function createRecoveryService({ store, sendEmail, calculatePrice, resolv
     const last=rows.at(-1);
     return {events,cursor:last ? base64url(encoder.encode(JSON.stringify([last.occurred_at,last.id]))) : cursor};
   }
-  async function runDue({limit=20}={}) {
+  async function runDue({limit=20,jobId,deadlineAt=Infinity}={}) {
     const now=clock();
-    await store.markStaleSending(now);
-    await store.purge(now);
     const report={sent:0,cancelled:0,deferred:0,failed:0,unknown:0};
-    for(const candidate of await store.listDue(now,limit)) {
+    const batch=Math.max(0,Math.min(20,Math.floor(limit)));
+    if(!batch || performance.now()>=deadlineAt)return report;
+    // A saved quote is sent only by its own capture request, without a global scan.
+    if(!jobId){await store.markStaleSending(now,{limit:batch,deadlineAt});await store.purge(now,{limit:batch,deadlineAt});}
+    const candidates=jobId?[await store.getJob(jobId)].filter(Boolean):await store.listDue(now,batch);
+    const sentSavedDrafts=new Set(),attemptedReminders=new Set();
+    for(const candidate of candidates.slice(0,batch)) {
+      if(performance.now()+15000>=deadlineAt)break;
       if(!await store.claimJob(candidate.id,now)) continue;
       let draft=await store.getDraft(candidate.draft_id);
       const cancel=async()=>{await store.markJob(candidate.id,'sending',{status:'cancelled',lease_until:null});report.cancelled++;};
       if(!draft || draft.status!=='active' || draft.expiresAt<=now) {await cancel();continue;}
+      if(candidate.kind!=='saved' && remindersEnabled!==true) {await cancel();continue;}
       if(draft.bookingId) {
         try { draft=(await resolveBooking(draft)).draft; }
         catch {
@@ -208,10 +214,14 @@ export function createRecoveryService({ store, sendEmail, calculatePrice, resolv
       }
       if(candidate.kind!=='saved') {
         if(!draft.reminderConsent || await store.isSuppressed(draft.emailHash)) {await cancel();continue;}
+        const saved=await store.getJob(`${draft.id}:saved`);
+        if(saved?.status!=='sent' || sentSavedDrafts.has(draft.id)) {
+          await store.markJob(candidate.id,'sending',{status:'queued',due_at:now+HOUR_MS,lease_until:null});report.deferred++;continue;
+        }
         const first=await store.getJob(`${draft.id}:reminder1`);
         const firstSent=first?.status==='sent' ? first.sent_at : null;
-        const due=Math.max(reminderDue(candidate.kind,draft.lastActivityAt,firstSent),isServiceWindow(now) ? 0 : nextServiceWindow(now));
-        if(due>now || (candidate.kind==='reminder2' && first?.status!=='sent')) {
+        const due=Math.max(reminderDue(candidate.kind,draft.lastActivityAt,firstSent),(saved.sent_at||0)+4*HOUR_MS,isServiceWindow(now) ? 0 : nextServiceWindow(now));
+        if(due>now || attemptedReminders.has(draft.id) || (candidate.kind==='reminder2' && first?.status!=='sent')) {
           await store.markJob(candidate.id,'sending',{status:'queued',due_at:Math.max(due,now+HOUR_MS),lease_until:null});report.deferred++;continue;
         }
       }
@@ -221,22 +231,25 @@ export function createRecoveryService({ store, sendEmail, calculatePrice, resolv
       // Check again after rendering and before the irreversible provider call.
       draft=await store.getDraft(draft.id);
       if(!draft || draft.status!=='active' || draft.expiresAt<=clock() || (candidate.kind!=='saved' && (!draft.reminderConsent || await store.isSuppressed(draft.emailHash)))) {await cancel();continue;}
+      if(candidate.kind!=='saved')attemptedReminders.add(draft.id);
       try {
         const result=await sendEmail({from:sender,to:draft.email,...rendered,idempotencyKey:`kraken-recovery:${candidate.id}`,tags:{draftId:draft.id,kind:candidate.kind}});
         if(!result || typeof result.id!=='string' || !result.id || result.id.length>200) throw new Error('UNCERTAIN_PROVIDER_RESULT');
-        await store.markJob(candidate.id,'sending',{status:'sent',provider_id:result.id,sent_at:clock(),lease_until:null});report.sent++;
+        await store.markJob(candidate.id,'sending',{status:'sent',provider_id:result.id,sent_at:clock(),lease_until:null});if(candidate.kind==='saved')sentSavedDrafts.add(draft.id);report.sent++;
       } catch(cause) {
         // Unknown outcomes must be reconciled with the provider, never blindly retried.
         const definitive=cause?.definitelyNotSent===true;
         const job=await store.getJob(candidate.id);
         const retry=definitive && cause?.retryable===true && job.attempts<3;
         const status=retry ? 'queued' : definitive ? 'failed' : 'delivery_unknown';
-        await store.markJob(candidate.id,'sending',{status,due_at:clock()+15*60_000,lease_until:null,last_error_code:definitive?'PROVIDER_REJECTED':'PROVIDER_OUTCOME_UNKNOWN'});
+        const retryAfterMs=typeof cause?.retryAfterMs==='number'&&Number.isFinite(cause.retryAfterMs)&&cause.retryAfterMs>=0?cause.retryAfterMs:0;
+        await store.markJob(candidate.id,'sending',{status,due_at:clock()+Math.max(15*60_000,retryAfterMs),lease_until:null,last_error_code:definitive?'PROVIDER_REJECTED':'PROVIDER_OUTCOME_UNKNOWN'});
         if(status==='delivery_unknown') report.unknown++; else report.failed++;
       }
     }
     return report;
   }
   return {capture,read,activity,withdrawConsent,unsubscribe,suppressEmail,stopDraft,attachCheckout,linkBooking,recordBookingEvent,publicActivity,runDue,
-    config:{enabled:true,emailReady:true,socialProofReady:true,consentVersion:CONSENT_VERSION}};
+    async sendSaved(id){await runDue({jobId:`${id}:saved`,limit:1});const status=(await store.getJob(`${id}:saved`))?.status;return ['queued','sending','sent','delivery_unknown'].includes(status)?status:'failed';},
+    config:{enabled:true,emailReady:true,socialProofReady:true,remindersEnabled:remindersEnabled===true,consentVersion:CONSENT_VERSION}};
 }

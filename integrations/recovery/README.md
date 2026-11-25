@@ -17,17 +17,19 @@ Este paquete implementa el núcleo de servidor, persistencia SQL, colas de email
 1. El visitante ya puede ver su precio. Elige **guardar su selección y recibirla por email**. No se exige crear una cuenta.
 2. Se solicita únicamente email, servicio/selección e idioma. La casilla de recordatorios empieza vacía y es independiente del email solicitado.
 3. `POST /api/recovery/drafts` valida el precio en servidor, guarda el draft y añade el email solicitado al outbox.
-4. Solo con consentimiento `recovery-2026-11-24`, se programan hasta dos recordatorios: después de 4 y 24 horas de inactividad. El segundo también respeta al menos 20 horas desde el primero. Es un punto de partida que se debe medir; no una promesa de máxima conversión.
+4. Los recordatorios están desactivados por defecto. Solo se programan con el gate operativo habilitado y consentimiento `recovery-2026-11-24`. Los mínimos internos son 4 y 24 horas de inactividad, y al menos 20 horas desde el primer envío para el segundo. El cron de producción es diario; la interfaz comunica próximos días, sin prometer horas exactas.
 5. Los recordatorios se envían únicamente entre 09:00 y 19:00 de Zürich. La zona IANA cubre CET/CEST. El email que el usuario acaba de pedir se puede despachar inmediatamente.
 6. Una solicitud enviada al negocio queda en `awaiting_confirmation`: se suspenden los recordatorios comerciales mientras Kraken debe confirmar la cita.
 7. Solo el backend de reservas puede habilitar `payment_ready`, al confirmar `canCheckout`, modo `live`, estado `confirmed` y un `holdExpiresAt` futuro. Los enlaces reabren el booking existente y piden su estado actual; no reutilizan un enlace Payrexx caducado.
-8. Pago, finalización, cancelación, devolución, baja, rebote o queja detienen los recordatorios correspondientes. No se añade un descuento adicional al ahorro hipotético de IVA.
+8. Pago, finalización, cancelación, devolución y baja detienen los recordatorios correspondientes. La supresión local por rebote o queja necesita recibir el evento autenticado del proveedor; no se presupone seguimiento si ese flujo no está conectado. No se añade un descuento adicional al ahorro hipotético de IVA.
 
 Las dos oportunidades de recordatorio pertenecen al mismo draft; no se reinician al pasar de formulario a pago. No se prometen cupos, fechas, precios congelados ni reservas inexistentes.
 
 ## Activación en el backend de producción
 
 Reutilizar el backend y proveedor de email reales de Kraken. Aplicar la migración en una base D1/SQLite autorizada; no aplicarla sobre una tabla de producción sin su proceso de despliegue. El adapter D1 usa `prepare().bind()`, `first()`, `all()`, `run()` y `batch()`; las operaciones de batch deben ser transacciones.
+
+En producción, guardar un presupuesto y enviar el correo solicitado funcionan sin recordatorios. Para estos últimos, el runtime exige `BOOKING_RECOVERY_REMINDERS_ENABLED=true` y `RESEND_WEBHOOK_SECRET` válido. No habilitar el flag hasta disponer de eventos de rebote/queja autenticados y aislados para Kraken. Una cuenta compartida sin filtro de dominio no justifica dirigir los eventos de otros dominios a esta web. Mientras el gate esté desactivado no se crean ni envían recordatorios, incluidos los jobs antiguos; el opt-in no se muestra. El cron diario de Hobby sigue atendiendo los envíos solicitados y su mantenimiento.
 
 ```js
 import { createD1RecoveryStore } from './integrations/recovery/d1-store.mjs';
@@ -43,6 +45,7 @@ const recovery = createRecoveryService({
   publicBaseUrl: 'https://krakenpfm.ch',
   sender: env.RECOVERY_EMAIL_FROM,
   tokenSecret: env.RECOVERY_TOKEN_SECRET, // aleatorio, >= 32 bytes, solo servidor
+  remindersEnabled: false, // activar únicamente con el flujo de eventos del proveedor preparado
 });
 const handleRecovery = createRecoveryHandler({
   service: recovery,
@@ -54,15 +57,16 @@ const handleRecovery = createRecoveryHandler({
 const response = await handleRecovery(request);
 if (response) return response;
 
-// En un job autenticado del backend, cada cinco minutos:
-await recovery.runDue({ limit: 20 });
+// Ejemplo del núcleo para un worker autenticado; no activa un scheduler externo.
+// El runtime Kraken usa el cron diario de vercel.json y un batch/presupuesto compartido.
+await recovery.runDue({ limit: 6 });
 ```
 
 `verifyCaptureChallenge(request, body)` debe validar el control antiabuso real y devolver `{rateKey}` derivado en servidor de un identificador fiable; no copiar una cabecera arbitraria del cliente. Se aplican además límites persistentes: 3 capturas por email/hora, 5 por email/día y 20 por origen/hora. Los reintentos idempotentes no consumen otra captura. Sin este adapter, la captura HTTP queda deshabilitada. Para recuperar una configuración no preparada, `createRecoveryHandler()` responde con configuración deshabilitada y actividad vacía, sin simular envíos.
 
 `sendEmail(message)` recibe `{from,to,subject,html,text,idempotencyKey,tags}`. Debe aceptar un `idempotencyKey` estable y devolver `{id}` solo cuando el proveedor haya aceptado el mensaje. `sent` significa aceptado por el proveedor, no que haya llegado a la bandeja de entrada. Una excepción normal se considera resultado incierto y queda `delivery_unknown`, sin reintento automático. Solo un error que garantice que no se envió puede marcar `definitelyNotSent:true`; `retryable:true` permite hasta tres intentos en total. Un lease interrumpido también se conserva como resultado incierto para reconciliación. Verificar las firmas de los webhooks de rebote/queja antes de llamar a `suppressEmail`.
 
-No hay un endpoint público de scheduler, administración, webhook, `stopDraft` ni `recordBookingEvent`. Se invocan desde el backend autenticado existente. No se ha creado ningún job ni enviado mensajes desde este paquete.
+El núcleo aislado no registra un endpoint de scheduler, administración o webhook. El runtime actual de Kraken añade GET `/api/booking/maintenance`, protegido por `CRON_SECRET`, y el cron diario de `vercel.json`. Las rutas de solicitud, recibo y captura despachan únicamente su propio job y esperan el intento. `stopDraft` y `recordBookingEvent` siguen siendo operaciones internas del backend. Las pruebas del paquete no activan jobs externos ni envían mensajes reales.
 
 ## API de navegador
 
@@ -70,7 +74,7 @@ Todas las respuestas contienen `Cache-Control: no-store`. Los POST/PATCH requier
 
 | Método y ruta | Contrato |
 | --- | --- |
-| `GET /api/recovery/config` | `{enabled,emailReady,socialProofReady,consentVersion}` |
+| `GET /api/recovery/config` | `{enabled,emailReady,socialProofReady,remindersEnabled,consentVersion}` |
 | `POST /api/recovery/drafts` | Body `{email,selection,language,guidePreferences?,reminderConsent,consentVersion:'recovery-2026-11-24',idempotencyKey}`. Cabecera `Idempotency-Key` opcional, coincidente. Devuelve `{id,accessToken,expiresAt,mailStatus,remindersEnabled}`. |
 | `GET /api/recovery/drafts/:id` | `Authorization: Bearer <accessToken>`. Devuelve `{id,email,language,selection,guidePreferences,quote,stage,bookingId,reminderConsent,expiresAt,resumeBooking}`. |
 | `POST /api/recovery/drafts/:id/activity` | Bearer + `{selection?,language?,guidePreferences?}`. Actualiza última actividad; revalida el presupuesto cuando llega una nueva selección. `language` admite exactamente `de`, `en`, `es`, `fr`, `it` o `pt`; cualquier otro valor se rechaza sin guardar cambios. También acepta PATCH. Serializar/debouncear estos updates en el cliente. |
