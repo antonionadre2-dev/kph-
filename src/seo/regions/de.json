@@ -1,0 +1,468 @@
+[
+  {
+    "id": "zuerich",
+    "city": "Zürich",
+    "slug": "/reinigung/region-zuerich",
+    "seo": {
+      "title": "Reinigung Zürich & kleine Umzüge | Kraken PFM",
+      "description": "Fenster, Wohnungsreinigung und kleine Umzüge in Zürich. Persönlich abgestimmt, ohne MwSt. auf der Rechnung. Leistung wählen und Preis im Rechner ansehen.",
+      "primaryIntent": "Private Haushalte suchen eine Reinigungsfirma in Zürich für einen klar umrissenen Auftrag.",
+      "secondaryKeywords": [
+        "Reinigung Zürich",
+        "Reinigungsfirma Zürich Privathaushalt",
+        "Fensterreinigung Zürich",
+        "Umzugsreinigung Zürich",
+        "Wohnungsreinigung Zürich",
+        "kleiner Umzug Zürich"
+      ],
+      "keywordNote": "Use naturally in the page title, H1, relevant service headings, body and internal-link labels. Do not output this list as a keyword block."
+    },
+    "eyebrow": "Für Ihr Zuhause in Zürich",
+    "h1": "Reinigung und kleine Umzüge in Zürich. Gut geplant, persönlich begleitet.",
+    "intro": [
+      "Ein paar Fenster, eine Wohnung vor der Übergabe oder Kartons, die in das neue Zuhause sollen: Sie müssen keinen grossen Auftrag haben, um Hilfe zu bekommen. Kraken unterstützt Privathaushalte in Zürich mit fünf klaren Leistungen. Sie wählen, was Sie brauchen. Wir stimmen den Umfang mit Ihnen ab.",
+      "Unser Standort ist in Schaffhausen. Ihren Einsatz in Zürich planen wir mit Adresse, Zugang und gewünschtem Termin. So gehören Stockwerk, Lift und der Weg vom Fahrzeug zur Haustür von Anfang an zur Vorbereitung."
+    ],
+    "heroFacts": [
+      "Kleine Aufträge willkommen",
+      "Persönliche Abstimmung",
+      "Keine MwSt. auf der Rechnung"
+    ],
+    "cta": {
+      "label": "Meinen Auftrag in Zürich berechnen",
+      "href": "/quote?lang=de",
+      "city": "Zürich"
+    },
+    "servicesTitle": "Welche Aufgabe möchten Sie abgeben?",
+    "servicesIntro": "Wählen Sie eine Leistung nach Ihrem Anlass. Im Rechner ergänzen Sie die Details, die den tatsächlichen Aufwand bestimmen.",
+    "services": [
+      {
+        "id": "windows",
+        "title": "Fensterreinigung in Zürich",
+        "body": "Wenn Glas und Rahmen wieder gründlich sauber werden sollen, erfassen Sie Anzahl und Art der Fenster. Balkontüren, Dachfenster, Storen oder schwer erreichbare Stellen nennen Sie zusätzlich. Für die Planung ist wichtig, welche Flächen von innen und aussen sicher zugänglich sind.",
+        "ctaLabel": "Meine Fenster erfassen"
+      },
+      {
+        "id": "moveout",
+        "title": "Umzugsreinigung vor der Wohnungsübergabe",
+        "body": "Nach dem Ausräumen kümmern wir uns um die vereinbarte Endreinigung. Zimmerzahl, Fläche, Zustand und Übergabetermin helfen uns, Küche, Bad, Fenster und Böden passend einzuplanen. Die Abnahmegarantie bezieht sich auf die vertraglich vereinbarten Reinigungsleistungen; den genauen Umfang klären wir vor dem Auftrag.",
+        "ctaLabel": "Meine Umzugsreinigung planen"
+      },
+      {
+        "id": "regular",
+        "title": "Regelmässige Wohnungsreinigung",
+        "body": "Sie wünschen wiederkehrende Unterstützung für Bad, Küche, Oberflächen und Böden? Wir stimmen Aufgaben und Rhythmus auf Ihren Haushalt ab. Nennen Sie uns Ihre Prioritäten und weisen Sie auf empfindliche Materialien hin. So wissen wir, was bei jedem Besuch wichtig ist und welche Zusatzaufgaben separat eingeplant werden sollen.",
+        "ctaLabel": "Meinen Reinigungsrhythmus wählen"
+      },
+      {
+        "id": "deep",
+        "title": "Grundreinigung für einen frischen Start",
+        "body": "Eine einmalige, gründliche Reinigung hilft dort, wo die alltägliche Pflege nicht ausreicht. Beschreiben Sie die betroffenen Räume, Ablagerungen und gewünschten Arbeiten. Fotos können die Einschätzung erleichtern. Wir legen den Umfang fest, bevor aus einem kleinen Anliegen ein unklarer Auftrag wird.",
+        "ctaLabel": "Meine Grundreinigung zusammenstellen"
+      },
+      {
+        "id": "moving",
+        "title": "Kleine Umzüge und Möbeltransporte",
+        "body": "Für ein WG-Zimmer, eine kompakte Wohnung oder einzelne Möbel planen wir den Transport mit unserem Ford Transit. Geben Sie Gegenstände, Abhol- und Zieladresse sowie beide Zugänge an. Masse grosser Möbel, Treppen und Tragewege entscheiden mit darüber, wie der Auftrag durchgeführt werden kann.",
+        "ctaLabel": "Meinen kleinen Umzug berechnen"
+      }
+    ],
+    "planning": {
+      "title": "In Zürich beginnt ein guter Einsatz vor der Haustür.",
+      "intro": "Bei Reinigung und Transport spart eine klare Vorbereitung Rückfragen. Diese vier Angaben helfen uns, Ihren Auftrag passend zu planen.",
+      "steps": [
+        {
+          "title": "Zugang beschreiben",
+          "body": "Nennen Sie Stockwerk, Lift, Treppen und mögliche Engstellen. Bei Möbeln sind auch die Masse von Türen und Lift hilfreich. Teilen Sie uns mit, ob eine Zufahrt oder ein Zugang nur zu bestimmten Zeiten möglich ist."
+        },
+        {
+          "title": "Haltemöglichkeit früh prüfen",
+          "body": "Wo kann das Fahrzeug zulässig stehen, und wie lang ist der Trageweg? Falls öffentliche Parkfelder für den Umzug gebraucht werden, bietet die Stadt Zürich eine Parkplatzreservation unter bestimmten Voraussetzungen an. Prüfen Sie die aktuellen Bedingungen und Vorlaufzeiten direkt bei der Stadt.",
+          "sourceIds": [
+            "zh-parking"
+          ]
+        },
+        {
+          "title": "Transport, Reinigung und Übergabe ordnen",
+          "body": "Sollen Umzug und Endreinigung zusammenpassen, nennen Sie alle relevanten Termine. Eine leere Wohnung erleichtert die Reinigung der vereinbarten Flächen. Planen Sie zwischen den Schritten ausreichend Zeit ein und klären Sie, wer Zugang und Schlüsselübergabe übernimmt."
+        },
+        {
+          "title": "Adressänderung separat erledigen",
+          "body": "Die Buchung eines Umzugs ersetzt keine Meldung Ihrer neuen Adresse. Für einen Wohnungswechsel innerhalb der Stadt stellt Zürich einen eigenen Online-Service bereit. Bei Zu- oder Wegzug prüfen Sie das dafür passende Verfahren der zuständigen Gemeinde.",
+          "sourceIds": [
+            "zh-address"
+          ]
+        }
+      ]
+    },
+    "why": {
+      "title": "Ein überschaubarer Auftrag verdient volle Aufmerksamkeit.",
+      "body": "Kraken ist auf Hilfe ausgerichtet, die im privaten Alltag einen Unterschied macht. Antonio und unser kleines, erfahrenes Team stimmen die Arbeit persönlich mit Ihnen ab. Sie brauchen keine umfangreiche Hausbetreuung zu buchen, wenn Sie eine konkrete Aufgabe abgeben möchten.",
+      "points": [
+        {
+          "title": "Der Umfang steht im Mittelpunkt",
+          "body": "Sie bestimmen, welche Leistung gebraucht wird. Besondere Wünsche, Zugänge und zusätzliche Arbeiten werden bei der Planung sichtbar."
+        },
+        {
+          "title": "Keine Mehrwertsteuer auf der Rechnung",
+          "body": "Kraken ist derzeit nicht mehrwertsteuerpflichtig und berechnet keine MwSt. Für Ihren Vergleich zählt der Gesamtpreis für denselben Leistungsumfang; Ihren Auftrag stellen Sie im Rechner zusammen."
+        },
+        {
+          "title": "Persönlich erreichbar",
+          "body": "Bei Fragen erreichen Sie uns von Montag bis Sonntag zwischen 09:00 und 19:00 Uhr. Die Ausführung und den gewünschten Termin stimmen wir gesondert mit Ihnen ab."
+        }
+      ]
+    },
+    "localResourcesTitle": "Nützliche Links für Ihren Umzug in Zürich",
+    "localResources": [
+      {
+        "label": "Parkplätze für einen Umzug reservieren",
+        "url": "https://www.stadt-zuerich.ch/de/stadtleben/notfall/standorte-der-stadtpolizei/parkplatzreservation.html",
+        "description": "Offizielle Voraussetzungen, Vorlaufzeiten und Reservationsformular der Stadt Zürich.",
+        "sourceId": "zh-parking"
+      },
+      {
+        "label": "Wohnungswechsel innerhalb von Zürich melden",
+        "url": "https://www.stadt-zuerich.ch/eumzug",
+        "description": "Der städtische Online-Service für eine Adressänderung innerhalb der Stadt.",
+        "sourceId": "zh-address"
+      }
+    ],
+    "faqTitle": "Fragen zu Ihrem Auftrag in Zürich",
+    "faqs": [
+      {
+        "question": "Übernimmt Kraken auch nur die Fenster einer Wohnung?",
+        "answer": "Ja, Fensterreinigung kann als eigene Leistung geplant werden. Erfassen Sie Ihre Fenster im Rechner und nennen Sie Storen oder schwierige Zugänge zusätzlich. Dort sehen Sie die für Ihren Auftrag geltenden Konditionen."
+      },
+      {
+        "question": "Was muss ich bei einem Umzug ohne Lift angeben?",
+        "answer": "Geben Sie das Stockwerk an beiden Adressen, die Treppensituation und die grössten Gegenstände an. Fotos und Masse helfen bei engen Stellen. Auch die Strecke vom Parkplatz bis zur Wohnung gehört zur Planung."
+      },
+      {
+        "question": "Kann ich Umzug und Endreinigung aufeinander abstimmen?",
+        "answer": "Ja. Teilen Sie uns Abhol-, Einzugs- und Übergabetermin sowie den gewünschten Reinigungsumfang mit. Wir klären die Reihenfolge und Verfügbarkeit, damit Transport, Reinigung und Schlüsselübergabe zusammen geplant werden können."
+      },
+      {
+        "question": "Hat Kraken ein Büro in Zürich?",
+        "answer": "Unser Standort ist Seewadelstrasse 3, 8203 Schaffhausen. Zürich gehört zu unserem Einsatzgebiet. Für Ihren Termin kommen wir nach Vereinbarung an die angegebene Adresse; diese Seite beschreibt unser Angebot für Zürich."
+      }
+    ],
+    "closing": {
+      "title": "Weniger organisieren. Den nächsten Schritt klar vor Augen.",
+      "body": "Starten Sie mit der Aufgabe, die Sie abgeben möchten. Ergänzen Sie Ihre Adresse in Zürich und die Details zum Zugang. Im Rechner entsteht daraus Ihr konkreter Auftrag.",
+      "ctaLabel": "Leistung wählen und Preis berechnen"
+    },
+    "wordCountApprox": 920
+  },
+  {
+    "id": "schaffhausen",
+    "city": "Schaffhausen",
+    "slug": "/reinigung/kanton-schaffhausen",
+    "seo": {
+      "title": "Reinigungsfirma Schaffhausen | Kraken PFM",
+      "description": "Kraken aus Schaffhausen: Reinigung für Privathaushalte, Fenster und kleine Umzüge. Persönlicher Kontakt, keine MwSt. Auftrag im Rechner zusammenstellen.",
+      "primaryIntent": "Private Haushalte suchen einen persönlich erreichbaren Reinigungsdienst mit echtem Standort in Schaffhausen.",
+      "secondaryKeywords": [
+        "Reinigungsfirma Schaffhausen",
+        "Reinigung Schaffhausen",
+        "Fensterreinigung Schaffhausen",
+        "Umzugsreinigung Schaffhausen",
+        "Wohnungsreinigung Schaffhausen",
+        "kleine Umzüge Schaffhausen"
+      ],
+      "keywordNote": "The physical address supports local relevance. Do not create additional addresses or branch listings."
+    },
+    "eyebrow": "Aus Schaffhausen. Persönlich für Sie da.",
+    "h1": "Ihre Reinigungsfirma in Schaffhausen. Für die Aufgaben, die Sie Zeit kosten.",
+    "intro": [
+      "Ein Zuhause braucht Aufmerksamkeit. Manchmal regelmässig, manchmal vor einer Übergabe und manchmal genau dann, wenn im Alltag zu viel zusammenkommt. Kraken unterstützt Sie mit Fensterreinigung, Umzugsreinigung, regelmässiger Reinigung, Grundreinigung und kleinen Umzügen. Auch einzelne, überschaubare Aufgaben sind bei uns willkommen.",
+      "Unser Standort ist an der Seewadelstrasse 3 in 8203 Schaffhausen. Antonio und unser kleines, erfahrenes Team kümmern sich um die persönliche Abstimmung. Sagen Sie uns, was Ihnen wichtig ist. Wir machen daraus einen klar beschriebenen Auftrag."
+    ],
+    "heroFacts": [
+      "Standort in Schaffhausen",
+      "Direkter Kontakt zu Antonio",
+      "Für private Haushalte"
+    ],
+    "cta": {
+      "label": "Meine Unterstützung in Schaffhausen planen",
+      "href": "/quote?lang=de",
+      "city": "Schaffhausen"
+    },
+    "servicesTitle": "Fünf Leistungen. Passend zu Ihrer Situation.",
+    "servicesIntro": "Sie müssen nicht alles auf einmal erledigen lassen. Beginnen Sie mit dem Bereich, in dem Unterstützung am meisten hilft.",
+    "services": [
+      {
+        "id": "regular",
+        "title": "Regelmässige Reinigung für Ihren Haushalt",
+        "body": "Bad, Küche und Böden brauchen regelmässig Pflege. Gemeinsam legen wir fest, welche Aufgaben bei einem Besuch Vorrang haben und welcher Rhythmus für Sie sinnvoll ist. Besondere Oberflächen und Ihre Wünsche halten wir bei der Planung fest, damit die Unterstützung zu Ihrem Zuhause passt.",
+        "ctaLabel": "Meinen Rhythmus finden"
+      },
+      {
+        "id": "windows",
+        "title": "Fensterreinigung in Schaffhausen",
+        "body": "Klare Scheiben machen den Unterschied im ganzen Raum. Wir planen Ihre Fensterreinigung anhand von Anzahl, Fensterart und Zugänglichkeit. Rahmen und Fensterbänke gehören zur beschriebenen Fensterleistung. Storen oder zusätzliche Glasflächen erfassen Sie gesondert, damit der Umfang eindeutig bleibt.",
+        "ctaLabel": "Meine Fensterreinigung berechnen"
+      },
+      {
+        "id": "deep",
+        "title": "Grundreinigung, wo es gründlicher werden soll",
+        "body": "Für hartnäckige Verschmutzungen und Bereiche, die länger liegen geblieben sind, wählen Sie eine einmalige Grundreinigung. Nennen Sie die Räume, Materialien und gewünschten Schwerpunkte. Ob Küche, Bad oder die ganze Wohnung: Wir stimmen die passenden Arbeiten auf den Zustand der Flächen ab.",
+        "ctaLabel": "Schwerpunkte meiner Reinigung wählen"
+      },
+      {
+        "id": "moveout",
+        "title": "Umzugsreinigung mit vereinbarter Abnahmegarantie",
+        "body": "Wenn Sie Ihre Wohnung zurückgeben, zählen ein klarer Leistungsumfang und ein gut abgestimmter Termin. Wir planen die Endreinigung nach Grösse, Zustand und vereinbarten Extras. Die Abnahmegarantie gilt für die vertraglich vereinbarten Reinigungsleistungen; Umfang und Bedingungen werden vor dem Auftrag festgelegt.",
+        "ctaLabel": "Meine Wohnungsübergabe vorbereiten"
+      },
+      {
+        "id": "moving",
+        "title": "Kleine Umzüge mit unserem Ford Transit",
+        "body": "Einzelne Möbel, Kartons oder ein kleiner Haushalt: Beschreiben Sie, was transportiert werden soll und welche Hilfe Sie benötigen. Für einen sinnvollen Ablauf brauchen wir beide Adressen, die Stockwerke, Angaben zum Lift und die Masse grosser Gegenstände. Wir klären, wie sich Ihr Transport passend organisieren lässt.",
+        "ctaLabel": "Meinen Transport zusammenstellen"
+      }
+    ],
+    "planning": {
+      "title": "Persönlich abstimmen, bevor wir zu Ihnen kommen.",
+      "intro": "Wir koordinieren Ihren Einsatz von unserem Standort in Schaffhausen aus. Entscheidend für Ihren Auftrag bleiben Ihre Wünsche und die Situation vor Ort.",
+      "steps": [
+        {
+          "title": "Mit Ihrer wichtigsten Aufgabe anfangen",
+          "body": "Überlegen Sie, was Ihnen gerade am meisten Arbeit abnimmt: wiederkehrende Entlastung, eine gründliche Einzelreinigung oder Hilfe beim Wohnungswechsel. Im Rechner wählen Sie die Leistung und ergänzen die Angaben zu Ihrer Wohnung."
+        },
+        {
+          "title": "Besonderheiten gemeinsam klären",
+          "body": "Teilen Sie uns mit, welche Räume zugänglich sind, ob empfindliche Materialien vorhanden sind und wie der Zutritt organisiert wird. Bei einem Umzug helfen eine Gegenstandsliste und Angaben zur Zufahrt. So können offene Punkte vor dem Einsatz besprochen werden."
+        },
+        {
+          "title": "Beim Umzug auch an die Meldung denken",
+          "body": "Die Stadt Schaffhausen bündelt ihre Informationen zu Zuzug, Umzug und Wegzug auf einer offiziellen Seite. Dort finden Sie das passende Verfahren und die nötigen Unterlagen für Ihre Situation. Diese Meldung erledigen Sie unabhängig von der Buchung bei Kraken.",
+          "sourceIds": [
+            "sh-moving"
+          ]
+        },
+        {
+          "title": "Zufahrt und Parkieren prüfen",
+          "body": "Klären Sie, wo das Fahrzeug zulässig halten kann und ob an Ihrer Adresse besondere Nutzungsbestimmungen gelten. Bei Fragen zu städtischen Park- und Verkehrsregelungen hilft der Verkehrs- und Parkdienst der Stadt weiter. Klären Sie die Haltemöglichkeit deshalb vor dem Einsatztag.",
+          "sourceIds": [
+            "sh-parking"
+          ]
+        }
+      ]
+    },
+    "why": {
+      "title": "Warum Kraken? Weil persönliche Hilfe einfach sein sollte.",
+      "body": "Sie bekommen einen direkten Ansprechpartner und ein Angebot, das sich an Privathaushalte richtet. Wir hören zu, klären den Umfang und planen den Einsatz mit Ihnen. Unser Maskottchen Kai begleitet Sie auf der Website; für die Arbeit und Ihre Fragen stehen echte Menschen dahinter.",
+      "points": [
+        {
+          "title": "Persönlich erreichbar in Schaffhausen",
+          "body": "Kraken ist in Schaffhausen ansässig. Für Fragen erreichen Sie Antonio und das Team telefonisch oder per E-Mail; einen persönlichen Besuch stimmen Sie bitte vorher mit uns ab."
+        },
+        {
+          "title": "Keine MwSt. in Rechnung gestellt",
+          "body": "Als derzeit nicht mehrwertsteuerpflichtiges Kleinunternehmen berechnen wir keine Mehrwertsteuer. Der Preis im Rechner bezieht sich auf Ihren gewählten Umfang. Vergleichen Sie Angebote anhand des Gesamtpreises und der enthaltenen Leistungen."
+        },
+        {
+          "title": "Erreichbar, wenn Sie planen",
+          "body": "Unsere Kontaktzeiten sind Montag bis Sonntag von 09:00 bis 19:00 Uhr. Fragen zum Ablauf, zu Ihren Wünschen oder zur Terminabstimmung haben hier ihren Platz."
+        }
+      ]
+    },
+    "localResourcesTitle": "Offizielle Hilfe für Ihren Wohnungswechsel",
+    "localResources": [
+      {
+        "label": "Zuzug, Umzug oder Wegzug in Schaffhausen",
+        "url": "https://www.stadt-schaffhausen.ch/dienste/100114",
+        "description": "Die Einwohnerkontrolle erklärt Meldeverfahren und erforderliche Unterlagen.",
+        "sourceId": "sh-moving"
+      },
+      {
+        "label": "Verkehrs- und Parkdienst der Stadt",
+        "url": "https://www.stadt-schaffhausen.ch/verkehrsparkdienst/33923",
+        "description": "Offizielle Informationen und Kontakt für Fragen zu städtischen Verkehrs- und Parkregelungen.",
+        "sourceId": "sh-parking"
+      }
+    ],
+    "faqTitle": "Gut zu wissen, bevor Sie buchen",
+    "faqs": [
+      {
+        "question": "Wie erreiche ich Kraken in Schaffhausen?",
+        "answer": "Sie erreichen uns unter +41 77 450 57 05 oder kai@krakenpfm.ch, Montag bis Sonntag von 09:00 bis 19:00 Uhr. Unser Standort ist Seewadelstrasse 3, 8203 Schaffhausen. Einen Besuch vereinbaren Sie bitte im Voraus."
+      },
+      {
+        "question": "Kann ich einen Auftrag aus der Rheinfallregion anfragen?",
+        "answer": "Ja. Geben Sie im Rechner Ihre genaue Adresse und die gewünschte Leistung an. Liegt Ihr Zuhause ausserhalb der Stadt Schaffhausen, klären wir Einsatzmöglichkeit, Anfahrt und Termin für diesen konkreten Auftrag."
+      },
+      {
+        "question": "Was bedeutet die Abnahmegarantie bei der Umzugsreinigung?",
+        "answer": "Sie bezieht sich auf die im Auftrag vereinbarten Reinigungsleistungen. Deshalb klären wir vorab die Räume, Arbeiten und Bedingungen. Beschädigungen, Reparaturen oder andere Fragen zum Mietverhältnis gehören nicht zum Reinigungsauftrag."
+      },
+      {
+        "question": "Warum steht keine MwSt. auf meiner Rechnung?",
+        "answer": "Kraken ist derzeit nicht mehrwertsteuerpflichtig und stellt deshalb keine Mehrwertsteuer in Rechnung. Massgebend für Ihren Auftrag sind der ausgewiesene Gesamtpreis und die vereinbarten Leistungen."
+      }
+    ],
+    "closing": {
+      "title": "Was dürfen wir Ihnen in Schaffhausen abnehmen?",
+      "body": "Wählen Sie Ihre Leistung und erzählen Sie uns von Ihrer Wohnung oder Ihrem kleinen Umzug. Der Rechner führt Sie durch die Angaben, die wir für Ihren Auftrag brauchen.",
+      "ctaLabel": "Meinen Auftrag im Rechner planen"
+    },
+    "wordCountApprox": 941
+  },
+  {
+    "id": "winterthur",
+    "city": "Winterthur",
+    "slug": "/reinigung/region-winterthur",
+    "seo": {
+      "title": "Reinigung Winterthur für Ihr Zuhause | Kraken PFM",
+      "description": "Regelmässige Reinigung, Grundreinigung, Fenster und kleine Umzüge in Winterthur. Wählen Sie passende Hilfe für Ihr Zuhause und berechnen Sie Ihren Auftrag.",
+      "primaryIntent": "Private Haushalte in Winterthur suchen passende Reinigung nach Bedarf oder eine unkompliziert planbare Hilfe beim kleinen Umzug.",
+      "secondaryKeywords": [
+        "Reinigung Winterthur",
+        "Wohnungsreinigung Winterthur",
+        "regelmässige Reinigung Winterthur",
+        "Grundreinigung Winterthur",
+        "Fensterreinigung Winterthur",
+        "Umzugsreinigung Winterthur",
+        "kleiner Umzug Winterthur"
+      ],
+      "keywordNote": "Emphasise useful choice between recurring and one-off services; avoid unsupported claims about local household demographics."
+    },
+    "eyebrow": "Mehr Raum für Ihren Alltag in Winterthur",
+    "h1": "Reinigung in Winterthur, die zu Ihrem Alltag passt.",
+    "intro": [
+      "Sie brauchen jede Woche Entlastung, einmal gründlich saubere Räume oder Hilfe beim Wechsel in die nächste Wohnung? Kraken unterstützt private Haushalte in Winterthur mit einer Leistung, die zu Ihrer Situation passt. Sie legen die Prioritäten fest. Gemeinsam planen wir die passenden Aufgaben.",
+      "Unser kleines, erfahrenes Team kommt von unserem Standort in Schaffhausen zu vereinbarten Einsätzen in Winterthur. Beginnen Sie im Rechner mit Ihrem Bedarf: regelmässige Reinigung, Grundreinigung, Fenster, Umzugsreinigung oder ein kleiner Umzug."
+    ],
+    "heroFacts": [
+      "Einmalig oder regelmässig",
+      "Auf Ihren Haushalt abgestimmt",
+      "Keine MwSt. auf der Rechnung"
+    ],
+    "cta": {
+      "label": "Passende Hilfe in Winterthur finden",
+      "href": "/quote?lang=de",
+      "city": "Winterthur"
+    },
+    "servicesTitle": "Welche Unterstützung passt gerade zu Ihnen?",
+    "servicesIntro": "Der Anlass entscheidet über die Leistung. So lässt sich wiederkehrende Pflege von einer intensiven Reinigung oder einem Wohnungswechsel unterscheiden.",
+    "services": [
+      {
+        "id": "regular",
+        "title": "Regelmässige Reinigung in Winterthur",
+        "body": "Wenn Küche, Bad und Böden immer wieder Zeit beanspruchen, hilft ein abgestimmter Reinigungsrhythmus. Sie nennen Ihre Räume und Prioritäten; wir planen die wiederkehrenden Arbeiten. Einzelne Extras lassen sich getrennt berücksichtigen, damit der normale Besuch einen klaren Umfang hat.",
+        "ctaLabel": "Meinen Alltag entlasten"
+      },
+      {
+        "id": "deep",
+        "title": "Grundreinigung für die intensive Pflege",
+        "body": "Eine Grundreinigung ist sinnvoll, wenn sich Verschmutzungen aufgebaut haben oder Sie bestimmte Bereiche gründlicher bearbeiten lassen möchten. Beschreiben Sie Zustand, Materialien und gewünschte Schwerpunkte. Danach kann eine regelmässige Reinigung ansetzen, muss aber nicht Teil Ihres Auftrags sein.",
+        "ctaLabel": "Meine Grundreinigung planen"
+      },
+      {
+        "id": "windows",
+        "title": "Fensterreinigung als eigener Termin",
+        "body": "Fenster müssen nicht bei jedem Haushaltsbesuch mitgeplant werden. Erfassen Sie Glasflächen, Rahmen und Fensterarten für einen separaten Einsatz. Storen, Balkontüren und schwer zugängliche Stellen geben Sie zusätzlich an. So passt die Planung zum tatsächlichen Umfang Ihrer Wohnung.",
+        "ctaLabel": "Meine Fenster auswählen"
+      },
+      {
+        "id": "moveout",
+        "title": "Umzugsreinigung vor der Rückgabe",
+        "body": "Beim Auszug richtet sich die Endreinigung nach Ihrer Wohnung und dem vereinbarten Leistungsumfang. Nennen Sie Fläche, Zimmerzahl, Zustand und den geplanten Übergabetermin. Eine Abnahmegarantie gilt für die vertraglich vereinbarten Reinigungsleistungen; die Bedingungen klären wir, bevor der Auftrag zustande kommt.",
+        "ctaLabel": "Meine Endreinigung berechnen"
+      },
+      {
+        "id": "moving",
+        "title": "Kleine Umzüge in und nach Winterthur",
+        "body": "Sie ziehen mit einem kompakten Haushalt um oder möchten einzelne Möbel transportieren? Den Einsatz unseres Ford Transit planen wir anhand Ihrer Gegenstände und der Zugänge. Geben Sie beide Adressen, Stockwerke, Angaben zum Lift und die Masse grosser Möbel an. Auch Kartons und Gegenstände aus dem Keller gehören auf die Liste.",
+        "ctaLabel": "Meinen kleinen Umzug planen"
+      }
+    ],
+    "planning": {
+      "title": "Ein Plan, der auch nach dem ersten Besuch funktioniert.",
+      "intro": "Ob Sie in Ihrer Wohnung bleiben oder neu einziehen: Mit klaren Prioritäten fällt die Auswahl leichter.",
+      "steps": [
+        {
+          "title": "Pflege oder gründlicher Neustart?",
+          "body": "Notieren Sie die Aufgaben, die regelmässig anfallen. Stellen Sie ihnen Arbeiten gegenüber, die einmalig mehr Aufmerksamkeit brauchen. Diese Trennung hilft, die passende Leistung zu wählen und Ihre Wünsche verständlich zu beschreiben."
+        },
+        {
+          "title": "Den Haushalt vorbereiten",
+          "body": "Klären Sie, welche Flächen frei zugänglich sein sollen und wie der Zutritt erfolgt. Weisen Sie uns auf empfindliche Materialien und besondere Wünsche hin. Für wiederkehrende Termine besprechen wir, welche Arbeiten zu jedem Besuch gehören sollen."
+        },
+        {
+          "title": "Beim Wohnungswechsel den Transportweg klären",
+          "body": "Prüfen Sie Lift, Treppen, Türen und die Strecke zum Fahrzeug. Werden öffentliche Parkfelder für einen Umzugswagen benötigt, informiert Winterthur über die vorübergehende Sperrung und das Bewilligungsverfahren. Die aktuellen Vorgaben finden Sie auf der städtischen Website.",
+          "sourceIds": [
+            "wt-parking"
+          ]
+        },
+        {
+          "title": "Die neue Adresse separat melden",
+          "body": "Die Stadt Winterthur verlinkt mit eUmzug einen Online-Service für An-, Ab- und Ummeldungen, sofern die Voraussetzungen erfüllt sind. Prüfen Sie dort, welches Verfahren für Ihre Situation passt. Transport und Reinigung stimmen Sie getrennt von diesen Behördenwegen mit uns ab.",
+          "sourceIds": [
+            "wt-moving"
+          ]
+        }
+      ]
+    },
+    "why": {
+      "title": "Hilfe, die sich nach Ihren Prioritäten richtet.",
+      "body": "Sie wissen am besten, was in Ihrem Zuhause ansteht. Antonio und unser Team bringen Erfahrung in die Planung und Ausführung der vereinbarten Arbeiten ein. Ein klarer Umfang macht die Zusammenarbeit einfacher, vom ersten Kontakt bis zum nächsten Einsatz.",
+      "points": [
+        {
+          "title": "Nur das einplanen, was Sie brauchen",
+          "body": "Regelmässige Pflege und zusätzliche Arbeiten werden verständlich beschrieben. So lässt sich ein einzelner Termin ebenso planen wie wiederkehrende Unterstützung."
+        },
+        {
+          "title": "Ihr Gesamtpreis im Rechner",
+          "body": "Sie wählen Leistung und Details an einem Ort. Kraken ist derzeit nicht mehrwertsteuerpflichtig und stellt keine MwSt. in Rechnung. Beim Vergleich mit anderen Angeboten zählen derselbe Umfang und der gesamte Endpreis."
+        },
+        {
+          "title": "Menschen, die Sie erreichen können",
+          "body": "Bei Fragen sind wir Montag bis Sonntag von 09:00 bis 19:00 Uhr erreichbar. Ihren Termin und den Zutritt stimmen wir persönlich ab. Winterthur ist unser Einsatzgebiet; unser Unternehmensstandort bleibt Schaffhausen."
+        }
+      ]
+    },
+    "localResourcesTitle": "Für den Umzug nach oder innerhalb von Winterthur",
+    "localResources": [
+      {
+        "label": "eUmzug: Adresse online melden",
+        "url": "https://stadt.winterthur.ch/services/eumzug",
+        "description": "Offizielle Voraussetzungen und Zugang zur digitalen Umzugsmeldung.",
+        "sourceId": "wt-moving"
+      },
+      {
+        "label": "Parkfelder für einen Umzug sperren lassen",
+        "url": "https://stadt.winterthur.ch/themen/mobilitaet/auto-parkieren/parkbewilligungen",
+        "description": "Die Stadt erklärt im Abschnitt zu Umzügen das Bewilligungsverfahren und verlinkt die Formulare.",
+        "sourceId": "wt-parking"
+      }
+    ],
+    "faqTitle": "Die passende Leistung leichter auswählen",
+    "faqs": [
+      {
+        "question": "Brauche ich eine regelmässige Reinigung oder eine Grundreinigung?",
+        "answer": "Regelmässige Reinigung dient der wiederkehrenden Pflege der vereinbarten Räume. Eine Grundreinigung richtet sich auf eine intensivere, einmalige Bearbeitung ausgewählter Bereiche. Beschreiben Sie den Zustand und Ihre Prioritäten; daraus lässt sich die passende Leistung ableiten."
+      },
+      {
+        "question": "Kann ich zuerst Küche und Bad in den Mittelpunkt stellen?",
+        "answer": "Ja. Nennen Sie diese Schwerpunkte bei der Planung und beschreiben Sie die gewünschten Arbeiten. Der Auftrag kann auf ausgewählte Bereiche abgestimmt werden. Im Rechner sehen Sie, welche Angaben für die gewählte Leistung erforderlich sind."
+      },
+      {
+        "question": "Welche Gegenstände gehören auf die Liste für meinen kleinen Umzug?",
+        "answer": "Erfassen Sie Möbel, Kartons und alles, was zusätzlich transportiert werden soll, auch aus Keller oder Abstellraum. Bei grossen Gegenständen helfen Masse und Angaben zur Demontage. Die Zugänge an beiden Adressen sind ebenso wichtig wie die Gegenstandsliste."
+      },
+      {
+        "question": "Kann ich Fensterreinigung und Haushaltsreinigung getrennt planen?",
+        "answer": "Ja. Fensterreinigung ist eine eigene Leistung. Geben Sie den jeweiligen Umfang und Ihre Terminwünsche an. Wir stimmen ab, ob getrennte Termine oder eine Kombination für Ihren Auftrag sinnvoll und verfügbar sind."
+      }
+    ],
+    "closing": {
+      "title": "Beginnen Sie mit dem, was Ihren Alltag leichter macht.",
+      "body": "Wählen Sie Ihre Leistung für Winterthur und setzen Sie Ihre Prioritäten. Im Rechner ergänzen Sie die Details und sehen, wie sich Ihr Auftrag zusammensetzt.",
+      "ctaLabel": "Meine Leistung auswählen und berechnen"
+    },
+    "wordCountApprox": 943
+  }
+]

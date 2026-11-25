@@ -38,8 +38,9 @@ test('all 19 local landing pages expose substantive, factual HTML before JavaScr
     assert.match(html, /href="tel:\+41774505705"/);
     assert.match(html, /href="mailto:kai@krakenpfm.ch"/);
     assert.match(html, /09:00–19:00/);
-    assert.doesNotMatch(html, /(?:CHF|EUR)\s*\d|99\.4%|zertifizier|GAV-konform|CO2|10 Millionen|Abnahmegarantie|offerCount|AggregateOffer/);
+    assert.doesNotMatch(html, /(?:CHF|EUR)\s*\d|99\.4%|zertifizier|GAV-konform|CO2|10 Millionen|offerCount|AggregateOffer/);
     assert.doesNotMatch(html, /<script|<button|Reaktionszeit|Schweizer Meisterklasse/);
+    if (html.includes('Abnahmegarantie')) assert.match(html, /vertraglich vereinbarten Reinigungsleistungen|mit vereinbarter Abnahmegarantie/);
     assert.ok(html.replace(/<[^>]+>/g, ' ').length > 1800, pathname);
   }
 });

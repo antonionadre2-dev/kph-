@@ -13,7 +13,7 @@ const TermsPage: React.FC<TermsPageProps> = ({ onNavigate }) => {
   const termsTrans = getTermsTranslation(language);
 
   return (
-    <main className="bg-slate-50 min-h-screen">
+    <main id="main" className="bg-slate-50 min-h-screen">
       {/* Header Section */}
       <section className="relative bg-[#001D3D] pt-48 pb-24 overflow-hidden text-white">
         <div className="absolute inset-0 z-0">

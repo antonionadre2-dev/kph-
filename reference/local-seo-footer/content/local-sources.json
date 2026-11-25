@@ -1,0 +1,87 @@
+{
+  "retrievedAt": "2026-11-25",
+  "purpose": "Primary official municipal sources for original local landing-page content. Brand facts are supplied by the owner and confirmed by the parent agent, rather than inferred from municipal sources.",
+  "sources": [
+    {
+      "id": "zh-parking",
+      "city": "Zürich",
+      "publisher": "Stadt Zürich",
+      "title": "Parkplatzreservation",
+      "url": "https://www.stadt-zuerich.ch/de/stadtleben/notfall/standorte-der-stadtpolizei/parkplatzreservation.html",
+      "webRef": "turn517610946view0",
+      "supportedUse": "The city provides an official parking reservation form for moves subject to stated necessity and conditions; lead times vary by parking zone. Page copy directs readers to current conditions instead of embedding time-sensitive deadlines or fees.",
+      "caution": "Do not imply parking reservation is automatic, mandatory for every move, included in Kraken's price, or organised by Kraken without an established service commitment. The source currently contains an apparent year typo in a holiday notice, so no holiday detail is reused."
+    },
+    {
+      "id": "zh-address",
+      "city": "Zürich",
+      "publisher": "Stadt Zürich",
+      "title": "Wohnungswechsel innerhalb der Stadt Zürich",
+      "url": "https://www.stadt-zuerich.ch/eumzug",
+      "webRef": "turn517610946view1",
+      "supportedUse": "Official online reporting route specifically for a change of residence within the city. The new copy explicitly distinguishes this from arrivals or departures.",
+      "caution": "Do not describe this particular service as the universal registration route for any move to Zürich."
+    },
+    {
+      "id": "sh-moving",
+      "city": "Schaffhausen",
+      "publisher": "Stadt Schaffhausen",
+      "title": "Zuzug/Umzug/Wegzug",
+      "url": "https://www.stadt-schaffhausen.ch/dienste/100114",
+      "webRef": "turn517610946view2",
+      "searchRef": "turn591470980search0",
+      "supportedUse": "Official municipal guidance covering arrival, address changes and departure, including different procedures and documents depending on the person's situation.",
+      "caution": "No nationality-specific advice or deadlines are reproduced. Readers are directed to the official source for their own situation."
+    },
+    {
+      "id": "sh-parking",
+      "city": "Schaffhausen",
+      "publisher": "Stadt Schaffhausen",
+      "title": "Verkehrs- und Parkdienst",
+      "url": "https://www.stadt-schaffhausen.ch/verkehrsparkdienst/33923",
+      "webRef": "turn517610946view3",
+      "searchRef": "turn591470980search2",
+      "supportedUse": "Official contact and information for local traffic and parking matters, including areas with visitor-related parking conditions. Used as a contact, not as evidence for an unverified dedicated moving reservation procedure.",
+      "caution": "The source's temporary traffic-order examples relate to construction. Do not convert that into a statement that a specific moving permit or reservation is available here."
+    },
+    {
+      "id": "wt-moving",
+      "city": "Winterthur",
+      "publisher": "Stadt Winterthur",
+      "title": "eUmzug",
+      "url": "https://stadt.winterthur.ch/services/eumzug",
+      "webRef": "turn517610946view4",
+      "supportedUse": "The city describes eUmzug as a service for registration, deregistration and municipal address changes, subject to eligibility conditions.",
+      "caution": "Do not promise that every customer qualifies or that this reports changes to every other organisation."
+    },
+    {
+      "id": "wt-parking",
+      "city": "Winterthur",
+      "publisher": "Stadt Winterthur",
+      "title": "Parkbewilligungen",
+      "url": "https://stadt.winterthur.ch/themen/mobilitaet/auto-parkieren/parkbewilligungen",
+      "webRef": "turn517610946view5",
+      "searchRef": "turn106175707search0",
+      "supportedUse": "FAQ section describes temporary closure of public parking spaces for a move, requiring city permission and advance application, with a link to forms.",
+      "caution": "Do not suggest an ordinary resident parking permit reserves a moving space, or promise approval."
+    }
+  ],
+  "brandFactsFromOwner": {
+    "name": "Kraken Properties & Facilities Management",
+    "contact": "Antonio",
+    "address": "Seewadelstrasse 3, 8203 Schaffhausen, Schweiz",
+    "telephone": "+41774505705",
+    "email": "kai@krakenpfm.ch",
+    "contactHours": "Montag–Sonntag, 09:00–19:00 Uhr, Europe/Zurich",
+    "taxStatement": "Owner confirms the business currently does not charge VAT because it is not VAT registered. Copy avoids an unconditional comparison saving claim.",
+    "services": ["Fensterreinigung", "Umzugsreinigung", "Regelmässige Reinigung", "Grundreinigung", "Kleine Umzüge"],
+    "vehicle": "Ford Transit",
+    "handoverGuarantee": "Only for the expressly agreed end-of-tenancy cleaning scope and the terms accepted in the booking. No general promise that unrelated damage or tenancy disputes are covered."
+  },
+  "implementationNotes": [
+    "Every commercial CTA targets the existing calculator. External municipal resources and ordinary contact/navigation links remain functional information links.",
+    "LocalService schema should identify one real Schaffhausen business and use areaServed for Zürich and Winterthur, not invented physical branches.",
+    "No prices, invented reviews, ratings, client numbers, booking notifications or cheapest claims are contained in these drafts.",
+    "If an existing regional URL already receives traffic, prefer updating its content and preserving the URL or implementing one-to-one permanent redirects instead of publishing duplicate copies."
+  ]
+}

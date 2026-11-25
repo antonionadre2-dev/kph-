@@ -4,6 +4,7 @@ import {
   LOCAL_CITIES, LOCAL_SCOPE, LOCAL_SERVICES, localHref, type LocalSeoRoute,
 } from '../src/seo/local-content';
 import { localText } from '../src/seo/local-translations';
+import { LocalRegionalContent } from './LocalRegionalContent';
 import './local-seo.css';
 
 interface LocalSeoContentProps {
@@ -39,6 +40,11 @@ const faqAnswers = {
 
 /** Pure content: the server renderer and interactive routes use this same component. */
 export function LocalSeoContent({ route, language }: LocalSeoContentProps) {
+  if (route.kind === 'region' || route.kind === 'coverage') return <LocalRegionalContent route={route} language={language} />;
+  return <LegacyLocalSeoContent route={route} language={language} />;
+}
+
+function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
   const t = (source: string) => localText(language, source);
   const href = (path: string) => localHref(path, language);
   const descriptor = getLocalSeoDescriptor(routePath(route), language)!;

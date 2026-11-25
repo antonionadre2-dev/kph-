@@ -1,0 +1,468 @@
+[
+  {
+    "id": "zuerich",
+    "city": "Zürich",
+    "slug": "/reinigung/region-zuerich",
+    "seo": {
+      "title": "Pulizie a Zurigo e piccoli traslochi | Kraken PFM",
+      "description": "Finestre, pulizie domestiche e piccoli traslochi a Zurigo. Accordi personali, senza IVA in fattura. Scelga il servizio e consulti il prezzo nel calcolatore.",
+      "primaryIntent": "Private Haushalte suchen eine Reinigungsfirma in Zürich für einen klar umrissenen Auftrag.",
+      "secondaryKeywords": [
+        "Reinigung Zürich",
+        "Reinigungsfirma Zürich Privathaushalt",
+        "Fensterreinigung Zürich",
+        "Umzugsreinigung Zürich",
+        "Wohnungsreinigung Zürich",
+        "kleiner Umzug Zürich"
+      ],
+      "keywordNote": "Use naturally in the page title, H1, relevant service headings, body and internal-link labels. Do not output this list as a keyword block."
+    },
+    "eyebrow": "Per la sua casa a Zurigo",
+    "h1": "Pulizie e piccoli traslochi a Zurigo. Ben pianificati, seguiti personalmente.",
+    "intro": [
+      "Qualche finestra, un alloggio prima della riconsegna o scatoloni da portare nella nuova casa: non serve un grande incarico per ricevere aiuto. Kraken sostiene le abitazioni private a Zurigo con cinque servizi chiari. Lei sceglie ciò che le occorre. Concordiamo insieme la portata del lavoro.",
+      "La nostra sede è a Sciaffusa. Pianifichiamo il suo servizio a Zurigo in base a indirizzo, accessi e data desiderata. Piano, ascensore e percorso dal veicolo alla porta fanno così parte della preparazione fin dall’inizio."
+    ],
+    "heroFacts": [
+      "Anche piccoli incarichi",
+      "Accordi personali",
+      "Senza IVA in fattura"
+    ],
+    "cta": {
+      "label": "Calcolare il mio servizio a Zurigo",
+      "href": "/quote?lang=de",
+      "city": "Zürich"
+    },
+    "servicesTitle": "Di quale compito desidera liberarsi?",
+    "servicesIntro": "Scelga il servizio secondo l’occasione. Nel calcolatore aggiunge i dettagli che determinano l’impegno effettivo.",
+    "services": [
+      {
+        "id": "windows",
+        "title": "Pulizia delle finestre a Zurigo",
+        "body": "Se vetri e telai hanno bisogno di una pulizia accurata, indichi il numero e il tipo di finestre. Segnali separatamente porte-finestre, lucernari, schermature solari o punti difficili da raggiungere. Per la pianificazione è importante sapere quali superfici sono accessibili in sicurezza dall’interno e dall’esterno.",
+        "ctaLabel": "Inserire le mie finestre"
+      },
+      {
+        "id": "moveout",
+        "title": "Pulizie di fine locazione prima della riconsegna",
+        "body": "Dopo lo sgombero ci occupiamo della pulizia finale concordata. Numero di locali, superficie, condizioni e data di riconsegna ci aiutano a pianificare cucina, bagno, finestre e pavimenti. La garanzia di riconsegna riguarda le prestazioni di pulizia concordate contrattualmente; definiamo la portata esatta prima dell’incarico.",
+        "ctaLabel": "Pianificare le mie pulizie di fine locazione"
+      },
+      {
+        "id": "regular",
+        "title": "Pulizie domestiche regolari",
+        "body": "Desidera un aiuto ricorrente per bagno, cucina, superfici e pavimenti? Concordiamo compiti e frequenza secondo le esigenze della sua casa. Ci indichi le priorità e segnali i materiali delicati. Sapremo così che cosa conta a ogni visita e quali lavori aggiuntivi pianificare separatamente.",
+        "ctaLabel": "Scegliere la mia frequenza di pulizia"
+      },
+      {
+        "id": "deep",
+        "title": "Pulizia a fondo per ripartire",
+        "body": "Una pulizia accurata una tantum aiuta dove la cura quotidiana non basta. Descriva locali interessati, depositi di sporco e lavori desiderati. Le foto possono facilitare la valutazione. Definiamo la portata prima che una piccola esigenza diventi un incarico poco chiaro.",
+        "ctaLabel": "Preparare la mia pulizia a fondo"
+      },
+      {
+        "id": "moving",
+        "title": "Piccoli traslochi e trasporto di mobili",
+        "body": "Per una stanza in un appartamento condiviso, un alloggio compatto o singoli mobili pianifichiamo il trasporto con il nostro Ford Transit. Indichi oggetti, indirizzi di ritiro e destinazione e accessi a entrambi. Dimensioni dei mobili grandi, scale e percorsi di trasporto contribuiscono a determinare come svolgere l’incarico.",
+        "ctaLabel": "Calcolare il mio piccolo trasloco"
+      }
+    ],
+    "planning": {
+      "title": "A Zurigo, un buon servizio inizia davanti alla porta.",
+      "intro": "Per pulizie e trasporti, una preparazione chiara evita domande successive. Queste quattro informazioni ci aiutano a pianificare il suo incarico.",
+      "steps": [
+        {
+          "title": "Descrivere gli accessi",
+          "body": "Indichi piano, ascensore, scale e possibili passaggi stretti. Per i mobili sono utili anche le dimensioni di porte e ascensore. Ci comunichi se l’accesso al veicolo o all’edificio è consentito soltanto in determinati orari."
+        },
+        {
+          "title": "Verificare per tempo dove sostare",
+          "body": "Dove può sostare legalmente il veicolo e quanto è lungo il percorso da fare a mano? Se servono parcheggi pubblici per il trasloco, la Città di Zurigo offre una prenotazione a determinate condizioni. Verifichi condizioni attuali e termini direttamente presso il Comune.",
+          "sourceIds": [
+            "zh-parking"
+          ]
+        },
+        {
+          "title": "Organizzare trasporto, pulizia e riconsegna",
+          "body": "Se desidera coordinare trasloco e pulizia finale, indichi tutte le date importanti. Un alloggio vuoto facilita la pulizia delle superfici concordate. Preveda tempo sufficiente fra le fasi e chiarisca chi si occupa dell’accesso e della consegna delle chiavi."
+        },
+        {
+          "title": "Comunicare separatamente il cambio di indirizzo",
+          "body": "Prenotare un trasloco non sostituisce la comunicazione del nuovo indirizzo. Per un cambio di alloggio all’interno della città, Zurigo mette a disposizione un apposito servizio online. In caso di arrivo o partenza dal Comune, verifichi la procedura adatta presso il comune competente.",
+          "sourceIds": [
+            "zh-address"
+          ]
+        }
+      ]
+    },
+    "why": {
+      "title": "Anche un piccolo incarico merita piena attenzione.",
+      "body": "Kraken offre un aiuto che fa la differenza nella vita domestica. Antonio e il nostro piccolo team esperto concordano personalmente con lei il lavoro. Non deve prenotare una gestione completa dell’immobile se vuole affidare un compito concreto.",
+      "points": [
+        {
+          "title": "La portata del lavoro è al centro",
+          "body": "Lei decide quale servizio occorre. Desideri particolari, accessi e lavori aggiuntivi vengono chiariti durante la pianificazione."
+        },
+        {
+          "title": "Senza IVA in fattura",
+          "body": "Kraken attualmente non è soggetta all’IVA e non la addebita. Per confrontare le offerte conta il prezzo totale a parità di prestazioni; prepari il suo servizio nel calcolatore."
+        },
+        {
+          "title": "Contatto personale",
+          "body": "Per domande ci può contattare dal lunedì alla domenica tra le 09:00 e le 19:00. Concordiamo separatamente con lei l’esecuzione e la data desiderata."
+        }
+      ]
+    },
+    "localResourcesTitle": "Informazioni utili direttamente dalla Città di Zurigo",
+    "localResources": [
+      {
+        "label": "Prenotare parcheggi per un trasloco",
+        "url": "https://www.stadt-zuerich.ch/de/stadtleben/notfall/standorte-der-stadtpolizei/parkplatzreservation.html",
+        "description": "Condizioni ufficiali, termini e modulo di prenotazione della Città di Zurigo.",
+        "sourceId": "zh-parking"
+      },
+      {
+        "label": "Comunicare un cambio di alloggio all’interno di Zurigo",
+        "url": "https://www.stadt-zuerich.ch/eumzug",
+        "description": "Il servizio online comunale per un cambio di indirizzo all’interno della città.",
+        "sourceId": "zh-address"
+      }
+    ],
+    "faqTitle": "Domande sulle pulizie e sui piccoli traslochi a Zurigo",
+    "faqs": [
+      {
+        "question": "Kraken si occupa anche solo delle finestre di un alloggio?",
+        "answer": "Sì, la pulizia delle finestre può essere pianificata come servizio autonomo. Inserisca le finestre nel calcolatore e segnali separatamente schermature solari o accessi difficili. Lì trova le condizioni applicabili al suo incarico."
+      },
+      {
+        "question": "Che cosa devo indicare per un trasloco senza ascensore?",
+        "answer": "Indichi il piano a entrambi gli indirizzi, la situazione delle scale e gli oggetti più grandi. Foto e dimensioni aiutano per i passaggi stretti. Anche il percorso dal parcheggio all’alloggio fa parte della pianificazione."
+      },
+      {
+        "question": "Posso coordinare trasloco e pulizia finale?",
+        "answer": "Sì. Ci comunichi le date di ritiro, ingresso e riconsegna e la portata desiderata della pulizia. Verifichiamo sequenza e disponibilità per pianificare insieme trasporto, pulizia e consegna delle chiavi."
+      },
+      {
+        "question": "Kraken ha un ufficio a Zurigo?",
+        "answer": "La nostra sede è in Seewadelstrasse 3, 8203 Schaffhausen. Zurigo rientra nella nostra zona servita. Per il suo appuntamento veniamo all’indirizzo indicato previo accordo; questa pagina descrive la nostra offerta per Zurigo."
+      }
+    ],
+    "closing": {
+      "title": "Meno organizzazione. Il prossimo passo ben chiaro.",
+      "body": "Inizi dal compito che desidera affidare. Aggiunga il suo indirizzo a Zurigo e i dettagli degli accessi. Nel calcolatore queste informazioni diventano il suo incarico concreto.",
+      "ctaLabel": "Scegliere il servizio e calcolare il prezzo"
+    },
+    "wordCountApprox": 920
+  },
+  {
+    "id": "schaffhausen",
+    "city": "Schaffhausen",
+    "slug": "/reinigung/kanton-schaffhausen",
+    "seo": {
+      "title": "Impresa di pulizie a Sciaffusa | Kraken PFM",
+      "description": "Pulizie personali e piccoli traslochi a Sciaffusa. Contatto diretto, cinque servizi per abitazioni private e senza IVA. Prepari il suo incarico nel calcolatore.",
+      "primaryIntent": "Private Haushalte suchen einen persönlich erreichbaren Reinigungsdienst mit echtem Standort in Schaffhausen.",
+      "secondaryKeywords": [
+        "Reinigungsfirma Schaffhausen",
+        "Reinigung Schaffhausen",
+        "Fensterreinigung Schaffhausen",
+        "Umzugsreinigung Schaffhausen",
+        "Wohnungsreinigung Schaffhausen",
+        "kleine Umzüge Schaffhausen"
+      ],
+      "keywordNote": "The physical address supports local relevance. Do not create additional addresses or branch listings."
+    },
+    "eyebrow": "A Sciaffusa, per la sua casa",
+    "h1": "Pulizie a Sciaffusa. Un contatto personale, meno pensieri a casa.",
+    "intro": [
+      "La sua casa richiede attenzione nella vita quotidiana, prima di una riconsegna o quando il tempo scarseggia. Kraken aiuta le abitazioni private di Sciaffusa con cinque servizi: pulizia delle finestre, di fine locazione, regolare, a fondo e piccoli traslochi. Anche i piccoli compiti sono benvenuti.",
+      "La nostra sede è in Seewadelstrasse 3, 8203 Schaffhausen. Antonio e il nostro team esperto concordano personalmente il lavoro con lei. Dalla prima domanda alla pianificazione conta l’aiuto concreto di cui la sua casa ha bisogno."
+    ],
+    "heroFacts": [
+      "Sede a Sciaffusa",
+      "Contatto diretto con Antonio",
+      "Per abitazioni private"
+    ],
+    "cta": {
+      "label": "Calcolare il mio servizio a Sciaffusa",
+      "href": "/quote?lang=de",
+      "city": "Schaffhausen"
+    },
+    "servicesTitle": "Un aiuto adatto alla sua casa",
+    "servicesIntro": "Che si tratti di un aiuto regolare o di un intervento singolo: scelga il servizio e descriva ciò che serve.",
+    "services": [
+      {
+        "id": "regular",
+        "title": "Pulizie regolari per la sua casa",
+        "body": "Bagno, cucina e pavimenti richiedono cure regolari. Insieme definiamo quali compiti hanno la precedenza durante una visita e quale frequenza le è utile. Annotiamo superfici particolari e desideri durante la pianificazione, perché il sostegno sia adatto alla sua casa.",
+        "ctaLabel": "Trovare la mia frequenza"
+      },
+      {
+        "id": "windows",
+        "title": "Pulizia delle finestre a Sciaffusa",
+        "body": "Vetri trasparenti fanno la differenza in tutta la stanza. Pianifichiamo la pulizia delle finestre in base a numero, tipo e accessibilità. Telai e davanzali rientrano nella prestazione descritta. Indichi separatamente schermature solari o altre superfici vetrate, perché la portata rimanga chiara.",
+        "ctaLabel": "Calcolare la pulizia delle mie finestre"
+      },
+      {
+        "id": "deep",
+        "title": "Pulizia a fondo dove serve più cura",
+        "body": "Per lo sporco ostinato e le zone trascurate da tempo scelga una pulizia a fondo una tantum. Indichi locali, materiali e priorità desiderate. Cucina, bagno o intero alloggio: concordiamo i lavori adatti alle condizioni delle superfici.",
+        "ctaLabel": "Scegliere le priorità della pulizia"
+      },
+      {
+        "id": "moveout",
+        "title": "Pulizie di fine locazione con garanzia concordata",
+        "body": "Alla riconsegna dell’alloggio contano una portata chiara del servizio e una data ben coordinata. Pianifichiamo la pulizia finale in base a dimensioni, condizioni ed extra concordati. La garanzia di riconsegna vale per le prestazioni di pulizia concordate contrattualmente; portata e condizioni vengono definite prima dell’incarico.",
+        "ctaLabel": "Preparare la riconsegna del mio alloggio"
+      },
+      {
+        "id": "moving",
+        "title": "Piccoli traslochi con il nostro Ford Transit",
+        "body": "Singoli mobili, scatoloni o una piccola casa: descriva ciò che va trasportato e l’aiuto necessario. Per organizzare bene servono entrambi gli indirizzi, i piani, le informazioni sull’ascensore e le dimensioni degli oggetti grandi. Chiariremo come organizzare il suo trasporto nel modo adatto.",
+        "ctaLabel": "Preparare il mio trasporto"
+      }
+    ],
+    "planning": {
+      "title": "Accordarsi personalmente prima del nostro arrivo.",
+      "intro": "Coordiniamo il suo intervento dalla nostra sede di Sciaffusa. Per l’incarico restano essenziali i suoi desideri e la situazione sul posto.",
+      "steps": [
+        {
+          "title": "Iniziare dal compito più importante",
+          "body": "Pensi a ciò che le toglie più lavoro in questo momento: un aiuto ricorrente, una pulizia accurata una tantum o un sostegno per cambiare casa. Nel calcolatore sceglie il servizio e aggiunge i dati del suo alloggio."
+        },
+        {
+          "title": "Chiarire insieme le particolarità",
+          "body": "Ci comunichi quali locali sono accessibili, se ci sono materiali delicati e come si organizza l’accesso. Per un trasloco aiutano un elenco degli oggetti e informazioni sull’accesso del veicolo. I punti aperti possono così essere discussi prima dell’intervento."
+        },
+        {
+          "title": "Ricordare anche la comunicazione di trasloco",
+          "body": "La Città di Sciaffusa raccoglie su una pagina ufficiale le informazioni su arrivo, trasloco e partenza. Lì trova la procedura e i documenti necessari per la sua situazione. Effettui questa comunicazione indipendentemente dalla prenotazione presso Kraken.",
+          "sourceIds": [
+            "sh-moving"
+          ]
+        },
+        {
+          "title": "Verificare accesso e parcheggio",
+          "body": "Chiarisca dove il veicolo può sostare legalmente e se al suo indirizzo valgono disposizioni d’uso particolari. Per domande sulle regole comunali di traffico e parcheggio può rivolgersi al servizio competente della Città. Verifichi quindi la possibilità di sosta prima del giorno dell’intervento.",
+          "sourceIds": [
+            "sh-parking"
+          ]
+        }
+      ]
+    },
+    "why": {
+      "title": "Perché Kraken? Perché l’aiuto personale dovrebbe essere semplice.",
+      "body": "Ha un interlocutore diretto e un’offerta rivolta alle abitazioni private. Ascoltiamo, definiamo la portata del lavoro e pianifichiamo con lei. La mascotte Kai la accompagna sul sito; dietro al lavoro e alle risposte alle sue domande ci sono persone reali.",
+      "points": [
+        {
+          "title": "Un contatto personale a Sciaffusa",
+          "body": "Kraken ha sede a Sciaffusa. Per domande può contattare Antonio e il team per telefono o e-mail; concordi in anticipo un’eventuale visita di persona."
+        },
+        {
+          "title": "Nessuna IVA addebitata",
+          "body": "Come piccola impresa attualmente non soggetta all’IVA, non addebitiamo l’imposta. Il prezzo nel calcolatore si riferisce alla portata scelta. Confronti le offerte in base al prezzo totale e alle prestazioni incluse."
+        },
+        {
+          "title": "Raggiungibili mentre pianifica",
+          "body": "I nostri orari di contatto sono dal lunedì alla domenica, dalle 09:00 alle 19:00. In questo spazio può porre domande sullo svolgimento, sui suoi desideri e sulle date."
+        }
+      ]
+    },
+    "localResourcesTitle": "Informazioni ufficiali utili a Sciaffusa",
+    "localResources": [
+      {
+        "label": "Arrivo, trasloco o partenza a Sciaffusa",
+        "url": "https://www.stadt-schaffhausen.ch/dienste/100114",
+        "description": "L’ufficio controllo abitanti spiega le procedure di comunicazione e i documenti necessari.",
+        "sourceId": "sh-moving"
+      },
+      {
+        "label": "Servizio comunale traffico e parcheggi",
+        "url": "https://www.stadt-schaffhausen.ch/verkehrsparkdienst/33923",
+        "description": "Informazioni ufficiali e contatti per domande sulle regole comunali di traffico e parcheggio.",
+        "sourceId": "sh-parking"
+      }
+    ],
+    "faqTitle": "Domande a Kraken a Sciaffusa",
+    "faqs": [
+      {
+        "question": "Come posso contattare Kraken a Sciaffusa?",
+        "answer": "Ci trova al +41 77 450 57 05 o a kai@krakenpfm.ch, dal lunedì alla domenica dalle 09:00 alle 19:00. La nostra sede è in Seewadelstrasse 3, 8203 Schaffhausen. Concordi in anticipo un’eventuale visita."
+      },
+      {
+        "question": "Posso richiedere un servizio nella regione delle cascate del Reno?",
+        "answer": "Sì. Indichi nel calcolatore l’indirizzo esatto e il servizio desiderato. Se la sua casa è fuori dalla città di Sciaffusa, verifichiamo possibilità d’intervento, spostamento e data per questo incarico concreto."
+      },
+      {
+        "question": "Che cosa significa la garanzia di riconsegna per le pulizie di fine locazione?",
+        "answer": "Riguarda le prestazioni di pulizia concordate nell’incarico. Per questo definiamo in anticipo locali, lavori e condizioni. Danni, riparazioni o altre questioni relative al rapporto di locazione non rientrano nell’incarico di pulizia."
+      },
+      {
+        "question": "Perché sulla mia fattura non c’è IVA?",
+        "answer": "Kraken attualmente non è soggetta all’IVA e quindi non la addebita. Per il suo incarico fanno fede il prezzo totale indicato e le prestazioni concordate."
+      }
+    ],
+    "closing": {
+      "title": "Di che cosa possiamo occuparci per lei a Sciaffusa?",
+      "body": "Scelga il servizio e ci parli del suo alloggio o piccolo trasloco. Il calcolatore la guida fra le informazioni necessarie per l’incarico.",
+      "ctaLabel": "Pianificare il mio incarico nel calcolatore"
+    },
+    "wordCountApprox": 941
+  },
+  {
+    "id": "winterthur",
+    "city": "Winterthur",
+    "slug": "/reinigung/region-winterthur",
+    "seo": {
+      "title": "Pulizie a Winterthur per la sua casa | Kraken PFM",
+      "description": "Pulizie regolari, a fondo, di finestre e di fine locazione o piccoli traslochi a Winterthur. Per abitazioni private, con accordi personali e senza IVA.",
+      "primaryIntent": "Private Haushalte in Winterthur suchen passende Reinigung nach Bedarf oder eine unkompliziert planbare Hilfe beim kleinen Umzug.",
+      "secondaryKeywords": [
+        "Reinigung Winterthur",
+        "Wohnungsreinigung Winterthur",
+        "regelmässige Reinigung Winterthur",
+        "Grundreinigung Winterthur",
+        "Fensterreinigung Winterthur",
+        "Umzugsreinigung Winterthur",
+        "kleiner Umzug Winterthur"
+      ],
+      "keywordNote": "Emphasise useful choice between recurring and one-off services; avoid unsupported claims about local household demographics."
+    },
+    "eyebrow": "Per la vita quotidiana a Winterthur",
+    "h1": "Pulizie a Winterthur. Più spazio per la sua vita quotidiana.",
+    "intro": [
+      "Un aiuto settimanale, una pulizia a fondo una tantum o un trasporto verso la nuova casa: a Winterthur le priorità sono le sue. Kraken sostiene le abitazioni private con pulizie e piccoli traslochi. Lei sceglie ciò che la alleggerisce; noi concordiamo la portata adatta.",
+      "Da Sciaffusa pianifichiamo con lei gli interventi concordati a Winterthur. Scelga fra pulizia delle finestre, di fine locazione, regolare, a fondo e piccoli traslochi. Per pianificare con chiarezza contano la situazione del suo alloggio e i lavori desiderati."
+    ],
+    "heroFacts": [
+      "Una tantum o regolare",
+      "Adatto alla sua casa",
+      "Senza IVA in fattura"
+    ],
+    "cta": {
+      "label": "Calcolare il mio servizio a Winterthur",
+      "href": "/quote?lang=de",
+      "city": "Winterthur"
+    },
+    "servicesTitle": "Cure regolari o una pulizia a fondo?",
+    "servicesIntro": "Non tutte le esigenze richiedono lo stesso servizio. Qui trova la distinzione fra i servizi e i dettagli utili alla pianificazione.",
+    "services": [
+      {
+        "id": "regular",
+        "title": "Pulizie regolari a Winterthur",
+        "body": "Quando cucina, bagno e pavimenti richiedono sempre tempo, una frequenza di pulizia concordata può aiutare. Lei indica locali e priorità; noi pianifichiamo i lavori ricorrenti. I singoli extra si possono considerare separatamente, perché la visita abituale abbia una portata chiara.",
+        "ctaLabel": "Alleggerire la mia vita quotidiana"
+      },
+      {
+        "id": "deep",
+        "title": "Pulizia a fondo per una cura intensiva",
+        "body": "Una pulizia a fondo è utile quando lo sporco si è accumulato o desidera un trattamento più accurato di certe zone. Descriva condizioni, materiali e priorità. Dopo può seguire una pulizia regolare, che però non deve necessariamente far parte dell’incarico.",
+        "ctaLabel": "Pianificare la mia pulizia a fondo"
+      },
+      {
+        "id": "windows",
+        "title": "Pulizia delle finestre in un appuntamento dedicato",
+        "body": "Non occorre includere le finestre in ogni visita domestica. Indichi superfici vetrate, telai e tipi di finestre per un intervento separato. Segnali inoltre schermature solari, porte-finestre e punti difficili da raggiungere. La pianificazione rispecchierà così la portata effettiva del suo alloggio.",
+        "ctaLabel": "Scegliere le mie finestre"
+      },
+      {
+        "id": "moveout",
+        "title": "Pulizie di fine locazione prima della restituzione",
+        "body": "Quando lascia l’alloggio, la pulizia finale dipende dalla casa e dalla portata concordata. Indichi superficie, numero di locali, condizioni e data prevista di riconsegna. La garanzia di riconsegna vale per le prestazioni di pulizia concordate contrattualmente; definiamo le condizioni prima della conclusione dell’incarico.",
+        "ctaLabel": "Calcolare la mia pulizia finale"
+      },
+      {
+        "id": "moving",
+        "title": "Piccoli traslochi a Winterthur e verso Winterthur",
+        "body": "Trasloca con un arredamento compatto o desidera trasportare singoli mobili? Pianifichiamo l’impiego del nostro Ford Transit in base agli oggetti e agli accessi. Indichi entrambi gli indirizzi, i piani, le informazioni sull’ascensore e le dimensioni dei mobili grandi. Anche scatoloni e oggetti in cantina vanno inclusi nell’elenco.",
+        "ctaLabel": "Pianificare il mio piccolo trasloco"
+      }
+    ],
+    "planning": {
+      "title": "Un piano che funziona anche dopo la prima visita.",
+      "intro": "Che resti nel suo alloggio o stia per trasferirsi: con priorità chiare scegliere è più semplice.",
+      "steps": [
+        {
+          "title": "Cura regolare o ripartenza a fondo?",
+          "body": "Annoti i compiti che si ripetono regolarmente. Li affianchi ai lavori che richiedono una volta sola maggiore attenzione. Questa distinzione aiuta a scegliere il servizio adatto e a descrivere chiaramente i suoi desideri."
+        },
+        {
+          "title": "Preparare la casa",
+          "body": "Chiarisca quali superfici devono essere liberamente accessibili e come si accede alla casa. Ci segnali materiali delicati e desideri particolari. Per appuntamenti ricorrenti discutiamo quali lavori debbano far parte di ogni visita."
+        },
+        {
+          "title": "Chiarire il percorso di trasporto per il trasloco",
+          "body": "Verifichi ascensore, scale, porte e percorso fino al veicolo. Se occorrono parcheggi pubblici per il furgone, Winterthur informa sulla chiusura temporanea e sulla procedura di autorizzazione. Le disposizioni attuali sono sul sito della Città.",
+          "sourceIds": [
+            "wt-parking"
+          ]
+        },
+        {
+          "title": "Comunicare separatamente il nuovo indirizzo",
+          "body": "La Città di Winterthur rimanda a eUmzug, un servizio online per arrivo, partenza e cambio di indirizzo, se sono soddisfatti i requisiti. Verifichi lì la procedura adatta alla sua situazione. Trasporto e pulizia vengono concordati con noi separatamente da queste pratiche amministrative.",
+          "sourceIds": [
+            "wt-moving"
+          ]
+        }
+      ]
+    },
+    "why": {
+      "title": "Un aiuto orientato alle sue priorità.",
+      "body": "Lei conosce meglio di chiunque altro ciò che serve a casa sua. Antonio e il nostro team apportano esperienza nella pianificazione e nell’esecuzione dei lavori concordati. Una portata chiara semplifica la collaborazione, dal primo contatto all’intervento successivo.",
+      "points": [
+        {
+          "title": "Pianificare solo ciò che serve",
+          "body": "Cure regolari e lavori aggiuntivi vengono descritti in modo comprensibile. È così possibile pianificare tanto un singolo appuntamento quanto un aiuto ricorrente."
+        },
+        {
+          "title": "Il prezzo totale nel calcolatore",
+          "body": "Sceglie servizio e dettagli in un unico posto. Kraken attualmente non è soggetta all’IVA e non la addebita. Per confrontare altre offerte contano la stessa portata e il prezzo finale complessivo."
+        },
+        {
+          "title": "Persone che può contattare",
+          "body": "Per domande siamo raggiungibili dal lunedì alla domenica dalle 09:00 alle 19:00. Concordiamo personalmente appuntamento e accesso. Winterthur è una zona servita; la nostra sede aziendale rimane a Sciaffusa."
+        }
+      ]
+    },
+    "localResourcesTitle": "Informazioni ufficiali utili a Winterthur",
+    "localResources": [
+      {
+        "label": "eUmzug: comunicare l’indirizzo online",
+        "url": "https://stadt.winterthur.ch/services/eumzug",
+        "description": "Requisiti ufficiali e accesso alla comunicazione digitale di trasloco.",
+        "sourceId": "wt-moving"
+      },
+      {
+        "label": "Far riservare parcheggi per un trasloco",
+        "url": "https://stadt.winterthur.ch/themen/mobilitaet/auto-parkieren/parkbewilligungen",
+        "description": "Nella sezione sui traslochi, la Città spiega la procedura di autorizzazione e rimanda ai moduli.",
+        "sourceId": "wt-parking"
+      }
+    ],
+    "faqTitle": "Domande sui servizi per la sua casa a Winterthur",
+    "faqs": [
+      {
+        "question": "Mi serve una pulizia regolare o una pulizia a fondo?",
+        "answer": "La pulizia regolare serve alla cura ricorrente dei locali concordati. La pulizia a fondo riguarda un intervento più intenso, una tantum, in zone selezionate. Descriva condizioni e priorità: da queste si può individuare il servizio adatto."
+      },
+      {
+        "question": "Posso dare la priorità a cucina e bagno?",
+        "answer": "Sì. Indichi queste priorità durante la pianificazione e descriva i lavori desiderati. L’incarico può essere concordato per zone selezionate. Nel calcolatore vede le informazioni richieste per il servizio scelto."
+      },
+      {
+        "question": "Quali oggetti devo includere nell’elenco del mio piccolo trasloco?",
+        "answer": "Inserisca mobili, scatoloni e tutto ciò che va trasportato, anche dalla cantina o dal ripostiglio. Per gli oggetti grandi aiutano dimensioni e informazioni sullo smontaggio. Gli accessi a entrambi gli indirizzi sono importanti quanto l’elenco degli oggetti."
+      },
+      {
+        "question": "Posso pianificare separatamente pulizia delle finestre e pulizie domestiche?",
+        "answer": "Sì. La pulizia delle finestre è un servizio autonomo. Indichi la portata di ciascun lavoro e le date desiderate. Concordiamo se appuntamenti separati o una combinazione siano adatti e disponibili per il suo incarico."
+      }
+    ],
+    "closing": {
+      "title": "Inizi da ciò che rende più leggera la sua giornata.",
+      "body": "Scelga il servizio per Winterthur e definisca le priorità. Nel calcolatore aggiunge i dettagli e vede come si compone il suo incarico.",
+      "ctaLabel": "Scegliere e calcolare il mio servizio"
+    },
+    "wordCountApprox": 943
+  }
+]

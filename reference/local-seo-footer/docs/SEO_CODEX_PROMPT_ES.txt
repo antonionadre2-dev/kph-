@@ -1,0 +1,68 @@
+Integra la mejora de SEO local y del footer de Kraken en el repositorio REAL de krakenpfm.ch.
+
+OBJETIVO
+Conservar el diseño aprobado y la experiencia de compra, y mejorar el contenido para búsquedas de particulares en Zürich, Schaffhausen y Winterthur. Implementa los cambios; no te limites a proponerlos. Inspecciona primero las instrucciones, router, renderizado, componentes compartidos, traducciones, SEO y calculadora del proyecto.
+
+EL PAQUETE Y SU ALCANCE
+Este paquete aporta contenido alemán suizo, una referencia visual HTML/CSS, el footer y utilidades de SEO. No es el proyecto de producción completo. No reemplaces el sitio, package.json, router, backend, pagos, reservas ni emails por el preview. Las páginas de referencia contienen noindex y un aviso de demo porque la preview es privada. No copies esas restricciones o avisos a producción. Usa el framework y los componentes actuales.
+
+PÁGINAS REGIONALES
+Actualiza estas URLs EXISTENTES; crea una ruta solamente si de verdad falta en el repositorio:
+- /reinigung/region-zuerich
+- /reinigung/kanton-schaffhausen
+- /reinigung/region-winterthur
+Lee content/locations.de.json y conserva sus tres textos distintos. Zürich: acceso, ascensor, aparcamiento y pequeños trabajos. Schaffhausen: sede real y atención personal. Winterthur: limpieza regular frente a profunda y traslados compactos. Las cinco prestaciones son ventanas, fin de contrato, regular, profunda y pequeñas mudanzas.
+Mantén títulos y descripciones de content/seo-local-routes.de.json. Reproduce la jerarquía de web/reinigung/*.html con el sistema visual actual: navy, blanco/hielo, mint, Manrope, tarjetas limpias, iconos de Kraken, fotografías/escenas de servicio sin cara del propietario, FAQ y CTA claros. El cuerpo útil debe estar en el HTML inicial/SSR, no esperar a useEffect. Mantén las guías municipales con sus enlaces oficiales.
+Utiliza /einsatzgebiete como índice de las tres ciudades, actualizando el componente existente. No crees rutas paralelas /zurich o /winterthur si duplican contenido. No añadas automáticamente más páginas de ciudades.
+
+FOOTER Y NAVEGACIÓN
+Integra content/footer.de.html en el componente de footer compartido, adaptándolo al framework y a los seis idiomas existentes. Referencia de estilos: web/footer.css, cuyas reglas están delimitadas por .kraken-footer.
+Los enlaces INFORMATIVOS deben ir a:
+Fensterreinigung -> /leistungen#fensterreinigung
+Umzugsreinigung -> /leistungen#umzugsreinigung
+Regelmässige Reinigung -> /leistungen#regelmaessige-reinigung
+Grundreinigung -> /leistungen#grundreinigung
+Kleine Umzüge -> /leistungen#kleine-umzuege
+Zürich/Schaffhausen/Winterthur -> sus tres rutas regionales de arriba.
+Sobre Kraken -> /about; contacto -> /kontakt; zonas -> /einsatzgebiete.
+Legal -> /impressum, /gdpr y /terms reales. Conserva los documentos existentes; comprueba sus componentes porque el HTML público revisado tenía muy poco contenido. No inventes condiciones contractuales ni política de privacidad.
+No dejes data-calculator, data-service ni listeners del calculador en enlaces informativos: cambiar solo href no basta. Los fragmentos deben abrir su sección de servicio incluso al entrar desde otra página. Conserva idioma antes del fragmento, por ejemplo /leistungen?lang=es#fensterreinigung.
+Los botones comerciales siguen llevando a /quote con el servicio y el idioma reconocidos por el router actual. Adapta las claves al contrato REAL; la referencia usa windows/end-of-tenancy/daily-cleaning/deep-cleaning/moving. No cambies el motor de precios. No añadas city= si la calculadora no lo interpreta.
+Los href nativos deben ser completos para que abrir en otra pestaña conserve servicio/idioma, sin depender exclusivamente de localStorage o click handlers. web/calculator.js y web/app.js muestran esa mejora. No reutilices ni borres borradores de clientes al integrar enlaces.
+
+CONTACTO Y MARCA
+Kraken Properties and Facilities Management Gomes Mendes.
+Una sola sede: Seewadelstrasse 3, 8203 Schaffhausen, Schweiz.
+Teléfono: +41 77 450 57 05, tel:+41774505705.
+Email: kai@krakenpfm.ch, mailto:kai@krakenpfm.ch.
+Atención al cliente: lunes a domingo, 09:00–19:00, Europe/Zurich; visitas con cita previa.
+WhatsApp: https://wa.me/41774505705
+LinkedIn existente: https://www.linkedin.com/company/krakenpfm/
+Crédito: Website made by seociety.ch -> https://seociety.ch
+Instagram: usa únicamente el perfil real verificado en la configuración del proyecto. No inventes un usuario ni dejes un enlace desactivado visible si todavía no existe la URL.
+No inventes oficinas en Zürich o Winterthur, reseñas, certificaciones, años de experiencia ni estadísticas. Enfatiza experiencia del equipo y trato personal sin poner la cara de Antonio. No hay precios fuera del calculador. Kraken actualmente no está sujeto a facturación de MwSt.; no prometas ahorrar siempre 8.1% frente a cualquier competidor. La garantía de recepción solo cubre las prestaciones de limpieza acordadas.
+
+SEO TÉCNICO Y GOOGLE
+Usa el sistema SEO existente para title, description, canonical, Open Graph y JSON-LD. content/seo.de.json también propone mejoras de home, servicios, about, contacto y calculadora. Revisa que un efecto de hidratación no restaure metadatos antiguos. Cada página tiene un H1 y texto propios.
+El alemán canónico se publica sin ?lang=de. Conserva el esquema actual de canonical por idioma, los seis idiomas reales (de,en,es,fr,it,pt) y el hreflang recíproco. El contenido nuevo entregado está redactado en alemán: no declares versiones traducidas nuevas a partir de una página alemana. Conserva las traducciones actuales y adapta cada idioma con traducción real cuando lo trabajes.
+El sitemap público tenía 144 URLs (24 rutas x 6 idiomas) en la auditoría del 25/11/2026, incluyendo las tres regionales y 15 páginas de ciudad/servicio. Preserva las URLs válidas y las traducciones. No sustituyas ese sitemap por una lista de 4 o 9 URLs generada desde el preview. Actualiza lastmod solo para páginas que realmente cambien. No elimines páginas o cambies canonicals arbitrariamente. Si más adelante se consolidan páginas, implementa redirecciones concretas y actualiza enlaces/sitemap juntos.
+Producción debe seguir siendo indexable en sus páginas públicas. La preview debe seguir privada/noindex. No copies robots.txt Disallow:/, X-Robots-Tag noindex o los headers del Worker de la preview a producción.
+Conserva UNA entidad LocalBusiness con la sede real y areaServed correcto. Actualiza los nodos existentes por su @id; no añadas un segundo grafo con otra empresa. integrations/local-seo.mjs aporta funciones de referencia. applySeoHead está pensado para los HTML controlados del preview y rechaza JSON-LD preexistente; en producción integra con el gestor de metadatos del framework. No prometas rich results de FAQ ni añadas aggregateRating ficticio.
+
+IMÁGENES: RUTAS DE PRODUCCIÓN VERIFICADAS
+No uses https://krakenpfm.ch/assets/...: las rutas probadas devolvían 404.
+Usa el resolvedor de assets del sitio o estas rutas públicas verificadas:
+/home-approved/assets/logo.webp
+/home-approved/assets/service-windows-v5.webp
+/home-approved/assets/service-end-v5.webp
+/home-approved/assets/service-regular-v5.webp
+/home-approved/assets/services-hero-v5.webp
+/about-approved/assets/kai-rheinfall-awakening.webp
+La excepción de About está en productionImage. El helper acepta assetBase para las imágenes comunes. Verifica cada og:image/logo y su Content-Type antes de publicar. Las imágenes locales de web/assets están incluidas como referencia para el componente si decides incorporarlas al pipeline actual.
+
+INTERACCIÓN Y ACCESIBILIDAD
+Mantén enlaces nativos, foco visible, un menú móvil accesible, botón de consulta legible y disclosures utilizables con teclado. La checklist de preparación es local y no envía datos ni reserva aparcamiento. No cargues la casa/tiempo/animación Transit completa en páginas regionales que no la necesitan. Respeta reduced motion y los anchos 320, 390, 768 y desktop.
+
+VALIDACIÓN Y ENTREGA
+Comprueba rutas 200 reales, 404 de rutas inexistentes, HTML inicial, títulos/descripciones únicos, canonical/hreflang coherentes, JSON-LD válido y sin doble escape de &, assets sin404 y enlaces de footer sin interceptores incorrectos. Abre todos los destinos internos y prueba al menos un servicio del footer, un CTA con preselección de servicio y el menú móvil. Conserva pruebas de precios, Payrexx, reservas y emails; no cambies ese comportamiento.
+Ejecuta build y los tests relevantes del proyecto actual. Revisa en móvil y escritorio. Usa el flujo de publicación del proyecto cuando esté disponible y autorizado; informa con claridad qué quedó integrado y qué llegó a producción. No afirmes que Google ya actualizó resultados. Deja indicadas las URLs que conviene inspeccionar/solicitar rastreo en Search Console cuando haya acceso.

@@ -415,6 +415,21 @@ const App: React.FC = () => {
     if (ogDesc) ogDesc.setAttribute('content', meta.description);
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute('content', meta.canonical);
+    const syncMeta = (attribute: 'name' | 'property', key: string, value: string) => {
+      let element = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attribute, key);
+        document.head.appendChild(element);
+      }
+      element.content = value;
+    };
+    syncMeta('property', 'og:image', meta.ogImage);
+    syncMeta('property', 'og:image:width', meta.ogImageWidth);
+    syncMeta('property', 'og:image:height', meta.ogImageHeight);
+    syncMeta('property', 'og:image:type', meta.ogImageType);
+    syncMeta('property', 'og:locale', ({ de: 'de_CH', en: 'en_US', es: 'es_ES', pt: 'pt_PT', it: 'it_IT', fr: 'fr_FR' } as Record<string, string>)[meta.language.slice(0, 2)] || 'de_CH');
+    syncMeta('name', 'twitter:image', meta.ogImage);
     let schema = document.querySelector<HTMLScriptElement>('#kraken-page-schema');
     if (!schema) {
       document.head.querySelectorAll('script[type="application/ld+json"]').forEach(element => element.remove());

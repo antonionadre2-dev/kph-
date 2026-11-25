@@ -5,11 +5,12 @@ import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { prepareVercelOutput } from '../scripts/prepare-vercel-output.mjs';
 import { INDEXABLE_PATHS } from '../src/seo/crawl-policy.ts';
-import { seoFragmentName } from '../src/seo/render-contract.ts';
+import { LEGAL_DOCUMENT_PATHS, seoFragmentName } from '../src/seo/render-contract.ts';
 
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
 const seoNames = languages.flatMap(language => [
   ...INDEXABLE_PATHS.map(pathname => seoFragmentName(pathname, language)),
+  ...LEGAL_DOCUMENT_PATHS.map(pathname => seoFragmentName(pathname, language)),
   `seo-shell-${language}.html`,
 ]);
 
@@ -52,8 +53,9 @@ test('prebuilt preparation repairs absent generated bundles, validates hashes an
     assert.equal(result.generatedBundles, 2);
     assert.equal(result.sha256Verified, 22);
     assert.equal(result.seoPageFragments, 144);
+    assert.equal(result.legalDocumentFragments, 18);
     assert.equal(result.seoShellFragments, 6);
-    assert.equal(result.runtimeHtmlFilesVerified, 175);
+    assert.equal(result.runtimeHtmlFilesVerified, 193);
     assert.equal(result.missing, 0);
     assert.equal(readFileSync(path.join(root, '.vercel/output/static/assets/index-a1b2.js'), 'utf8'), 'BUILT_JS');
     for (const filename of ['untracked-private.json', '.env.production', 'archive.zip', 'error.log', 'stats.html', 'server.cjs', 'assets/index-a1b2.js.map', 'seo-page-home-de.html', 'seo-shell-de.html', 'about-content-de.html']) {
@@ -135,5 +137,13 @@ test('preflight validates frontend assets referenced only by SEO fragments', () 
   try {
     write('dist/' + seoFragmentName('/einsatzgebiete', 'en'), '<link rel="stylesheet" href="/assets/missing-local.css">');
     assert.throws(() => prepareVercelOutput(root, { trackedPublicFiles }), /unpublished frontend file: assets\/missing-local\.css/);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test('preflight rejects missing legal content before publication', () => {
+  const { root, trackedPublicFiles } = fixture();
+  try {
+    rmSync(path.join(root, 'dist', seoFragmentName('/terms', 'es')));
+    assert.throws(() => prepareVercelOutput(root, { trackedPublicFiles }), /Missing or invalid built HTML: seo-page-terms-es\.html/);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });

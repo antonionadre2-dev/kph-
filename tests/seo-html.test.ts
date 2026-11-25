@@ -48,5 +48,5 @@ test('language switches replace stale alternate links with the same reciprocal s
 test('SEO text cannot terminate attributes or inject HTML', () => {
   assert.equal(escapeSeoHtml('"</title><script>&\''), '&quot;&lt;/title&gt;&lt;script&gt;&amp;&#39;');
   const html = injectPageSeo(template, '/?lang=de');
-  assert.match(html, /Reinigung &amp; kleine Umzüge/);
+  assert.match(html, /Zürich, Schaffhausen &amp; Winterthur/);
 });

@@ -1,0 +1,422 @@
+[
+  {
+    "id": "zuerich",
+    "city": "Zurich",
+    "slug": "/reinigung/region-zuerich",
+    "seo": {
+      "title": "Cleaning and small moves in Zurich | Kraken PFM",
+      "description": "Windows, home cleaning and small moves in Zurich. Personally arranged, with no VAT on your invoice. Choose your service and see the price in our calculator."
+    },
+    "eyebrow": "For your home in Zurich",
+    "h1": "Cleaning and small moves in Zurich. Well planned, with personal support.",
+    "intro": [
+      "A few windows, a flat before handover or boxes for your new home: you do not need a large job to get some help. Kraken supports private households in Zurich with five clearly defined services. You choose what you need, and we agree the scope with you.",
+      "Our base is in Schaffhausen. To plan your job in Zurich, we take your address, access arrangements and preferred date into account. The floor, lift and distance from the vehicle to your front door are part of the preparation from the start."
+    ],
+    "heroFacts": [
+      "Small jobs welcome",
+      "Personally arranged",
+      "No VAT on your invoice"
+    ],
+    "cta": {
+      "label": "Calculate my job in Zurich",
+      "href": "/quote?lang=en",
+      "city": "Zurich"
+    },
+    "servicesTitle": "Which task would you like to leave to us?",
+    "servicesIntro": "Choose a service to suit your situation. In the calculator, add the details that determine the work involved.",
+    "services": [
+      {
+        "id": "windows",
+        "title": "Window cleaning in Zurich",
+        "body": "To get your glass and frames thoroughly clean again, enter the number and type of windows. Include balcony doors, roof windows, blinds and any areas that are difficult to reach. For planning, we need to know which surfaces can be reached safely from inside and outside.",
+        "ctaLabel": "Enter my windows"
+      },
+      {
+        "id": "moveout",
+        "title": "End of tenancy cleaning before handover",
+        "body": "Once your flat is empty, we take care of the agreed final clean. The number of rooms, floor area, condition and handover date help us plan the kitchen, bathroom, windows and floors. The handover guarantee covers the cleaning services agreed in the contract; we clarify its exact scope before the job.",
+        "ctaLabel": "Plan my end of tenancy clean"
+      },
+      {
+        "id": "regular",
+        "title": "Regular home cleaning",
+        "body": "Would you like recurring help with your bathroom, kitchen, surfaces and floors? We agree the tasks and frequency to suit your household. Tell us your priorities and point out any delicate materials. That way, we know what matters on each visit and which extra tasks need to be planned separately.",
+        "ctaLabel": "Choose my cleaning schedule"
+      },
+      {
+        "id": "deep",
+        "title": "Deep cleaning for a fresh start",
+        "body": "A thorough one-off clean helps where everyday care is not enough. Describe the rooms, any build-up and the work you would like done. Photos can help us assess the job. We agree the scope so that a small concern does not turn into an unclear assignment.",
+        "ctaLabel": "Put together my deep clean"
+      },
+      {
+        "id": "moving",
+        "title": "Small moves and furniture transport",
+        "body": "We plan transport for a room in a shared flat, a compact home or individual pieces of furniture with our Ford Transit. List your items, collection and destination addresses, and access at both locations. The dimensions of large furniture, stairs and carrying distances help determine how the job can be carried out.",
+        "ctaLabel": "Calculate my small move"
+      }
+    ],
+    "planning": {
+      "title": "In Zurich, a well planned job starts before your front door.",
+      "intro": "Clear preparation reduces follow-up questions for cleaning and transport. These four details help us plan your job properly.",
+      "steps": [
+        {
+          "title": "Describe the access",
+          "body": "Tell us the floor, whether there is a lift, the stairs and any narrow spaces. For furniture, the dimensions of doors and the lift are also useful. Let us know if vehicle access or entry is only possible at certain times."
+        },
+        {
+          "title": "Check stopping arrangements early",
+          "body": "Where can the vehicle stop legally, and how far will items need to be carried? If you need public parking spaces for your move, the City of Zurich offers parking reservations subject to conditions. Check the current requirements and advance notice directly with the city.",
+          "sourceIds": ["zh-parking"]
+        },
+        {
+          "title": "Coordinate transport, cleaning and handover",
+          "body": "If your move and final clean need to fit together, tell us all the relevant dates. An empty flat makes it easier to clean the agreed surfaces. Allow enough time between each stage and agree who will arrange access and hand over the keys."
+        },
+        {
+          "title": "Register your new address separately",
+          "body": "Booking a move does not register your new address with the authorities. Zurich provides its own online service for a change of address within the city. If you are moving into or out of the city, check the appropriate procedure with the municipality responsible.",
+          "sourceIds": ["zh-address"]
+        }
+      ]
+    },
+    "why": {
+      "title": "A manageable job deserves our full attention.",
+      "body": "Kraken focuses on help that makes a difference in everyday life at home. Antonio and our small, experienced team agree the work with you personally. You do not need to book comprehensive property care when you have a specific task to hand over.",
+      "points": [
+        {
+          "title": "The scope comes first",
+          "body": "You decide which service you need. Special requests, access arrangements and extra work are made clear during planning."
+        },
+        {
+          "title": "No VAT on your invoice",
+          "body": "Kraken is currently not liable for VAT and does not charge it. When comparing quotes, look at the total price for the same scope of work. You put together your job in the calculator."
+        },
+        {
+          "title": "People you can reach",
+          "body": "You can contact us with questions from Monday to Sunday, 09:00–19:00. We arrange the work and your preferred appointment separately with you."
+        }
+      ]
+    },
+    "localResourcesTitle": "Useful links for your move in Zurich",
+    "localResources": [
+      {
+        "label": "Reserve parking spaces for a move",
+        "url": "https://www.stadt-zuerich.ch/de/stadtleben/notfall/standorte-der-stadtpolizei/parkplatzreservation.html",
+        "description": "Official requirements, advance notice and the City of Zurich's reservation form.",
+        "sourceId": "zh-parking"
+      },
+      {
+        "label": "Register a change of address within Zurich",
+        "url": "https://www.stadt-zuerich.ch/eumzug",
+        "description": "The city's online service for registering a new address within Zurich.",
+        "sourceId": "zh-address"
+      }
+    ],
+    "faqTitle": "Questions about your job in Zurich",
+    "faqs": [
+      {
+        "question": "Can Kraken clean just the windows of my flat?",
+        "answer": "Yes, window cleaning can be booked as a separate service. Enter your windows in the calculator and also mention blinds or difficult access. You will see the conditions that apply to your job there."
+      },
+      {
+        "question": "What should I mention for a move without a lift?",
+        "answer": "Give the floor at both addresses, describe the stairs and list the largest items. Photos and measurements help with tight spaces. The distance from the parking space to the flat is also part of the planning."
+      },
+      {
+        "question": "Can I coordinate my move and final clean?",
+        "answer": "Yes. Tell us your collection, move-in and handover dates, along with the cleaning you need. We check the sequence and availability so that transport, cleaning and key handover can be planned together."
+      },
+      {
+        "question": "Does Kraken have an office in Zurich?",
+        "answer": "Our base is at Seewadelstrasse 3, 8203 Schaffhausen. Zurich is one of our service areas. We come to your specified address by arrangement; this page describes our services for Zurich."
+      }
+    ],
+    "closing": {
+      "title": "Less to organise. A clearer next step.",
+      "body": "Start with the task you would like to hand over. Add your address in Zurich and details of the access. The calculator turns this into a clearly defined job.",
+      "ctaLabel": "Choose a service and calculate the price"
+    }
+  },
+  {
+    "id": "schaffhausen",
+    "city": "Schaffhausen",
+    "slug": "/reinigung/kanton-schaffhausen",
+    "seo": {
+      "title": "Cleaning company in Schaffhausen | Kraken PFM",
+      "description": "Kraken in Schaffhausen: home cleaning, windows and small moves. Personal contact, with no VAT charged. Put together your job in our calculator."
+    },
+    "eyebrow": "Based in Schaffhausen. Here for you personally.",
+    "h1": "Your cleaning company in Schaffhausen. For the tasks that take up your time.",
+    "intro": [
+      "A home needs care. Sometimes regularly, sometimes before a handover, and sometimes just when everyday life gets too busy. Kraken helps with window cleaning, end of tenancy cleaning, regular cleaning, deep cleaning and small moves. Individual, manageable tasks are welcome too.",
+      "Our base is at Seewadelstrasse 3 in 8203 Schaffhausen. Antonio and our small, experienced team take care of the personal arrangements. Tell us what matters to you, and we turn it into a clearly described job."
+    ],
+    "heroFacts": [
+      "Based in Schaffhausen",
+      "Direct contact with Antonio",
+      "For private households"
+    ],
+    "cta": {
+      "label": "Plan my help in Schaffhausen",
+      "href": "/quote?lang=en",
+      "city": "Schaffhausen"
+    },
+    "servicesTitle": "Five services. Suited to your situation.",
+    "servicesIntro": "You do not have to have everything done at once. Start with the area where a little help would make the biggest difference.",
+    "services": [
+      {
+        "id": "regular",
+        "title": "Regular cleaning for your household",
+        "body": "Bathrooms, kitchens and floors need regular care. Together, we agree which tasks take priority on each visit and which frequency makes sense for you. We note special surfaces and your preferences during planning so the help fits your home.",
+        "ctaLabel": "Find my cleaning schedule"
+      },
+      {
+        "id": "windows",
+        "title": "Window cleaning in Schaffhausen",
+        "body": "Clear windows make a difference to the whole room. We plan your window cleaning around the number, type and accessibility of your windows. Frames and window sills form part of the described window service. Enter blinds or additional glass surfaces separately so that the scope stays clear.",
+        "ctaLabel": "Calculate my window cleaning"
+      },
+      {
+        "id": "deep",
+        "title": "Deep cleaning where more attention is needed",
+        "body": "For stubborn dirt and areas that have been left for a while, choose a one-off deep clean. Tell us the rooms, materials and your priorities. Whether it is the kitchen, bathroom or whole flat, we agree the work according to the condition of the surfaces.",
+        "ctaLabel": "Choose my cleaning priorities"
+      },
+      {
+        "id": "moveout",
+        "title": "End of tenancy cleaning with an agreed handover guarantee",
+        "body": "When you hand back your flat, a clear scope and a well coordinated appointment matter. We plan the final clean around its size, condition and the agreed extras. The handover guarantee applies to the cleaning services agreed in the contract; its scope and conditions are set before the job.",
+        "ctaLabel": "Prepare my property handover"
+      },
+      {
+        "id": "moving",
+        "title": "Small moves with our Ford Transit",
+        "body": "Individual pieces of furniture, boxes or a small household: describe what needs transporting and the help you need. For a practical plan, we need both addresses, the floors, lift information and the dimensions of large items. We discuss how to organise your transport appropriately.",
+        "ctaLabel": "Put together my transport job"
+      }
+    ],
+    "planning": {
+      "title": "Agree the details personally before we come to you.",
+      "intro": "We coordinate your job from our base in Schaffhausen. Your wishes and the situation at your home remain central to the plan.",
+      "steps": [
+        {
+          "title": "Start with your most important task",
+          "body": "Think about what would take the most work off your hands right now: regular support, a thorough one-off clean or help moving home. Choose the service in the calculator and add the details about your flat."
+        },
+        {
+          "title": "Discuss any special requirements",
+          "body": "Tell us which rooms are accessible, whether there are delicate materials and how entry will be arranged. For a move, an inventory and vehicle access details help. This lets us discuss any open questions before the job."
+        },
+        {
+          "title": "Remember to register your move",
+          "body": "The City of Schaffhausen brings together information on moving into, within and out of the city on an official page. You can find the relevant procedure and documents for your situation there. This registration is separate from your booking with Kraken.",
+          "sourceIds": ["sh-moving"]
+        },
+        {
+          "title": "Check vehicle access and parking",
+          "body": "Check where the vehicle can stop legally and whether any specific restrictions apply at your address. The city's traffic and parking service can help with questions about municipal parking and traffic rules. Arrange a suitable stopping place before the day of the job.",
+          "sourceIds": ["sh-parking"]
+        }
+      ]
+    },
+    "why": {
+      "title": "Why Kraken? Because personal help should be straightforward.",
+      "body": "You get a direct point of contact and services designed for private households. We listen, clarify the scope and plan the job with you. Our mascot Kai guides you through the website; real people are behind the work and ready to answer your questions.",
+      "points": [
+        {
+          "title": "Personal contact in Schaffhausen",
+          "body": "Kraken is based in Schaffhausen. You can reach Antonio and the team by phone or email with any questions. Please arrange a personal visit with us in advance."
+        },
+        {
+          "title": "No VAT charged",
+          "body": "As a small business currently not liable for VAT, we do not charge it. The calculator price relates to your chosen scope. Compare quotes by their total price and the services included."
+        },
+        {
+          "title": "Available when you are planning",
+          "body": "Our contact hours are Monday to Sunday, 09:00–19:00. You can ask about the process, discuss your wishes or arrange an appointment during these hours."
+        }
+      ]
+    },
+    "localResourcesTitle": "Official help for your change of address",
+    "localResources": [
+      {
+        "label": "Moving into, within or out of Schaffhausen",
+        "url": "https://www.stadt-schaffhausen.ch/dienste/100114",
+        "description": "The residents' registration office explains the procedures and documents required.",
+        "sourceId": "sh-moving"
+      },
+      {
+        "label": "The city's traffic and parking service",
+        "url": "https://www.stadt-schaffhausen.ch/verkehrsparkdienst/33923",
+        "description": "Official information and contact details for questions about municipal traffic and parking rules.",
+        "sourceId": "sh-parking"
+      }
+    ],
+    "faqTitle": "Good to know before you book",
+    "faqs": [
+      {
+        "question": "How can I contact Kraken in Schaffhausen?",
+        "answer": "You can reach us on +41 77 450 57 05 or at kai@krakenpfm.ch, Monday to Sunday, 09:00–19:00. Our base is at Seewadelstrasse 3, 8203 Schaffhausen. Please arrange a visit in advance."
+      },
+      {
+        "question": "Can I request a job in the Rhine Falls area?",
+        "answer": "Yes. Enter your exact address and the service you need in the calculator. If your home is outside the city of Schaffhausen, we check whether we can carry out the job and discuss travel and the appointment for that specific request."
+      },
+      {
+        "question": "What does the handover guarantee for end of tenancy cleaning mean?",
+        "answer": "It relates to the cleaning services agreed for the job. That is why we clarify the rooms, tasks and conditions beforehand. Damage, repairs or other tenancy matters are not part of the cleaning job."
+      },
+      {
+        "question": "Why is there no VAT on my invoice?",
+        "answer": "Kraken is currently not liable for VAT and therefore does not charge it. The stated total price and agreed services are what apply to your job."
+      }
+    ],
+    "closing": {
+      "title": "What can we take off your hands in Schaffhausen?",
+      "body": "Choose your service and tell us about your home or small move. The calculator guides you through the details we need for your job.",
+      "ctaLabel": "Plan my job in the calculator"
+    }
+  },
+  {
+    "id": "winterthur",
+    "city": "Winterthur",
+    "slug": "/reinigung/region-winterthur",
+    "seo": {
+      "title": "Home cleaning in Winterthur | Kraken PFM",
+      "description": "Regular cleaning, deep cleaning, windows and small moves in Winterthur. Choose the right help for your home and calculate your job."
+    },
+    "eyebrow": "More room for everyday life in Winterthur",
+    "h1": "Cleaning in Winterthur that fits your everyday life.",
+    "intro": [
+      "Do you need help every week, a thorough one-off clean or support with moving to your next flat? Kraken helps private households in Winterthur with a service suited to their situation. You set the priorities, and together we plan the right tasks.",
+      "Our small, experienced team travels from our base in Schaffhausen to arranged jobs in Winterthur. Start in the calculator with what you need: regular cleaning, deep cleaning, windows, end of tenancy cleaning or a small move."
+    ],
+    "heroFacts": [
+      "One-off or regular",
+      "Suited to your household",
+      "No VAT on your invoice"
+    ],
+    "cta": {
+      "label": "Find the right help in Winterthur",
+      "href": "/quote?lang=en",
+      "city": "Winterthur"
+    },
+    "servicesTitle": "What kind of help suits you right now?",
+    "servicesIntro": "Your situation determines the service. This helps distinguish recurring care from an intensive clean or a move to a new home.",
+    "services": [
+      {
+        "id": "regular",
+        "title": "Regular cleaning in Winterthur",
+        "body": "When the kitchen, bathroom and floors keep taking up your time, an agreed cleaning schedule helps. Tell us your rooms and priorities, and we plan the recurring tasks. Individual extras can be considered separately so that a normal visit has a clear scope.",
+        "ctaLabel": "Make my everyday life easier"
+      },
+      {
+        "id": "deep",
+        "title": "Deep cleaning for more intensive care",
+        "body": "A deep clean makes sense when dirt has built up or you would like certain areas cleaned more thoroughly. Describe their condition, materials and your priorities. Regular cleaning can follow afterwards, but it does not have to be part of your booking.",
+        "ctaLabel": "Plan my deep clean"
+      },
+      {
+        "id": "windows",
+        "title": "Window cleaning as a separate appointment",
+        "body": "Windows do not need to be included in every home cleaning visit. Enter the glass surfaces, frames and window types for a separate job. Also mention blinds, balcony doors and areas that are difficult to reach. This lets us plan around the actual scope of your home.",
+        "ctaLabel": "Choose my windows"
+      },
+      {
+        "id": "moveout",
+        "title": "End of tenancy cleaning before you hand back your home",
+        "body": "When you move out, the final clean depends on your flat and the agreed scope of work. Tell us the floor area, number of rooms, condition and planned handover date. A handover guarantee applies to the cleaning services agreed in the contract; we clarify the conditions before the job is confirmed.",
+        "ctaLabel": "Calculate my final clean"
+      },
+      {
+        "id": "moving",
+        "title": "Small moves in and to Winterthur",
+        "body": "Are you moving a compact household or transporting individual pieces of furniture? We plan the use of our Ford Transit around your items and access arrangements. Enter both addresses, floors, lift details and the dimensions of large furniture. Include boxes and items from the cellar on your list too.",
+        "ctaLabel": "Plan my small move"
+      }
+    ],
+    "planning": {
+      "title": "A plan that works beyond the first visit.",
+      "intro": "Whether you are staying in your flat or moving into a new one, clear priorities make it easier to choose.",
+      "steps": [
+        {
+          "title": "Routine care or a thorough fresh start?",
+          "body": "List the tasks that come up regularly. Then identify the work that needs more attention as a one-off. This distinction helps you choose the right service and explain your wishes clearly."
+        },
+        {
+          "title": "Prepare your home",
+          "body": "Decide which surfaces need to be freely accessible and how entry will be arranged. Point out any delicate materials and special requests. For recurring appointments, we discuss which tasks should be included on every visit."
+        },
+        {
+          "title": "Check the carrying route when moving home",
+          "body": "Check the lift, stairs, doors and distance to the vehicle. If you need public parking spaces for a moving van, Winterthur provides information on temporarily reserving them and the permit procedure. You can find the current requirements on the city's website.",
+          "sourceIds": ["wt-parking"]
+        },
+        {
+          "title": "Register your new address separately",
+          "body": "The City of Winterthur links to eUmzug, an online service for registering arrivals, departures and changes of address where the conditions are met. Check which procedure suits your situation there. Arrange transport and cleaning with us separately from these official procedures.",
+          "sourceIds": ["wt-moving"]
+        }
+      ]
+    },
+    "why": {
+      "title": "Help guided by your priorities.",
+      "body": "You know best what needs doing in your home. Antonio and our team bring experience to planning and carrying out the agreed work. A clear scope makes working together easier, from your first enquiry to the next visit.",
+      "points": [
+        {
+          "title": "Plan only what you need",
+          "body": "Regular care and extra tasks are clearly described. This makes it possible to plan a single appointment as well as recurring support."
+        },
+        {
+          "title": "Your total price in the calculator",
+          "body": "Choose the service and its details in one place. Kraken is currently not liable for VAT and does not charge it. When comparing other quotes, consider the same scope of work and the full final price."
+        },
+        {
+          "title": "People you can reach",
+          "body": "We are available for questions Monday to Sunday, 09:00–19:00. We arrange your appointment and access with you personally. Winterthur is a service area; our business remains based in Schaffhausen."
+        }
+      ]
+    },
+    "localResourcesTitle": "For a move to or within Winterthur",
+    "localResources": [
+      {
+        "label": "eUmzug: register your address online",
+        "url": "https://stadt.winterthur.ch/services/eumzug",
+        "description": "Official requirements and access to online registration of your move.",
+        "sourceId": "wt-moving"
+      },
+      {
+        "label": "Reserve parking spaces for a move",
+        "url": "https://stadt.winterthur.ch/themen/mobilitaet/auto-parkieren/parkbewilligungen",
+        "description": "The city's section on moving explains the permit procedure and links to the forms.",
+        "sourceId": "wt-parking"
+      }
+    ],
+    "faqTitle": "Choose the right service more easily",
+    "faqs": [
+      {
+        "question": "Do I need regular cleaning or a deep clean?",
+        "answer": "Regular cleaning is for recurring care of the agreed rooms. A deep clean provides more intensive, one-off attention to selected areas. Describe the condition and your priorities so the right service can be identified."
+      },
+      {
+        "question": "Can I focus on the kitchen and bathroom first?",
+        "answer": "Yes. Mention these priorities when planning and describe the work you would like done. The job can focus on selected areas. In the calculator, you will see which details are needed for the service you choose."
+      },
+      {
+        "question": "Which items should I list for my small move?",
+        "answer": "List furniture, boxes and everything else that needs transporting, including items from the cellar or storage room. For large items, measurements and dismantling details help. Access at both addresses is just as important as the inventory."
+      },
+      {
+        "question": "Can I plan window cleaning and home cleaning separately?",
+        "answer": "Yes. Window cleaning is a service in its own right. Enter the scope of each job and your preferred dates. We discuss whether separate appointments or a combination are suitable and available for your job."
+      }
+    ],
+    "closing": {
+      "title": "Start with what makes everyday life easier.",
+      "body": "Choose your service for Winterthur and set your priorities. Add the details in the calculator and see how your job is put together.",
+      "ctaLabel": "Choose my service and calculate the price"
+    }
+  }
+]

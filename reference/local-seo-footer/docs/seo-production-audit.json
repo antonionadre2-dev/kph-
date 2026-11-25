@@ -1,0 +1,210 @@
+{
+  "schema_version": "1.0",
+  "project": "Kraken PFM — integración SEO local",
+  "audit_date_utc": "2026-11-25",
+  "production_origin": "https://krakenpfm.ch",
+  "audit_language": "es",
+  "scope": {
+    "read_only": true,
+    "methods": ["Lectura de páginas públicas mediante buscador", "Peticiones HTTP directas al servidor público"],
+    "not_verified": ["Search Console", "Google Business Profile", "Posiciones o snippets reales de Google", "Contenido completo de los seis idiomas en todas las rutas", "Titularidad de perfiles sociales", "Contenido legal tras hidratación en navegador"],
+    "cache_caveat": "La extracción web puede devolver una versión indexada anterior. Las observaciones marcadas direct_http corresponden al HTML obtenido del servidor el día de la auditoría. No atribuir las versiones antiguas a la producción actual."
+  },
+  "integration_contract": {
+    "target": "Fusionar el contenido regional alemán nuevo y sus metadatos en el framework de renderizado de servidor de producción existente.",
+    "not_a_production_replacement": true,
+    "preserve": [
+      "Componentes, identidad visual y navegación existentes",
+      "Las tres rutas regionales existentes y sus canonicals",
+      "Las quince rutas de servicio por ciudad existentes",
+      "Las seis versiones de idioma y su selección persistente",
+      "El sitemap existente con sus 144 entradas y la generación de hreflang",
+      "La calculadora, las claves de servicio y los flujos de pago y correo",
+      "Contenido legal verificado existente, aunque esté almacenado en otros componentes",
+      "Redirecciones existentes, incluida /ueber-kraken hacia /about"
+    ],
+    "do_not": [
+      "Sustituir producción por un HTML de preview",
+      "Crear rutas regionales paralelas para el mismo contenido",
+      "Borrar idiomas, rutas o entradas válidas del sitemap para simplificar la entrega",
+      "Publicar texto alemán en las URLs de otros idiomas como si estuviera traducido",
+      "Declarar oficinas, valoraciones, certificaciones o garantías no verificadas",
+      "Presentar metadatos propuestos como snippets garantizados de Google"
+    ]
+  },
+  "languages": {
+    "declared": ["de", "en", "es", "pt", "it", "fr"],
+    "hreflang_values": ["de-CH", "en", "es", "pt", "it", "fr", "x-default"],
+    "german_canonical_omits_lang_query": true,
+    "other_language_canonical_pattern": "URL de la misma ruta con ?lang={en|es|pt|it|fr}",
+    "sample_verified": "Zürich ?lang=en devuelve título y H1 ingleses, canonical propio con ?lang=en y siete enlaces alternativos.",
+    "integration_note": "Añadir contenido DE sin sobrescribir las traducciones actuales. Traducir los módulos nuevos antes de declararlos como disponibles en otros idiomas."
+  },
+  "homepage": {
+    "path": "/",
+    "verification": "direct_http",
+    "http_status": 200,
+    "title": "Kraken PFM – Reinigung & kleine Umzüge in Zürich, Schaffhausen und Winterthur",
+    "description": "Persönliche Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur. Fensterreinigung, Umzugsreinigung, regelmässige Reinigung und Grundreinigung.",
+    "h1": "Ihr Zuhause in guten Armen.",
+    "canonical": "https://krakenpfm.ch/",
+    "robots": "index, follow",
+    "source_ref": "turn155771420view0"
+  },
+  "regional_pages": [
+    {
+      "city": "Zürich",
+      "path": "/reinigung/region-zuerich",
+      "footer_current_href": "/reinigung/region-zuerich?lang=de",
+      "http_status": 200,
+      "verification": "direct_http",
+      "title": "Reinigung und kleine Umzüge · Zürich | Kraken PFM",
+      "description": "Reinigung und kleine Umzüge in Zürich für Privathaushalte. Fenster, Umzugsreinigung, regelmässige Reinigung und Grundreinigung. Auftrag im Rechner planen.",
+      "h1": "Reinigung und kleine Umzüge · Zürich",
+      "canonical": "https://krakenpfm.ch/reinigung/region-zuerich",
+      "robots": "index, follow",
+      "hreflang_count": 7,
+      "source_ref": "turn710315680view0"
+    },
+    {
+      "city": "Schaffhausen",
+      "path": "/reinigung/kanton-schaffhausen",
+      "footer_current_href": "/reinigung/kanton-schaffhausen?lang=de",
+      "http_status": 200,
+      "verification": "direct_http",
+      "title": "Reinigung und kleine Umzüge · Schaffhausen | Kraken PFM",
+      "description": "Reinigung und kleine Umzüge in Schaffhausen für Privathaushalte. Fenster, Umzugsreinigung, regelmässige Reinigung und Grundreinigung. Auftrag im Rechner planen.",
+      "h1": "Reinigung und kleine Umzüge · Schaffhausen",
+      "canonical": "https://krakenpfm.ch/reinigung/kanton-schaffhausen",
+      "robots": "index, follow",
+      "hreflang_count": 7,
+      "source_ref": "turn710315680view1"
+    },
+    {
+      "city": "Winterthur",
+      "path": "/reinigung/region-winterthur",
+      "footer_current_href": "/reinigung/region-winterthur?lang=de",
+      "http_status": 200,
+      "verification": "direct_http",
+      "title": "Reinigung und kleine Umzüge · Winterthur | Kraken PFM",
+      "description": "Reinigung und kleine Umzüge in Winterthur für Privathaushalte. Fenster, Umzugsreinigung, regelmässige Reinigung und Grundreinigung. Auftrag im Rechner planen.",
+      "h1": "Reinigung und kleine Umzüge · Winterthur",
+      "canonical": "https://krakenpfm.ch/reinigung/region-winterthur",
+      "robots": "index, follow",
+      "hreflang_count": 7,
+      "source_ref": "turn710315680view2"
+    }
+  ],
+  "regional_content_finding": "Las tres páginas repiten prácticamente toda la introducción, las cinco descripciones y las preguntas frecuentes; solo cambian ciudad y un breve párrafo de preparación. Reescribir con utilidad local real en las rutas existentes. Esta similitud es un hallazgo editorial; no demuestra una penalización de Google.",
+  "city_service_pages": {
+    "count": 15,
+    "verification": "Todas las rutas enumeradas están presentes en el sitemap. Solo las cuatro indicadas en direct_http_samples se comprobaron individualmente por HTTP.",
+    "paths": [
+      "/services/schaffhausen/end-of-tenancy",
+      "/services/schaffhausen/daily-cleaning",
+      "/services/schaffhausen/deep-cleaning",
+      "/services/schaffhausen/moving-furniture",
+      "/services/schaffhausen/window-cleaning",
+      "/services/zurich/end-of-tenancy",
+      "/services/zurich/daily-cleaning",
+      "/services/zurich/deep-cleaning",
+      "/services/zurich/moving-furniture",
+      "/services/zurich/window-cleaning",
+      "/services/winterthur/end-of-tenancy",
+      "/services/winterthur/daily-cleaning",
+      "/services/winterthur/deep-cleaning",
+      "/services/winterthur/moving-furniture",
+      "/services/winterthur/window-cleaning"
+    ],
+    "direct_http_samples": [
+      {"path": "/services/zurich/window-cleaning", "http_status": 200, "title": "Fensterreinigung · Zürich | Kraken PFM", "self_canonical": true},
+      {"path": "/services/winterthur/window-cleaning", "http_status": 200, "title": "Fensterreinigung · Winterthur | Kraken PFM", "self_canonical": true},
+      {"path": "/services/schaffhausen/window-cleaning", "http_status": 200, "title": "Fensterreinigung · Schaffhausen | Kraken PFM", "self_canonical": true},
+      {"path": "/services/schaffhausen/end-of-tenancy", "http_status": 200, "title": "Umzugsreinigung · Schaffhausen | Kraken PFM", "self_canonical": true}
+    ],
+    "finding": "Las tres páginas de ventanas de la muestra también comparten casi todo el contenido salvo ciudad y párrafo de preparación. Conservar sus rutas; no crear otras quince páginas equivalentes."
+  },
+  "other_current_metadata": [
+    {"path": "/leistungen", "http_status": 200, "title": "Reinigung & kleine Umzüge in Zürich, Schaffhausen & Winterthur | Kraken", "description": "Fensterreinigung, Umzugsreinigung, regelmässige Reinigung, Grundreinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur.", "canonical": "https://krakenpfm.ch/leistungen", "robots": "index, follow"},
+    {"path": "/about", "http_status": 200, "title": "Über Kraken & Kai · Persönliche Hilfe für Ihr Zuhause", "description": "Lernen Sie Kraken PFM, Gründer Antonio Nadre Gomes Mendes und Maskottchen Kai kennen. Persönliche Reinigung und kleine Umzüge ab Schaffhausen für Zürich und Winterthur.", "canonical": "https://krakenpfm.ch/about", "robots": "index, follow"},
+    {"path": "/kontakt", "http_status": 200, "title": "Kontakt · Kraken PFM in Schaffhausen", "description": "Kontaktieren Sie Kraken PFM in Schaffhausen. Persönlich erreichbar von Montag bis Sonntag, 09:00–19:00 Uhr. Reinigung und kleine Umzüge im bestehenden Rechner planen.", "canonical": "https://krakenpfm.ch/kontakt", "robots": "index, follow"}
+  ],
+  "footer": {
+    "verification": "direct_http de la homepage",
+    "service_navigation": [
+      {"label": "Fensterreinigung", "current": "/quote?service=windows&lang=de", "proposed_information_link": "/leistungen?lang=de#fensterreinigung", "service_key": "windows"},
+      {"label": "Umzugsreinigung", "current": "/quote?service=end&lang=de", "proposed_information_link": "/leistungen?lang=de#umzugsreinigung", "service_key": "end"},
+      {"label": "Regelmässige Reinigung", "current": "/quote?service=regular&lang=de", "proposed_information_link": "/leistungen?lang=de#regelmaessige-reinigung", "service_key": "regular"},
+      {"label": "Grundreinigung", "current": "/quote?service=deep&lang=de", "proposed_information_link": "/leistungen?lang=de#grundreinigung", "service_key": "deep"},
+      {"label": "Kleine Umzüge", "current": "/quote?service=moving&lang=de", "proposed_information_link": "/leistungen?lang=de#kleine-umzuege", "service_key": "moving"}
+    ],
+    "all_five_information_fragments_exist": true,
+    "commercial_cta": {"label": "Meine Offerte berechnen", "keep_target": "/quote?lang=de"},
+    "legal_links": ["/impressum?lang=de", "/gdpr?lang=de", "/terms?lang=de"],
+    "contact_and_external_links": {
+      "phone": "tel:+41774505705",
+      "email": "mailto:kai@krakenpfm.ch",
+      "whatsapp": "https://wa.me/41774505705",
+      "linkedin": "https://www.linkedin.com/company/krakenpfm/",
+      "maps": "https://www.google.com/maps/search/?api=1&query=Seewadelstrasse%203%2C%208203%20Schaffhausen%2C%20Schweiz",
+      "website_credit": "https://seociety.ch",
+      "instagram": null
+    },
+    "instagram_note": "No figura un enlace Instagram en el footer HTML auditado. Obtener el perfil real antes de añadirlo.",
+    "interaction_caveat": "Los enlaces actuales de servicios llevan data-calculator y data-service. Revisar listeners al convertirlos a enlaces informativos para que JavaScript no los redirija todavía a la calculadora. Mantener el idioma y colocar ?lang= antes del fragmento #."
+  },
+  "robots_and_sitemap": {
+    "robots_url": "https://krakenpfm.ch/robots.txt",
+    "robots_http_status": 200,
+    "public_pages_allowed": true,
+    "sitemap_declared_in_robots": "https://krakenpfm.ch/sitemap.xml",
+    "sitemap_url": "https://krakenpfm.ch/sitemap.xml",
+    "sitemap_http_status": 200,
+    "sitemap_loc_count": 144,
+    "base_route_count": 24,
+    "language_variants_per_base": 6,
+    "core_base_routes": ["/", "/leistungen", "/about", "/kontakt", "/quote", "/einsatzgebiete"],
+    "other_bases": "Las tres regionales y las quince ciudad/servicio enumeradas en este archivo.",
+    "preserve_sensitive_exclusions": true,
+    "note": "No regenerar un sitemap mínimo desde el preview ni eliminar entradas existentes. Si hay una decisión posterior de consolidación, coordinar redirección, sitemap, canonical y enlaces."
+  },
+  "legal_route_caveat": {
+    "paths": ["/impressum", "/gdpr", "/terms"],
+    "direct_http_status": 200,
+    "robots": "noindex, follow",
+    "canonical_behavior": "Cada ruta se canonicaliza a sí misma sin ?lang=de.",
+    "hreflang_count": 0,
+    "observation": "En el main del HTML directo solo aparecen H1, una frase descriptiva genérica y contacto; la lectura web muestra lo mismo.",
+    "required_action": "Inspeccionar los componentes y la hidratación. Recuperar contenido legal verificado donde ya exista. No inventar condiciones, cobertura de seguro o política de datos para rellenar páginas.",
+    "source_refs": ["turn748880726view0", "turn748880726view1", "turn748880726view2"]
+  },
+  "structured_data": {
+    "existing_types": ["WebSite", "LocalBusiness", "WebPage"],
+    "business_id": "https://krakenpfm.ch/#business",
+    "single_verified_address": {"streetAddress": "Seewadelstrasse 3", "postalCode": "8203", "addressLocality": "Schaffhausen", "addressRegion": "SH", "addressCountry": "CH"},
+    "area_served": ["Zürich", "Schaffhausen", "Winterthur"],
+    "published_opening_hours": "Lunes a domingo, 09:00–19:00",
+    "finding_to_test": "El name del nodo WebPage de la homepage mostraba una secuencia literal \\u0026; revisar posible doble escape de & en el serializador JSON-LD.",
+    "keep_one_business_entity": true
+  },
+  "official_google_sources": [
+    {"topic": "Títulos", "url": "https://developers.google.com/search/docs/appearance/title-link", "accessed_on": "2026-11-25", "source_ref": "turn365290017view0", "takeaway": "Títulos descriptivos y distintos; Google puede generar otro título y necesita rastrear/reprocesar los cambios."},
+    {"topic": "Snippets y descripciones", "url": "https://developers.google.com/search/docs/appearance/snippet", "accessed_on": "2026-11-25", "source_ref": "turn365290017view1", "takeaway": "Descripciones propias y coherentes con el cuerpo. Los snippets pueden variar según la consulta."},
+    {"topic": "Páginas locales repetidas", "url": "https://developers.google.com/search/docs/essentials/spam-policies#doorway-abuse", "accessed_on": "2026-11-25", "source_ref": "turn365290017view2", "takeaway": "Crear utilidad real, no páginas regionales casi iguales que solo canalicen tráfico a otro destino."},
+    {"topic": "Canonical", "url": "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls", "accessed_on": "2026-11-25", "source_ref": "turn555260049view1", "takeaway": "Mantener señales coherentes entre canonical, enlaces internos, redirecciones y sitemap."},
+    {"topic": "Hreflang", "url": "https://developers.google.com/search/docs/specialty/international/localized-versions", "accessed_on": "2026-11-25", "source_ref": "turn555260049view0", "takeaway": "Versiones realmente traducidas; referencias recíprocas e inclusión de la propia versión."},
+    {"topic": "Sitemap", "url": "https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap", "accessed_on": "2026-11-25", "source_ref": "turn555260049view2", "takeaway": "Incluir URLs canónicas que se desea mostrar, sin sustituir el inventario existente por el del preview."}
+  ],
+  "verification_priorities": [
+    "Comparar inventario de rutas, idiomas y sitemap antes/después; no perder ninguna de las 144 entradas sin una decisión explícita de consolidación.",
+    "Comprobar HTTP 200 real, un H1 y metadata específica en el HTML inicial de las tres regionales; comprobar que la hidratación no repone texto antiguo.",
+    "Probar todos los enlaces del footer en móvil y escritorio, con idioma no alemán, y confirmar anclas reales y ausencia de interceptores antiguos.",
+    "Verificar canonical propio y hreflang recíproco de variantes; no canonicalizar traducciones al alemán ni ciudades a la homepage.",
+    "Comprobar que el entorno preview no sea indexable como producción y que las URLs públicas de producción no hereden noindex del preview.",
+    "Parsear JSON-LD, resolver URLs y evitar dobles escapes; no añadir oficinas, reseñas o claims ficticios.",
+    "Verificar que calculadora, selección de servicio, idioma, pagos y correo no hayan cambiado al actualizar footer y páginas regionales.",
+    "Comprobar los tres documentos legales tras renderizado/hidratación; conservar contenido real y resolver los placeholders si son visibles.",
+    "Revisar el contenido local editorialmente para evitar cambios puramente nominales entre ciudades y sobrecarga de keywords.",
+    "Tras despliegue autorizado, comprobar URL pública y solicitar recrawl si se dispone de Search Console; no prometer indexación, posición o snippet exacto."
+  ]
+}

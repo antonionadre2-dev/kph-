@@ -1,6 +1,7 @@
 import { MUNICIPALITIES } from '../data/locations.ts';
 import { normalizeHomeLanguage } from '../../components/home/homeTranslations.ts';
 import { localText } from './local-translations.ts';
+import { getApprovedPageMetadata } from './local-metadata.ts';
 
 export const LOCAL_CITIES = [
   { id: 'schaffhausen', municipalitySlug: 'schaffhausen', regionId: 'schaffhausen', name: 'Schaffhausen', regionPath: '/reinigung/kanton-schaffhausen' },
@@ -91,6 +92,8 @@ export function getLocalSeoDescriptor(pathname: string, language: string = 'de')
   const { city, name } = getLocalRoutePlace(route);
   const service = route.kind === 'service' ? getLocalService(route.serviceId) : undefined;
   const indexable = route.kind === 'coverage' || route.kind === 'region' || (route.kind === 'service' && !!city && !!service);
+  const approved = getApprovedPageMetadata(pathname, language);
+  if (approved?.h1) return { title: approved.title, h1: approved.h1, description: approved.description, indexable, route };
   const h1 = route.kind === 'coverage'
     ? t('Einsatzgebiete')
     : route.kind === 'service' && city && service

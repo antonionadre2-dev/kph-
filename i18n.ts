@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext, type ReactNode } from 'react';
-import { LANGUAGE_STORAGE_KEY, LOCALE_LOCATION_EVENT, languageSelectionUrl, normalizeSiteLanguage, resolveSiteLanguage } from './src/locale.ts';
+import { LANGUAGE_STORAGE_KEY, LOCALE_LOCATION_EVENT, languageSelectionUrl, normalizeSiteLanguage, resolveSiteLanguage, restoredLanguageUrl } from './src/locale.ts';
 
 // Consultation specific keys
 const consultationKeys = {
@@ -7526,6 +7526,14 @@ export const I18nProvider: React.FC<{ children: ReactNode; initialLanguage?: Lan
   const [language, setLanguageState] = useState<Language>(() => initialLanguage || readLanguage());
 
   const [activeToast, setActiveToast] = useState<{ show: boolean; msg: string; langCode: string } | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const restored = restoredLanguageUrl(window.location.href, language);
+    if (!restored) return;
+    window.history.replaceState(window.history.state, '', restored);
+    window.dispatchEvent(new Event(LOCALE_LOCATION_EVENT));
+  }, [language]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

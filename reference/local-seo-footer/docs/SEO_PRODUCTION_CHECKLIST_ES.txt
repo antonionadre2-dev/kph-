@@ -1,0 +1,42 @@
+KRAKEN PFM — CHECKLIST DE INTEGRACIÓN EN PRODUCCIÓN
+Auditoría pública: 25 de noviembre de 2026
+
+OBJETIVO
+Integrar el nuevo contenido alemán de Zürich, Schaffhausen y Winterthur y sus metadatos en el framework actual de renderizado de servidor. El preview es una referencia visual y de contenido; no sustituye la aplicación de producción.
+
+1. CONSERVAR LA ESTRUCTURA EXISTENTE
+[ ] Modificar las rutas actuales /reinigung/region-zuerich, /reinigung/kanton-schaffhausen y /reinigung/region-winterthur. No crear otras tres equivalentes.
+[ ] Conservar /leistungen, /about, /kontakt, /quote, /einsatzgebiete, las quince rutas /services/{ciudad}/{servicio} y las redirecciones actuales.
+[ ] Mantener DE, EN, ES, PT, IT y FR. No sobrescribir traducciones con alemán. Los módulos nuevos necesitan traducción antes de declararse disponibles en esos idiomas.
+[ ] Conservar la generación de sitemap y hreflang: el inventario auditado contiene 144 entradas, 24 rutas base por seis idiomas. No reemplazarlo por el sitemap reducido de un preview.
+
+2. FUSIONAR EL CONTENIDO Y LOS METADATOS
+[ ] Insertar el contenido DE en los componentes/datos regionales actuales, reutilizando header, footer, estilos, imágenes y controles.
+[ ] Mantener una introducción, prioridades, explicación y preguntas propias de cada ciudad; no cambiar solo el nombre.
+[ ] Renderizar título, descripción, H1 y cuerpo significativo en el HTML inicial. Confirmar que la hidratación no vuelve al texto antiguo.
+[ ] Mantener canonical propio: alemán sin ?lang=de; las traducciones con su URL de idioma. Hreflang recíproco entre variantes reales.
+[ ] Mantener una única entidad empresarial real en Schaffhausen con las tres ciudades como área de servicio; no crear oficinas, reseñas o garantías ficticias.
+
+3. CORREGIR LA NAVEGACIÓN DEL FOOTER
+[ ] Los cinco nombres de servicio llevan a sus fragmentos existentes de /leistungen; el botón de presupuesto permanece en /quote.
+[ ] Conservar idioma en enlaces; colocar ?lang= antes de #fragmento. El mapa exacto está en production-audit.json.
+[ ] Revisar data-calculator, data-service y sus listeners: cambiar href no basta si un interceptor sigue abriendo la calculadora.
+[ ] Mantener teléfono, email, WhatsApp, Maps, LinkedIn y crédito seociety.ch. Añadir Instagram solamente con su perfil real.
+[ ] Verificar las tres páginas legales: su HTML inicial auditado solo muestra texto genérico. Buscar contenido completo en los componentes antes de reemplazar o redactar nada.
+
+4. VERIFICACIÓN EN EL ENTORNO DE PRUEBA
+[ ] Recorrer los enlaces del footer en móvil y escritorio, incluyendo una sesión con idioma distinto del alemán.
+[ ] Confirmar 200 real para rutas existentes y las nuevas respuestas de contenido; evitar errores 200 que muestran una página genérica.
+[ ] Comparar rutas, sitemap, canonical, robots y hreflang antes y después. No perder traducciones ni bloquear páginas públicas accidentalmente.
+[ ] Parsear JSON-LD y comprobar que no aparezcan secuencias literales de escape como \u0026 en los nombres.
+[ ] Verificar que la calculadora conserva servicio e idioma y que los flujos de pago/correo no cambian.
+[ ] Mantener el preview fuera del índice; comprobar que producción no herede sus directivas noindex.
+[ ] Verificar contenido local y enlaces con JavaScript activado y revisar también el HTML servido al rastreador.
+
+5. DESPUÉS DE UN DESPLIEGUE AUTORIZADO
+[ ] Abrir las URLs públicas y repetir una comprobación breve de metadatos, enlaces y sitemap.
+[ ] Si hay acceso a Search Console, inspeccionar las URLs regionales y solicitar recrawl. La auditoría no incluye métricas de Search Console ni resultados reales de Google.
+[ ] No prometer posición, indexación inmediata ni texto exacto del snippet: Google puede generar títulos y descripciones distintos según consulta.
+
+REFERENCIA
+production-audit.json contiene rutas verificadas, destinos del footer, metadatos actuales, límites de verificación y enlaces oficiales de Google consultados el 25 de noviembre de 2026.

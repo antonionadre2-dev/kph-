@@ -241,7 +241,7 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
   const tLocal = impressumTranslations[resolvedLang];
 
   return (
-    <main className="bg-slate-50 pt-48 pb-24 min-h-screen">
+    <main id="main" className="bg-slate-50 pt-48 pb-24 min-h-screen">
       <div className="container mx-auto px-6 max-w-4xl">
         
         {/* Navigation Action */}
@@ -270,7 +270,7 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
           
           {/* Company Details Card */}
           <motion.div 
-            initial={{ opacity: 0, y: 15 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between"
@@ -316,7 +316,7 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
 
           {/* Registration & Registry Details Card */}
           <motion.div 
-            initial={{ opacity: 0, y: 15 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between"
@@ -356,7 +356,7 @@ const ImpressumPage: React.FC<ImpressumPageProps> = ({ onNavigate }) => {
 
         {/* Contact Information Banner */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.98 }}
+          initial={false}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="bg-gradient-to-r from-[#002D5B] to-[#001A3D] text-white p-8 md:p-10 rounded-[2.5rem] shadow-xl relative overflow-hidden mb-12"

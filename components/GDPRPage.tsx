@@ -22,7 +22,7 @@ const GDPRPage: React.FC = () => {
   );
 
   return (
-    <main className="bg-slate-50 pt-32 pb-24 min-h-screen">
+    <main id="main" className="bg-slate-50 pt-32 pb-24 min-h-screen">
       <div className="container mx-auto px-6 max-w-4xl">
         
         {/* Header Area */}

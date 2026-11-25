@@ -1,0 +1,91 @@
+{
+  "language": "de-CH",
+  "pages": [
+    {
+      "file": "reinigung/region-zuerich.html",
+      "path": "/reinigung/region-zuerich",
+      "title": "Reinigung Zürich & kleine Umzüge | Kraken PFM",
+      "description": "Fenster, Wohnungsreinigung und kleine Umzüge in Zürich. Persönlich abgestimmt, ohne MwSt. auf der Rechnung. Leistung wählen und Preis im Rechner ansehen.",
+      "city": "Zürich",
+      "image": "/assets/service-windows-v5.webp",
+      "imageAlt": "Fenster, Reinigungsutensilien und Licht in einem privaten Wohnraum.",
+      "breadcrumbs": [
+        {
+          "name": "Startseite",
+          "path": "/"
+        },
+        {
+          "name": "Einsatzgebiete",
+          "path": "/einsatzgebiete"
+        },
+        {
+          "name": "Zürich",
+          "path": "/reinigung/region-zuerich"
+        }
+      ]
+    },
+    {
+      "file": "reinigung/kanton-schaffhausen.html",
+      "path": "/reinigung/kanton-schaffhausen",
+      "title": "Reinigungsfirma Schaffhausen | Kraken PFM",
+      "description": "Kraken aus Schaffhausen: Reinigung für Privathaushalte, Fenster und kleine Umzüge. Persönlicher Kontakt, keine MwSt. Auftrag im Rechner zusammenstellen.",
+      "city": "Schaffhausen",
+      "image": "/assets/service-end-v5.webp",
+      "imageAlt": "Vorbereiteter Wohnraum mit Reinigungsmaterial für eine Wohnungsübergabe.",
+      "breadcrumbs": [
+        {
+          "name": "Startseite",
+          "path": "/"
+        },
+        {
+          "name": "Einsatzgebiete",
+          "path": "/einsatzgebiete"
+        },
+        {
+          "name": "Schaffhausen",
+          "path": "/reinigung/kanton-schaffhausen"
+        }
+      ]
+    },
+    {
+      "file": "reinigung/region-winterthur.html",
+      "path": "/reinigung/region-winterthur",
+      "title": "Reinigung Winterthur für Ihr Zuhause | Kraken PFM",
+      "description": "Regelmässige Reinigung, Grundreinigung, Fenster und kleine Umzüge in Winterthur. Wählen Sie passende Hilfe für Ihr Zuhause und berechnen Sie Ihren Auftrag.",
+      "city": "Winterthur",
+      "image": "/assets/service-regular-v5.webp",
+      "imageAlt": "Reinigungsutensilien und gefaltete Tücher für die regelmässige Pflege einer Wohnung.",
+      "breadcrumbs": [
+        {
+          "name": "Startseite",
+          "path": "/"
+        },
+        {
+          "name": "Einsatzgebiete",
+          "path": "/einsatzgebiete"
+        },
+        {
+          "name": "Winterthur",
+          "path": "/reinigung/region-winterthur"
+        }
+      ]
+    },
+    {
+      "file": "einsatzgebiete.html",
+      "path": "/einsatzgebiete",
+      "title": "Einsatzgebiete Zürich, Schaffhausen & Winterthur | Kraken",
+      "description": "Hier hilft Kraken: Reinigung und kleine Umzüge für private Haushalte in Zürich, Schaffhausen und Winterthur. Finden Sie die Informationen für Ihren Wohnort.",
+      "image": "/assets/services-hero-v5.webp",
+      "breadcrumbs": [
+        {
+          "name": "Startseite",
+          "path": "/"
+        },
+        {
+          "name": "Einsatzgebiete",
+          "path": "/einsatzgebiete"
+        }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '../../i18n';
 import ApprovedHeader from '../home/ApprovedHeader';
 import { openHomeCalculator, type HomeService } from '../../src/home/calculator';
+import { serviceInformationSections, serviceInformationTarget } from '../../src/home/serviceInformation';
 import { requestKaiOpen } from '../../src/kai/open';
 import { servicesText } from './servicesTranslations';
 import PublicPriceGuide from '../PublicPriceGuide';
@@ -11,10 +12,7 @@ import '../home/home-language.css';
 import '../home/device-fixes.css';
 import './services.css';
 
-const serviceIds: Record<HomeService, string> = {
-  windows: 'fensterreinigung', end: 'umzugsreinigung', regular: 'regelmaessige-reinigung',
-  deep: 'grundreinigung', moving: 'kleine-umzuege',
-};
+const serviceIds = serviceInformationSections;
 const scenes = {
   windows: { kicker: 'Fenster putzen lassen', lines: ['Licht rein.', 'Alltag raus.'] },
   end: { kicker: 'Endreinigung zur Wohnungsabgabe', lines: ['Sauber abschliessen.', 'Neu ankommen.'] },
@@ -66,12 +64,24 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
       setOpenService(service); setActiveService(service); scrollToService(service);
       return true;
     };
+    const openNativeServiceLink = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !(event.target instanceof Element)) return;
+      const link = event.target.closest<HTMLAnchorElement>('a[href]');
+      // Jump links in this main already have their own ordinary-click handler.
+      if (!link || rootRef.current?.contains(link) || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+      const service = serviceInformationTarget(link.href, window.location.href);
+      if (!service) return;
+      setOpenService(service); setActiveService(service); scrollToService(service);
+      // Preserve native navigation, history and locale. No calculator hand-off is involved.
+    };
     if (!openHashTarget() && window.matchMedia('(max-width:760px)').matches) setOpenService(null);
     window.addEventListener('hashchange', openHashTarget);
     window.addEventListener('popstate', openHashTarget);
+    document.addEventListener('click', openNativeServiceLink);
     return () => {
       window.removeEventListener('hashchange', openHashTarget);
       window.removeEventListener('popstate', openHashTarget);
+      document.removeEventListener('click', openNativeServiceLink);
       framesRef.current.forEach(cancelAnimationFrame); framesRef.current.clear();
     };
   }, []);

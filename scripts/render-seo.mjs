@@ -29,18 +29,22 @@ export async function renderSeoHtml(root) {
         import ApprovedHome from './components/home/ApprovedHome.tsx';
         import ApprovedHeader from './components/home/ApprovedHeader.tsx';
         import Footer from './components/Footer.tsx';
+        import ImpressumPage from './components/ImpressumPage.tsx';
+        import GDPRPage from './components/GDPRPage.tsx';
+        import TermsPage from './components/TermsPage.tsx';
         import {LocalSeoContent} from './components/LocalSeoContent.tsx';
         import {resolveLocalSeoRoute,LOCAL_SERVICES} from './src/seo/local-content.ts';
         import {INDEXABLE_PATHS} from './src/seo/crawl-policy.ts';
-        import {seoFragmentName} from './src/seo/render-contract.ts';
+        import {seoFragmentName,LEGAL_DOCUMENT_PATHS} from './src/seo/render-contract.ts';
         import {bookingText} from './src/booking/uiCopy.ts';
-        export const routes=INDEXABLE_PATHS; export const filename=seoFragmentName;
+        export const routes=[...INDEXABLE_PATHS,...LEGAL_DOCUMENT_PATHS]; export const filename=seoFragmentName;
         const noop=()=>{};
         const wrap=(language,child)=>renderToStaticMarkup(<I18nProvider initialLanguage={language}>{child}</I18nProvider>);
         export const header=language=>wrap(language,<div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div>);
         export const footer=language=>wrap(language,<Footer onNavigate={noop}/>);
         export const home=language=>wrap(language,<><ApprovedHome onNavigate={noop}/><Footer onNavigate={noop}/></>);
         export const local=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div><LocalSeoContent route={resolveLocalSeoRoute(pathname)} language={language}/><Footer onNavigate={noop}/></>);
+        export const legal=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div>{pathname==='/impressum'?<ImpressumPage onNavigate={noop}/>:pathname==='/gdpr'?<GDPRPage/>:<TermsPage onNavigate={noop}/>}<Footer onNavigate={noop}/></>);
         export const quote=language=>{const t=key=>bookingText(language,key);return wrap(language,<>
           <div className="kraken-home"><ApprovedHeader onNavigate={noop} page="calculator"/></div>
           <main id="main" className="kr-service-calculator" lang={language}><div className="kr-calc-shell"><header className="kr-calc-intro"><p className="kr-calc-eyebrow">{t('eyebrow')}</p><h1>{t('titleStart')} <span>{t('titleAccent')}</span></h1><p className="kr-calc-lead">{t('intro')}</p></header>
@@ -64,6 +68,11 @@ export async function renderSeoHtml(root) {
           styles += extra.join(''); body = header + fragment.replace(/<link rel="stylesheet" href="[^"]+">/g, '') + footer;
         } else if (pathname === '/quote') {
           styles += stylesFor('components/calculator/CalculatorRoute.tsx'); body = render.quote(language);
+        } else if (['/impressum','/gdpr','/terms'].includes(pathname)) {
+          // The existing legal documents must be readable before JavaScript too.
+          // Rendering them does not change their indexing policy or legal copy.
+          styles += stylesFor('components/ImpressumPage.tsx','components/GDPRPage.tsx','components/TermsPage.tsx');
+          body = render.legal(pathname,language);
         } else {
           styles += stylesFor('components/RegionHubPage.tsx', 'components/CoverageHubPage.tsx', 'components/SeoServiceCityPage.tsx');
           body = render.local(pathname, language);

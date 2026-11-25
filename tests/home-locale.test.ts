@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { I18nProvider, useTranslation } from '../i18n.ts';
-import { languageFromSearch, languageSelectionUrl, localizedNavigationUrl, normalizeSiteLanguage, resolveSiteLanguage } from '../src/locale.ts';
+import { languageFromSearch, languageSelectionUrl, localizedNavigationUrl, normalizeSiteLanguage, resolveSiteLanguage, restoredLanguageUrl } from '../src/locale.ts';
+import { getPageSeo } from '../src/seo/metadata.ts';
 
 test('URL language and hl override saved preferences, including homepage and regional aliases', () => {
   for (const language of ['de', 'en', 'fr', 'it', 'es', 'pt'] as const) {
@@ -27,6 +28,39 @@ test('language choice preserves unrelated query and hash, and removes a stale hl
   assert.equal(url.searchParams.has('hl'), false);
   assert.equal(url.searchParams.get('utm_source'), 'referral');
   assert.equal(url.hash, '#leistungen');
+});
+
+test('restored language matches the visible URL and metadata while preserving booking data and explicit choices', () => {
+  const origin = 'https://krakenpfm.ch';
+  const source = new URL('/quote?service=windows&draft=test%2Bdraft%26value&booking=b1&utm_source=a&utm_source=b#resume=opaque', origin);
+  for (const language of ['en', 'es', 'fr', 'it', 'pt'] as const) {
+    const resolved = resolveSiteLanguage({ search: source.search, saved: language });
+    const restored = new URL(restoredLanguageUrl(source.href, resolved)!, origin);
+    assert.equal(restored.pathname, source.pathname);
+    assert.equal(restored.hash, source.hash);
+    assert.equal(restored.searchParams.get('lang'), language);
+    for (const key of new Set(source.searchParams.keys())) {
+      assert.deepEqual(restored.searchParams.getAll(key), source.searchParams.getAll(key), key);
+    }
+    const visible = getPageSeo(restored.pathname + restored.search);
+    const selected = getPageSeo(source.pathname + source.search, language);
+    assert.equal(visible.title, selected.title);
+    assert.equal(visible.canonical, selected.canonical);
+    assert.equal(visible.language, selected.language);
+    assert.equal(restoredLanguageUrl(restored.href, language), null);
+    const publicSource = origin + '/einsatzgebiete?service=windows&utm_source=a#regions';
+    const publicRestored = new URL(restoredLanguageUrl(publicSource, language)!, origin);
+    const publicMeta = getPageSeo(publicRestored.href);
+    assert.equal(publicMeta.canonical, origin + `/einsatzgebiete?lang=${language}`);
+    assert.equal(publicMeta.title, getPageSeo('/einsatzgebiete', language).title);
+    assert.equal(publicRestored.searchParams.get('service'), 'windows');
+    assert.equal(publicRestored.hash, '#regions');
+  }
+  for (const query of ['?lang=es', '?hl=fr', '?lang=de-CH', '?lang=EN-us', '?lang=es&hl=fr']) {
+    assert.equal(restoredLanguageUrl(origin + '/about' + query + '#story-kraken', 'pt'), null, query);
+  }
+  assert.equal(restoredLanguageUrl(source.href, 'de'), null);
+  assert.equal(restoredLanguageUrl(source.href, 'de-CH'), null);
 });
 
 test('booking and recovery context stays on its route during navigation', () => {

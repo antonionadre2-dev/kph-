@@ -35,6 +35,13 @@ export function languageSelectionUrl(href: string, language: SiteLanguage): stri
   return url.pathname + url.search + url.hash;
 }
 
+/** A restored preference gets the same explicit URL as a visitor's language selection. */
+export function restoredLanguageUrl(href: string, language: SiteLanguage): string | null {
+  const url = new URL(href);
+  if (languageFromSearch(url.search) || language === 'de' || language === 'de-CH') return null;
+  return languageSelectionUrl(href, language);
+}
+
 /** Merge route queries without duplicating '?'; an explicit target locale wins. */
 export function localizedNavigationUrl(target: string, currentHref: string, language: SiteLanguage): string {
   const current = new URL(currentHref);

@@ -6,6 +6,7 @@ import { contactText } from "./components/contact/contactTranslations.ts";
 import { bookingText } from "./src/booking/uiCopy.ts";
 import { customerAccessText } from "./src/booking/customerAccessCopy.ts";
 import { getLocalSeoDescriptor } from "./src/seo/local-content.ts";
+import { getApprovedPageMetadata } from "./src/seo/local-metadata.ts";
 
 export type Language = "de" | "en" | "fr" | "it" | "es" | "pt";
 
@@ -799,7 +800,7 @@ export function translateKey(key: string, lang: Language): string {
   return "";
 }
 
-export function getMetadataForPath(
+function getBaseMetadataForPath(
   pathname: string,
   langParam?: string
 ): {
@@ -977,4 +978,12 @@ export function getMetadataForPath(
     ogImageHeight: OG_IMAGE_HEIGHT,
     ogImageType: OG_IMAGE_TYPE,
   };
+}
+
+/** Approved copy is shared by SSR, client navigation and the legacy prerender entry point. */
+export function getMetadataForPath(pathname: string, langParam?: string): ReturnType<typeof getBaseMetadataForPath> {
+  const base = getBaseMetadataForPath(pathname, langParam);
+  const locale = normalizeHomeLanguage(langParam || languageFromSearch(pathname.includes('?') ? pathname.slice(pathname.indexOf('?')) : '') || 'de');
+  const approved = getApprovedPageMetadata(normalizeCanonicalPath(pathname), locale);
+  return approved ? { ...base, ...approved, bodyText: approved.description } : base;
 }

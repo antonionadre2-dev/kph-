@@ -1,0 +1,11 @@
+{
+  "language": "de-CH",
+  "productionOrigin": "https://krakenpfm.ch",
+  "pages": [
+    {"file":"index.html","path":"/","title":"Reinigung in Zürich, Schaffhausen & Winterthur | Kraken","description":"Persönliche Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur. Keine MwSt. Auftrag im Rechner zusammenstellen.","image":"/assets/services-hero-v5.webp"},
+    {"file":"leistungen.html","path":"/leistungen","title":"Reinigung & kleine Umzüge für Privathaushalte | Kraken PFM","description":"Fenster, Umzugsreinigung, regelmässige Reinigung, Grundreinigung und kleine Umzüge. Entdecken Sie die passende Hilfe und berechnen Sie Ihren Auftrag.","image":"/assets/services-hero-v5.webp","breadcrumbs":[{"name":"Startseite","path":"/"},{"name":"Leistungen","path":"/leistungen"}]},
+    {"file":"ueber-kraken.html","path":"/about","title":"Über Kraken: Antonio, unser Team & Kai | Kraken PFM","description":"Lernen Sie Antonio, Kraken und Maskottchen Kai kennen. Persönliche Reinigung und kleine Umzüge aus Schaffhausen für Zürich und Winterthur.","image":"/assets/kai-rheinfall-awakening.webp","productionImage":"/about-approved/assets/kai-rheinfall-awakening.webp"},
+    {"file":"kontakt.html","path":"/kontakt","title":"Kontakt zu Kraken in Schaffhausen | Mo–So 09–19 Uhr","description":"Fragen zur Reinigung oder zum kleinen Umzug? Kontaktieren Sie Kraken in Schaffhausen: +41 77 450 57 05, kai@krakenpfm.ch. Mo–So 09:00–19:00 Uhr.","image":"/assets/logo.webp"},
+    {"file":"rechner.html","path":"/quote","title":"Reinigung & Umzug berechnen | Kraken Service-Rechner","description":"Wählen Sie Ihre Leistung, den passenden Umfang und Ihren Wunschtermin. Planen Sie Reinigung oder kleinen Umzug mit Kraken. Keine MwSt. auf Ihrer Rechnung.","image":"/assets/services-hero-v5.webp"}
+  ]
+}

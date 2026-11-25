@@ -6,6 +6,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getMetadataForPath } from '../seoConfig.ts';
+import { getApprovedPageMetadata } from '../src/seo/local-metadata.ts';
 import { contactText } from '../components/contact/contactTranslations.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -50,7 +51,7 @@ test('Contact initial HTML keeps verified contact information and localized calc
 test('Contact metadata follows all six locales and keeps a single public canonical', () => {
   for (const language of [...languages, 'de-CH']) {
     const meta = getMetadataForPath(`/kontakt?lang=${language}`);
-    assert.equal(meta.title, contactText(language, 'Kontakt · Kraken PFM in Schaffhausen'));
+    assert.equal(meta.title, getApprovedPageMetadata('/kontakt', language).title);
     assert.equal(meta.h1, `${contactText(language, 'Näher dran.')} ${contactText(language, 'Persönlich für Sie da.')}`);
     assert.equal(meta.canonical, 'https://krakenpfm.ch/kontakt');
     assert.equal(meta.pageType, 'kontakt');

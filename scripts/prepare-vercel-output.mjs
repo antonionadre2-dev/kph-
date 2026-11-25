@@ -4,15 +4,17 @@ import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { INDEXABLE_PATHS } from '../src/seo/crawl-policy.ts';
-import { seoFragmentName } from '../src/seo/render-contract.ts';
+import { seoFragmentName, LEGAL_DOCUMENT_PATHS } from '../src/seo/render-contract.ts';
 
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
 const seoPages = languages.flatMap(language => INDEXABLE_PATHS.map(pathname => seoFragmentName(pathname, language)));
+const legalPages = languages.flatMap(language => LEGAL_DOCUMENT_PATHS.map(pathname => seoFragmentName(pathname, language)));
 const seoShells = languages.map(language => `seo-shell-${language}.html`);
 const runtimeHtmlNames = [
   'index.html',
   ...languages.flatMap(language => ['services', 'about', 'why', 'contact'].map(kind => `${kind}-content-${language}.html`)),
   ...seoPages,
+  ...legalPages,
   ...seoShells,
 ];
 
@@ -137,6 +139,7 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
     htmlBundleReferences: references.length,
     generatedBundles: [...files.keys()].filter(name => name.startsWith('assets/')).length,
     seoPageFragments: seoPages.length,
+    legalDocumentFragments: legalPages.length,
     seoShellFragments: seoShells.length,
     runtimeHtmlFilesVerified: runtimeHtml.length,
     sha256Verified: files.size,
