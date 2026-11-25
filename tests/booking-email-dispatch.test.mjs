@@ -418,3 +418,121 @@ test('maintenance still reports a worker failure instead of a false successful d
   assert.doesNotMatch(JSON.stringify(result.body), /CANARY|stack|message|@/);
   assert.equal(providerCalls, 0);
 });
+
+test('only documented Resend 429 errors expose safe retry metadata', async () => {
+  const message = { from: 'sender@example.test', to: 'client@example.test', subject: 'Synthetic', text: 'Synthetic', idempotencyKey: 'synthetic-fixed-key' };
+  for (const name of ['rate_limit_exceeded', 'daily_quota_exceeded', 'monthly_quota_exceeded']) {
+    const adapter = createResendEmailAdapter('synthetic-key', async () => Response.json({ name, message: 'PRIVATE_PROVIDER_BODY_CANARY' }, { status: 429, headers: { 'Retry-After': '1200' } }));
+    await assert.rejects(adapter(message), error => {
+      assert.equal(error.definitelyNotSent, true);
+      assert.equal(error.retryable, true);
+      assert.equal(error.retryAfterMs, 1200000);
+      assert.doesNotMatch(JSON.stringify(error), /PRIVATE_PROVIDER_BODY_CANARY|retry-after/i);
+      return true;
+    });
+  }
+  for (const header of [undefined, '-10', 'not-a-delay', '999999999999999999999999999']) {
+    const adapter = createResendEmailAdapter('synthetic-key', async () => Response.json({ name: 'rate_limit_exceeded' }, { status: 429, headers: header ? { 'Retry-After': header } : {} }));
+    await assert.rejects(adapter(message), error => error.retryable === true && error.retryAfterMs === 0);
+  }
+});
+
+test('known 429 retries respect persisted dueAt, stable idempotency and three total worker attempts', async () => {
+  let currentTime = now, providerCalls = 0;
+  const keys = [];
+  const adapter = createResendEmailAdapter('synthetic-key', async (_url, init) => {
+    providerCalls++; keys.push(init.headers['Idempotency-Key']);
+    return Response.json({ name: 'rate_limit_exceeded' }, { status: 429, headers: { 'Retry-After': '1200' } });
+  });
+  const initial = fixture(adapter, null, () => currentTime), { store } = initial;
+  let service = initial.service;
+  const booking = await service.create(request()), jobId = `${booking.bookingId}:request:1`;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    assert.deepEqual(await service.runDue({ jobId, limit: 1 }), { sent: 0, unknown: 0 });
+    assert.equal(providerCalls, attempt);
+    assert.equal(store.mail.get(jobId).attempts, attempt);
+    if (attempt < 3) {
+      assert.equal(store.mail.get(jobId).status, 'queued');
+      assert.equal((await store.get(booking.bookingId)).email.request, 'queued');
+      const retryAt = currentTime + 1200000;
+      assert.equal(store.mail.get(jobId).dueAt, retryAt);
+      currentTime = retryAt - 1;
+      await service.runDue({ jobId, limit: 1 });
+      assert.equal(providerCalls, attempt, 'HTTP retries cannot bypass dueAt');
+      currentTime = retryAt;
+      service = createBookingService({ store, tokenSecret: secret, origin, mode: 'live', sendEmail: adapter, sender: 'sender@example.test', clock: () => currentTime });
+    }
+  }
+  assert.equal(store.mail.get(jobId).status, 'failed');
+  assert.equal((await store.get(booking.bookingId)).email.request, 'failed');
+  currentTime += 86400000;
+  await service.runDue({ jobId, limit: 1 });
+  await service.runDue();
+  assert.equal(providerCalls, 3);
+  assert.deepEqual([...new Set(keys)], [`kraken-booking:${jobId}`]);
+});
+
+test('a known rejection waits at least fifteen minutes and a later accepted email is sent once', async () => {
+  let currentTime = now, providerCalls = 0;
+  const keys = [];
+  const adapter = createResendEmailAdapter('synthetic-key', async (_url, init) => {
+    keys.push(init.headers['Idempotency-Key']);
+    if (++providerCalls === 1) return Response.json({ name: 'daily_quota_exceeded' }, { status: 429, headers: { 'Retry-After': '1' } });
+    return Response.json({ id: 'accepted-after-known-rejection' });
+  });
+  const { service, store } = fixture(adapter, null, () => currentTime);
+  const booking = await service.create(request()), jobId = `${booking.bookingId}:request:1`;
+  await service.runDue({ jobId, limit: 1 });
+  assert.equal(store.mail.get(jobId).dueAt, now + 15 * 60000);
+  currentTime += 15 * 60000;
+  assert.deepEqual(await service.runDue({ jobId, limit: 1 }), { sent: 1, unknown: 0 });
+  assert.equal((await store.get(booking.bookingId)).email.request, 'sent');
+  assert.equal(store.mail.get(jobId).attempts, 2);
+  await service.runDue({ jobId, limit: 1 });
+  assert.equal(providerCalls, 2);
+  assert.equal(new Set(keys).size, 1);
+});
+
+test('unrecognised 429, 409, 5xx, timeouts and uncertain successful bodies are never retried', async () => {
+  for (const response of [
+    () => Response.json({ name: 'unrecognised_limit' }, { status: 429 }),
+    () => Response.json({ name: 'rate_limit_exceeded' }, { status: 409 }),
+    () => Response.json({ name: 'rate_limit_exceeded' }, { status: 503 }),
+    () => { throw new DOMException('Synthetic timeout', 'TimeoutError'); },
+    () => Response.json({ unexpected: true }),
+  ]) {
+    let providerCalls = 0;
+    const adapter = createResendEmailAdapter('synthetic-key', async () => { providerCalls++; return response(); });
+    const { service, store } = fixture(adapter);
+    const booking = await service.create(request()), jobId = `${booking.bookingId}:request:1`;
+    assert.deepEqual(await service.runDue({ jobId, limit: 1 }), { sent: 0, unknown: 1 });
+    await service.runDue({ jobId, limit: 1 }); await service.runDue();
+    assert.equal(providerCalls, 1);
+    assert.equal(store.mail.get(jobId).status, 'delivery_unknown');
+    assert.equal(store.mail.get(jobId).attempts, 1);
+  }
+});
+
+test('Firestore transaction records persist attempt counts and deferred dueAt', async () => {
+  const documents = new Map();
+  const db = {
+    collection: name => ({ doc: id => ({ key: `${name}/${id}` }) }),
+    async runTransaction(action) {
+      return action({
+        async get(ref) { return { exists: documents.has(ref.key), data: () => clone(documents.get(ref.key)) }; },
+        create(ref, value) { assert.equal(documents.has(ref.key), false); documents.set(ref.key, clone(value)); },
+        set(ref, value) { documents.set(ref.key, clone(value)); },
+        update(ref, value) { documents.set(ref.key, { ...documents.get(ref.key), ...clone(value) }); },
+      });
+    },
+  };
+  const store = createFirestoreBookingStore(db);
+  await store.addMail({ id: 'synthetic-persisted-job', kind: 'request', status: 'queued', dueAt: now });
+  const first = await store.claimMail('synthetic-persisted-job', now);
+  assert.equal(first.attempts, 1);
+  await store.finishMail(first.id, 'queued', null, now + 1200000);
+  assert.equal(await store.claimMail(first.id, now + 1199999), null);
+  const second = await store.claimMail(first.id, now + 1200000);
+  assert.equal(second.attempts, 2);
+  assert.equal(second.dueAt, now + 1200000);
+});
