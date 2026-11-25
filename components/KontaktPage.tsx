@@ -5,6 +5,8 @@ import ApprovedHeader from './home/ApprovedHeader';
 import ContactMessageForm from './contact/ContactMessageForm';
 import { openHomeCalculator } from '../src/home/calculator';
 import { contactText } from './contact/contactTranslations';
+import { homeText } from './home/homeTranslations';
+import { publicHref } from '../src/routing/site-paths';
 import { loadContactConfig, searchContactAddresses, calculateContactRoute } from './contact/contact-api';
 import { mountKrakenContact, type KrakenD3, type KrakenContactController, type KrakenMapData } from './contact/contact-controller.js';
 import './home/approved-home.css';
@@ -51,10 +53,10 @@ export function ContactContent({language, onNavigate = () => {}}: {language: str
   const [loadState,setLoadState] = useState<'loading'|'ready'|'error'>('loading');
   const [attempt,setAttempt] = useState(0);
   const t = (source:string) => contactText(language,source);
-  const calculatorUrl = `/quote?lang=${encodeURIComponent(language)}`;
+  const calculatorUrl = publicHref('/quote', language);
   const handleQuote = (event:React.MouseEvent<HTMLAnchorElement>) => {
     if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault(); openHomeCalculator(null,onNavigate);
+    event.preventDefault(); openHomeCalculator(null,path=>onNavigate(publicHref(path,language)));
   };
   useEffect(() => {
     const root = rootRef.current;
@@ -118,7 +120,7 @@ export function ContactContent({language, onNavigate = () => {}}: {language: str
       <div className="kr-map-bottom"><button className="kr-route-player cursor-interaction" type="button" aria-label={t('Route abspielen')}><ContactIcon name="play" className="kr-play-icon" aria-hidden="true" /><ContactIcon name="pause" className="kr-pause-icon" hidden aria-hidden="true" /><span>{t('Route ansehen')}</span></button><span className="kr-attribution">© swisstopo · © OpenStreetMap contributors / openrouteservice</span></div>
     </div>
     <aside className="kr-contact" aria-label={t('Kraken Kontakt und Anfahrt')}>
-      <div className="kr-contact-top"><span className="kr-logo-lockup"><img className="kr-original-logo" src="/kraken-contact/assets/logo-kraken-azul.webp" decoding="async" alt={t('Kraken')} /><span>Properties & Facilities Management</span></span><span className="kr-contact-location"><ContactIcon name="map-pin" aria-hidden="true" /></span></div>
+      <div className="kr-contact-top"><span className="kr-logo-lockup"><img className="kr-original-logo" src="/kraken-contact/assets/logo-kraken-azul.webp" decoding="async" alt={t('Kraken')} /><span>{homeText(language,'Reinigung & kleine Umzüge')}</span></span><span className="kr-contact-location"><ContactIcon name="map-pin" aria-hidden="true" /></span></div>
       <button className="kr-gallery-cover kr-photo-scene cursor-interaction" data-scene="exterior" type="button" aria-label={t('Bilder der Bürogestaltung vergrössern')}><img className="kr-scene-image" src="/kraken-contact/assets/contact-exterior.webp" decoding="async" data-photo-source="exterior" alt={t('Fassade als fotorealistischer Gestaltungsentwurf')} /><span className="kr-photo-sign"><img className="kr-original-logo" src="/kraken-contact/assets/logo-kraken-azul.webp" decoding="async" alt="" /></span><span className="kr-gallery-cover-label"><ContactIcon name="images" aria-hidden="true" /> {t('2 Ansichten')}</span><span className="kr-expand"><ContactIcon name="expand" aria-hidden="true" /></span></button>
       <p className="kr-concept-note">{t('Konzeptbilder · keine Fotos des Standorts')}</p>
       <div className="kr-contact-body">
@@ -137,7 +139,7 @@ export function ContactContent({language, onNavigate = () => {}}: {language: str
         <div className="kr-example-options" id="kr-example-note"><span>{t('Beispiele')}</span><button className="cursor-interaction" type="button" data-example="0">{t('Bahnhof')}</button><button className="cursor-interaction" type="button" data-example="1">{t('Bahnhof Neuhausen')}</button><button className="cursor-interaction" type="button" data-example="2">{t('Rheinfall')}</button></div>
         <p className="kr-address-error" role="alert" hidden></p>
         <div hidden className="kr-result" aria-live="polite" aria-atomic="true"><div className="kr-result-metrics"><strong className="kr-distance">— <small>{t('km')}</small></strong><span className="kr-duration">—</span><ContactIcon name="car-front" aria-hidden="true" /></div><p className="kr-result-direction">—</p><p className="kr-result-note">{t('Geschätzte Fahrzeit · ohne Live-Verkehr')}</p></div>
-        <a className="kr-quote cursor-interaction" href={calculatorUrl} onClick={handleQuote}><ContactIcon name="calculator" aria-hidden="true" /> {t('Offerte berechnen')}</a>
+        <a className="kr-quote cursor-interaction kr-button kr-button--primary" href={calculatorUrl} onClick={handleQuote}><ContactIcon name="calculator" aria-hidden="true" /> {homeText(language,'Offerte berechnen')}</a>
       </div>
     </aside>
     <section role="dialog" aria-modal="true" tabIndex={-1} aria-labelledby="kr-gallery-title" className="kr-gallery-panel" aria-label={t('Bildergalerie: Kraken Bürokonzept')} hidden>

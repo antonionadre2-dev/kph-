@@ -2,6 +2,7 @@ import { build } from 'esbuild';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import { publicHref } from '../src/routing/site-paths.ts';
 import { fileURLToPath } from 'node:url';
 
 /** Keep contact details and the calculator accessible before map JavaScript loads. */
@@ -30,7 +31,7 @@ export async function renderContactHtml(root) {
         || !body.includes('id="kraken-contact-real"')
         || !body.includes('href="tel:+41774505705"')
         || !body.includes('href="mailto:kai@krakenpfm.ch"')
-        || !body.includes(`/quote?lang=${language}`)) {
+        || !body.includes(publicHref('/quote', language))) {
         throw new Error(`Incomplete Contact HTML (${language}).`);
       }
       writeFileSync(path.join(root, `dist/contact-content-${language}.html`), `${styles}<div class="kraken-home kraken-contact-page" lang="${language === 'de' ? 'de-CH' : language}">${body}</div>`);

@@ -1,4 +1,5 @@
 import React, { useId } from 'react';
+import { mediaAsset } from '../../src/media/images';
 
 type LogoPlacement = { x: number; y: number; width: number; skewY?: number };
 
@@ -52,7 +53,7 @@ const stages: { name: string; alignment: readonly number[]; logos: LogoPlacement
 function OriginalLogo({ x, y, width, skewY = 0 }: LogoPlacement) {
   return <g transform={`translate(${x} ${y}) skewY(${skewY})`}>
     <svg width={width} height={width * 445 / 1024} viewBox="0 280 1024 445">
-      <image href="/home-approved/assets/logo.webp" width="1024" height="1024" />
+      <image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024" />
     </svg>
   </g>;
 }
@@ -60,7 +61,7 @@ function OriginalLogo({ x, y, width, skewY = 0 }: LogoPlacement) {
 /** One fixed body outside the crossfade prevents any vehicle-size or edge changes. */
 export function TransitLoadingVehicle() {
   return <>
-    <img className="transit-cargo-vehicle" src="/transit-quality/transit-empty-v1.webp" width="1254" height="1254" loading="lazy" decoding="async" alt="" aria-hidden="true" />
+    <img className="transit-cargo-vehicle" data-media-source="/transit-quality/transit-empty-v1.webp" width="1254" height="1254" loading="lazy" decoding="async" alt="" aria-hidden="true" />
     <svg className="transit-cargo-vehicle-branding" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false">
       <OriginalLogo {...stages[0].logos[0]} />
     </svg>
@@ -82,7 +83,7 @@ export default function TransitLoadingVisual() {
       const transform = `translate(${x / 1254 * 100}%, ${y / 1254 * 100}%) matrix(${a}, ${b}, ${c}, ${d}, 0, 0)`;
       return <div key={stage.name} className="transit-cargo-photo" data-cargo-photo={index} style={{ clipPath: `url(#${clipId})` }}>
         <div className="transit-cargo-aligned" style={{ transform }}>
-          <img src={`/transit-quality/transit-${stage.name}-v1.webp`} width="1254" height="1254" loading="lazy" decoding="async" alt="" aria-hidden="true" />
+          <img data-media-source={`/transit-quality/transit-${stage.name}-v1.webp`} width="1254" height="1254" loading="lazy" decoding="async" alt="" aria-hidden="true" />
           <svg className="transit-cargo-branding" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false">
             <g data-brand-stage={index}>
               {stage.logos.slice(1).map((placement, logoIndex) => <g key={logoIndex}><OriginalLogo {...placement} /></g>)}

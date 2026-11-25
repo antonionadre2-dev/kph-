@@ -1,3 +1,5 @@
+import { publicHref, pathLanguage, toPublicPath } from './routing/site-paths.ts';
+
 export const SITE_LANGUAGES = ['de-CH', 'de', 'en', 'fr', 'it', 'es', 'pt'] as const;
 export type SiteLanguage = typeof SITE_LANGUAGES[number];
 export const LANGUAGE_STORAGE_KEY = 'kraken_preferred_lang';
@@ -17,10 +19,10 @@ export function languageFromSearch(search: string): SiteLanguage | null {
   return normalizeSiteLanguage(params.get('lang')) || normalizeSiteLanguage(params.get('hl'));
 }
 
-export function resolveSiteLanguage({ search = '', saved = null, browserLanguage = '' }: {
-  search?: string; saved?: unknown; browserLanguage?: string;
+export function resolveSiteLanguage({ pathname = '', search = '', saved = null, browserLanguage = '' }: {
+  pathname?: string; search?: string; saved?: unknown; browserLanguage?: string;
 } = {}): SiteLanguage {
-  const explicit = languageFromSearch(search);
+  const explicit = pathLanguage(pathname) || languageFromSearch(search);
   if (explicit) return explicit;
   const preferred = normalizeSiteLanguage(saved);
   if (preferred) return preferred;
@@ -30,15 +32,13 @@ export function resolveSiteLanguage({ search = '', saved = null, browserLanguage
 
 export function languageSelectionUrl(href: string, language: SiteLanguage): string {
   const url = new URL(href);
-  url.searchParams.delete('hl');
-  url.searchParams.set('lang', language);
-  return url.pathname + url.search + url.hash;
+  return publicHref(url.pathname + url.search + url.hash, language);
 }
 
 /** A restored preference gets the same explicit URL as a visitor's language selection. */
 export function restoredLanguageUrl(href: string, language: SiteLanguage): string | null {
   const url = new URL(href);
-  if (languageFromSearch(url.search) || language === 'de' || language === 'de-CH') return null;
+  if (pathLanguage(href) || language === 'de' || language === 'de-CH') return null;
   return languageSelectionUrl(href, language);
 }
 
@@ -47,14 +47,12 @@ export function localizedNavigationUrl(target: string, currentHref: string, lang
   const current = new URL(currentHref);
   const destination = new URL(target, current);
   if (destination.origin !== current.origin) throw new Error('Expected a same-origin navigation route.');
-  const explicit = languageFromSearch(destination.search);
+  const explicit = pathLanguage(destination.href);
   const targetKeys = new Set(destination.searchParams.keys());
   const bookingKeys = new Set(['booking', 'draft', 'guide', 'payment']);
   for (const [key, value] of current.searchParams) {
-    if (destination.pathname !== current.pathname && bookingKeys.has(key)) continue;
+    if (toPublicPath(destination.pathname) !== toPublicPath(current.pathname) && bookingKeys.has(key)) continue;
     if (!targetKeys.has(key)) destination.searchParams.append(key, value);
   }
-  destination.searchParams.delete('hl');
-  destination.searchParams.set('lang', explicit || language);
-  return destination.pathname + destination.search + destination.hash;
+  return publicHref(destination.pathname + destination.search + destination.hash, explicit || language);
 }

@@ -3,9 +3,10 @@ import { initTransitLighting } from './transit-lighting';
 import TransitOverviewBranding from './TransitOverviewBranding';
 import TransitLoadingVisual, { TransitLoadingVehicle } from './TransitLoadingVisual';
 import './transit-section.css';
+import { responsiveImage } from '../../src/media/images';
 
 /** The approved two-view Transit story; the owner’s four interior dimensions stay accessible HTML. */
-export default function TransitSection({ t, quoteHref = '/quote?service=moving' }: { t: (source: string, params?: Record<string, string | number>) => string; quoteHref?: string }) {
+export default function TransitSection({ t, quoteHref = '/offerte?service=moving' }: { t: (source: string, params?: Record<string, string | number>) => string; quoteHref?: string }) {
   const root = useRef<HTMLElement>(null);
   const lightId = 'transit-light-' + useId().replace(/:/g, '');
   useEffect(() => root.current ? initTransitLighting(root.current) : undefined, []);
@@ -22,7 +23,7 @@ export default function TransitSection({ t, quoteHref = '/quote?service=moving' 
       <div id="vanOverview" role="tabpanel" aria-labelledby="vanOverviewTab" tabIndex={0}>
       <div className="moving-inner container">
         <div className="moving-art atlas-panel panel-transit" role="img" aria-label={t("Illustration eines weissen Ford Transit mit Umzugskartons und Sofa")}>
-          <img className="transit-overview-image" src="/transit-quality/transit-overview-v1.webp" width="1254" height="1254" loading="lazy" decoding="async" alt="" aria-hidden="true" />
+          <img className="transit-overview-image" {...responsiveImage('/transit-quality/transit-overview-v1.webp','(max-width:760px) 100vw, 60vw')} loading="lazy" decoding="async" alt="" aria-hidden="true" />
           <TransitOverviewBranding />
           <svg className="transit-headlamps" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false">
             <defs><radialGradient id={lightId + '-lens'}><stop stopColor="#fffef0" /><stop offset=".45" stopColor="#fff6cd" stopOpacity=".95" /><stop offset="1" stopColor="#e7faff" stopOpacity="0" /></radialGradient></defs>
@@ -35,7 +36,7 @@ export default function TransitSection({ t, quoteHref = '/quote?service=moving' 
           <defs>{[0, 1, 2, 3].map(index => <linearGradient key={index} id={lightId + '-beam-' + index} data-light-gradient={index} gradientUnits="userSpaceOnUse"><stop stopColor="#fff5d5" stopOpacity=".75" /><stop offset=".55" stopColor="#d9f5ff" stopOpacity=".16" /><stop offset="1" stopColor="#bbf4e1" stopOpacity=".5" /></linearGradient>)}</defs>
           {[0, 1, 2, 3].map(index => <path key={index} className={'transit-light-cone transit-light-cone-' + index} data-light-cone={index} fill={`url(#${lightId}-beam-${index})`} />)}
         </svg>
-        <div className="moving-copy"><p className="eyebrow">{t("Für Ihren nächsten Anfang")}</p><h2 id="moving-title">{t("Kleiner Umzug.")}<br />{t("Klar geplant.")}</h2><p className="moving-description">{t("Ein paar Möbel oder eine kleine Wohnung? Mit unserem Ford Transit und einem erfahrenen Team bringen wir Bewegung in Ihre Pläne.")}</p>
+        <div className="moving-copy"><p className="eyebrow">{t("Für Ihren nächsten Anfang")}</p><h2 id="moving-title">{t("Kleine Umzüge mit Ford Transit")}</h2><p className="moving-description">{t("Ein paar Möbel oder eine kleine Wohnung? Mit unserem Ford Transit und einem erfahrenen Team bringen wir Bewegung in Ihre Pläne.")}</p>
           <div className="move-features" aria-label={t("Ihr Umzug mit Kraken")}><div><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving" /></svg><span>{t("Unser Transit")}</span></div><div><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#team" /></svg><span>{t("Unser Team")}</span></div><div><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#time" /></svg><span>{t("Ihr Termin")}</span></div><div><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#distance" /></svg><span>{t("Ihre Strecke")}</span></div></div>
           <p className="moving-detail">{t("Vom Abholort bis zum Ziel: Beschreiben Sie Ihren Umzug Schritt für Schritt im Rechner.")}</p>
         </div>
@@ -47,7 +48,7 @@ export default function TransitSection({ t, quoteHref = '/quote?service=moving' 
         <div className="van-inside-inner container">
           <div className="van-inside-copy">
             <p className="eyebrow">{t("Platz für Ihren nächsten Schritt")}</p>
-            <h2>{t("Tür auf.")}<br />{t("Raum für Neues.")}</h2>
+            <h2>{t("Laderaum und Beladung unseres Transit")}</h2>
             <p className="van-intro">{t("Kartons, Stühle und ein zerlegtes Möbelstück: Entdecken Sie, wie wir einen kleinen Umzug im Transit planen.")}</p>
             <div className="van-load-steps" role="group" aria-label={t("Beladung ansehen")}>
               <button type="button" data-cargo-step="0" aria-pressed="true"><svg className="icon" aria-hidden="true"><use href="#i-truck" /></svg><span>{t("Leer")}</span></button>
@@ -97,7 +98,7 @@ export default function TransitSection({ t, quoteHref = '/quote?service=moving' 
           <div className="van-fit-card">
             <div className="van-fit-icon" aria-hidden="true"><svg className="icon" viewBox="0 0 24 24"><path d="m4 16 12-12 5 5L9 21Zm5-5 3 3m0-6 3 3m0-6 3 3" /></svg></div>
             <div><h3>{t("Passt Ihr Möbelstück?")}</h3><p>{t("Die Innenmasse geben Ihnen eine erste Orientierung. Teilen Sie uns die Masse Ihrer Möbel mit – wir berücksichtigen zusätzlich die Türöffnungen und die passende Ladungssicherung.")}</p></div>
-            <a className="button button-mint" data-service="moving" href={quoteHref} data-calculator="">{t("Umzug im Rechner planen")}</a>
+            <a className="button button-mint" data-service="moving" href={quoteHref} data-calculator="">{t("Umzug berechnen")}</a>
           </div>
           <p className="van-capacity-note">{t("Die gezeigte Beladung ist ein Beispiel. Was mitkommt und wie viele Fahrten nötig sind, planen wir anhand Ihrer Möbel, der Zugänge und der Ladungssicherung.")}</p>
         </div>

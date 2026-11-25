@@ -3,6 +3,11 @@ import { homeText, normalizeHomeLanguage } from '../../components/home/homeTrans
 import { languageFromSearch } from '../locale.ts';
 import { isIndexablePath, isPrivateUrl } from './crawl-policy.ts';
 import { CORE_SERVICE_CATALOG, SITE_IDENTITY } from './site-identity.ts';
+import { publicHref, pathLanguage, toLegacyPath } from '../routing/site-paths.ts';
+import { getEndOfTenancyMetadata, getEndOfTenancyOfferRows } from './end-of-tenancy-metadata.ts';
+import { getPublicPriceOffers } from '../booking/publicPricing.ts';
+import { getHomeFaqs, getServicePageFaqs } from './page-faqs.ts';
+import { getRegionalPageMetadata } from './regional-metadata.ts';
 
 export { normalizeCanonicalPath } from '../../seoConfig.ts';
 
@@ -11,10 +16,7 @@ export const SEO_LANGUAGES = ['de', 'en', 'es', 'pt', 'it', 'fr'] as const;
 
 /** German keeps its established URL; translated pages retain their existing language URL. */
 export function localizedCanonicalUrl(pathname: string, language: string): string {
-  const url = new URL(normalizeCanonicalPath(pathname), SITE_IDENTITY.origin);
-  const locale = normalizeHomeLanguage(language);
-  if (locale !== 'de') url.searchParams.set('lang', locale);
-  return url.href;
+  return new URL(publicHref(normalizeCanonicalPath(pathname), language), SITE_IDENTITY.origin).href;
 }
 
 export function localizedAlternates(pathname: string): { lang: string; href: string }[] {
@@ -48,13 +50,17 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
   let validUrl = true;
   try { url = new URL(pathOrUrl, SITE_IDENTITY.origin); }
   catch { validUrl = false; url = new URL('/', SITE_IDENTITY.origin); }
-  const locale = normalizeHomeLanguage(language || languageFromSearch(url.search) || 'de');
-  const baseMeta = getMetadataForPath(url.pathname + url.search, locale);
+  const locale = normalizeHomeLanguage(language || pathLanguage(url.href) || 'de');
+  let baseMeta = getMetadataForPath(url.pathname + url.search, locale);
   const canonicalPath = normalizeCanonicalPath(url.pathname);
+  const legacyPath = toLegacyPath(canonicalPath);
+  const endOfTenancyMatch = /^\/services\/(schaffhausen|zurich|winterthur)\/end-of-tenancy$/.exec(legacyPath);
+  const endOfTenancy = endOfTenancyMatch ? getEndOfTenancyMetadata(endOfTenancyMatch[1], locale) : null;
+  if (endOfTenancy) baseMeta = { ...baseMeta, title: endOfTenancy.title, description: endOfTenancy.description, h1: endOfTenancy.h1, bodyText: endOfTenancy.description };
   const indexable = validUrl && isIndexablePath(canonicalPath) && !isPrivateUrl(url.pathname + url.search);
   const meta = {
     ...baseMeta,
-    canonical: indexable ? localizedCanonicalUrl(canonicalPath, locale) : baseMeta.canonical,
+    canonical: localizedCanonicalUrl(canonicalPath, locale),
     hreflangs: indexable ? localizedAlternates(canonicalPath) : [],
   };
   const result: PageSeo = {
@@ -88,7 +94,7 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': businessId,
-    name: SITE_IDENTITY.name,
+    name: SITE_IDENTITY.shortName,
     alternateName: SITE_IDENTITY.shortName,
     url: `${origin}/`,
     logo: origin + SITE_IDENTITY.logoPath,
@@ -96,6 +102,8 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
     email: SITE_IDENTITY.email,
     telephone: SITE_IDENTITY.telephone,
     address: { '@type': 'PostalAddress', ...SITE_IDENTITY.address },
+    geo: { '@type': 'GeoCoordinates', ...SITE_IDENTITY.geo },
+    priceRange: `${homeText(locale, 'Umzugsreinigung')}: ${{ de: 'ab', en: 'from', es: 'desde', pt: 'desde', it: 'da', fr: 'dès' }[locale]} CHF ${(getPublicPriceOffers().find(offer => offer.service === 'end')!.minimumCents! / 100).toFixed(2)}`,
     areaServed: SITE_IDENTITY.areas.map(name => ({ '@type': 'City', name })),
     openingHoursSpecification: [{
       '@type': 'OpeningHoursSpecification',
@@ -110,7 +118,7 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
   };
   const page: StructuredData = {
     '@context': 'https://schema.org',
-    '@type': canonicalPath === '/about' ? 'AboutPage' : canonicalPath === '/kontakt' ? 'ContactPage' : 'WebPage',
+    '@type': legacyPath === '/about' ? 'AboutPage' : legacyPath === '/kontakt' ? 'ContactPage' : 'WebPage',
     '@id': `${meta.canonical}#webpage`,
     url: meta.canonical,
     name: meta.title,
@@ -120,11 +128,12 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
     about: { '@id': businessId },
   };
   const schema: StructuredData[] = [website, business, page];
+  let visibleFaqs = canonicalPath === '/' ? getHomeFaqs(locale) : getRegionalPageMetadata(canonicalPath,locale)?.faqs;
   if (canonicalPath !== '/') {
     const breadcrumbs: { name: string; item: string }[] = [
       { name: SITE_IDENTITY.shortName, item: localizedCanonicalUrl('/', locale) },
     ];
-    const serviceMatch = /^\/services\/(schaffhausen|zurich|winterthur)\/([^/]+)$/.exec(canonicalPath);
+    const serviceMatch = /^\/services\/(schaffhausen|zurich|winterthur)\/([^/]+)$/.exec(legacyPath);
     if (serviceMatch) {
       breadcrumbs.push({ name: homeText(locale, 'Leistungen'), item: localizedCanonicalUrl('/leistungen', locale) });
       const service = CORE_SERVICE_CATALOG.find(item => item.slug === serviceMatch[2]);
@@ -140,6 +149,22 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
           provider: { '@id': businessId },
           areaServed: { '@type': 'City', name: city },
         });
+        if (endOfTenancy) {
+          const rows = getEndOfTenancyOfferRows(locale).filter(row => row.priceCents !== null);
+          const node = schema[schema.length - 1];
+          node.offers = rows.map(row => ({ '@type': 'Offer', name: row.name, priceCurrency: 'CHF', price: (row.priceCents! / 100).toFixed(2), url: localizedCanonicalUrl('/offerte', locale) + '?service=end', seller: { '@id': businessId } }));
+          visibleFaqs = endOfTenancy.faqs;
+        } else {
+          const key = ({ 'window-cleaning': 'windows', 'daily-cleaning': 'regular', 'deep-cleaning': 'deep', 'moving-furniture': 'moving' } as Record<string, string>)[serviceMatch[2]];
+          const offer = getPublicPriceOffers().find(item => item.service === key);
+          visibleFaqs = getServicePageFaqs(key,locale);
+          if (offer?.minimumCents !== null && offer?.minimumCents !== undefined) schema[schema.length - 1].offers = {
+            '@type': 'Offer', name: meta.h1, priceCurrency: offer.quote.currency,
+            price: (offer.minimumCents / 100).toFixed(2),
+            url: new URL(publicHref(`/offerte?service=${key}`, locale), origin).href,
+            seller: { '@id': businessId },
+          };
+        }
         page.mainEntity = { '@id': serviceId };
       }
     } else if (canonicalPath.startsWith('/reinigung/')) {
@@ -153,6 +178,7 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
     });
     page.breadcrumb = { '@id': breadcrumbId };
   }
+  if (visibleFaqs?.length) schema.push({ '@type': 'FAQPage', '@id': meta.canonical + '#faq', mainEntity: visibleFaqs.map(faq => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })) });
   result.structuredData = schema;
   return result;
 }

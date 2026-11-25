@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { publicHref } from '../src/routing/site-paths.ts';
+import { getPublicPriceOffers } from '../src/booking/publicPricing.ts';
 import { getPageSeo, normalizeCanonicalPath, serializeStructuredData } from '../src/seo/metadata.ts';
 import { INDEXABLE_PATHS } from '../src/seo/crawl-policy.ts';
 import { SITE_IDENTITY } from '../src/seo/site-identity.ts';
@@ -33,24 +35,24 @@ test('reviewed public routes have stable metadata, one business identity and can
 
 test('canonical aliases converge without language or private query values', () => {
   const cases = [
-    ['/imprint/', '/impressum'], ['/ueber-kraken', '/about'], ['/ABOUT/', '/about'],
+    ['/imprint/', '/impressum'], ['/ueber-kraken', '/ueber-uns'], ['/ABOUT/', '/ueber-uns'],
     ['/services', '/leistungen'], ['/contacto', '/kontakt'],
-    ['/services/zuerich/window-cleaning/', '/services/zurich/window-cleaning'],
-    ['/seo/zuerich/window-cleaning', '/services/zurich/window-cleaning'],
-    ['/reinigung-zuerich-window-cleaning', '/services/zurich/window-cleaning'],
+    ['/services/zuerich/window-cleaning/', '/fensterreinigung/zuerich'],
+    ['/seo/zuerich/window-cleaning', '/fensterreinigung/zuerich'],
+    ['/reinigung-zuerich-window-cleaning', '/fensterreinigung/zuerich'],
   ];
   for (const [source, target] of cases) {
     assert.equal(normalizeCanonicalPath(source + '?lang=fr&booking=private#fragment'), target);
-    assert.equal(getPageSeo(source + '?lang=fr&booking=private').canonical, SITE_IDENTITY.origin + target);
+    assert.equal(getPageSeo(source + '?lang=fr&booking=private').canonical, SITE_IDENTITY.origin + publicHref(target,'fr'));
   }
-  assert.equal(getPageSeo('/quote-demo?lang=es').canonical, SITE_IDENTITY.origin + '/quote');
+  assert.equal(getPageSeo('/quote-demo?lang=es').canonical, SITE_IDENTITY.origin + '/es/quote-demo');
 });
 
 test('private, unverified and unsupported URLs cannot inherit public indexing or schema', () => {
   for (const pathname of [
     '/login', '/register', '/dashboard', '/customer-access', '/quote-demo', '/reviews', '/commercial-quote',
     '/quote?booking=private', '/quote?draft=private', '/quote?access=private', '/quote?payment=private',
-    '/services/neuhausen/window-cleaning', '/services/zurich/gardening', '/reinigung/schaffhausen',
+    '/services/zurich/gardening', '/reinigung/missing-municipality',
     '/commercial', '/blog', '/missing-route',
   ]) {
     const meta = getPageSeo(pathname);
@@ -65,7 +67,7 @@ test('business schema uses the published daily contact hours and truthful linked
   for (const language of ['de', 'en', 'es', 'pt', 'it', 'fr']) {
     const meta = getPageSeo('/leistungen?lang=' + language);
     const business = meta.structuredData.find(item => item['@type'] === 'LocalBusiness')!;
-    assert.equal(business.name, SITE_IDENTITY.name);
+    assert.equal(business.name, SITE_IDENTITY.shortName);
     assert.equal(business.telephone, '+41774505705');
     assert.equal(business.email, 'kai@krakenpfm.ch');
     const hours = business.openingHoursSpecification as { dayOfWeek: string[]; opens: string; closes: string }[];
@@ -74,9 +76,9 @@ test('business schema uses the published daily contact hours and truthful linked
     assert.equal(hours[0].closes, '19:00');
     const catalog = business.hasOfferCatalog as { itemListElement: { name: string; url: string }[] };
     assert.equal(catalog.itemListElement.length, 5);
-    const servicesUrl = SITE_IDENTITY.origin + '/leistungen' + (language === 'de' ? '' : `?lang=${language}`);
+    const servicesUrl = SITE_IDENTITY.origin + publicHref('/leistungen',language);
     assert.ok(catalog.itemListElement.every(service => service.url.startsWith(servicesUrl + '#')));
-    assert.doesNotMatch(JSON.stringify(meta.structuredData), /ratingValue|reviewCount|aggregateRating|offerCount|lowPrice|priceCurrency|sameAs|GeoCoordinates/);
+    assert.doesNotMatch(JSON.stringify(meta.structuredData), /ratingValue|reviewCount|aggregateRating|offerCount|lowPrice|sameAs/);
     if (language !== 'de') assert.notEqual(catalog.itemListElement[0].name, 'Fensterreinigung');
     assert.equal(meta.canonical, servicesUrl);
     assert.equal(meta.hreflangs.length, 7);
@@ -87,7 +89,7 @@ test('every reviewed translation has its own canonical, reciprocal alternates an
   for (const pathname of INDEXABLE_PATHS) {
     const expected = ['de', 'en', 'es', 'pt', 'it', 'fr'].map(language => ({
       lang: language === 'de' ? 'de-CH' : language,
-      href: SITE_IDENTITY.origin + pathname + (language === 'de' ? '' : `?lang=${language}`),
+      href: SITE_IDENTITY.origin + publicHref(pathname,language),
     }));
     expected.push({ lang: 'x-default', href: SITE_IDENTITY.origin + pathname });
     for (const alternate of expected) {
@@ -103,16 +105,16 @@ test('every reviewed translation has its own canonical, reciprocal alternates an
       assert.equal(business.url, SITE_IDENTITY.origin + '/');
       const site = meta.structuredData.find(item => item['@type'] === 'WebSite')!;
       assert.equal(site['@id'], SITE_IDENTITY.origin + '/#website');
-      assert.equal(site.url, SITE_IDENTITY.origin + '/' + (alternate.lang === 'de-CH' || alternate.lang === 'x-default' ? '' : `?lang=${alternate.lang}`));
+      assert.equal(site.url, SITE_IDENTITY.origin + publicHref('/',alternate.lang === 'x-default' ? 'de' : alternate.lang));
     }
   }
 });
 
 test('locale aliases and harmless selection queries canonicalize without leaking other parameters', () => {
   assert.equal(getPageSeo('/?lang=de-CH&utm_source=example').canonical, SITE_IDENTITY.origin + '/');
-  assert.equal(getPageSeo('/leistungen?hl=pt').canonical, SITE_IDENTITY.origin + '/leistungen?lang=pt');
-  assert.equal(getPageSeo('/services?lang=en').canonical, SITE_IDENTITY.origin + '/leistungen?lang=en');
-  assert.equal(getPageSeo('/quote?lang=fr&service=windows&utm_campaign=example').canonical, SITE_IDENTITY.origin + '/quote?lang=fr');
+  assert.equal(getPageSeo('/leistungen?hl=pt').canonical, SITE_IDENTITY.origin + '/pt/leistungen');
+  assert.equal(getPageSeo('/services?lang=en').canonical, SITE_IDENTITY.origin + '/en/leistungen');
+  assert.equal(getPageSeo('/quote?lang=fr&service=windows&utm_campaign=example').canonical, SITE_IDENTITY.origin + '/fr/offerte');
   for (const key of ['booking', 'draft', 'access', 'accessToken', 'token', 'payment', 'guide', 'oobCode']) {
     const meta = getPageSeo(`/quote?lang=en&${key}=private-capability`);
     assert.equal(meta.indexable, false, key);
@@ -129,7 +131,7 @@ test('service schema describes the page and uses the single business reference',
   assert.equal(service.description, meta.description);
   assert.deepEqual(service.provider, { '@id': SITE_IDENTITY.origin + '/#business' });
   assert.deepEqual(service.areaServed, { '@type': 'City', name: 'Zürich' });
-  assert.equal(service.offers, undefined);
+  assert.equal((service.offers as {price:string}).price, (getPublicPriceOffers().find(offer=>offer.service==='windows')!.minimumCents!/100).toFixed(2));
   assert.doesNotMatch(meta.title + meta.description, /CHF|Meisterklasse|Masterclass|100%/);
 });
 
@@ -144,7 +146,7 @@ test('legacy schema components retain the verified identity and never turn price
   const businessHtml = renderToStaticMarkup(React.createElement(LocalBusinessSchema, { citiesServed: ['Zürich'] }));
   const business = JSON.parse(businessHtml.match(/<script[^>]*>([\s\S]*?)<\/script>/)![1]);
   assert.equal(business['@id'], SITE_IDENTITY.origin + '/#business');
-  assert.equal(business.name, SITE_IDENTITY.name);
+  assert.equal(business.name, SITE_IDENTITY.shortName);
   assert.equal(business.openingHoursSpecification[0].dayOfWeek.length, 7);
   assert.equal(business.openingHoursSpecification[0].opens, '09:00');
   assert.equal(business.openingHoursSpecification[0].closes, '19:00');

@@ -7,6 +7,7 @@ import { type GuidePreferences } from '../src/booking/movingGuide';
 import { journeyCopy, LANGUAGE_NAMES } from '../src/booking/journeyCopy';
 import CustomerSpaceDemo, { type CustomerSpaceSnapshot } from './CustomerSpaceDemo';
 import CustomerAccessRequest from './CustomerAccessRequest';
+import { homeText } from './home/homeTranslations';
 import './quote-recovery.css';
 
 export interface QuoteRecoveryCardProps {
@@ -300,7 +301,7 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
       <div className="kr-recovery-email-panel" role="tabpanel" id={`${identity}-email-panel`} aria-labelledby={`${identity}-tab-${emailKind}`} tabIndex={0}>
         <dl className="kr-recovery-envelope"><div><dt>{copy.subject}</dt><dd>{message.subject}</dd></div><div><dt>{copy.sender}</dt><dd>Kraken · kai@krakenpfm.ch</dd></div><div><dt>{copy.recipient}</dt><dd>{isValidEmail(normalizedEmail) ? normalizedEmail : copy.sampleEmail}</dd></div></dl>
         <article className="kr-recovery-email-design">
-          <header className="kr-recovery-email-brand"><span className="kr-recovery-logo"><img src="/calculator-approved/assets/logo.webp" alt="Kraken" width="115" height="115" /></span><span>Properties &amp; Facilities<br />Management</span></header>
+          <header className="kr-recovery-email-brand"><span className="kr-recovery-logo"><img src="/calculator-approved/assets/logo.webp" alt="Kraken" width="115" height="115" /></span><span>{homeText(locale, 'Reinigung & kleine Umzüge')}</span></header>
           <div className="kr-recovery-email-content"><h3>{message.title}</h3><p>{message.body}</p>
             <div className="kr-recovery-email-quote"><div className="kr-recovery-email-service"><span>{copy.service}</span><strong>{serviceLabel}</strong></div>
               {quote && <ul className="kr-recovery-email-lines">{quote.lines.map(line => <li key={line.id}><span>{bookingLineLabel(language, line)}</span><b>{money(line.totalCents)}</b></li>)}</ul>}
@@ -314,7 +315,7 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
             {demoNotice && <p className="kr-recovery-demo-action" role="status">{copy.demoCta}</p>}
             <p>{message.support}</p><p className="kr-recovery-email-signature">{copy.signature}</p>
           </div>
-          <footer className="kr-recovery-email-footer"><p>{emailKind === 'saved' ? copy.requestedEmail : copy.reminderEmail}</p><p>Kraken Properties &amp; Facilities Management<br />Seewadelstrasse 3 · 8203 Schaffhausen<br />kai@krakenpfm.ch · +41 77 450 57 05</p>{emailKind !== 'saved' && <span className="kr-recovery-email-unsubscribe">{copy.unsubscribe} · {copy.previewOnly}</span>}</footer>
+          <footer className="kr-recovery-email-footer"><p>{emailKind === 'saved' ? copy.requestedEmail : copy.reminderEmail}</p><p>Kraken<br />Seewadelstrasse 3 · 8203 Schaffhausen<br />kai@krakenpfm.ch · +41 77 450 57 05</p>{emailKind !== 'saved' && <span className="kr-recovery-email-unsubscribe">{copy.unsubscribe} · {copy.previewOnly}</span>}</footer>
         </article>
       </div>
     </dialog>}

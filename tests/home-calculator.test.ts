@@ -21,7 +21,7 @@ test('all four approved homepage selections reach the real route without changin
     let navigations = 0;
     openHomeCalculator(home, route => {
       navigations++;
-      assert.equal(route, `/quote?service=${home}`);
+      assert.equal(route, `/offerte?service=${home}`);
       assert.equal(storage.getItem(CALCULATOR_SERVICE_STORAGE_KEY), service);
     }, storage);
     assert.deepEqual(consumeHomeCalculatorRequest(storage), { kind: 'service', service });
@@ -35,7 +35,7 @@ test('all four approved homepage selections reach the real route without changin
 test('windows has its own UI intention and cannot inherit a stale cleaning selection', () => {
   const storage = storageFixture();
   storage.setItem(CALCULATOR_SERVICE_STORAGE_KEY, 'deep-cleaning');
-  openHomeCalculator('windows', route => assert.equal(route, '/quote?service=windows'), storage);
+  openHomeCalculator('windows', route => assert.equal(route, '/offerte?service=windows'), storage);
   assert.equal(storage.getItem(CALCULATOR_SERVICE_STORAGE_KEY), null);
   assert.equal(storage.getItem(HOME_CALCULATOR_INTENT_KEY), 'windows');
   assert.deepEqual(consumeHomeCalculatorRequest(storage), { kind: 'windows' });
@@ -48,7 +48,7 @@ test('blocked browser storage still hands off the selected service in memory and
   for (const service of ['windows', 'regular'] as HomeService[]) {
     const routes: string[] = [];
     openHomeCalculator(service, route => routes.push(route), blocked);
-    assert.deepEqual(routes, [`/quote?service=${service}`]);
+    assert.deepEqual(routes, [`/offerte?service=${service}`]);
     assert.deepEqual(consumeHomeCalculatorRequest(blocked), homeCalculatorRequest(service));
   }
 });
@@ -68,7 +68,7 @@ test('generic calculator entry clears stale intentions without changing customer
   const storage = storageFixture();
   storage.setItem(CALCULATOR_SERVICE_STORAGE_KEY, 'moving');
   storage.setItem(HOME_CALCULATOR_INTENT_KEY, 'windows');
-  openHomeCalculator(null, route => assert.equal(route, '/quote'), storage);
+  openHomeCalculator(null, route => assert.equal(route, '/offerte'), storage);
   assert.equal(consumeHomeCalculatorRequest(storage), null);
   assert.equal(storage.getItem('kraken_consultation_data_v2'), storage.draft);
   for (const invalid of ['constructor', '__proto__', 'window-cleaning', 'daily-cleaning', {}, undefined]) assert.equal(homeCalculatorRequest(invalid), null);
@@ -94,7 +94,7 @@ test('a mounted calculator is notified after navigation and can consume a servic
   const unsubscribe = subscribeHomeCalculatorRequests(() => received.push(consumeHomeCalculatorRequest(storage)), target);
   context.after(unsubscribe);
   openHomeCalculator('windows', route => {
-    assert.equal(route, '/quote?service=windows');
+    assert.equal(route, '/offerte?service=windows');
     assert.equal(notifications, 0);
   }, storage, target);
   assert.deepEqual(received, []);

@@ -1,5 +1,6 @@
 import { createHomeScope } from './lifecycle.js';
 import { requestKaiOpen } from '../../src/kai/open.ts';
+import { publicHref } from '../../src/routing/site-paths.ts';
 
 export function initApprovedHome(homeRoot, openCalculator, t = source => source) {
   const scope = createHomeScope();
@@ -12,15 +13,14 @@ export function initApprovedHome(homeRoot, openCalculator, t = source => source)
     deep: { name: 'Grundreinigung', hint: 'Wenn Ihr Zuhause etwas mehr Aufmerksamkeit braucht.', hotspot: 'floor' },
     moving: { name: 'Kleiner Umzug', hint: 'Möbel, Kartons, ein neuer Anfang. Planen wir Ihren kleinen Umzug.', hotspot: 'moving' }
   };
-  let service = null;
+  let service = 'end';
   function refreshCalculatorLinks() {
     $$('a[data-calculator]').forEach(link => {
       const url = new URL(link.getAttribute('href'), window.location.origin);
-      url.searchParams.set('lang', homeRoot.lang || 'de-CH');
       const selected = link.dataset.service || service;
       if (selected) url.searchParams.set('service', selected);
       else url.searchParams.delete('service');
-      link.setAttribute('href', url.pathname + url.search + url.hash);
+      link.setAttribute('href', publicHref(url.pathname + url.search + url.hash, homeRoot.lang));
     });
   }
   function chooseService(key, announce = true) {
@@ -51,8 +51,7 @@ export function initApprovedHome(homeRoot, openCalculator, t = source => source)
   function refreshLanguage() {
     $$('a[href^="/"]').forEach(link => {
       const url = new URL(link.getAttribute('href'), window.location.origin);
-      url.searchParams.set('lang', homeRoot.lang || 'de-CH');
-      link.setAttribute('href', url.pathname + url.search + url.hash);
+      link.setAttribute('href', publicHref(url.pathname + url.search + url.hash, homeRoot.lang));
     });
     if (service) chooseService(service, false);
     else $('#serviceHint').textContent = t('Was dürfen wir Ihnen abnehmen? Wählen Sie Ihren Service.');

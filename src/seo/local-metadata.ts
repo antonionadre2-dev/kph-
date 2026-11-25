@@ -7,12 +7,12 @@ type Language = 'de' | 'en' | 'es' | 'pt' | 'it' | 'fr';
 /** Approved local SEO copy; kept separate from regional body data in the main bundle. */
 const PAGE_COPY: Record<string, Record<Language, Copy>> = {
   '/': {
-    de: { title: 'Reinigung in Zürich, Schaffhausen & Winterthur | Kraken', description: 'Persönliche Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur. Keine MwSt. Auftrag im Rechner zusammenstellen.' },
-    en: { title: 'Cleaning in Zurich, Schaffhausen & Winterthur | Kraken', description: 'Cleaning and small moves with personal service for private households in Zurich, Schaffhausen and Winterthur. No VAT. Plan your service in the calculator.' },
-    es: { title: 'Limpieza en Zúrich, Schaffhausen y Winterthur | Kraken', description: 'Limpieza y pequeñas mudanzas con atención personal para hogares particulares en Zúrich, Schaffhausen y Winterthur. Sin IVA. Prepare su encargo en el calculador.' },
-    pt: { title: 'Limpeza em Zurique, Schaffhausen e Winterthur | Kraken', description: 'Limpeza e pequenas mudanças com atendimento pessoal para casas particulares em Zurique, Schaffhausen e Winterthur. Sem IVA. Prepare o seu serviço na calculadora.' },
-    it: { title: 'Pulizie a Zurigo, Sciaffusa e Winterthur | Kraken', description: 'Pulizie e piccoli traslochi con assistenza personale per abitazioni private a Zurigo, Sciaffusa e Winterthur. Senza IVA. Prepari il suo servizio nel calcolatore.' },
-    fr: { title: 'Nettoyage à Zurich, Schaffhouse et Winterthour | Kraken', description: 'Nettoyage et petits déménagements avec un suivi personnel pour les particuliers à Zurich, Schaffhouse et Winterthour. Sans TVA. Préparez votre prestation dans le calculateur.' },
+    de: { title: "Umzugsreinigung Zürich | Kraken PFM", description: "Umzugsreinigung Zürich und Endreinigung für die Wohnungsabgabe. Persönliche Planung, transparente Preise im Rechner und vereinbarter Reinigungsumfang. Auch in Schaffhausen und Winterthur." },
+    en: { title: "End of tenancy cleaning Zurich | Kraken PFM", description: "End of tenancy cleaning in Zurich for your flat handover. Personal planning, transparent calculator prices and an agreed cleaning scope. Also in Schaffhausen and Winterthur." },
+    es: { title: "Limpieza de fin de alquiler Zúrich | Kraken PFM", description: "Limpieza de fin de alquiler en Zúrich para la entrega de su vivienda. Atención personal, precios transparentes en el calculador y trabajos acordados. También en Schaffhausen y Winterthur." },
+    pt: { title: "Limpeza de fim de arrendamento Zurique | Kraken PFM", description: "Limpeza de fim de arrendamento em Zurique para entregar a sua casa. Atendimento pessoal, preços transparentes na calculadora e trabalhos acordados. Também em Schaffhausen e Winterthur." },
+    it: { title: "Pulizia di fine locazione Zurigo | Kraken PFM", description: "Pulizia di fine locazione a Zurigo per la riconsegna dell’alloggio. Assistenza personale, prezzi trasparenti nel calcolatore e lavori concordati. Anche a Sciaffusa e Winterthur." },
+    fr: { title: "Nettoyage de fin de bail Zurich | Kraken PFM", description: "Nettoyage de fin de bail à Zurich pour la remise du logement. Suivi personnel, prix transparents dans le calculateur et travaux convenus. Aussi à Schaffhouse et Winterthour." },
   },
   '/leistungen': {
     de: { title: 'Reinigung & kleine Umzüge für Privathaushalte | Kraken PFM', description: 'Fenster, Umzugsreinigung, regelmässige Reinigung, Grundreinigung und kleine Umzüge. Entdecken Sie die passende Hilfe und berechnen Sie Ihren Auftrag.' },

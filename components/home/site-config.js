@@ -1,8 +1,8 @@
-// Confirmed live calculator route. Use '/quote' when integrating into its app.
+// Public calculator route; the legacy /quote address redirects to this URL.
 export const siteConfig = Object.freeze({
   // Exact company Instagram profile still needs owner confirmation.
   instagramUrl: null,
-  calculatorUrl: '/quote',
+  calculatorUrl: '/offerte',
   calculatorServiceStorageKey: 'kraken_preselected_service',
   calculatorServiceMap: Object.freeze({
     end: 'end-of-tenancy',

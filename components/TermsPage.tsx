@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from '../i18n';
-import { getTermsTranslation } from './docTranslations';
+import { getTermsTranslation } from './legal/terms';
+import { publicHref } from '../src/routing/site-paths';
+import './legal/legal.css';
 
 // Add Props interface to accept onNavigate
 interface TermsPageProps {
@@ -8,16 +10,16 @@ interface TermsPageProps {
 }
 
 // Updated component to accept onNavigate prop
-const TermsPage: React.FC<TermsPageProps> = ({ onNavigate }) => {
+const TermsPage: React.FC<TermsPageProps> = () => {
   const { language } = useTranslation();
   const termsTrans = getTermsTranslation(language);
 
   return (
-    <main id="main" className="bg-slate-50 min-h-screen">
+    <main id="main" className="kraken-legal-page bg-slate-50 min-h-screen">
       {/* Header Section */}
       <section className="relative bg-[#001D3D] pt-48 pb-24 overflow-hidden text-white">
         <div className="absolute inset-0 z-0">
-          <img src="/kai terms and condition.webp" alt="Terms and Conditions" className="w-full h-full object-cover opacity-25 object-center" referrerPolicy="no-referrer" />
+          <img src="/kai terms and condition.webp" alt="" aria-hidden="true" className="w-full h-full object-cover opacity-25 object-center" referrerPolicy="no-referrer" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#001D3D] via-[#001D3D]/85 to-transparent" />
         </div>
         <div className="container mx-auto px-6 max-w-4xl text-center relative z-10">
@@ -63,12 +65,12 @@ const TermsPage: React.FC<TermsPageProps> = ({ onNavigate }) => {
 
             {/* Back button using onNavigate */}
             <div className="mt-12 text-center">
-                <button 
-                  onClick={() => onNavigate('home')}
-                  className="bg-[#002D5B] text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#00254A] transition-all shadow-xl"
+                <a
+                  href={publicHref('/', language)}
+                  className="kr-button kr-button--secondary"
                 >
                   {termsTrans.backHome}
-                </button>
+                </a>
             </div>
         </div>
       </section>

@@ -7,6 +7,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import { CONTACT_TRANSLATIONS, contactText, contactTranslationRows, contactTranslationSources } from '../components/contact/contactTranslations';
+import { homeText } from '../components/home/homeTranslations';
+import { publicHref } from '../src/routing/site-paths';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'] as const;
@@ -110,10 +112,10 @@ test('Contact renders real multilingual HTML and usable contact/calculator links
       assert.match(html, /8203 Schaffhausen/);
       assert.match(html, /href="tel:\+41774505705"/);
       assert.match(html, /href="mailto:kai@krakenpfm\.ch"/);
-      assert.match(html, new RegExp(`href="/quote\\?lang=${language}"`));
+      assert.ok(html.includes('href="'+publicHref('/quote',language)+'"'));
       assert.match(html, /09:00–19:00/);
       assert.match(html, /Europe\/Zurich/);
-      assert.match(html, /Properties &amp; Facilities Management/);
+      assert.ok(html.includes(homeText(language,'Reinigung & kleine Umzüge').replace(/&/g,'&amp;')));
       assert.ok(html.includes(contactText(language, 'Konzeptbilder · keine Fotos des Standorts')), language + ': translated office concept disclaimer');
       if (language !== 'de') assert.ok(!html.includes('Konzeptbilder · keine Fotos des Standorts'), language + ': no German disclaimer fallback');
       assert.match(html, /© swisstopo · © OpenStreetMap contributors \/ openrouteservice/);

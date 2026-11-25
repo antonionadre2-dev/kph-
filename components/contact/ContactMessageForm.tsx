@@ -362,6 +362,7 @@ const ContactMessageForm: React.FC<ContactMessageFormProps> = ({ onNavigate, lan
                       <input
                         type="text"
                         id="contact-name"
+                      maxLength={150}
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -378,6 +379,7 @@ const ContactMessageForm: React.FC<ContactMessageFormProps> = ({ onNavigate, lan
                       <input
                         type="email"
                         id="contact-email"
+                      maxLength={254}
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -395,6 +397,7 @@ const ContactMessageForm: React.FC<ContactMessageFormProps> = ({ onNavigate, lan
                     <input
                       type="text"
                       id="contact-subject"
+                      maxLength={200}
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       placeholder={d.placeholderSubject}
@@ -409,6 +412,7 @@ const ContactMessageForm: React.FC<ContactMessageFormProps> = ({ onNavigate, lan
                     </label>
                     <textarea
                       id="contact-message"
+                      maxLength={5000}
                       required
                       rows={6}
                       value={formData.message}

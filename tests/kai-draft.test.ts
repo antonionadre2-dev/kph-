@@ -35,18 +35,18 @@ test('a blocked browser store still transfers once in memory and importing in No
   assert.deepEqual(getKaiTransferPreview(draft('windows'), blocked), { conflicts: [], malformed: false });
 });
 
-test('reload fallback validates the envelope, rejects expiry and leaves malformed customer JSON byte-for-byte intact', () => {
+test('reload fallback validates transfer expiry while removing legacy stored contact data', () => {
   const storage = storageFixture();
   storage.setItem('kraken_consultation_data_v2', '{broken original');
-  assert.equal(getKaiTransferPreview(draft('regular'), storage).malformed, true);
+  assert.equal(getKaiTransferPreview(draft('regular'), storage).malformed, false);
   storage.setItem(KAI_TRANSFER_KEY, JSON.stringify({ version: 1, createdAt: Date.now(), policy: 'preserve', draft: draft('regular', { frequency: 'Weekly' }) }));
   assert.equal(consumeKaiTransfer(storage)?.draft.fields.frequency, 'Weekly');
-  assert.equal(storage.getItem('kraken_consultation_data_v2'), '{broken original');
+  assert.equal(storage.getItem('kraken_consultation_data_v2'), null);
   for (const value of [null, '{broken', { version: 1, createdAt: 0, policy: 'replace', draft: draft('moving') }, { version: 1, createdAt: Date.now(), policy: 'merge', draft: draft('moving') }]) {
     storage.setItem(KAI_TRANSFER_KEY, typeof value === 'string' ? value : JSON.stringify(value));
     assert.equal(consumeKaiTransfer(storage), null);
   }
-  assert.equal(storage.getItem('kraken_consultation_data_v2'), '{broken original');
+  assert.equal(storage.getItem('kraken_consultation_data_v2'), null);
 });
 
 test('conflicts are reported before continuation and preserve retains existing customer and service choices', () => {
@@ -57,7 +57,7 @@ test('conflicts are reported before continuation and preserve retains existing c
   storage.setItem('kraken_cart_persistent', JSON.stringify([{ type: 'end-of-tenancy', details: config }]));
   const incoming = draft('end', { postcode: '8001', city: 'Zürich', rooms: '4', bathrooms: '2', notes: 'New note' });
   const preview = getKaiTransferPreview(incoming, storage);
-  assert.deepEqual(new Set(preview.conflicts), new Set(['postcode', 'city', 'rooms', 'bathrooms', 'notes']));
+  assert.deepEqual(new Set(preview.conflicts), new Set(['rooms', 'bathrooms']));
   const result = applyKaiToCalculation(contact, config, incoming, 'preserve');
   assert.equal(result.contact.postcode, '8200');
   assert.equal(result.contact.city, 'Schaffhausen');
@@ -174,7 +174,7 @@ test('the summary detects unsaved calculator edits instead of only reading older
   assert.match(String(applied.contact.notes), /Current edit/);
   unregister();
   assert.deepEqual(getKaiTransferPreview(incoming, storage), { conflicts: [], malformed: false });
-  assert.equal(storage.getItem('kraken_consultation_data_v2'), JSON.stringify({ city: 'Saved city', notes: 'Saved note' }));
+  assert.equal(storage.getItem('kraken_consultation_data_v2'), null);
 });
 
 

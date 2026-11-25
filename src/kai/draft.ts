@@ -1,3 +1,4 @@
+import { readPrivateCart } from '../booking/privateStorage.ts';
 import { homeCalculatorRequest } from '../home/calculator.ts';
 import { KAI_FIELDS, KAI_SERVICES, KAI_SERVICE_FIELDS, type KaiDraft, type KaiField } from './types.ts';
 
@@ -68,18 +69,8 @@ function selectedServiceDraft(draft: KaiDraft): KaiDraft {
 }
 
 function readContactAndCart(storage: StorageAccess | null): { contact: Data; cart: Data[]; malformed: boolean } {
-  try {
-    const contactRaw = storage?.getItem(CONTACT_KEY);
-    const cartRaw = storage?.getItem(CART_KEY);
-    const contact = contactRaw == null ? {} : JSON.parse(contactRaw);
-    const cart = cartRaw == null ? [] : JSON.parse(cartRaw);
-    if (!isRecord(contact) || !Array.isArray(cart) || !cart.every(isRecord)) return { contact: {}, cart: [], malformed: true };
-    return { contact, cart, malformed: false };
-  } catch {
-    // Unavailable storage is not evidence that a saved customer draft is malformed.
-    try { storage?.getItem(CONTACT_KEY); } catch { return { contact: {}, cart: [], malformed: false }; }
-    return { contact: {}, cart: [], malformed: true };
-  }
+  // Stored personal fields are no longer restored. An active calculator supplies current edits in memory.
+  return { contact: {}, cart: readPrivateCart(storage).map(item => ({ ...item })), malformed: false };
 }
 
 export function getKaiTransferPreview(value: unknown, storage: StorageAccess | null = browserStorage('localStorage')): { conflicts: string[]; malformed: boolean } {
@@ -94,7 +85,7 @@ export function getKaiTransferPreview(value: unknown, storage: StorageAccess | n
   return { conflicts: [...new Set([...applyKaiToCalculation({ ...saved.contact, ...current?.contact }, current?.config || config, draft, 'preserve').conflicts, ...(current?.conflicts || [])])], malformed: false };
 }
 
-/** Explicit Continue action only. Existing consultation/cart/payment keys are never written here. */
+/** Explicit Continue action only. This hand-off never writes cart/payment keys. */
 export function prepareKaiTransfer(value: unknown, policy: KaiTransferPolicy, storage: StorageAccess | null = browserStorage('sessionStorage'), target: EventTarget | null = browserEvents()): void {
   const draft = normalizeKaiDraft(value);
   if (!draft || !['preserve', 'replace'].includes(policy)) throw new TypeError('Invalid Kai transfer');

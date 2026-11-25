@@ -1,0 +1,5 @@
+/* Loaded with the authenticated dashboard, never by the public homepage. */
+@import "tailwindcss" source(none);
+@source "./Dashboard.tsx";
+@source "./DetailInspectorModal.tsx";
+@source "./FilePreviewModal.tsx";

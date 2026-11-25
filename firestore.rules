@@ -11,8 +11,10 @@ service cloud.firestore {
       return request.auth != null 
         && 'email' in request.auth.token 
         && request.auth.token.email != null
+        && 'email_verified' in request.auth.token
+        && request.auth.token.email_verified == true
         && (
-          request.auth.token.email.lower().endsWith('@krakenpfm.ch') ||
+          ('admin' in request.auth.token && request.auth.token.admin == true) ||
           request.auth.token.email.lower() == 'antonio.nadre@anotherstar.com' ||
           request.auth.token.email.lower() == 'kai@krakenpfm.ch'
         );
@@ -28,6 +30,7 @@ service cloud.firestore {
         && requestId.size() <= 128
         && request.resource.data.id == requestId
         && request.resource.data.userId == request.auth.uid
+        && (isStaffOrAdmin() || request.resource.data.keys().hasOnly(['id','userId','client','email','phone','address','service','date','status','priority','amount','notes','mediaUrls','mediaNames','createdAt','updatedAt']))
         && request.resource.data.client is string
         && request.resource.data.client.size() >= 0
         && request.resource.data.client.size() <= 100
@@ -46,7 +49,10 @@ service cloud.firestore {
         
       allow update: if request.auth != null
         && (
-          (resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid) ||
+          (resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid
+            && resource.data.status in ['Draft','Pending']
+            && request.resource.data.status == resource.data.status
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['client','email','phone','address','service','date','priority','notes','mediaUrls','mediaNames','updatedAt'])) ||
           (isStaffOrAdmin() && request.resource.data.userId == resource.data.userId)
         )
         && request.resource.data.id == resource.data.id
@@ -69,7 +75,7 @@ service cloud.firestore {
         
       allow delete: if request.auth != null
         && (resource.data.userId == request.auth.uid || isStaffOrAdmin())
-        && (resource.data.status != 'Completed' || isStaffOrAdmin());
+        && (resource.data.status in ['Draft','Pending'] || isStaffOrAdmin());
     }
 
     match /job_applications/{applicationId} {
@@ -97,8 +103,11 @@ service cloud.firestore {
 
       allow update: if request.auth != null
         && (
-          (resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid) ||
-          isStaffOrAdmin()
+          (resource.data.userId == request.auth.uid && request.resource.data.userId == request.auth.uid
+            && resource.data.status == 'Pending'
+            && request.resource.data.status == resource.data.status
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','phone','position','region','permit','startDate','pensum','certificates','languages','message','cvName','cvData','cvType','updatedAt'])) ||
+          (isStaffOrAdmin() && request.resource.data.userId == resource.data.userId)
         )
         && request.resource.data.id == resource.data.id
         && request.resource.data.createdAt == resource.data.createdAt
@@ -108,13 +117,88 @@ service cloud.firestore {
         && (resource.data.userId == request.auth.uid || isStaffOrAdmin());
     }
 
+    function limitedText(value, minimum, maximum) {
+      return value is string && value.size() >= minimum && value.size() <= maximum;
+    }
+    function submissionLanguage(value) {
+      return value in ['de','de-CH','en','es','fr','it','pt'];
+    }
+    function submissionEmail(value) {
+      return limitedText(value, 3, 254) && value.matches('^[^@ ]+@[^@ ]+[.][^@ ]+$');
+    }
+    function validContactMessage(data) {
+      return data.keys().hasOnly(['name','email','subject','message','language','status','createdAt'])
+        && data.keys().hasAll(['name','email','subject','message','language','status','createdAt'])
+        && limitedText(data.name, 1, 150)
+        && submissionEmail(data.email)
+        && limitedText(data.subject, 0, 200)
+        && limitedText(data.message, 1, 5000)
+        && submissionLanguage(data.language)
+        && data.status == 'new'
+        && data.createdAt == request.time;
+    }
+    function commercialServices(data) {
+      return data is map
+        && data.keys().hasOnly(['dailyCleaning','deepCleaning','maintenance','gardening','gutterCare','wasteLogistics'])
+        && data.keys().hasAll(['dailyCleaning','deepCleaning','maintenance','gardening','gutterCare','wasteLogistics'])
+        && data.dailyCleaning is bool && data.deepCleaning is bool
+        && data.maintenance is bool && data.gardening is bool
+        && data.gutterCare is bool && data.wasteLogistics is bool;
+    }
+    function commercialProtocols(data) {
+      return data is map && data.keys().hasOnly(['ecoOnly','emergency','security','portal'])
+        && data.keys().hasAll(['ecoOnly','emergency','security','portal'])
+        && data.ecoOnly is bool && data.emergency is bool
+        && data.security is bool && data.portal is bool;
+    }
+    function validFloorPlan(plan) {
+      return plan is map && plan.keys().hasOnly(['name','size','content'])
+        && plan.keys().hasAll(['name','size','content'])
+        && limitedText(plan.name, 1, 180) && limitedText(plan.size, 1, 40)
+        && limitedText(plan.content, 0, 750000);
+    }
+    function optionalFloorPlan(plans, index) {
+      return plans.size() <= index || validFloorPlan(plans[index]);
+    }
+    function floorPlanSize(plans, index) {
+      return plans.size() > index ? plans[index].content.size() : 0;
+    }
+    function commercialFloorPlans(plans) {
+      return plans is list && plans.size() <= 5
+        && optionalFloorPlan(plans, 0) && optionalFloorPlan(plans, 1)
+        && optionalFloorPlan(plans, 2) && optionalFloorPlan(plans, 3) && optionalFloorPlan(plans, 4)
+        && floorPlanSize(plans, 0) + floorPlanSize(plans, 1) + floorPlanSize(plans, 2)
+          + floorPlanSize(plans, 3) + floorPlanSize(plans, 4) <= 750000;
+    }
+    function validLegacyCommercialQuote(data) {
+      return data.keys().hasOnly(['type','buildingType','numBuildings','totalArea','services','frequency','protocols','postalCode','city','hours','address','companyName','contactName','contactEmail','contactPhone','floorPlans','estimatedMonthlyBudget','estimatedAnnualBudget','createdAt','language','status'])
+        && data.keys().hasAll(['type','buildingType','numBuildings','totalArea','services','frequency','protocols','postalCode','city','hours','address','companyName','contactName','contactEmail','contactPhone','floorPlans','estimatedMonthlyBudget','estimatedAnnualBudget','createdAt','language','status'])
+        && data.type == 'commercial_b2b'
+        && data.buildingType in ['office','residential','retail','industrial','medical']
+        && data.numBuildings is int && data.numBuildings >= 1 && data.numBuildings <= 50
+        && data.totalArea is number && data.totalArea > 0 && data.totalArea <= 1000000
+        && commercialServices(data.services) && commercialProtocols(data.protocols)
+        && data.frequency in ['daily','multiple','weekly','biweekly','monthly','ondemand']
+        && limitedText(data.postalCode, 4, 4) && data.postalCode.matches('^[0-9]{4}$')
+        && limitedText(data.city, 1, 100) && limitedText(data.address, 1, 180)
+        && limitedText(data.companyName, 1, 150) && limitedText(data.contactName, 1, 150)
+        && submissionEmail(data.contactEmail) && limitedText(data.contactPhone, 0, 50)
+        && data.hours is number && data.hours > 0 && data.hours <= 1000
+        && commercialFloorPlans(data.floorPlans)
+        && data.estimatedMonthlyBudget is number && data.estimatedMonthlyBudget >= 0 && data.estimatedMonthlyBudget <= 1000000000
+        && data.estimatedAnnualBudget is number && data.estimatedAnnualBudget >= 0 && data.estimatedAnnualBudget <= 12000000000
+        && submissionLanguage(data.language) && data.status == 'pending'
+        && data.createdAt == request.time;
+    }
+
+    // Retained anonymous intake: creates only the form schema, never staff flags or payment state.
     match /b2b_quotes/{quoteId} {
-      allow create: if true;
+      allow create: if validLegacyCommercialQuote(request.resource.data);
       allow read, update, delete: if isStaffOrAdmin();
     }
 
     match /contact_messages/{messageId} {
-      allow create: if true;
+      allow create: if validContactMessage(request.resource.data);
       allow read, update, delete: if isStaffOrAdmin();
     }
   }

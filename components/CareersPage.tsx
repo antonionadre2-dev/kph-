@@ -1256,7 +1256,7 @@ Language: ${language}`.trim(),
         false
       );
 
-      await Promise.allSettled([firestorePromise, webhookPromise, emailPromise]);
+      await Promise.allSettled([firestorePromise, emailPromise]);
 
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });

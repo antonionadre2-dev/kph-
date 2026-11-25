@@ -19,7 +19,7 @@ const runtimeHtmlNames = [
 ];
 
 const digest = file => createHash('sha256').update(readFileSync(file)).digest('hex');
-const forbidden = name => name.split('/').some(segment => segment.startsWith('.'))
+const forbidden = name => (name !== '.well-known/security.txt' && name.split('/').some(segment => segment.startsWith('.')))
   || /\.(?:zip|map|cjs|log|pem|key|md)$/i.test(name)
   || /(?:^|\/)(?:server\.(?:js|mjs)|stats\.html|index\.html|seo-(?:page|shell)-[^/]+\.html|(?:services|about|why|contact)-content-[^/]+\.html)$/i.test(name);
 

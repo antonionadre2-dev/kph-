@@ -1,7 +1,9 @@
-import { MUNICIPALITIES } from '../data/locations.ts';
+import { ROUTE_MUNICIPALITIES as MUNICIPALITIES } from '../routing/municipalities.ts';
+import { toLegacyPath, publicHref } from '../routing/site-paths.ts';
 import { normalizeHomeLanguage } from '../../components/home/homeTranslations.ts';
 import { localText } from './local-translations.ts';
 import { getApprovedPageMetadata } from './local-metadata.ts';
+import { getEndOfTenancyMetadata } from './end-of-tenancy-metadata.ts';
 
 export const LOCAL_CITIES = [
   { id: 'schaffhausen', municipalitySlug: 'schaffhausen', regionId: 'schaffhausen', name: 'Schaffhausen', regionPath: '/reinigung/kanton-schaffhausen' },
@@ -54,7 +56,7 @@ export const getLocalService = (value: string) => LOCAL_SERVICES.find(service =>
 
 /** Existing routes only: no generated municipality × service URL expansion. */
 export function resolveLocalSeoRoute(pathname: string): LocalSeoRoute | null {
-  const path = pathname.split(/[?#]/)[0].replace(/\/$/, '') || '/';
+  const path = toLegacyPath(pathname);
   if (path === '/einsatzgebiete') return { kind: 'coverage' };
   const cityForRegion = LOCAL_CITIES.find(city => city.regionPath === path);
   if (cityForRegion) return { kind: 'region', regionId: cityForRegion.regionId };
@@ -76,10 +78,7 @@ export function getLocalRoutePlace(route: LocalSeoRoute): { city?: typeof LOCAL_
   return { name: MUNICIPALITIES.find(municipality => municipality.slug === slug)?.name || placeId };
 }
 
-export function localHref(path: string, language: string): string {
-  const [pathname, fragment] = path.split('#');
-  return `${pathname}${pathname.includes('?') ? '&' : '?'}lang=${normalizeHomeLanguage(language)}${fragment ? '#' + fragment : ''}`;
-}
+export function localHref(path: string, language: string): string { return publicHref(path, language); }
 
 export const LOCAL_SCOPE = 'Persönliche Hilfe für Privathaushalte in Zürich, Schaffhausen und Winterthur. Von einzelnen Fenstern bis zur Wohnung mit 1–4 Zimmern.';
 export const LOCAL_ADDRESS_CONFIRMATION = 'Diese Ortsseite bestätigt keinen verfügbaren Termin. Teilen Sie uns Adresse, Aufgabe und Wunschdatum mit, damit wir prüfen können, ob Ihr Auftrag in unsere Planung passt.';
@@ -92,6 +91,8 @@ export function getLocalSeoDescriptor(pathname: string, language: string = 'de')
   const { city, name } = getLocalRoutePlace(route);
   const service = route.kind === 'service' ? getLocalService(route.serviceId) : undefined;
   const indexable = route.kind === 'coverage' || route.kind === 'region' || (route.kind === 'service' && !!city && !!service);
+  const endOfTenancy = route.kind === 'service' && route.serviceId === 'end-of-tenancy' ? getEndOfTenancyMetadata(route.cityId, language) : null;
+  if (endOfTenancy) return { title: endOfTenancy.title, h1: endOfTenancy.h1, description: endOfTenancy.description, indexable, route };
   const approved = getApprovedPageMetadata(pathname, language);
   if (approved?.h1) return { title: approved.title, h1: approved.h1, description: approved.description, indexable, route };
   const h1 = route.kind === 'coverage'

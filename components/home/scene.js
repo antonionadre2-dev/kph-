@@ -1,6 +1,8 @@
 import { createHomeScope } from './lifecycle.js';
 import { resolveKaiState } from './scene-state.js';
 import { createSceneAutoplay } from './scene-autoplay.js';
+import { mediaAsset, responsiveImage } from '../../src/media/images.ts';
+import { createInitialClothingGate, kaiSpriteTargetWidth, seasonalKaiClothing } from './scene-sprites.js';
 export function initApartmentScene(homeRoot, { t = source => source, getLocale = () => 'de-CH' } = {}) {
     const scope = createHomeScope();
     const byId = id => homeRoot.querySelector('#' + id);
@@ -14,6 +16,9 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     const kai = $('#sceneKai');
     const room = $('#sceneRoom');
     const landscape = $('#sceneLandscape');
+    const kaiImage = new Image();
+    let mediaReady = false;
+    let kaiSource = '';
     const motionToggle = $('#sceneMotionToggle');
     const controls = [...dialog.querySelectorAll('[data-scene-control]')];
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -43,7 +48,32 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     let lastOpener = null;
     let selectedService = 'moving';
     let sceneVisible = false;
+    const clothingGate = createInitialClothingGate(scope, () => updateScene());
     const autoplay = createSceneAutoplay(scope, { play: animateTask, stop: stopTask });
+    function prepareKaiSprite() {
+        if (!mediaReady || (!clothingGate.isReady() && overrides.clothing === 'auto')) return;
+        const warm = canvas.dataset.clothing === 'warm';
+        const columns = kai.dataset.task === 'rest' || kai.dataset.task === 'windows' ? 2 : 3;
+        const original = kai.dataset.task === 'rest' ? '/home-approved/assets/kai-rest-v3.webp'
+            : kai.dataset.task === 'windows' ? warm ? '/home-approved/assets/kai-windows-cold-v3.webp' : '/home-approved/assets/kai-windows.webp'
+                : warm ? '/home-approved/assets/kai-tasks-cold-v3.webp' : '/home-approved/assets/kai-tasks.webp';
+        const target = kaiSpriteTargetWidth(kai.getBoundingClientRect().width, columns, window.devicePixelRatio || 1, matchMedia('(max-width:1080px)').matches);
+        const source = mediaAsset(original, target);
+        if (source === kaiSource) return;
+        const variable = kai.dataset.task === 'rest' ? '--kh-kai-rest'
+            : kai.dataset.task === 'windows' ? warm ? '--kh-kai-windows-cold' : '--kh-kai-windows'
+                : warm ? '--kh-kai-tasks-cold' : '--kh-kai-tasks';
+        canvas.style.setProperty(variable, `url("${source}")`);
+        kaiSource = source;
+        kai.classList.remove('is-ready');
+        kaiImage.src = source;
+    }
+    function hydrateSceneMedia() {
+        if (mediaReady) return;
+        mediaReady = true;
+        canvas.style.setProperty('--kh-holiday-decor', `url("${mediaAsset('/home-approved/assets/holiday-decor.webp')}")`);
+        prepareKaiSprite();
+    }
     function syncMotion() {
         const paused = document.hidden || !sceneVisible || reducedMotion.matches || overrides.motion === 'still';
         canvas.classList.toggle('is-paused', paused);
@@ -127,19 +157,22 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
         const observation = currentObservation(now);
         const observedWeather = conditionFor(observation);
         const weather = overrides.weather === 'auto' ? observedWeather : overrides.weather;
-        const kaiState = resolveKaiState({ phase, temperatureC: observation?.temperatureC, clothing: overrides.clothing, service: selectedService });
+        const clothing = overrides.clothing === 'auto' && !observation ? seasonalKaiClothing(parts.month) : overrides.clothing;
+        const kaiState = resolveKaiState({ phase, temperatureC: observation?.temperatureC, clothing, service: selectedService });
         const preview = Object.values(overrides).some(value => value !== 'auto');
         Object.assign(canvas.dataset, { season, celebration, phase, weather, clothing: kaiState.clothing, lights: kaiState.lightsOn ? 'on' : 'off' });
-        const roomSource = kaiState.lightsOn ? '/home-approved/assets/hero-room-day-v4.webp' : '/home-approved/assets/hero-room-night-v4.webp';
-        if (room.getAttribute('src') !== roomSource)
-            room.src = roomSource;
+        const roomProps = responsiveImage(kaiState.lightsOn ? '/home-approved/assets/hero-room-day-v4.webp' : '/home-approved/assets/hero-room-night-v4.webp', room.sizes || '(max-width:1080px) 120vw, 78vw');
+        if (mediaReady && room.getAttribute('src') !== roomProps.src) {
+            room.srcset = roomProps.srcSet || '';
+            room.sizes = roomProps.sizes || '';
+            room.src = roomProps.src;
+        }
         if (kai.dataset.task !== kaiState.task) {
             stopTask();
             kai.dataset.task = kaiState.task;
         }
-        const positions = { spring: [0, 0], summer: [-627, 0], autumn: [0, -627], winter: [-627, -627] };
-        landscape.setAttribute('x', positions[season][0]);
-        landscape.setAttribute('y', positions[season][1]);
+        prepareKaiSprite();
+        if (mediaReady) landscape.setAttribute('href', mediaAsset(`/home-approved/assets/seasons-window-${season}.webp`));
         const clock = timeFormatter.format(now);
         const temperature = observation && Number.isFinite(observation.temperatureC)
             ? `${Math.round(observation.temperatureC)} °C` : null;
@@ -154,7 +187,7 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
         $('#sceneKaiNote').textContent = phase === 'night'
             ? t('Lichter aus, Kai ruht mit seiner Decke. Ihre Anfrage können Sie jederzeit vorbereiten. Bei Tag nimmt Kai die ausgewählte Aufgabe wieder auf.')
             : kaiState.clothing === 'warm'
-                ? [t('Kai trägt Jacke, Mütze und Handschuhe.'), t(overrides.clothing === 'auto' ? 'Die warme Kleidung erscheint bei gemeldeten Temperaturen unter 8 °C.' : 'Sie sehen die ausgewählte Kleidungsvariante.'), t('Wählen Sie im Zuhause eine Aufgabe aus.')].join(' ')
+                ? [t('Kai trägt Jacke, Mütze und Handschuhe.'), t(overrides.clothing === 'auto' ? !observation ? 'Ohne Temperaturmeldung folgt Kais Kleidung der Jahreszeit.' : 'Die warme Kleidung erscheint bei gemeldeten Temperaturen unter 8 °C.' : 'Sie sehen die ausgewählte Kleidungsvariante.'), t('Wählen Sie im Zuhause eine Aufgabe aus.')].join(' ')
                 : t('Kai trägt sein leichtes Kraken-Polo. Wählen Sie Fenster, Böden oder Umzug aus und sehen Sie ihm bei der Arbeit zu.');
         const weatherStatus = $('#sceneWeatherStatus');
         const delayed = observation && (weatherData.stale === true || now.getTime() - Date.parse(observation.time) > 45 * 60000);
@@ -229,7 +262,8 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
             weatherLoading = false;
             weatherRequest = null;
             if (!scope.disposed) {
-                updateScene();
+                if (!clothingGate.isReady()) clothingGate.resolve();
+                else updateScene();
                 scheduleWeather();
             }
         }
@@ -334,16 +368,20 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
         syncMotion();
     });
     scope.on(reducedMotion, 'change', syncMotion);
+    let resizeTimer;
+    scope.on(window, 'resize', () => {
+        scope.clearTimeout(resizeTimer);
+        resizeTimer = scope.timeout(prepareKaiSprite, 120);
+    });
     const visibility = scope.observer(entries => {
         const entry = entries.at(-1);
         if (!entry) return;
         sceneVisible = entry.isIntersecting && entry.intersectionRatio > 0;
+        if (sceneVisible) { hydrateSceneMedia(); updateScene(); }
         syncMotion();
     }, { threshold: 0 });
     visibility.observe(canvas);
-    const kaiImage = new Image();
     scope.on(kaiImage, 'load', () => { kai.classList.add('is-ready'); syncMotion(); });
-    kaiImage.src = '/home-approved/assets/kai-tasks.webp';
     // Warm and night variants are requested by their CSS only when they are needed.
     scope.cleanup(() => { if (dialog.open)
         dialog.close(); document.body.classList.remove('kraken-home-scene-dialog-open'); $('#sceneRain').replaceChildren(); $('#sceneSnow').replaceChildren(); kaiImage.src = ''; });

@@ -121,7 +121,7 @@ export default function MovingGuide({ language, preview, service, customer, requ
         <label className="kr-moving-guide-vehicle"><input type="checkbox" checked={preferences.vehicle} onChange={event=>changePreferences({vehicle:event.target.checked})}/><span>{copy.vehicle}</span></label>
       </div></section>
       <article className="kr-moving-guide-paper">
-        <header className="kr-moving-guide-brand"><span><img src="/calculator-approved/assets/logo.webp" alt="Kraken" width="112" height="112" /></span><small>Properties &amp; Facilities<br/>Management</small></header>
+        <header className="kr-moving-guide-brand"><span><img src="/calculator-approved/assets/logo.webp" alt="Kraken" width="112" height="112" /></span><small>{copy.brandDescriptor}</small></header>
         <div className="kr-moving-guide-paper-content"><h3 className="kr-moving-guide-paper-title">{document.title}</h3><p>{document.subtitle}</p>
           <dl className="kr-moving-guide-context">{document.context.map(row=><div key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>
           <div className="kr-moving-guide-progress"><span><Check aria-hidden="true"/>{count} / {document.items.length} {copy.complete}</span><progress aria-label={copy.complete} value={count} max={document.items.length}/></div>

@@ -6,6 +6,11 @@ import ApprovedHeader from './ApprovedHeader';
 import TransitSection from './TransitSection';
 import WhyKrakenSection from './WhyKrakenSection';
 import PublicPriceGuide from '../PublicPriceGuide';
+import FeaturedMoveoutOffer from './FeaturedMoveoutOffer';
+import CustomerReviews from './CustomerReviews';
+import { publicHref } from '../../src/routing/site-paths';
+import { mediaAsset, responsiveImage } from '../../src/media/images';
+import { initDeferredHomeMedia } from './deferred-media';
 import { whyTranslations } from './whyTranslations';
 import { initApprovedHome } from './app';
 import { initApartmentScene } from './scene';
@@ -16,6 +21,8 @@ import './approved-home.css';
 import './responsive-fixes.css';
 import './home-language.css';
 import './device-fixes.css';
+import './design-system.css';
+import './conversion-home.css';
 
 // The approved illustration layers and accessible controls remain one React route.
 export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
@@ -26,7 +33,8 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
   translationRef.current = t;
   const localeRef = useRef('de-CH');
   localeRef.current = homeLanguages.find(item => item.code === homeLanguage)?.locale || 'de-CH';
-  const quoteHref = '/quote?lang=' + encodeURIComponent(language);
+  const quoteHref = publicHref('/quote', language);
+  const serviceHref = (service: HomeService) => publicHref('/quote?service=' + service, language);
   const rootRef = useRef<HTMLDivElement>(null);
   const navigateRef = useRef(onNavigate);
   navigateRef.current = onNavigate;
@@ -37,7 +45,8 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
     document.documentElement.style.scrollPaddingTop = '100px';
     const translate = (source: string, params?: Record<string, string | number>) => translationRef.current(source, params);
     const cleanups = [
-      initApprovedHome(root, (service: HomeService | null) => openHomeCalculator(service, (path) => navigateRef.current(path)), translate),
+      initDeferredHomeMedia(root),
+      initApprovedHome(root, (service: HomeService | null) => openHomeCalculator(service, (path) => navigateRef.current(publicHref(path, localeRef.current))), translate),
       initApartmentScene(root, { t: translate, getLocale: () => localeRef.current }),
       initTransit(root, translate),
       initServicePreview(root, { getLanguage: () => localeRef.current }),
@@ -91,6 +100,26 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
   <main id="main">
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-stage">
+        <div className="hero-copy">
+          <p className="eyebrow">{t("Reinigungsfirma für Privathaushalte")}</p>
+          <h1 id="hero-title">{t("Umzugsreinigung Zürich")}</h1>
+          <p className="hero-description">{t("Ihr Zuhause in guten Armen.")}</p>
+          <FeaturedMoveoutOffer language={homeLanguage} />
+          <a className="button button-navy hero-primary-action kr-button kr-button--primary" href={serviceHref('end')} data-service="end" data-calculator="">{t('Umzugsreinigung berechnen')}</a>
+          <p className="hero-guarantee"><strong>{t('Abnahmegarantie beim Pauschalpaket')}</strong><span>{t('Für den vereinbarten Reinigungsumfang gemäss Auftragsbestätigung und AGB. Stundenreinigung ohne Abnahmegarantie.')}{' '}<a href={publicHref('/terms', language)}>{t('AGB ansehen')}</a></span></p>
+          <a className="hero-service-details kr-button kr-button--quiet" href={publicHref('/umzugsreinigung/zuerich', language)}>{t('Umzugsreinigung in Zürich entdecken')}</a>
+          <CustomerReviews language={homeLanguage} />
+          <div className="hero-scene-controls">
+          <button className="scene-open" id="sceneOpen" type="button" aria-haspopup="dialog" aria-controls="sceneDialog">
+            <span className="scene-open-weather" aria-hidden="true"><svg id="sceneWeatherIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg></span>
+            <span className="scene-open-copy"><strong id="sceneCityTime">{t("Zürich · Ortszeit")}</strong><span id="sceneShortStatus">{t("Szene entdecken")}</span></span><svg className="scene-open-settings icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h7m4 0h5M4 17h3m4 0h9"></path><circle cx="13" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>
+          </button>
+          <button className="scene-motion-toggle" id="sceneMotionToggle" type="button" aria-label={t("Animation pausieren")} title={t("Animation pausieren")} aria-pressed={false}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><g className="scene-motion-pause" data-motion-icon="pause"><path d="M8 5v14m8-14v14" /></g><g className="scene-motion-play" data-motion-icon="play"><path d="m9 6 9 6-9 6Z" /></g></svg>
+            <span className="sr-only" data-scene-motion-label="">{t("Animation pausieren")}</span>
+          </button>
+          </div>
+        </div>
         <div className="hero-visual">
         <div className="hero-art scene-canvas" id="sceneCanvas" data-season="autumn" data-phase="day" data-weather="unknown" data-celebration="none" role="img" aria-label={t("Eine gemütliche Wohnung mit Kai und Kraken-Umzugskartons. Die Szene passt sich der Jahreszeit und der Uhrzeit in Zürich an.")}>
           <svg className="scene-window" viewBox="0 0 1536 1024" aria-hidden="true">
@@ -101,7 +130,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
             <g clipPath="url(#sceneWindowClip)">
               <rect x="550" y="171" width="363" height="300" fill="#c6d9e3"></rect>
               <svg x="550" y="171" width="363" height="300" viewBox="0 0 627 627" preserveAspectRatio="xMidYMid slice" className="scene-landscape">
-                <image id="sceneLandscape" href="/home-approved/assets/seasons-window.webp" x="0" y="-627" width="1254" height="1254"></image>
+                <image id="sceneLandscape" x="0" y="0" width="627" height="627"></image>
               </svg>
               <rect className="scene-mist" x="550" y="171" width="363" height="300"></rect>
               <rect className="scene-window-shade" x="550" y="171" width="363" height="300"></rect>
@@ -113,10 +142,10 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
               <path className="scene-wipe" d="M831 247q20 25 6 55t-2 55"></path>
             </g>
           </svg>
-          <img className="scene-room" id="sceneRoom" src="/home-approved/assets/hero-room-day-v4.webp" alt="" width="1536" height="1024" fetchPriority="high" aria-hidden="true" />
+          <img className="scene-room" id="sceneRoom" {...responsiveImage('/home-approved/assets/hero-room-day-v4.webp','(max-width:1080px) 120vw, 78vw')} alt="" fetchPriority="high" aria-hidden="true" />
           <svg className="scene-box-branding" viewBox="0 0 1536 1024" aria-hidden="true">
-            <g transform="translate(1354 667) skewY(-17)"><svg width="55" height="23.6" viewBox="4 283 1016 436"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g>
-            <g transform="translate(1338 744) skewY(-17)"><svg width="80" height="34.33" viewBox="4 283 1016 436"><image href="/home-approved/assets/logo.webp" width="1024" height="1024"></image></svg></g>
+            <g transform="translate(1354 667) skewY(-17)"><svg width="55" height="23.6" viewBox="4 283 1016 436"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g>
+            <g transform="translate(1338 744) skewY(-17)"><svg width="80" height="34.33" viewBox="4 283 1016 436"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g>
           </svg>
           <svg className="scene-interior" viewBox="0 0 1536 1024" aria-hidden="true">
             <path className="scene-cushion" d="M729 484q19 2 33-6l13 54q-18 7-35 6Z"></path>
@@ -133,21 +162,6 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
         <button className="scene-hotspot hotspot-window" type="button" data-service="windows" data-hotspot="windows" aria-label={t("Fensterreinigung auswählen")}><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#window"></use></svg><span>{t("Fenster")}</span><span className="hotspot-dot" aria-hidden="true"></span></button>
         <button className="scene-hotspot hotspot-floor" type="button" data-service="deep" data-hotspot="floor" aria-label={t("Grundreinigung auswählen")}><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#deep"></use></svg><span>{t("Böden & mehr")}</span><span className="hotspot-dot" aria-hidden="true"></span></button>
         <button className="scene-hotspot hotspot-move" type="button" data-service="moving" data-hotspot="moving" aria-label={t("Kleinen Umzug auswählen")}><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving"></use></svg><span>{t("Kleiner Umzug")}</span><span className="hotspot-dot" aria-hidden="true"></span></button>
-        </div>
-        <div className="hero-copy">
-          <p className="eyebrow">{t("Kleine Aufgaben. Grosse Entlastung.")}</p>
-          <h1 id="hero-title"><span>{t("Ihr Zuhause")}</span> <span>{t("in guten")}</span> <span>{t("Armen.")}</span></h1>
-          <p className="hero-description">{t("Reinigung und kleine Umzüge in Zürich, Schaffhausen und Winterthur.")}</p>
-          <p className="hero-personal">{t("Persönlich. Erfahren. Für Sie da.")}</p>
-          <a className="button button-navy hero-primary-action" href={quoteHref}>{homeText(homeLanguage, 'Meine Offerte berechnen')}</a>
-          <button className="scene-open" id="sceneOpen" type="button" aria-haspopup="dialog" aria-controls="sceneDialog">
-            <span className="scene-open-weather" aria-hidden="true"><svg id="sceneWeatherIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg></span>
-            <span className="scene-open-copy"><strong id="sceneCityTime">{t("Zürich · Ortszeit")}</strong><span id="sceneShortStatus">{t("Szene entdecken")}</span></span><svg className="scene-open-settings icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h7m4 0h5M4 17h3m4 0h9"></path><circle cx="13" cy="7" r="2"></circle><circle cx="9" cy="17" r="2"></circle></svg>
-          </button>
-          <button className="scene-motion-toggle" id="sceneMotionToggle" type="button" aria-label={t("Animation pausieren")} title={t("Animation pausieren")} aria-pressed={false}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><g className="scene-motion-pause" data-motion-icon="pause"><path d="M8 5v14m8-14v14" /></g><g className="scene-motion-play" data-motion-icon="play"><path d="m9 6 9 6-9 6Z" /></g></svg>
-            <span className="sr-only" data-scene-motion-label="">{t("Animation pausieren")}</span>
-          </button>
         </div>
         <dialog className="scene-dialog" id="sceneDialog" aria-labelledby="sceneDialogTitle" aria-describedby="scenePreviewExplanation">
           <div className="scene-dialog-inner">
@@ -172,8 +186,8 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
       <div className="booking-dock" id="anfrage">
         <p className="sr-only" id="serviceGroupLabel">{t("Welche Unterstützung wünschen Sie?")}</p>
         <div className="service-picker" role="group" aria-labelledby="serviceGroupLabel" aria-describedby="serviceHint">
-          <button className="service-option" type="button" data-service="windows" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#window"></use></svg><span>{t("Fensterreinigung")}</span></button>
           <button className="service-option" type="button" data-service="end" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#end"></use></svg><span>{t("Umzugsreinigung")}</span></button>
+          <button className="service-option" type="button" data-service="windows" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#window"></use></svg><span>{t("Fensterreinigung")}</span></button>
           <button className="service-option" type="button" data-service="regular" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#regular"></use></svg><span>{t("Regelmässige Reinigung")}</span></button>
           <button className="service-option" type="button" data-service="deep" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#deep"></use></svg><span>{t("Grundreinigung")}</span></button>
           <button className="service-option" type="button" data-service="moving" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving"></use></svg><span>{t("Kleine Umzüge")}</span></button>
@@ -181,7 +195,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
         <p className="service-hint" id="serviceHint" aria-live="polite">{t("Was dürfen wir Ihnen abnehmen? Wählen Sie Ihren Service.")}</p>
         <div className="booking-form calculator-entry">
           <div className="calculator-entry-copy"><strong>{t("Ihr Auftrag. Einfach geplant.")}</strong><span>{t("Die passenden Angaben machen Sie direkt im Rechner.")}</span></div>
-          <a className="button button-mint booking-submit" href={quoteHref} data-calculator="">{t("Zum Service-Rechner")}</a>
+          <a className="button button-mint booking-submit" href={serviceHref('end')} data-calculator="">{t("Offerte berechnen")}</a>
           <span className="booking-divider" aria-hidden="true"></span>
           <button className="button button-kai" type="button" data-open-kai=""><svg className="icon" aria-hidden="true"><use href="#i-message"></use></svg>{t("Mit Kai starten")}</button>
         </div>
@@ -190,23 +204,23 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
     </section>
 
     <section className="services-section section container" id="leistungen" aria-labelledby="services-title">
-      <div className="section-heading"><div><p className="eyebrow">{t("So viel Hilfe, wie Sie brauchen")}</p><h2 id="services-title">{t("Was dürfen wir Ihnen")}<br />{t("abnehmen?")}</h2></div><p>{t("Ein einzelnes Fenster, die ganze Wohnung oder Ihr nächster Umzug. Wir schauen gemeinsam, was für Sie passt.")}</p></div>
+      <div className="section-heading"><div><p className="eyebrow">{t("So viel Hilfe, wie Sie brauchen")}</p><h2 id="services-title">{t("Reinigung und kleine Umzüge für Ihr Zuhause")}</h2></div><p>{t("Ein einzelnes Fenster, die ganze Wohnung oder Ihr nächster Umzug. Wir schauen gemeinsam, was für Sie passt.")}</p></div>
       <div className="service-preview-controls" id="servicePreviewControls" data-service-preview-control="" hidden={true}><span id="servicePreviewStatus"></span><button type="button" id="servicePreviewToggle" aria-label="" title=""><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path className="service-preview-pause" d="M8 5v14M16 5v14" /><path className="service-preview-play" d="m9 5 10 7-10 7Z" /></svg></button></div>
       <div className="service-cards">
-        <article className="service-card home-card"><div className="card-art atlas-panel panel-window" role="img" aria-label={t("Illustration eines sonnigen Fensters mit Reinigungsmitteln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Mehr Zeit für Ihr Zuhause")}</span><h3>{t("Ein Zuhause zum")}<br />{t("Durchatmen.")}</h3><p>{t("Klare Fenster. Frische Räume.")}<br />{t("Ein gutes Gefühl beim Heimkommen.")}</p><div className="card-service-links"><a data-service="windows" href={quoteHref + '&service=windows'} data-calculator="">{t("Fenster")}</a><a data-service="regular" href={quoteHref + '&service=regular'} data-calculator="">{t("Regelmässig")}</a><a data-service="deep" href={quoteHref + '&service=deep'} data-calculator="">{t("Grundreinigung")}</a></div></div></article>
-        <article className="service-card end-card"><div className="card-art atlas-panel panel-apartment" role="img" aria-label={t("Illustration einer leeren Wohnung mit Schlüsseln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Ein Kapitel endet. Ein neues beginnt.")}</span><h3>{t("Bereit für die")}<br />{t("Wohnungsabgabe.")}</h3><p>{t("Wir kümmern uns um die Reinigung.")}<br />{t("Sie um das Ankommen.")}</p><a className="button button-mint" data-service="end" href={quoteHref + '&service=end'} data-calculator="">{t("Umzugsreinigung berechnen")}</a></div></article>
+        <article className="service-card end-card"><div className="card-art atlas-panel panel-apartment" role="img" aria-label={t("Illustration einer leeren Wohnung mit Schlüsseln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Ein Kapitel endet. Ein neues beginnt.")}</span><h3>{t("Bereit für die")}<br />{t("Wohnungsabgabe.")}</h3><p>{t("Wir kümmern uns um die Reinigung.")}<br />{t("Sie um das Ankommen.")}</p><a className="end-card-details" href={publicHref('/umzugsreinigung/zuerich', language)}>{t("Endreinigung, Preise und Wohnungsabgabe")}</a><a className="button button-mint" data-service="end" href={serviceHref('end')} data-calculator="">{t("Umzugsreinigung berechnen")}</a></div></article>
+        <article className="service-card home-card"><div className="card-art atlas-panel panel-window" role="img" aria-label={t("Illustration eines sonnigen Fensters mit Reinigungsmitteln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Mehr Zeit für Ihr Zuhause")}</span><h3>{t("Ein Zuhause zum")}<br />{t("Durchatmen.")}</h3><p>{t("Klare Fenster. Frische Räume.")}<br />{t("Ein gutes Gefühl beim Heimkommen.")}</p><div className="card-service-links"><a data-service="windows" href={serviceHref('windows')} data-calculator="">{t("Fenster")}</a><a data-service="regular" href={serviceHref('regular')} data-calculator="">{t("Regelmässig")}</a><a data-service="deep" href={serviceHref('deep')} data-calculator="">{t("Grundreinigung")}</a></div></div></article>
       </div>
       <div className="service-note"><svg className="icon" aria-hidden="true"><use href="#i-check"></use></svg><p>{t("Einmalig oder regelmässig: Wir vereinbaren den Umfang passend zu Ihrer Wohnung und Ihrem Alltag.")}</p></div>
       <PublicPriceGuide language={homeLanguage} id="home-prices" />
     </section>
 
-    <TransitSection t={t} quoteHref={quoteHref + '&service=moving'} />
+    <TransitSection t={t} quoteHref={serviceHref('moving')} />
 
     <WhyKrakenSection t={t} quoteHref={quoteHref} />
 
-    <section className="faq-section section container" aria-labelledby="faq-title"><div className="faq-intro"><p className="eyebrow">{t("Gut zu wissen")}</p><h2 id="faq-title">{t("Noch eine")}<br />{t("Frage?")}</h2><p>{t("Wir sind auch persönlich für Sie da.")}</p><a href="mailto:kai@krakenpfm.ch" className="text-link">kai@krakenpfm.ch</a></div><div className="faq-list">
+    <section className="faq-section section container" aria-labelledby="faq-title"><div className="faq-intro"><p className="eyebrow">{t("Gut zu wissen")}</p><h2 id="faq-title">{t("Fragen zu Reinigung und kleinen Umzügen")}</h2><p>{t("Wir sind auch persönlich für Sie da.")}</p><a href="mailto:kai@krakenpfm.ch" className="text-link">kai@krakenpfm.ch</a></div><div className="faq-list">
       <details><summary>{t("Übernehmen Sie auch kleine Aufträge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen mit 1–4 Zimmern und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.")}</p></details>
-      <details><summary>{t("Wie plane ich meinen Auftrag?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.")}{' '}<a href={quoteHref} data-calculator="">{t("Zum Service-Rechner")}</a></p></details>
+      <details><summary>{t("Wie plane ich meinen Auftrag?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.")}{' '}<a href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a></p></details>
       <details><summary>{t("Wird Mehrwertsteuer verrechnet?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Es wird keine Mehrwertsteuer verrechnet. Die Angaben zu Ihrem Auftrag erhalten Sie im Rechner und in Ihrer persönlichen Bestätigung.")}</p></details>
       <details><summary>{t("In welchen Regionen ist Kraken tätig?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir unterstützen Privathaushalte in Zürich, Schaffhausen und Winterthur. Geben Sie Ihre Postleitzahl an, damit wir Ihren Auftrag und die Anfahrt gemeinsam prüfen können.")}</p></details>
       <details><summary>{t("Welches Fahrzeug nutzen Sie für kleine Umzüge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir nutzen einen Ford Transit. Teilen Sie uns mit, welche Möbel und Kartons transportiert werden sollen und wie die Zugänge aussehen. So können wir Fahrzeug, Helfer und benötigte Fahrten passend abstimmen.")}</p></details>

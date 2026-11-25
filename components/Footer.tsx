@@ -5,11 +5,13 @@ import { footerInformationHref, serviceInformationLinks } from '../src/home/serv
 import { homeText, normalizeHomeLanguage } from './home/homeTranslations';
 import { footerText } from './home/footerTranslations';
 import { siteConfig } from './home/site-config';
+import { responsiveImage } from '../src/media/images';
 import './home/approved-home.css';
 import './home/responsive-fixes.css';
 import './home/home-language.css';
 import './home/device-fixes.css';
 import './home/footer-enhancements.css';
+import './home/design-system.css';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
@@ -40,16 +42,16 @@ export function FooterContent({ language }: { language: string }) {
   return <div className="kraken-home kraken-site-footer" lang={locale}>
     <footer className="site-footer kraken-footer" id="kontakt">
       <div className="container">
-        <div className="footer-invitation"><div><p className="eyebrow">{t('Einfach miteinander sprechen')}</p><h2>{t('Ihr Zuhause.')}<br />{t('Unser nächster Auftrag?')}</h2></div><div><p>{t('Erzählen Sie uns, wobei wir helfen dürfen.')}</p><a className="button button-mint" href={href('/quote')}>{t('Meine Offerte berechnen')}</a></div></div>
+        <div className="footer-invitation"><div><p className="eyebrow">{t('Einfach miteinander sprechen')}</p><h2>{t('Reinigung und kleine Umzüge für Ihr Zuhause')}</h2></div><div><p>{t('Erzählen Sie uns, wobei wir helfen dürfen.')}</p><a className="button button-mint kr-button kr-button--primary" href={href('/quote')}>{t('Offerte berechnen')}</a></div></div>
         <div className="footer-grid">
-          <div className="footer-brand"><a className="logo logo-light" href={href('/')} aria-label={t('Kraken Properties and Facilities Management – Startseite')}><img src="/home-approved/assets/logo.webp" alt="Kraken" width="1024" height="1024" loading="lazy" /></a><p>{t('Reinigung und kleine Umzüge.')}<br />{t('Für private Haushalte.')}<br />{t('Für ein leichteres Ankommen.')}</p><p className="footer-tax">{t('Es wird keine Mehrwertsteuer verrechnet.')}</p></div>
+          <div className="footer-brand"><a className="logo logo-light" href={href('/')} aria-label={t('Kraken – Startseite')}><img {...responsiveImage('/home-approved/assets/logo.webp','160px')} alt="Kraken" loading="lazy" /></a><p>{t('Reinigung und kleine Umzüge.')}<br />{t('Für private Haushalte.')}<br />{t('Für ein leichteres Ankommen.')}</p><p className="footer-tax">{t('Es wird keine Mehrwertsteuer verrechnet.')}</p></div>
           <div className="footer-contact"><h3>{t('Hier sind wir zu Hause')}</h3><address>Kraken PFM<br />Seewadelstrasse 3<br />{t('8203 Schaffhausen, Schweiz')}</address><p className="footer-hours">{ft('hours')}<span>{ft('localTime')}</span><span>{ft('visits')}</span></p><a className="footer-map" href="https://www.google.com/maps/search/?api=1&query=Seewadelstrasse%203%2C%208203%20Schaffhausen%2C%20Schweiz" target="_blank" rel="noopener noreferrer">{t('Adresse auf Google Maps')}</a><a className="footer-contact-link" href="tel:+41774505705"><FooterIcon name="phone" />+41 77 450 57 05</a><a className="footer-contact-link" href="mailto:kai@krakenpfm.ch"><FooterIcon name="mail" />kai@krakenpfm.ch</a></div>
           <div className="footer-services"><h3>{t('So helfen wir Ihnen')}</h3><nav aria-label={t('Leistungen im Footer')}>
             {serviceInformationLinks.map(({service,section,label})=><a key={service} href={href('/leistungen#'+section)}>{t(label)}</a>)}
           </nav></div>
           <div className="footer-regions"><h3>{t('In Ihrer Nähe')}</h3><nav className="footer-region-links" aria-label={ft('regions')}><a href={href('/reinigung/region-zuerich')}>{t('Zürich')}</a><a href={href('/reinigung/kanton-schaffhausen')}>{t('Schaffhausen')}</a><a href={href('/reinigung/region-winterthur')}>{t('Winterthur')}</a></nav><h3 className="footer-social-heading">{t('Bleiben wir in Kontakt')}</h3><div className="social-links">{instagramUrl && <a className="social-instagram" data-instagram="" href={instagramUrl} target="_blank" rel="noopener noreferrer"><FooterIcon name="instagram" />Instagram</a>}<a href="https://www.linkedin.com/company/krakenpfm/" target="_blank" rel="noopener noreferrer"><FooterIcon name="linkedin" />LinkedIn</a><a href="https://wa.me/41774505705" target="_blank" rel="noopener noreferrer"><FooterIcon name="message" />WhatsApp</a></div></div>
         </div>
-        <nav className="footer-page-links" aria-label={ft('discover')}><a href={href('/leistungen')}>{ft('allServices')}</a><a href={href('/about')}>{t('Über Kraken')}</a><a href={href('/kontakt')}>{t('Kontakt')}</a><a href={href('/einsatzgebiete')}>{ft('allAreas')}</a></nav>
+        <nav className="footer-page-links" aria-label={ft('discover')}><a href={href('/umzugsreinigung/zuerich')}>{t('Umzugsreinigung Zürich')}</a><a href={href('/leistungen')}>{ft('allServices')}</a><a href={href('/about')}>{t('Über Kraken')}</a><a href={href('/kontakt')}>{t('Kontakt')}</a><a href={href('/einsatzgebiete')}>{ft('allAreas')}</a></nav>
         <div className="footer-bottom"><p>© <span>{year}</span> Kraken Properties and Facilities Management Gomes Mendes</p><nav aria-label={t('Rechtliches')}><a href={href('/impressum')} target="_blank" rel="noopener noreferrer">{t('Impressum')}</a><a href={href('/gdpr')} target="_blank" rel="noopener noreferrer">{t('Datenschutz')}</a><a href={href('/terms')} target="_blank" rel="noopener noreferrer">{t('AGB')}</a></nav></div>
         <p className="preview-note">{t('Die Bildwelten sind Illustrationen. Ihren Auftrag planen Sie im Service-Rechner.')}</p>
         <p className="footer-credit">{t('Website made by')}{' '}<a href="https://seociety.ch" target="_blank" rel="noopener noreferrer">seociety.ch</a></p>

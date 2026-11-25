@@ -1,0 +1,1134 @@
+{
+  "version": 1,
+  "generator": "sharp-webp-v1",
+  "assets": {
+    "/home-approved/assets/hero-room-day-v4.webp": {
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 239284,
+      "variants": [
+        {
+          "src": "/media/hero-room-day-v4-320-9a71b8b6ce94.webp",
+          "width": 320,
+          "height": 213,
+          "bytes": 11248
+        },
+        {
+          "src": "/media/hero-room-day-v4-640-0eb1604f05a2.webp",
+          "width": 640,
+          "height": 427,
+          "bytes": 29968
+        },
+        {
+          "src": "/media/hero-room-day-v4-960-b2c99bf7006b.webp",
+          "width": 960,
+          "height": 640,
+          "bytes": 53914
+        },
+        {
+          "src": "/media/hero-room-day-v4-1536-376c8e828d28.webp",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 118418
+        }
+      ]
+    },
+    "/home-approved/assets/hero-room-night-v4.webp": {
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 194984,
+      "variants": [
+        {
+          "src": "/media/hero-room-night-v4-320-13256d8bd483.webp",
+          "width": 320,
+          "height": 213,
+          "bytes": 9210
+        },
+        {
+          "src": "/media/hero-room-night-v4-640-34b17e365670.webp",
+          "width": 640,
+          "height": 427,
+          "bytes": 24248
+        },
+        {
+          "src": "/media/hero-room-night-v4-960-0de1b8acda0a.webp",
+          "width": 960,
+          "height": 640,
+          "bytes": 43028
+        },
+        {
+          "src": "/media/hero-room-night-v4-1536-281dea691b91.webp",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 95854
+        }
+      ]
+    },
+    "/home-approved/assets/holiday-decor.webp": {
+      "width": 1774,
+      "height": 887,
+      "hasAlpha": true,
+      "kind": "atlas",
+      "originalBytes": 296292,
+      "variants": [
+        {
+          "src": "/media/holiday-decor-1774-5d95f8538ba4.webp",
+          "width": 1774,
+          "height": 887,
+          "bytes": 256646
+        }
+      ]
+    },
+    "/home-approved/assets/kai-rest-v3.webp": {
+      "width": 1774,
+      "height": 887,
+      "hasAlpha": true,
+      "kind": "atlas",
+      "grid": {
+        "columns": 2,
+        "rows": 1
+      },
+      "originalBytes": 277214,
+      "variants": [
+        {
+          "src": "/media/kai-rest-v3-768-d238943dbe80.webp",
+          "width": 768,
+          "height": 384,
+          "bytes": 53316
+        },
+        {
+          "src": "/media/kai-rest-v3-1774-a9e3baba59a4.webp",
+          "width": 1774,
+          "height": 887,
+          "bytes": 217092
+        }
+      ]
+    },
+    "/home-approved/assets/kai-tasks-cold-v3.webp": {
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true,
+      "kind": "atlas",
+      "grid": {
+        "columns": 3,
+        "rows": 2
+      },
+      "originalBytes": 306008,
+      "variants": [
+        {
+          "src": "/media/kai-tasks-cold-v3-768-4af21f7c81b4.webp",
+          "width": 768,
+          "height": 512,
+          "bytes": 88338
+        },
+        {
+          "src": "/media/kai-tasks-cold-v3-1536-90021ea024b8.webp",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 256534
+        }
+      ]
+    },
+    "/home-approved/assets/kai-tasks.webp": {
+      "width": 1536,
+      "height": 1024,
+      "hasAlpha": true,
+      "kind": "atlas",
+      "grid": {
+        "columns": 3,
+        "rows": 2
+      },
+      "originalBytes": 309518,
+      "variants": [
+        {
+          "src": "/media/kai-tasks-768-5de31a064af2.webp",
+          "width": 768,
+          "height": 512,
+          "bytes": 88160
+        },
+        {
+          "src": "/media/kai-tasks-1536-03b4772d8c3a.webp",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 262424
+        }
+      ]
+    },
+    "/home-approved/assets/kai-windows-cold-v3.webp": {
+      "width": 1774,
+      "height": 887,
+      "hasAlpha": true,
+      "kind": "atlas",
+      "grid": {
+        "columns": 2,
+        "rows": 1
+      },
+      "originalBytes": 242002,
+      "variants": [
+        {
+          "src": "/media/kai-windows-cold-v3-768-325ca54b000e.webp",
+          "width": 768,
+          "height": 384,
+          "bytes": 52240
+        },
+        {
+          "src": "/media/kai-windows-cold-v3-1774-d5fc62c527a2.webp",
+          "width": 1774,
+          "height": 887,
+          "bytes": 196890
+        }
+      ]
+    },
+    "/home-approved/assets/kai-windows.webp": {
+      "width": 1774,
+      "height": 887,
+      "hasAlpha": true,
+      "kind": "atlas",
+      "grid": {
+        "columns": 2,
+        "rows": 1
+      },
+      "originalBytes": 242398,
+      "variants": [
+        {
+          "src": "/media/kai-windows-768-d5870834425b.webp",
+          "width": 768,
+          "height": 384,
+          "bytes": 52388
+        },
+        {
+          "src": "/media/kai-windows-1774-2b8b6aa6cd6d.webp",
+          "width": 1774,
+          "height": 887,
+          "bytes": 201920
+        }
+      ]
+    },
+    "/home-approved/assets/kai.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 151698,
+      "variants": [
+        {
+          "src": "/media/kai-320-f23758300de2.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 16378
+        },
+        {
+          "src": "/media/kai-640-27d3378a7ce8.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 40774
+        },
+        {
+          "src": "/media/kai-960-b0b0f1b23072.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 67290
+        },
+        {
+          "src": "/media/kai-1254-4320a96553d6.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 93786
+        }
+      ]
+    },
+    "/home-approved/assets/logo.webp": {
+      "width": 1024,
+      "height": 1024,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 59822,
+      "variants": [
+        {
+          "src": "/media/logo-160-ecadc5489b3f.webp",
+          "width": 160,
+          "height": 160,
+          "bytes": 4276
+        },
+        {
+          "src": "/media/logo-320-c6ec024cf74e.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 10202
+        },
+        {
+          "src": "/media/logo-640-2d3545a30c7c.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 25708
+        },
+        {
+          "src": "/media/logo-960-afdba55dc4b2.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 45176
+        },
+        {
+          "src": "/media/logo-1024-27039a1adbfe.webp",
+          "width": 1024,
+          "height": 1024,
+          "bytes": 50576
+        }
+      ]
+    },
+    "/home-approved/assets/seasons-window.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": false,
+      "kind": "atlas",
+      "originalBytes": 506340,
+      "variants": [
+        {
+          "src": "/media/seasons-window-1254-6f89e028ec75.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 454412
+        }
+      ]
+    },
+    "/home-approved/assets/service-deep-v5.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 180176,
+      "variants": [
+        {
+          "src": "/media/service-deep-v5-320-e7eb06e7a2de.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 10568
+        },
+        {
+          "src": "/media/service-deep-v5-640-eee647a8c239.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 29446
+        },
+        {
+          "src": "/media/service-deep-v5-960-2c1ccc178cdd.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 51574
+        },
+        {
+          "src": "/media/service-deep-v5-1254-be83e5d5b25c.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 82238
+        }
+      ]
+    },
+    "/home-approved/assets/service-end-v5.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 142122,
+      "variants": [
+        {
+          "src": "/media/service-end-v5-320-a5d24b2de099.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 10938
+        },
+        {
+          "src": "/media/service-end-v5-640-394b61611934.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 27938
+        },
+        {
+          "src": "/media/service-end-v5-960-ea2a39d62a35.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 47212
+        },
+        {
+          "src": "/media/service-end-v5-1254-f6ff2c4de734.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 73240
+        }
+      ]
+    },
+    "/home-approved/assets/service-moving-v6.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 301032,
+      "variants": [
+        {
+          "src": "/media/service-moving-v6-320-dad13ccadb4f.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 19258
+        },
+        {
+          "src": "/media/service-moving-v6-640-d41292d0fde4.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 56548
+        },
+        {
+          "src": "/media/service-moving-v6-960-7f473decbc76.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 100570
+        },
+        {
+          "src": "/media/service-moving-v6-1254-69c59e816b43.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 156430
+        }
+      ]
+    },
+    "/home-approved/assets/service-regular-v5.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 252378,
+      "variants": [
+        {
+          "src": "/media/service-regular-v5-320-a7ff248ba12b.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 13354
+        },
+        {
+          "src": "/media/service-regular-v5-640-33c8a8d26997.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 40200
+        },
+        {
+          "src": "/media/service-regular-v5-960-675e2a4e568d.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 73854
+        },
+        {
+          "src": "/media/service-regular-v5-1254-99a1cfbddfb8.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 124348
+        }
+      ]
+    },
+    "/home-approved/assets/service-scenes-branded-v4.webp": {
+      "width": 2172,
+      "height": 724,
+      "hasAlpha": false,
+      "kind": "atlas",
+      "originalBytes": 320266,
+      "variants": [
+        {
+          "src": "/media/service-scenes-branded-v4-2172-03756b4dba4d.webp",
+          "width": 2172,
+          "height": 724,
+          "bytes": 163208
+        }
+      ]
+    },
+    "/home-approved/assets/service-windows-v5.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 307484,
+      "variants": [
+        {
+          "src": "/media/service-windows-v5-320-e2537cd8cfb8.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 17984
+        },
+        {
+          "src": "/media/service-windows-v5-640-d47f28f714c4.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 58146
+        },
+        {
+          "src": "/media/service-windows-v5-960-e8739c2f4d24.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 107382
+        },
+        {
+          "src": "/media/service-windows-v5-1254-a22f2ff6a66f.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 168874
+        }
+      ]
+    },
+    "/home-approved/assets/services-hero-v5.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 208226,
+      "variants": [
+        {
+          "src": "/media/services-hero-v5-320-cbd944c020a9.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 9986
+        },
+        {
+          "src": "/media/services-hero-v5-640-f93d1c23aa32.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 28448
+        },
+        {
+          "src": "/media/services-hero-v5-960-e134baf5b261.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 53304
+        },
+        {
+          "src": "/media/services-hero-v5-1254-16bb5880fcf4.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 94846
+        }
+      ]
+    },
+    "/home-approved/assets/transit-loading-v4.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": false,
+      "kind": "atlas",
+      "originalBytes": 243618,
+      "variants": [
+        {
+          "src": "/media/transit-loading-v4-1254-402ef9e503bc.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 124904
+        }
+      ]
+    },
+    "/transit-quality/transit-boxes-v1.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 246456,
+      "variants": [
+        {
+          "src": "/media/transit-boxes-v1-320-c20f1dde7346.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 16826
+        },
+        {
+          "src": "/media/transit-boxes-v1-640-5f6322db38d4.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 45202
+        },
+        {
+          "src": "/media/transit-boxes-v1-960-bd2b17a45adf.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 83876
+        },
+        {
+          "src": "/media/transit-boxes-v1-1254-5b4cd9b34e6f.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 135822
+        }
+      ]
+    },
+    "/transit-quality/transit-chairs-v1.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 247890,
+      "variants": [
+        {
+          "src": "/media/transit-chairs-v1-320-b02fc4650d4d.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 16376
+        },
+        {
+          "src": "/media/transit-chairs-v1-640-a206457aa510.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 43874
+        },
+        {
+          "src": "/media/transit-chairs-v1-960-d531341ac6f2.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 80596
+        },
+        {
+          "src": "/media/transit-chairs-v1-1254-9c00a6290604.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 127688
+        }
+      ]
+    },
+    "/transit-quality/transit-empty-v1.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 240968,
+      "variants": [
+        {
+          "src": "/media/transit-empty-v1-320-afcc6212ffd3.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 17120
+        },
+        {
+          "src": "/media/transit-empty-v1-640-b77fd1a9e801.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 46606
+        },
+        {
+          "src": "/media/transit-empty-v1-960-771170924392.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 85468
+        },
+        {
+          "src": "/media/transit-empty-v1-1254-e1f8c10cec60.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 135642
+        }
+      ]
+    },
+    "/transit-quality/transit-furniture-v1.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 271318,
+      "variants": [
+        {
+          "src": "/media/transit-furniture-v1-320-971dc6d2e40e.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 17792
+        },
+        {
+          "src": "/media/transit-furniture-v1-640-b79724ac0a9b.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 48044
+        },
+        {
+          "src": "/media/transit-furniture-v1-960-0cb4183815e3.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 88438
+        },
+        {
+          "src": "/media/transit-furniture-v1-1254-c530f9866be9.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 142038
+        }
+      ]
+    },
+    "/transit-quality/transit-overview-v1.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 269204,
+      "variants": [
+        {
+          "src": "/media/transit-overview-v1-320-9ce6f574cd63.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 16226
+        },
+        {
+          "src": "/media/transit-overview-v1-640-a025dc3110f6.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 45974
+        },
+        {
+          "src": "/media/transit-overview-v1-960-63d5bcb48954.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 86376
+        },
+        {
+          "src": "/media/transit-overview-v1-1254-5a5d4427a0fb.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 141258
+        }
+      ]
+    },
+    "/about-approved/assets/kai-comic-cover.webp": {
+      "width": 1055,
+      "height": 1491,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 316790,
+      "variants": [
+        {
+          "src": "/media/kai-comic-cover-320-058b79fde70c.webp",
+          "width": 320,
+          "height": 452,
+          "bytes": 20746
+        },
+        {
+          "src": "/media/kai-comic-cover-640-6ca9d06452de.webp",
+          "width": 640,
+          "height": 904,
+          "bytes": 65926
+        },
+        {
+          "src": "/media/kai-comic-cover-960-b176559c0983.webp",
+          "width": 960,
+          "height": 1357,
+          "bytes": 115440
+        },
+        {
+          "src": "/media/kai-comic-cover-1055-2fb4110f23d0.webp",
+          "width": 1055,
+          "height": 1491,
+          "bytes": 148018
+        }
+      ]
+    },
+    "/about-approved/assets/kai-evolution.webp": {
+      "width": 1672,
+      "height": 941,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 117332,
+      "variants": [
+        {
+          "src": "/media/kai-evolution-320-a3205c798a43.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 8514
+        },
+        {
+          "src": "/media/kai-evolution-640-7eca39ff6d8d.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 21320
+        },
+        {
+          "src": "/media/kai-evolution-960-b8769926fa3e.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 35446
+        },
+        {
+          "src": "/media/kai-evolution-1672-8b257147da61.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 70630
+        }
+      ]
+    },
+    "/about-approved/assets/kai-help-deep.webp": {
+      "width": 1672,
+      "height": 941,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 145040,
+      "variants": [
+        {
+          "src": "/media/kai-help-deep-320-b19c4bb38c32.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 6974
+        },
+        {
+          "src": "/media/kai-help-deep-640-b851598281e5.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 18162
+        },
+        {
+          "src": "/media/kai-help-deep-960-a21f4f9e08c9.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 31808
+        },
+        {
+          "src": "/media/kai-help-deep-1672-4410e77957da.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 73938
+        }
+      ]
+    },
+    "/about-approved/assets/kai-help-end.webp": {
+      "width": 1672,
+      "height": 941,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 137994,
+      "variants": [
+        {
+          "src": "/media/kai-help-end-320-80a1be32bcc9.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 7490
+        },
+        {
+          "src": "/media/kai-help-end-640-9cf0eb730ba2.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 18904
+        },
+        {
+          "src": "/media/kai-help-end-960-6df88fead4ff.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 32572
+        },
+        {
+          "src": "/media/kai-help-end-1672-4c5fe928f727.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 73356
+        }
+      ]
+    },
+    "/about-approved/assets/kai-help-moving.webp": {
+      "width": 1672,
+      "height": 941,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 137466,
+      "variants": [
+        {
+          "src": "/media/kai-help-moving-320-e3fb7a7ce3cb.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 5990
+        },
+        {
+          "src": "/media/kai-help-moving-640-76f860f9bbe7.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 15472
+        },
+        {
+          "src": "/media/kai-help-moving-960-337474d60b57.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 27176
+        },
+        {
+          "src": "/media/kai-help-moving-1672-9640de1c4962.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 64438
+        }
+      ]
+    },
+    "/about-approved/assets/kai-help-regular.webp": {
+      "width": 1672,
+      "height": 941,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 141592,
+      "variants": [
+        {
+          "src": "/media/kai-help-regular-320-4e20e32d9724.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 7346
+        },
+        {
+          "src": "/media/kai-help-regular-640-4c0a5c0f2b28.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 18854
+        },
+        {
+          "src": "/media/kai-help-regular-960-437a1a2cd30d.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 32820
+        },
+        {
+          "src": "/media/kai-help-regular-1672-1572b7203315.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 73662
+        }
+      ]
+    },
+    "/about-approved/assets/kai-help-windows.webp": {
+      "width": 1672,
+      "height": 941,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 150300,
+      "variants": [
+        {
+          "src": "/media/kai-help-windows-320-4cc38f3a611e.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 7106
+        },
+        {
+          "src": "/media/kai-help-windows-640-1857fe3d0e4f.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 18882
+        },
+        {
+          "src": "/media/kai-help-windows-960-4cf4344e70f5.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 33432
+        },
+        {
+          "src": "/media/kai-help-windows-1672-8067904534c3.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 78190
+        }
+      ]
+    },
+    "/about-approved/assets/kai-rheinfall-awakening.webp": {
+      "width": 1672,
+      "height": 941,
+      "hasAlpha": false,
+      "kind": "image",
+      "originalBytes": 299260,
+      "variants": [
+        {
+          "src": "/media/kai-rheinfall-awakening-320-26fd8690f97c.webp",
+          "width": 320,
+          "height": 180,
+          "bytes": 13760
+        },
+        {
+          "src": "/media/kai-rheinfall-awakening-640-5b7e376fc72f.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 42692
+        },
+        {
+          "src": "/media/kai-rheinfall-awakening-960-2fe605932dfe.webp",
+          "width": 960,
+          "height": 540,
+          "bytes": 76886
+        },
+        {
+          "src": "/media/kai-rheinfall-awakening-1672-189c90a89612.webp",
+          "width": 1672,
+          "height": 941,
+          "bytes": 162520
+        }
+      ]
+    },
+    "/about-approved/assets/kai-story.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 231798,
+      "variants": [
+        {
+          "src": "/media/kai-story-320-b330296510cd.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 22286
+        },
+        {
+          "src": "/media/kai-story-640-3ca9d044b7cb.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 58950
+        },
+        {
+          "src": "/media/kai-story-960-505018951215.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 99248
+        },
+        {
+          "src": "/media/kai-story-1254-6f4160e59e2a.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 146208
+        }
+      ]
+    },
+    "/about-approved/assets/kai.webp": {
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": true,
+      "kind": "image",
+      "originalBytes": 151698,
+      "variants": [
+        {
+          "src": "/media/kai-320-f23758300de2.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 16378
+        },
+        {
+          "src": "/media/kai-640-27d3378a7ce8.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 40774
+        },
+        {
+          "src": "/media/kai-960-b0b0f1b23072.webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 67290
+        },
+        {
+          "src": "/media/kai-1254-4320a96553d6.webp",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 93786
+        }
+      ]
+    },
+    "/home-approved/assets/seasons-window-spring.webp": {
+      "width": 627,
+      "height": 627,
+      "hasAlpha": false,
+      "kind": "image",
+      "derivedFrom": "/home-approved/assets/seasons-window.webp",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 627,
+        "height": 627
+      },
+      "originalBytes": 0,
+      "variants": [
+        {
+          "src": "/media/season-spring-320-c10c402561f9.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 33384
+        },
+        {
+          "src": "/media/season-spring-627-e5553f502867.webp",
+          "width": 627,
+          "height": 627,
+          "bytes": 102310
+        }
+      ]
+    },
+    "/home-approved/assets/seasons-window-summer.webp": {
+      "width": 627,
+      "height": 627,
+      "hasAlpha": false,
+      "kind": "image",
+      "derivedFrom": "/home-approved/assets/seasons-window.webp",
+      "crop": {
+        "left": 627,
+        "top": 0,
+        "width": 627,
+        "height": 627
+      },
+      "originalBytes": 0,
+      "variants": [
+        {
+          "src": "/media/season-summer-320-eabd17c44200.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 32164
+        },
+        {
+          "src": "/media/season-summer-627-b8174ca2b03e.webp",
+          "width": 627,
+          "height": 627,
+          "bytes": 90686
+        }
+      ]
+    },
+    "/home-approved/assets/seasons-window-autumn.webp": {
+      "width": 627,
+      "height": 627,
+      "hasAlpha": false,
+      "kind": "image",
+      "derivedFrom": "/home-approved/assets/seasons-window.webp",
+      "crop": {
+        "left": 0,
+        "top": 627,
+        "width": 627,
+        "height": 627
+      },
+      "originalBytes": 0,
+      "variants": [
+        {
+          "src": "/media/season-autumn-320-bd407f549de4.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 32694
+        },
+        {
+          "src": "/media/season-autumn-627-69765a132464.webp",
+          "width": 627,
+          "height": 627,
+          "bytes": 91512
+        }
+      ]
+    },
+    "/home-approved/assets/seasons-window-winter.webp": {
+      "width": 627,
+      "height": 627,
+      "hasAlpha": false,
+      "kind": "image",
+      "derivedFrom": "/home-approved/assets/seasons-window.webp",
+      "crop": {
+        "left": 627,
+        "top": 627,
+        "width": 627,
+        "height": 627
+      },
+      "originalBytes": 0,
+      "variants": [
+        {
+          "src": "/media/season-winter-320-52c367511466.webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 29896
+        },
+        {
+          "src": "/media/season-winter-627-2befde5090e5.webp",
+          "width": 627,
+          "height": 627,
+          "bytes": 92832
+        }
+      ]
+    }
+  }
+}

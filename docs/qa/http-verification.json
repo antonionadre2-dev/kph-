@@ -1,0 +1,1029 @@
+{
+  "checkedAt": "2026-11-25T14:59:17.004Z",
+  "origin": "http://127.0.0.1:3019",
+  "productionWasNotRequested": true,
+  "canonicalPages": 144,
+  "legalPages": 18,
+  "historicalRoutes": 735,
+  "historicalStatuses": {
+    "200": 10,
+    "301": 284,
+    "410": 441
+  },
+  "immutableAssets": 8,
+  "security": "passed",
+  "cors": "passed",
+  "schemas": "passed",
+  "privateNoindex": "passed",
+  "previewNoindex": "passed",
+  "pages": [
+    {
+      "path": "/",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/en/",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/es/",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/pt/",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/it/",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/fr/",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/leistungen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/leistungen",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/en/leistungen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/leistungen",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/es/leistungen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/leistungen",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/pt/leistungen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/leistungen",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/it/leistungen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/leistungen",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/fr/leistungen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/leistungen",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/ueber-uns",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/ueber-uns",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/en/ueber-uns",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/ueber-uns",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/es/ueber-uns",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/ueber-uns",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/pt/ueber-uns",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/ueber-uns",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/it/ueber-uns",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/ueber-uns",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/fr/ueber-uns",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/ueber-uns",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/kontakt",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/kontakt",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/en/kontakt",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/kontakt",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/es/kontakt",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/kontakt",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/pt/kontakt",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/kontakt",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/it/kontakt",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/kontakt",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/fr/kontakt",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/kontakt",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/offerte",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/offerte",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/en/offerte",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/offerte",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/es/offerte",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/offerte",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/pt/offerte",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/offerte",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/it/offerte",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/offerte",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/fr/offerte",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/offerte",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/einsatzgebiete",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/einsatzgebiete",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/en/einsatzgebiete",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/einsatzgebiete",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/es/einsatzgebiete",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/einsatzgebiete",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/pt/einsatzgebiete",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/einsatzgebiete",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/it/einsatzgebiete",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/einsatzgebiete",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/fr/einsatzgebiete",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/einsatzgebiete",
+      "alternates": 7,
+      "schemaNodes": 4
+    },
+    {
+      "path": "/reinigung/kanton-schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/reinigung/kanton-schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/en/reinigung/kanton-schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/reinigung/kanton-schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/es/reinigung/kanton-schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/reinigung/kanton-schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/pt/reinigung/kanton-schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/reinigung/kanton-schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/it/reinigung/kanton-schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/reinigung/kanton-schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/fr/reinigung/kanton-schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/reinigung/kanton-schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/reinigung/region-winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/reinigung/region-winterthur",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/en/reinigung/region-winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/reinigung/region-winterthur",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/es/reinigung/region-winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/reinigung/region-winterthur",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/pt/reinigung/region-winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/reinigung/region-winterthur",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/it/reinigung/region-winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/reinigung/region-winterthur",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/fr/reinigung/region-winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/reinigung/region-winterthur",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/reinigung/region-zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/reinigung/region-zuerich",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/en/reinigung/region-zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/reinigung/region-zuerich",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/es/reinigung/region-zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/reinigung/region-zuerich",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/pt/reinigung/region-zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/reinigung/region-zuerich",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/it/reinigung/region-zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/reinigung/region-zuerich",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/fr/reinigung/region-zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/reinigung/region-zuerich",
+      "alternates": 7,
+      "schemaNodes": 5
+    },
+    {
+      "path": "/umzugsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/umzugsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/umzugsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/umzugsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/umzugsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/umzugsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/umzugsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/umzugsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/umzugsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/umzugsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/umzugsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/umzugsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/wohnungsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/wohnungsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/wohnungsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/wohnungsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/wohnungsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/wohnungsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/wohnungsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/wohnungsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/wohnungsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/wohnungsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/wohnungsreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/wohnungsreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/grundreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/grundreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/grundreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/grundreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/grundreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/grundreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/grundreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/grundreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/grundreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/grundreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/grundreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/grundreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/kleinumzug/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/kleinumzug/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/kleinumzug/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/kleinumzug/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/kleinumzug/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/kleinumzug/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/kleinumzug/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/kleinumzug/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/kleinumzug/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/kleinumzug/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/kleinumzug/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/kleinumzug/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fensterreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fensterreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/fensterreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/fensterreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/fensterreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/fensterreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/fensterreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/fensterreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/fensterreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/fensterreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/fensterreinigung/schaffhausen",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/fensterreinigung/schaffhausen",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/umzugsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/umzugsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/umzugsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/umzugsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/umzugsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/umzugsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/umzugsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/umzugsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/umzugsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/umzugsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/umzugsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/umzugsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/wohnungsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/wohnungsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/wohnungsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/wohnungsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/wohnungsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/wohnungsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/wohnungsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/wohnungsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/wohnungsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/wohnungsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/wohnungsreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/wohnungsreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/grundreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/grundreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/grundreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/grundreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/grundreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/grundreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/grundreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/grundreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/grundreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/grundreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/grundreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/grundreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/kleinumzug/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/kleinumzug/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/kleinumzug/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/kleinumzug/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/kleinumzug/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/kleinumzug/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/kleinumzug/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/kleinumzug/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/kleinumzug/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/kleinumzug/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/kleinumzug/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/kleinumzug/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fensterreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fensterreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/fensterreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/fensterreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/fensterreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/fensterreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/fensterreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/fensterreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/fensterreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/fensterreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/fensterreinigung/zuerich",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/fensterreinigung/zuerich",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/umzugsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/umzugsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/umzugsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/umzugsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/umzugsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/umzugsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/umzugsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/umzugsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/umzugsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/umzugsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/umzugsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/umzugsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/wohnungsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/wohnungsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/wohnungsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/wohnungsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/wohnungsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/wohnungsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/wohnungsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/wohnungsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/wohnungsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/wohnungsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/wohnungsreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/wohnungsreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/grundreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/grundreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/grundreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/grundreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/grundreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/grundreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/grundreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/grundreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/grundreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/grundreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/grundreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/grundreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/kleinumzug/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/kleinumzug/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/kleinumzug/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/kleinumzug/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/kleinumzug/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/kleinumzug/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/kleinumzug/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/kleinumzug/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/kleinumzug/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/kleinumzug/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/kleinumzug/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/kleinumzug/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fensterreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fensterreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/en/fensterreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/en/fensterreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/es/fensterreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/es/fensterreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/pt/fensterreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/pt/fensterreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/it/fensterreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/it/fensterreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    },
+    {
+      "path": "/fr/fensterreinigung/winterthur",
+      "status": 200,
+      "canonical": "https://krakenpfm.ch/fr/fensterreinigung/winterthur",
+      "alternates": 7,
+      "schemaNodes": 6
+    }
+  ]
+}

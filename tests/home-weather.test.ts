@@ -242,7 +242,7 @@ test('actual server marks preview hosts noindex and serves generated bodies thro
   await writeFile(path.join(directory, 'dist/index-spa.html'), html('spa-home-injected'));
   await writeFile(path.join(directory, 'dist/about.html'), html('existing-prerendered-route'));
   await writeFile(path.join(directory, 'dist/seo-page-home-de.html'), '<main><h1>Generated home</h1>home-crawl-body</main>');
-  await writeFile(path.join(directory, 'dist/seo-page-about-de.html'), '<main><h1>Generated about</h1>about-crawl-body</main>');
+  await writeFile(path.join(directory, 'dist/seo-page-ueber-uns-de.html'), '<main><h1>Generated about</h1>about-crawl-body</main>');
   const reservation = createServer();
   reservation.listen(0, '127.0.0.1');
   await once(reservation, 'listening');
@@ -294,7 +294,10 @@ test('actual server marks preview hosts noindex and serves generated bodies thro
   assert.ok(!markup.includes('spa-home-injected'));
   assert.ok(!markup.includes('prerender-home-bypass'));
   assert.ok(!markup.includes('<title>fixture</title>'), 'home title must pass through injectSeoMeta');
-  const about = await get('/about');
+  const oldAbout = await get('/about');
+  assert.equal(oldAbout.status, 301);
+  assert.equal(oldAbout.headers.location, '/ueber-uns');
+  const about = await get('/ueber-uns');
   assert.ok(about.body.includes('about-crawl-body'));
   assert.ok(!about.body.includes('existing-prerendered-route'));
 });
