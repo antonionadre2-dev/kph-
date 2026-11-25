@@ -162,7 +162,9 @@ test('unconfigured HTTP backend is explicit, private and never manufactures acti
   }finally {await new Promise<void>(resolve=>server.close(()=>resolve()));}
 });
 
-test('booking HTTP config reports email readiness independently of booking and saved-quote availability', async () => {
+test('booking HTTP config reports email readiness independently of booking and saved-quote availability', async (t) => {
+  const diagnostics:any[][]=[];
+  t.mock.method(console,'info',(...args:any[])=>diagnostics.push(args));
   // A synthetic in-memory signing key initializes the SDK locally. No Firebase,
   // Payrexx or Resend operation is performed by these configuration GETs.
   const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048,
@@ -170,6 +172,7 @@ test('booking HTTP config reports email readiness independently of booking and s
   const credential = JSON.stringify({ type: 'service_account', project_id: 'kraken-email-test',
     client_email: 'booking-test@kraken-email-test.iam.gserviceaccount.com', private_key: privateKey });
   for (const emailConfigured of [false, true]) {
+    diagnostics.length=0;
     const env = { BOOKING_ENABLED: 'true', BOOKING_TOKEN_SECRET: 'synthetic-booking-secret-over-thirty-two-characters',
       FIREBASE_SERVICE_ACCOUNT_JSON: credential, BOOKING_FIREBASE_PROJECT_ID: 'kraken-email-test', BOOKING_FIREBASE_DATABASE_ID: 'email-test-db',
       APP_URL: 'https://krakenpfm.ch', BOOKING_CUSTOMER_ACCESS_ENABLED: 'false',
@@ -188,10 +191,59 @@ test('booking HTTP config reports email readiness independently of booking and s
       const recovery = await (await fetch(origin + '/api/recovery/config')).json();
       assert.equal(recovery.enabled, false, 'a mail provider alone does not configure saved-quote recovery');
       assert.equal((await (await fetch(origin + '/api/customer/access/config')).json()).enabled, false);
+      assert.deepEqual(diagnostics,[['[booking:initialize]',{bookingEnabled:true,tokenSecretReady:true,adminCredentialProvided:true,phase:'ready',error:{name:null,code:null}}]]);
     } finally {
       await new Promise<void>(resolve => server.close(() => resolve()));
       const adminApp = getApps().find(value => value.name === 'kraken-booking');
       if (adminApp) { await getFirestore(adminApp, 'email-test-db').terminate(); await deleteApp(adminApp); }
     }
+  }
+});
+
+test('booking initialization logs only safe gate booleans once when disabled',async(t)=>{
+  const diagnostics:any[][]=[];
+  for(const method of ['info','warn','error'] as const)t.mock.method(console,method,(...args:any[])=>diagnostics.push(args));
+  const scenarios=[
+    {env:{},gates:{bookingEnabled:false,tokenSecretReady:false,adminCredentialProvided:false}},
+    {env:{BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'short-token-canary',FIREBASE_SERVICE_ACCOUNT_JSON:'credential-canary'},gates:{bookingEnabled:true,tokenSecretReady:false,adminCredentialProvided:true}},
+    {env:{BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'token-canary-longer-than-thirty-two-characters'},gates:{bookingEnabled:true,tokenSecretReady:true,adminCredentialProvided:false}},
+  ];
+  for(const {env,gates} of scenarios){
+    diagnostics.length=0;
+    const handlers=createBookingHandlers({env});
+    const [first,second]=await Promise.all([handlers.initialize(),handlers.initialize()]);
+    assert.equal(first,second);assert.equal(first.service,null);
+    await handlers.initialize();
+    assert.deepEqual(diagnostics,[['[booking:initialize]',{...gates,phase:'gates',error:{name:null,code:null}}]]);
+    assert.doesNotMatch(JSON.stringify(diagnostics),/canary|credential-canary|short-token/);
+  }
+});
+
+test('malformed credentials and SDK failures never log input, messages, stacks or arbitrary error fields',async(t)=>{
+  const diagnostics:any[][]=[];
+  for(const method of ['info','warn','error'] as const)t.mock.method(console,method,(...args:any[])=>diagnostics.push(args));
+  // No initialized app may bypass parsing these deliberately invalid synthetic inputs.
+  assert.equal(getApps().some(app=>app.name==='kraken-booking'),false);
+  const originalParse=JSON.parse;
+  t.mock.method(JSON,'parse',((input:string,reviver?:Parameters<typeof JSON.parse>[1])=>{
+    if(input==='INJECTED_ERROR_CANARY'){
+      const error:any=new Error('MESSAGE_CANARY');error.name='NAME_CANARY';error.code='CODE_CANARY';error.stack='STACK_CANARY';throw error;
+    }
+    return originalParse(input,reviver);
+  }) as typeof JSON.parse);
+  const scenarios=[
+    {credential:'{"private_key":"MALFORMED_JSON_CANARY',phase:'credential_json',error:{name:'SyntaxError',code:null}},
+    {credential:JSON.stringify({type:'service_account',project_id:'PROJECT_CANARY',client_email:'EMAIL_CANARY@example.test',private_key:'-----BEGIN PRIVATE KEY-----\nPEM_CANARY\n-----END PRIVATE KEY-----'}),phase:'firebase_credential',error:{name:'Error',code:'app/invalid-credential'}},
+    {credential:'INJECTED_ERROR_CANARY',phase:'credential_json',error:{name:'UnknownError',code:null}},
+  ];
+  for(const {credential,phase,error}of scenarios){
+    diagnostics.length=0;
+    const handlers=createBookingHandlers({env:{BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'TOKEN_CANARY_longer-than-thirty-two-characters',FIREBASE_SERVICE_ACCOUNT_JSON:credential}});
+    const [first,second]=await Promise.all([handlers.initialize(),handlers.initialize()]);
+    assert.equal(first,second);assert.equal(first.service,null);
+    await handlers.initialize();
+    assert.deepEqual(diagnostics,[['[booking:initialize]',{bookingEnabled:true,tokenSecretReady:true,adminCredentialProvided:true,phase,error}]]);
+    assert.doesNotMatch(JSON.stringify(diagnostics),/CANARY|private_key|client_email|project_id|message|stack|BEGIN PRIVATE KEY/i);
+    assert.equal(getApps().some(app=>app.name==='kraken-booking'),false);
   }
 });
