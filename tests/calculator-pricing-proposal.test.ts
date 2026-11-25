@@ -92,7 +92,7 @@ test('construction prices remain unchanged; quote-only cases never get a checkou
 });
 
 test('new conversion copy is available in all six calculator languages', () => {
-  const keys = ['titleStart', 'titleAccent', 'vatCardTitle', 'vatCardBody', 'vatComparisonLabel', 'vatComparisonCondition', 'vatHowCalculated', 'vatKrakenPrice', 'vatHypotheticalTax', 'vatHypotheticalTotal', 'vatComparisonExplanation', 'extrasReassurance', 'contactPage', 'previewTools', 'nudgeShowHelp', 'nudgeShowDemo', 'nudgeHelpBody'];
+  const keys = ['titleStart', 'titleAccent', 'vatCardTitle', 'vatCardBody', 'vatComparisonLabel', 'vatComparisonCondition', 'vatHowCalculated', 'vatKrakenPrice', 'vatHypotheticalTax', 'vatHypotheticalTotal', 'vatComparisonExplanation', 'extrasReassurance', 'contactPage', 'previewTools', 'nudgeShowHelp', 'nudgeShowDemo', 'nudgeHelpBody', 'emailUnavailableBeforeRequest', 'mailUnavailable', 'recoveryAvailabilityLoading', 'recoveryUnavailable', 'returnMissing', 'mailFailed'];
   for (const lang of ['de', 'en', 'es', 'fr', 'it', 'pt']) {
     for (const key of keys) {
       const value = bookingText(lang, key);

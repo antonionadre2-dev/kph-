@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { calculatePrice, type BookingSelection, type PriceQuote } from '../src/booking/pricing';
-import { bookingLineLabel } from '../src/booking/uiCopy';
+import { bookingLineLabel, bookingText } from '../src/booking/uiCopy';
+import { fetchRecoveryEmailAvailability } from '../src/booking/emailAvailability';
 import { recoveryCopy, recoveryLanguage, type RecoveryEmailKind } from '../src/booking/recoveryCopy';
 import { type GuidePreferences } from '../src/booking/movingGuide';
 import { journeyCopy, LANGUAGE_NAMES } from '../src/booking/journeyCopy';
@@ -68,6 +69,8 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [error, setError] = useState<'invalidEmail' | 'chooseService' | 'unavailable' | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [recoveryReady, setRecoveryReady] = useState<boolean | null>(null);
+  const [availabilityAttempt, setAvailabilityAttempt] = useState(0);
   const [emailKind, setEmailKind] = useState<RecoveryEmailKind>('saved');
   const [demoNotice, setDemoNotice] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -102,6 +105,17 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
   const message = copy.emails[emailKind];
   const tabLabels = [copy.savedTab, copy.firstTab, copy.lastTab];
   const isSaved = !['idle', 'saving', 'error'].includes(saveState);
+  const canSave = preview || recoveryReady === true;
+
+  useEffect(() => {
+    if (preview) { setRecoveryReady(null); return; }
+    const controller = new AbortController();
+    setRecoveryReady(null);
+    void fetchRecoveryEmailAvailability(fetch, controller.signal).then(ready => {
+      if (!controller.signal.aborted) setRecoveryReady(ready);
+    });
+    return () => controller.abort();
+  }, [preview, availabilityAttempt]);
 
   // A customer email entered elsewhere can prefill this card. Locally typed input is not overwritten on every render.
   useEffect(() => {
@@ -162,7 +176,7 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
   }, [modalOpen, preview]);
 
   async function saveQuote() {
-    if (saveState === 'saving') return;
+    if (saveState === 'saving' || !canSave) return;
     setError(null);
     if (!selection || !selectedService || !quote) { setError('chooseService'); return; }
     if (!isValidEmail(normalizedEmail)) {
@@ -235,6 +249,10 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
     <details ref={disclosureRef} className="kr-recovery-disclosure">
       <summary><img src="/calculator-approved/assets/kraken-emoji-mail.svg" alt="" width="42" height="42" aria-hidden="true" /><span>{copy.title}</span><span className="kr-recovery-chevron" aria-hidden="true" /></summary>
       <div className="kr-recovery-body">
+        {!canSave ? <>
+          <p className="kr-recovery-intro" role="status">{bookingText(locale, recoveryReady === null ? 'recoveryAvailabilityLoading' : 'recoveryUnavailable')}</p>
+          {recoveryReady === false && <button type="button" className="kr-calc-text-button" onClick={() => setAvailabilityAttempt(value => value + 1)}>{bookingText(locale, 'retry')}</button>}
+        </> : <>
         <p className="kr-recovery-intro">{copy.intro}</p>
         <p className="kr-recovery-language"><span>{journey.emailLanguage}</span><strong>{LANGUAGE_NAMES[locale]}</strong></p>
         <label className="kr-recovery-label" htmlFor={`${identity}-email`}>{copy.emailLabel}</label>
@@ -254,6 +272,7 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
         {!preview && isSaved && savedRef.current && <CustomerAccessRequest language={locale} email={normalizedEmail} recovery={savedRef.current} />}
         {preview && isSaved && demoAccount && <button type="button" className="kr-recovery-account-open" aria-haspopup="dialog" onClick={() => setAccountOpen(true)}>{journey.accountOpen}</button>}
         {preview && <p className="kr-recovery-preview-note">{copy.previewOnly}</p>}
+        </>}
       </div>
     </details>
     {preview && <button type="button" className="kr-recovery-preview-link" aria-haspopup="dialog" onClick={event => { openerRef.current = event.currentTarget; setModalOpen(true); }}>{copy.previewEmails}</button>}

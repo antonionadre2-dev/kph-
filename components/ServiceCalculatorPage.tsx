@@ -16,6 +16,7 @@ import { fieldErrorKey, type FieldErrorKey } from '../src/booking/fieldValidatio
 import { consumeKaiTransfer, registerKaiCalculationPreview, subscribeKaiTransfers, kaiDraftFieldLabel } from '../src/kai/draft';
 import { KAI_FIELDS, type KaiDraft } from '../src/kai/types';
 import { applyKaiBookingTransfer, kaiBookingPreview, type KaiCalculatorState } from '../src/booking/kaiTransfer';
+import { bookingMailStatusKey } from '../src/booking/emailAvailability';
 import './service-calculator.css';
 
 interface ServiceCalculatorPageProps {
@@ -29,7 +30,7 @@ interface Customer {
 }
 interface RecoveryAccess { id: string; accessToken: string }
 interface BookingConfig {
-  available: boolean; paymentReady: boolean; mode: 'test' | 'live' | 'unconfigured';
+  available: boolean; paymentReady: boolean; emailReady: boolean; mode: 'test' | 'live' | 'unconfigured';
   termsVersion: string; depositPercent?: number;
 }
 interface BookingView {
@@ -372,7 +373,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
 
   useEffect(() => {
     if (preview) {
-      setConfig({ available: false, paymentReady: false, mode: 'unconfigured', termsVersion: TERMS_VERSION });
+      setConfig({ available: false, paymentReady: false, emailReady: false, mode: 'unconfigured', termsVersion: TERMS_VERSION });
       setConfigLoading(false);
       return;
     }
@@ -380,7 +381,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
     setConfigLoading(true);
     api<BookingConfig>('/api/booking/config', { signal: controller.signal })
       .then(value => { if (!controller.signal.aborted) setConfig(value); })
-      .catch(() => { if (!controller.signal.aborted) setConfig({ available: false, paymentReady: false, mode: 'unconfigured', termsVersion: TERMS_VERSION }); })
+      .catch(() => { if (!controller.signal.aborted) setConfig({ available: false, paymentReady: false, emailReady: false, mode: 'unconfigured', termsVersion: TERMS_VERSION }); })
       .finally(() => { if (!controller.signal.aborted) setConfigLoading(false); });
     return () => controller.abort();
   }, [configAttempt, preview]);
@@ -813,6 +814,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
   const services: ServiceChoice[] = ['regular', 'deep', 'endOfTenancy', 'windows', 'construction', 'moving'];
   const emailState = booking?.payment.status === 'paid' ? booking?.email?.receipt : booking?.email?.request;
   const paid = booking?.payment.status === 'paid';
+  const emailStatusKey = bookingMailStatusKey(emailState, paid, preview || config?.emailReady === true);
   const testPaid = booking?.payment.status === 'test_paid';
   const held = booking?.scheduling.status === 'held';
   const needsReschedule = booking?.scheduling.status === 'needs_reschedule';
@@ -871,6 +873,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
       {recoveryRestored && <p className="kr-calc-inline-note" role="status"><CheckCircle2 aria-hidden="true" />{text('recoveryRestored')}</p>}
       {recoveryLoading && <div className="kr-calc-loading" role="status"><LoaderCircle className="kr-calc-spin" aria-hidden="true" />{text('working')}</div>}
       {config?.mode === 'test' && <p className="kr-calc-alert kr-calc-test" role="status">{text('testBanner')}</p>}
+      {!preview && config?.available && config.emailReady === false && <p className="kr-calc-inline-note" role="status"><Mail aria-hidden="true" />{text(booking ? 'mailUnavailable' : 'emailUnavailableBeforeRequest')}</p>}
       {returnMissing && <section className="kr-calc-card kr-calc-return-error" role="status"><ShieldCheck aria-hidden="true" /><p>{text('returnMissing')}</p><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a><button type="button" className="kr-calc-secondary" onClick={reset}>{text('newRequest')}</button></section>}
       {bookingAccess && !booking && <div className="kr-calc-loading" role="status">{loadingStatus ? <><LoaderCircle className="kr-calc-spin" aria-hidden="true" />{text('working')}</> : <button type="button" className="kr-calc-secondary" onClick={() => { void refreshStatus(); }}>{text('refresh')}</button>}</div>}
       {error && <p className="kr-calc-alert" role="alert">{error}</p>}
@@ -898,7 +901,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
               {!needsReschedule && <div className="kr-calc-appointment"><strong>{booking.scheduling.date ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: 'Europe/Zurich' }).format(new Date(`${booking.scheduling.date}T12:00:00Z`)) : '—'}</strong><span>{booking.scheduling.time || '—'}{booking.scheduling.endTime ? `–${booking.scheduling.endTime}` : ''} · {text('swissTime')}</span></div>}
               {booking.scopeNotes && <div className="kr-calc-scope-notes"><h4>{text('selectedExtras')}</h4><p>{booking.scopeNotes}</p></div>}
               {(booking.customer || customer.address) && <div className="kr-calc-address"><MapPin aria-hidden="true" /><div><h4>{text('serviceAddress')}</h4><p>{booking.customer?.address || customer.address}<br />{booking.customer?.postalCode || customer.postalCode} {booking.customer?.city || customer.city}</p></div></div>}
-              {emailState && <p className="kr-calc-email-state" role="status"><Mail aria-hidden="true" />{text(emailState === 'failed' || emailState === 'delivery_unknown' ? 'mailFailed' : paid ? (emailState === 'sent' ? 'receiptSent' : 'receiptQueued') : (emailState === 'sent' ? 'mailSent' : 'mailQueued'))}</p>}
+              {emailStatusKey && <p className="kr-calc-email-state" role="status"><Mail aria-hidden="true" />{text(emailStatusKey)}</p>}
               {!preview && <button type="button" className="kr-calc-secondary" onClick={() => { void refreshStatus(); }} disabled={loadingStatus}>{loadingStatus && <LoaderCircle className="kr-calc-spin" aria-hidden="true" />}{text('refresh')}</button>}
             </section>
             {booking.canCheckout && !checkoutHasExpired && <section className="kr-calc-card kr-calc-payment-card">

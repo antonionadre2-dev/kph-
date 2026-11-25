@@ -6,6 +6,9 @@ import { calculatePrice, defaultSelection, PRICING_VERSION } from '../src/bookin
 import { BookingError } from '../server/booking-store.ts';
 import { createPayrexxAdapter } from '../server/booking-payrexx.ts';
 import { renderBookingEmail, createResendEmailAdapter } from '../server/booking-email.ts';
+import { generateKeyPairSync } from 'node:crypto';
+import { deleteApp, getApps } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 
 const now=Date.parse('2026-11-24T10:00:00Z');
 const clone=(value:any)=>structuredClone(value);
@@ -152,9 +155,43 @@ test('unconfigured HTTP backend is explicit, private and never manufactures acti
   const server=app.listen(0,'127.0.0.1');await new Promise<void>(resolve=>server.on('listening',resolve));
   try {
     const address=server.address() as any,origin=`http://127.0.0.1:${address.port}`;
-    const config=await fetch(`${origin}/api/booking/config`);assert.equal(config.headers.get('cache-control'),'private, no-store');assert.deepEqual(await config.json(),{available:false,paymentReady:false,mode:'unconfigured',termsVersion:BOOKING_TERMS_VERSION,depositPercent:15});
+    const config=await fetch(`${origin}/api/booking/config`);assert.equal(config.headers.get('cache-control'),'private, no-store');assert.deepEqual(await config.json(),{available:false,paymentReady:false,emailReady:false,mode:'unconfigured',termsVersion:BOOKING_TERMS_VERSION,depositPercent:15});
     const response=await fetch(`${origin}/api/booking/requests`,{method:'POST',headers:{'Content-Type':'application/json',Origin:'https://krakenpfm.ch'},body:JSON.stringify(request())});assert.equal(response.status,503);assert.deepEqual(await response.json(),{code:'BOOKING_NOT_CONFIGURED'});
     const activity=await fetch(`${origin}/api/bookings/activity`);assert.deepEqual(await activity.json(),{events:[],cursor:null});
     const crossOrigin=await fetch(`${origin}/api/booking/requests`,{method:'POST',headers:{'Content-Type':'application/json',Origin:'https://attacker.invalid'},body:'{}'});assert.equal(crossOrigin.status,403);
   }finally {await new Promise<void>(resolve=>server.close(()=>resolve()));}
+});
+
+test('booking HTTP config reports email readiness independently of booking and saved-quote availability', async () => {
+  // A synthetic in-memory signing key initializes the SDK locally. No Firebase,
+  // Payrexx or Resend operation is performed by these configuration GETs.
+  const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048,
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' }, publicKeyEncoding: { type: 'spki', format: 'pem' } });
+  const credential = JSON.stringify({ type: 'service_account', project_id: 'kraken-email-test',
+    client_email: 'booking-test@kraken-email-test.iam.gserviceaccount.com', private_key: privateKey });
+  for (const emailConfigured of [false, true]) {
+    const env = { BOOKING_ENABLED: 'true', BOOKING_TOKEN_SECRET: 'synthetic-booking-secret-over-thirty-two-characters',
+      FIREBASE_SERVICE_ACCOUNT_JSON: credential, BOOKING_FIREBASE_PROJECT_ID: 'kraken-email-test', BOOKING_FIREBASE_DATABASE_ID: 'email-test-db',
+      APP_URL: 'https://krakenpfm.ch', BOOKING_CUSTOMER_ACCESS_ENABLED: 'false',
+      ...(emailConfigured ? { RESEND_API_KEY: 'synthetic-not-a-provider-key', BOOKING_EMAIL_FROM: 'test@example.test' } : {}) };
+    const handlers = createBookingHandlers({ env, fetcher: async () => { throw new Error('Provider requests are forbidden in this test'); } });
+    const app = express(); app.use(handlers.middleware);
+    const server = app.listen(0, '127.0.0.1'); await new Promise<void>(resolve => server.on('listening', resolve));
+    try {
+      const origin = `http://127.0.0.1:${(server.address() as any).port}`;
+      const configResponse = await fetch(origin + '/api/booking/config');
+      const config = await configResponse.json();
+      assert.equal(config.available, true, 'no mail provider must not disable durable booking requests');
+      assert.equal(config.emailReady, emailConfigured);
+      assert.equal(config.paymentReady, false);
+      assert.equal(configResponse.headers.get('cache-control'), 'private, no-store');
+      const recovery = await (await fetch(origin + '/api/recovery/config')).json();
+      assert.equal(recovery.enabled, false, 'a mail provider alone does not configure saved-quote recovery');
+      assert.equal((await (await fetch(origin + '/api/customer/access/config')).json()).enabled, false);
+    } finally {
+      await new Promise<void>(resolve => server.close(() => resolve()));
+      const adminApp = getApps().find(value => value.name === 'kraken-booking');
+      if (adminApp) { await getFirestore(adminApp, 'email-test-db').terminate(); await deleteApp(adminApp); }
+    }
+  }
 });

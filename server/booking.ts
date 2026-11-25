@@ -241,7 +241,7 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
           const signature=crypto.createHmac('sha256',runtime.secret).update(value).digest('base64url');
           res.cookie('kraken_capture',`${value}.${signature}`,{httpOnly:true,sameSite:'strict',secure:runtime.origin.startsWith('https://'),path:'/',maxAge:3600000});
         }
-        return res.json({available:Boolean(runtime.service),paymentReady:runtime.paymentReady,mode:runtime.mode,termsVersion:BOOKING_TERMS_VERSION,depositPercent:DEPOSIT_PERCENT});
+        return res.json({available:Boolean(runtime.service),paymentReady:runtime.paymentReady,emailReady:runtime.emailReady,mode:runtime.mode,termsVersion:BOOKING_TERMS_VERSION,depositPercent:DEPOSIT_PERCENT});
       }
       if(req.path.startsWith('/api/recovery/')||req.path==='/api/bookings/activity'||req.path==='/recovery/unsubscribe') {
         const headers=new Headers();for(const [key,value]of Object.entries(req.headers))if(typeof value==='string')headers.set(key,value);
