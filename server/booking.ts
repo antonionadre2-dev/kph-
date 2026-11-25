@@ -218,8 +218,6 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       const {getApps,initializeApp,cert,applicationDefault}=await import('firebase-admin/app');
       phase='sdk_firestore_import';
       const {getFirestore}=await import('firebase-admin/firestore');
-      phase='sdk_auth_import';
-      const {getAuth}=await import('firebase-admin/auth');
       let app=getApps().find(app=>app.name==='kraken-booking');
       if(!app){
         phase='credential_json';
@@ -232,8 +230,6 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       phase='firestore';
       const db=getFirestore(app,env.BOOKING_FIREBASE_DATABASE_ID||firebaseConfig.firestoreDatabaseId);
       const store=createFirestoreBookingStore(db);
-      phase='auth';
-      const auth=getAuth(app);
       phase='services';
       const mode=['live','test'].includes(env.PAYREXX_MODE||'')?env.PAYREXX_MODE!:'unconfigured';
       const paymentReady=Boolean(env.PAYREXX_INSTANCE&&env.PAYREXX_API_SECRET&&mode!=='unconfigured'&&origin.startsWith('https://'));
@@ -243,6 +239,15 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       const sendEmail=providerEmail?async(message:any)=>{if(await store.isEmailSuppressed(message.to)){const error:any=new BookingError('EMAIL_SUPPRESSED');error.definitelyNotSent=true;throw error;}return providerEmail(message);}:null;
       const service=createBookingService({store,tokenSecret:secret,origin,mode,payment,sendEmail,sender:env.BOOKING_EMAIL_FROM,clock});
       const recovery=emailReady&&(env.RECOVERY_TOKEN_SECRET||'').length>=32?createRecoveryService({store:createFirestoreRecoveryStore(db),calculatePrice,sendEmail,resolveBookingForRecovery:service.resolveBookingForRecovery,publicBaseUrl:origin,sender:env.BOOKING_EMAIL_FROM!,tokenSecret:env.RECOVERY_TOKEN_SECRET!,clock}):null;
+      const customerAccess=env.BOOKING_CUSTOMER_ACCESS_ENABLED==='true'&&emailReady&&Boolean(recovery);
+      let auth=null;
+      if(customerAccess){
+        phase='sdk_auth_import';
+        const {getAuth}=await import('firebase-admin/auth');
+        phase='auth';
+        auth=getAuth(app);
+      }
+      phase='services';
       service.setRecovery(recovery);
       const handleRecovery=(createRecoveryHandler as any)({service:recovery,publicBaseUrl:origin,...(recovery?{authorizeCapture:async(request:globalThis.Request)=>{
         const session=cookieSession(request.headers.get('cookie')||'',secret,clock());
@@ -250,7 +255,7 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
         return session&&remote?{rateKey:remote}:null;
       }}:{})});
       diagnostic('ready');
-      return {service,recovery,store,auth,origin,mode,paymentReady,emailReady,customerAccess:env.BOOKING_CUSTOMER_ACCESS_ENABLED==='true'&&emailReady&&Boolean(recovery),handleRecovery,secret};
+      return {service,recovery,store,auth,origin,mode,paymentReady,emailReady,customerAccess,handleRecovery,secret};
     }catch(cause){diagnostic(phase,cause);return disabled;}
   })();
   async function middleware(req:Request,res:Response,next:any) {
