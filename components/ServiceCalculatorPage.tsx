@@ -1,8 +1,10 @@
+import "../src/styles/route-utilities.css";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CalendarDays, Check, CheckCircle2, ChevronDown, ClipboardList, CreditCard, Info, LoaderCircle, Mail, MapPin, Minus, Pencil, Phone, Plus, ShieldCheck } from 'lucide-react';
 import { useTranslation } from '../i18n';
 import { calculatePrice, defaultSelection, PricingValidationError, REGULAR_RATES, REGULAR_MINIMUM_HOURS, type BookingSelection, type BookingService, type PriceQuote } from '../src/booking/pricing';
 import { bookingLanguage, bookingLineLabel, bookingText } from '../src/booking/uiCopy';
+import { BOOKING_TERMS_VERSION } from '../src/booking/terms';
 import CalculatorNudges from './CalculatorNudges';
 import KrakenServiceIcon from './KrakenServiceIcon';
 import QuoteRecoveryCard from './QuoteRecoveryCard';
@@ -52,7 +54,7 @@ type ServiceChoice = BookingService | 'deep';
 type WizardStep = 0 | 1 | 2;
 type Text = (key: string, params?: Record<string, string | number>) => string;
 const emptyCustomer: Customer = { name: '', email: '', phone: '', address: '', postalCode: '', city: '' };
-const TERMS_VERSION = '2026-11-24';
+const TERMS_VERSION = BOOKING_TERMS_VERSION;
 const tokenKey = (id: string) => `kraken.booking.${id}`;
 const recoveryTokenKey = (id: string) => `kraken.recovery.${id}`;
 const safeId = /^[A-Za-z0-9_-]{1,128}$/;
@@ -673,6 +675,10 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
       const fieldByCode: Record<string, string> = { INVALID_NAME: 'name', INVALID_EMAIL: 'email', INVALID_PHONE: 'phone', INVALID_ADDRESS: 'address', INVALID_POSTAL_CODE: 'postal', INVALID_CITY: 'city', INVALID_DATE: 'date', INVALID_TIME: 'time', INVALID_DATE_TIME: 'date', DATE_OUT_OF_RANGE: 'date' };
       if (cause instanceof BookingApiError && fieldByCode[cause.code]) revealIssue({ step: 1, message: text(cause.code.includes('DATE') || cause.code.includes('TIME') ? 'invalidDate' : 'invalidContact'), fieldId: `kr-calc-${fieldByCode[cause.code]}` });
       else if (cause instanceof BookingApiError && cause.code === 'PRICE_CHANGED') revealIssue({ step: 0, message: text('priceChanged') });
+      else if (cause instanceof BookingApiError && cause.code === 'TERMS_REQUIRED') {
+        setTermsAccepted(false); setConfigAttempt(value => value + 1);
+        revealIssue({ step: 2, message: text('termsUpdated'), fieldId: 'kr-calc-final-consent' });
+      }
       else setError(text(cause instanceof BookingApiError && cause.status === 409 ? 'priceChanged' : 'networkError'));
     } finally { setSubmitting(false); setJourneyPhase(null); }
   };
@@ -938,7 +944,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
                 {typeof balanceAfterDeposit === 'number' && <div><dt>{text('remaining')}</dt><dd>{money(balanceAfterDeposit)}</dd></div>}
               </dl>
               {preview && booking.demo && <label className="kr-journey-demo-result">{journey.demoResult}<select value={demoOutcome} onChange={event=>setDemoOutcome(event.target.value as DemoPaymentOutcome)} disabled={openingPayment}><option value="paid">{journey.resultPaid}</option><option value="pending">{journey.resultPending}</option><option value="failed">{journey.resultFailed}</option></select></label>}
-              <label className="kr-calc-consent"><input type="checkbox" checked={payConsent} onChange={event => setPayConsent(event.target.checked)} /><span>{preview&&booking.demo?journey.demoConsent:<>{text('payConsent')} <a href={publicHref('/terms', locale)}>{text('terms')}</a></>}</span></label>
+              <label className="kr-calc-consent"><input type="checkbox" checked={payConsent} onChange={event => setPayConsent(event.target.checked)} /><span>{preview&&booking.demo?journey.demoConsent:booking.termsVersion&&booking.termsVersion!==BOOKING_TERMS_VERSION?text('payConsentExisting'):<>{text('payConsent')} <a href={publicHref('/terms', locale)}>{text('terms')}</a></>}</span></label>
               <button type="button" className="kr-calc-primary" disabled={!payConsent || openingPayment || typeof dueNow !== 'number' || dueNow <= 0} onClick={() => { void startPayment(); }}>{openingPayment ? <LoaderCircle className="kr-calc-spin" aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}{preview&&booking.demo?journey.demoPay:text(openingPayment ? 'openingPayment' : depositPercent < 100 ? 'payDeposit' : 'pay')}</button>
             </section>}
             {paid && <section className="kr-calc-card kr-calc-payment-card"><div className="kr-calc-section-title"><CheckCircle2 aria-hidden="true" /><h3>{text('paidAmount')}</h3></div><strong className="kr-calc-paid-amount">{money(booking.payment.amountPaidCents)}</strong>{typeof finalBalance === 'number' && <p className="kr-calc-balance">{text('remaining')}: <strong>{money(finalBalance)}</strong></p>}</section>}

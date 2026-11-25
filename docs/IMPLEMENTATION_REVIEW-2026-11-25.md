@@ -70,7 +70,7 @@ Alcance, limitaciones y comprobaciones específicas: [AUTH_SECURITY_REVIEW.md](.
 - El desplazamiento sigue incluido, conforme a la instrucción del propietario. No se altera la fórmula de precios.
 - Se conservan literalmente los textos originales de pago, cancelación y garantía de entrega en las seis lenguas. La garantía sigue en la sección 8 y se comparte con las landings.
 - Privacidad separada en un módulo ligero, con enlace a Impressum para la identidad jurídica, infraestructura actual y almacenamiento local descrito según la implementación.
-- **Permanece explícita la contradicción entre el paquete de precio fijo y la sección 2 que llama preliminar/no vinculante al cálculo en línea.** Requiere decisión del propietario antes de publicar.
+- **Actualización posterior:** el propietario confirmó precio cerrado. La sección 2, el calculador y las FAQ ya comparten esa regla en seis lenguas; las reservas existentes conservan las condiciones aceptadas. Véase [seguimiento de Home y precio cerrado](./HOME-FOLLOWUP-2026-11-25.md).
 
 Ediciones y decisiones concretas: [LEGAL-OWNER-REVIEW-2026-11-25.md](./LEGAL-OWNER-REVIEW-2026-11-25.md). No se declara que esta edición sea una aprobación jurídica.
 
@@ -122,7 +122,7 @@ Las 441 URL con 410 que deben abandonar los resultados antiguos están en [URL_R
 
 ## Decisiones que necesita tomar el propietario
 
-1. Aprobar la revisión completa de AGB, especialmente precio cerrado frente a estimación preliminar, depósito express del 15 %, pagos, recordatorios, cancelación y aceptación de cambios. Véase el [informe legal](./LEGAL-OWNER-REVIEW-2026-11-25.md).
+1. Revisar las condiciones conservadas de depósito express del 15 %, pagos, recordatorios y cancelación. El propietario ya confirmó precio cerrado para el alcance seleccionado. Véase el [informe legal](./LEGAL-OWNER-REVIEW-2026-11-25.md).
 2. Confirmar aseguradora, suma y justificante, y las condiciones de garantía de la sección 8 antes de publicar afirmaciones adicionales.
 3. Proporcionar reseñas auténticas con sus fuentes y fotografías reales si desea sustituir las ilustraciones. Hasta entonces se mantienen los bloques condicionales y las advertencias actuales.
 4. Confirmar el plazo de respuesta a las solicitudes; el valor configurable está vacío.
@@ -155,7 +155,7 @@ Se ejecutó `node scripts/verify-local-preview.mjs http://127.0.0.1:3019`. Todas
 | Oferta anterior | No aparecen las referencias retiradas en el texto de las 144 páginas públicas |
 | Vista previa | noindex en HTML y cabecera; no se solicita indexación externa |
 
-Los controles de autorización se probaron con dobles de SDK, pruebas de sesión y validaciones locales. No se ha iniciado sesión en cuentas reales ni validado remotamente el acceso de cada usuario. Las reglas Firestore requieren la prueba pendiente descrita en [PRIVACY_FIRESTORE_AUDIT.md](./PRIVACY_FIRESTORE_AUDIT.md). Los headers CDN de Vercel no se han observado en un despliegue nuevo.
+Los controles de autorización se probaron con dobles de SDK, pruebas de sesión y validaciones locales. No se ha iniciado sesión en cuentas reales ni validado remotamente el acceso de cada usuario. La prueba del emulador Firestore ya pasa en sus seis casos sintéticos; la aplicación remota y compatibilidad con datos existentes siguen pendientes, como se describe en [PRIVACY_FIRESTORE_AUDIT.md](./PRIVACY_FIRESTORE_AUDIT.md). Los headers CDN de Vercel no se han observado en un despliegue nuevo.
 
 ### Dispositivos y navegación
 
@@ -180,3 +180,10 @@ Revisión de navegador con anchos **320, 390, 768 y 1440 px**: ancho del documen
 Se alcanza el objetivo de puntuación ≥90. **No se alcanza todavía LCP <2,5 s**: la mediana es 3,16 s. La transferencia se reduce un 81,4 %. FCP empeora en la mediana de esta muestra (de 1,36 a 2,16 s), con ejecuciones finales entre 1,08 y 2,19 s. Ambos puntos quedan expresamente pendientes; no se presenta el rendimiento como completamente resuelto. El siguiente trabajo debe centrarse en el CSS inicial y el arranque de la escena, midiendo también FCP y la interacción para evitar trasladar el coste. No se han ocultado imágenes o contenido para mejorar la puntuación. Las tres ejecuciones finales dan 91, 91 y 93 puntos; el JSON conserva todos los valores.
 
 La prueba local no demuestra una operación real de pago, correo transaccional, permisos remotos de Firebase o indexación efectiva. No se realiza ninguna de esas acciones como parte de este informe. La entrega se mantiene para revisión; no se ha publicado en producción.
+
+
+## Seguimiento posterior del 25 de noviembre
+
+El propietario confirmó precio cerrado para los datos y servicios seleccionados. Las AGB, el calculador y FAQ ya comparten esa regla en seis idiomas. Las reservas existentes mantienen las condiciones aceptadas. La casa tiene nuevo encuadre por dispositivo y fuentes AVIF con WebP de alternativa; se reduce CSS inicial y se prioriza la pintura del HTML antes de iniciar la aplicación.
+
+La nueva mediana local de tres ejecuciones es **95 puntos, LCP 2,76 s y FCP 1,06 s**. LCP 2,5 s continúa pendiente. TBT sube a 107 ms; se documenta la contrapartida. Las seis pruebas del emulador Firestore ya pasan con datos sintéticos. No se ha publicado ni aplicado reglas remotamente. El estado actual y la evidencia están en [Home y precio cerrado](./HOME-FOLLOWUP-2026-11-25.md).

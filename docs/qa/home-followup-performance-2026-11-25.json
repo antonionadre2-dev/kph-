@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-25",
+  "baselineCommit": "331b3c0",
+  "branch": "codex/umzugsreinigung-audit-2026-11-25",
+  "lighthouseVersion": "13.6.0",
+  "method": "Three serial cold-profile default simulated mobile runs on compiled local Express; no concurrent build/tests; metrics medians independently. Not field or production data.",
+  "runs": [
+    {
+      "file": "lighthouse-release-1.report.json",
+      "run": 1,
+      "score": 98,
+      "LCP": 1732.7598,
+      "FCP": 1098.7598,
+      "TBT": 168.62009999999987,
+      "CLS": 0.000250591676583666,
+      "bytes": 529173,
+      "roomRequests": [
+        {
+          "path": "/media/hero-room-day-v4-960-877bf2e090d7.avif",
+          "bytes": 37801
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "file": "lighthouse-release-2.report.json",
+      "run": 2,
+      "score": 95,
+      "LCP": 2757.5531,
+      "FCP": 1054.0236,
+      "TBT": 98,
+      "CLS": 0.0007716256316734234,
+      "bytes": 529173,
+      "roomRequests": [
+        {
+          "path": "/media/hero-room-day-v4-960-877bf2e090d7.avif",
+          "bytes": 37801
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "file": "lighthouse-release-3.report.json",
+      "run": 3,
+      "score": 95,
+      "LCP": 2785.854725,
+      "FCP": 1056.6021,
+      "TBT": 106.5,
+      "CLS": 0.0007716256316734234,
+      "bytes": 529173,
+      "roomRequests": [
+        {
+          "path": "/media/hero-room-day-v4-960-877bf2e090d7.avif",
+          "bytes": 37801
+        }
+      ],
+      "warnings": []
+    }
+  ],
+  "medians": {
+    "score": 95,
+    "LCP": 2757.5531,
+    "FCP": 1056.6021,
+    "TBT": 106.5,
+    "CLS": 0.0007716256316734234,
+    "bytes": 529173
+  }
+}

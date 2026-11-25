@@ -88,6 +88,7 @@ service cloud.firestore {
         && applicationId.size() <= 128
         && request.resource.data.id == applicationId
         && request.resource.data.userId == request.auth.uid
+        && request.resource.data.keys().hasOnly(['id','userId','name','phone','position','region','permit','startDate','pensum','certificates','languages','message','cvName','cvData','cvUrl','cvType','status','createdAt','updatedAt'])
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 150
@@ -154,21 +155,24 @@ service cloud.firestore {
     function validFloorPlan(plan) {
       return plan is map && plan.keys().hasOnly(['name','size','content'])
         && plan.keys().hasAll(['name','size','content'])
-        && limitedText(plan.name, 1, 180) && limitedText(plan.size, 1, 40)
-        && limitedText(plan.content, 0, 750000);
-    }
-    function optionalFloorPlan(plans, index) {
-      return plans.size() <= index || validFloorPlan(plans[index]);
-    }
-    function floorPlanSize(plans, index) {
-      return plans.size() > index ? plans[index].content.size() : 0;
+        && plan.name is string && plan.name.size() > 0 && plan.name.size() <= 180
+        && plan.size is string && plan.size.size() > 0 && plan.size.size() <= 40
+        && plan.content is string && plan.content.size() <= 750000;
     }
     function commercialFloorPlans(plans) {
-      return plans is list && plans.size() <= 5
-        && optionalFloorPlan(plans, 0) && optionalFloorPlan(plans, 1)
-        && optionalFloorPlan(plans, 2) && optionalFloorPlan(plans, 3) && optionalFloorPlan(plans, 4)
-        && floorPlanSize(plans, 0) + floorPlanSize(plans, 1) + floorPlanSize(plans, 2)
-          + floorPlanSize(plans, 3) + floorPlanSize(plans, 4) <= 750000;
+      let count = plans.size();
+      // Keep the five-file path below Firestore's expression budget as well as its byte limit.
+      return plans is list && count <= 5
+        && (count < 1 || validFloorPlan(plans[0]))
+        && (count < 2 || validFloorPlan(plans[1]))
+        && (count < 3 || validFloorPlan(plans[2]))
+        && (count < 4 || validFloorPlan(plans[3]))
+        && (count < 5 || validFloorPlan(plans[4]))
+        && (count < 1 ? 0 : plans[0].content.size())
+          + (count < 2 ? 0 : plans[1].content.size())
+          + (count < 3 ? 0 : plans[2].content.size())
+          + (count < 4 ? 0 : plans[3].content.size())
+          + (count < 5 ? 0 : plans[4].content.size()) <= 750000;
     }
     function validLegacyCommercialQuote(data) {
       return data.keys().hasOnly(['type','buildingType','numBuildings','totalArea','services','frequency','protocols','postalCode','city','hours','address','companyName','contactName','contactEmail','contactPhone','floorPlans','estimatedMonthlyBudget','estimatedAnnualBudget','createdAt','language','status'])

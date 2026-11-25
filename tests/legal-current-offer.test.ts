@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { getTermsTranslation } from '../components/legal/terms';
 import { getGDPRTranslation } from '../components/legal/privacy';
 import { getTermsTranslation as compatibleTerms, getGDPRTranslation as compatiblePrivacy } from '../components/docTranslations';
+import { BOOKING_TERMS_VERSION } from '../src/booking/terms';
 
 // Original payment, cancellation and guarantee clauses were explicitly required to remain unchanged.
 const originalHashes = {
@@ -30,9 +31,13 @@ test('consumer terms remove retired services and unsupported fees while preservi
     assert.match(terms.sections[7].content,/72h/);
     assert.equal(compatibleTerms(language),terms);
   }
-  // The owner must resolve this contradiction; the editorial change must not silently erase it.
-  assert.match(getTermsTranslation('de').sections[1].content,/unverbindlich/);
-  assert.match(getTermsTranslation('en').sections[1].content,/preliminary/);
+  // The owner's latest instruction confirms a fixed price for the declared scope.
+  for (const [language, phrase] of Object.entries({de:'Festpreis',en:'fixed price',es:'precio cerrado',pt:'preço fixo',it:'prezzo fisso',fr:'prix fixe'})) {
+    const terms=getTermsTranslation(language);
+    assert.ok(terms.sections[1].content.includes(phrase));
+    assert.ok(terms.lastUpdated.includes(BOOKING_TERMS_VERSION));
+    assert.doesNotMatch(terms.sections[1].content,/unverbindlich|preliminary|orientativ/i);
+  }
   assert.match(getTermsTranslation('de').sections[3].content,/im Preis des Rechners enthalten/);
   assert.doesNotMatch(JSON.stringify(getTermsTranslation('de')),/ß/);
 });

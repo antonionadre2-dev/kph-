@@ -8,6 +8,7 @@ import { isRouteValid } from "./seoConfig.ts";
 import { getPageSeo, normalizeCanonicalPath } from "./src/seo/metadata.ts";
 import { injectPageSeo, escapeSeoHtml } from "./src/seo/html.ts";
 import { seoFragmentName, HOME_APP_SSR_MARKER } from "./src/seo/render-contract.ts";
+import { startHomeAfterPaint } from "./src/home/paint-start.ts";
 import { pathLanguage, toLegacyPath } from "./src/routing/site-paths.ts";
 import { getRouteDisposition } from "./src/routing/route-policy.ts";
 import { publicHref } from "./src/routing/site-paths.ts";
@@ -144,9 +145,17 @@ async function configureApplication() {
         const styles = content.match(resourcePattern) || [];
         // Vite already places shared styles in the head. Attribute differences
         // (notably crossorigin) must not make a second render-blocking request.
-        const resourceHrefs = new Set([...html.matchAll(/<link\b(?=[^>]*\brel=["'](?:stylesheet|preload)["'])[^>]*\bhref=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]));
+        // Responsive image preloads may intentionally omit href. Their srcset
+        // is the resource identity; dropping them delays discovery until <img>.
+        const resourceKey = (tag: string) => {
+          const href=tag.match(/\bhref=["']([^"']+)["']/i)?.[1];
+          if(href)return href;
+          const sources=tag.match(/\bimagesrcset=["']([^"']+)["']/i)?.[1];
+          return sources ? 'srcset:'+sources+'|'+(tag.match(/\bimagesizes=["']([^"']+)["']/i)?.[1] || '') : null;
+        };
+        const resourceHrefs = new Set([...html.matchAll(/<link\b(?=[^>]*\brel=["'](?:stylesheet|preload)["'])[^>]*>/gi)].map(match => resourceKey(match[0])).filter(Boolean));
         const additionalResources = styles.filter(tag => {
-          const href = tag.match(/\bhref=["']([^"']+)["']/i)?.[1];
+          const href = resourceKey(tag);
           if (!href || resourceHrefs.has(href)) return false;
           resourceHrefs.add(href); return true;
         });
@@ -154,8 +163,12 @@ async function configureApplication() {
         const otherResources = additionalResources.filter(tag => !imageHints.includes(tag));
         // Discover the LCP image before the stylesheet or metadata graph.
         // These are React's own srcset/sizes hints, matching the real visible image.
-        html = html.replace(/<head\b[^>]*>/i, opening => opening + imageHints.join(''));
+        // Mobile srcset selection needs the real viewport before its preload;
+        // otherwise the browser can fetch both a desktop and a mobile candidate.
+        const viewport=/<meta\b(?=[^>]*\bname=["']viewport["'])[^>]*>/i;
+        html = html.replace(viewport.test(html)?viewport:/<head\b[^>]*>/i, opening => opening + imageHints.join(''));
         html = html.replace('</head>', () => otherResources.join('') + '</head>');
+        if (hydratableHome) html=startHomeAfterPaint(html);
         const body = content.replace(resourcePattern, '');
         const rootPattern = html.includes('<!-- kraken-root-end -->')
           ? /<div id="root">[\s\S]*?<\/div>(?=\s*<!-- kraken-root-end -->)/

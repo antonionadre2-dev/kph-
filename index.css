@@ -1,32 +1,12 @@
 @import "tailwindcss" source(none);
-/* Public UI only. Authenticated legacy tools load their own utility sheet. */
+/* First paint: Home, shared navigation and cookie controls only. */
 @source "./index.html";
 @source "./index.tsx";
 @source "./components/App.tsx";
 @source "./components/Header.tsx";
 @source "./components/Footer.tsx";
 @source "./components/CookieConsent.tsx";
-@source "./components/KaiAssistant.tsx";
-@source "./components/ServiceCalculatorPage.tsx";
-@source "./components/CalculatorNudges.tsx";
-@source "./components/QuoteRecoveryCard.tsx";
-@source "./components/KrakenJourney.tsx";
-@source "./components/MovingGuide.tsx";
-@source "./components/ReviewInvitePage.tsx";
-@source "./components/ImpressumPage.tsx";
-@source "./components/GDPRPage.tsx";
-@source "./components/TermsPage.tsx";
-@source "./components/LocalSeoContent.tsx";
-@source "./components/LocalRegionalContent.tsx";
-@source "./components/EndOfTenancyLanding.tsx";
 @source "./components/home";
-@source "./components/about";
-@source "./components/services";
-@source "./components/contact";
-@source "./components/calculator";
-@source "./components/auth";
-@source "./components/legal";
-@source "./src/kai";
 @theme {
   --font-handwriting: "Manrope", sans-serif;
 }

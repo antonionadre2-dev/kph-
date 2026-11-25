@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import type { Request, Response, RequestHandler } from 'express';
 import { calculatePrice, defaultSelection, PRICING_VERSION } from '../src/booking/pricing.ts';
+import { BOOKING_TERMS_VERSION, checkoutTermsMatch } from '../src/booking/terms.ts';
 import { createFirestoreBookingStore, BookingError, digest, type BookingStore } from './booking-store.ts';
 import { createPayrexxAdapter } from './booking-payrexx.ts';
 import { createResendEmailAdapter, renderBookingEmail } from './booking-email.ts';
@@ -12,7 +13,7 @@ import { bookingAppointmentStart, bookingEmailLinks, collectionConfiguration, cr
 import { languageForBackgroundEmail, normalizeEmailLanguage } from '../integrations/email-collection/index.mjs';
 import firebaseConfig from '../firebase-applet-config.json' with {type:'json'};
 
-export const BOOKING_TERMS_VERSION='kraken-2026-11-24';
+export { BOOKING_TERMS_VERSION };
 export const DEPOSIT_PERCENT=15;
 const languages=['de','en','es','fr','it','pt'];
 const safeId=/^[A-Za-z0-9_-]{1,128}$/;
@@ -122,9 +123,10 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
     async checkout(id:string,access:string,input:any) {
       await authenticated(id,access);
       if(!payment)throw new BookingError('PAYMENT_NOT_CONFIGURED',503);
-      if(input?.termsAccepted!==true || input.termsVersion!==BOOKING_TERMS_VERSION)throw new BookingError('TERMS_REQUIRED');
+      if(input?.termsAccepted!==true)throw new BookingError('TERMS_REQUIRED');
       language(input.language); // Checkout presentation never changes the saved communication preference.
       const claimed=await store.mutate(id,current=>{
+        if(!checkoutTermsMatch(input.termsVersion,current.termsVersion))throw new BookingError('TERMS_REQUIRED');
         if(input.acceptedQuoteRevision!==current.quoteRevision)throw new BookingError('PRICE_CHANGED',409);
         if(!['live','test'].includes(mode)||current.mode!==mode)throw new BookingError('PAYMENT_MODE_CHANGED',409);
         if(!canCheckout(current))throw new BookingError('CHECKOUT_NOT_AVAILABLE',409);

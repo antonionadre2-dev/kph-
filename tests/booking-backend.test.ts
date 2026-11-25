@@ -38,6 +38,7 @@ test('server uses proposal version and rejects a browser amount/version change',
   assert.throws(()=>validateBookingRequest(request({acceptedTotalCents:1}),now),{code:'PRICE_CHANGED'});
   assert.throws(()=>validateBookingRequest(request({pricingVersion:'old'}),now),{code:'PRICE_CHANGED'});
   assert.throws(()=>validateBookingRequest(request({termsAccepted:false}),now),{code:'TERMS_REQUIRED'});
+  assert.throws(()=>validateBookingRequest(request({termsVersion:'kraken-2026-11-24'}),now),{code:'TERMS_REQUIRED'});
 });
 test('server validates Zurich calendar, future date, hours and Swiss postcode',()=>{
   assert.equal(validateAppointment('2026-11-25','10:00',now),Date.parse('2026-11-25T09:00:00Z'));
@@ -80,6 +81,17 @@ test('checkout requires authorized confirmation, stays idempotent, charges 15% a
   const first=await service.checkout(booking.bookingId,booking.publicToken,body),second=await service.checkout(booking.bookingId,booking.publicToken,body);
   assert.deepEqual(first,second);assert.equal(calls,1);
   const state=await service.read(booking.bookingId,booking.publicToken);assert.equal(state.payment.status,'pending');assert.equal(state.scheduling.status,'held');assert.equal(state.payment.amountPaidCents,0);assert.equal(store.mail.size,1);
+});
+test('existing bookings retain their accepted terms and amounts when the public version changes',async()=>{
+  let calls=0;const {service,store}=serviceFixture({async create(){calls++;return {id:42,link:'https://test.payrexx.com/existing'};}});
+  const booking=await service.create(request());const record=store.records.get(booking.bookingId);record.termsVersion='kraken-2026-11-24';
+  await service.confirmAppointment(booking.bookingId,{operatorId:'authorized-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
+  const input={acceptedQuoteRevision:1,termsAccepted:true,termsVersion:'kraken-2026-11-24',language:'es'};
+  await assert.rejects(service.checkout(booking.bookingId,booking.publicToken,{...input,termsVersion:BOOKING_TERMS_VERSION}),{code:'TERMS_REQUIRED'});
+  await assert.rejects(service.checkout(booking.bookingId,booking.publicToken,{...input,termsAccepted:false}),{code:'TERMS_REQUIRED'});
+  assert.equal(calls,0);
+  const result=await service.checkout(booking.bookingId,booking.publicToken,input);assert.equal(result.link,'https://test.payrexx.com/existing');assert.equal(calls,1);
+  const saved=store.records.get(booking.bookingId);assert.equal(saved.termsVersion,'kraken-2026-11-24');assert.equal(saved.quote.totalCents,booking.quote.totalCents);assert.equal(saved.payment.amountDueNowCents,booking.payment.amountDueNowCents);
 });
 test('uncertain checkout creation is blocked from automatic retries',async()=>{
   let calls=0;const {service}=serviceFixture({async create(){calls++;throw new Error('timeout');}});

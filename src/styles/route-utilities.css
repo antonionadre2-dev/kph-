@@ -1,0 +1,23 @@
+/* Loaded only by secondary routes; preserve their utilities without a second reset. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../../components/ServiceCalculatorPage.tsx";
+@source "../../components/CalculatorNudges.tsx";
+@source "../../components/QuoteRecoveryCard.tsx";
+@source "../../components/KrakenJourney.tsx";
+@source "../../components/MovingGuide.tsx";
+@source "../../components/ReviewInvitePage.tsx";
+@source "../../components/ImpressumPage.tsx";
+@source "../../components/GDPRPage.tsx";
+@source "../../components/TermsPage.tsx";
+@source "../../components/LocalSeoContent.tsx";
+@source "../../components/LocalRegionalContent.tsx";
+@source "../../components/EndOfTenancyLanding.tsx";
+@source "../../components/about";
+@source "../../components/services";
+@source "../../components/contact";
+@source "../../components/calculator";
+@source "../../components/auth";
+@source "../../components/legal";
+@source "../../components/CommercialQuotePage.tsx";
+@theme { --font-handwriting: "Manrope", sans-serif; }

@@ -66,10 +66,22 @@ const forbidden = await call('/api/health', { Origin: 'https://other.example' })
 const allowed = await call('/api/health', { Origin: 'https://krakenpfm.ch' }); assert.equal(allowed.headers['access-control-allow-origin'], 'https://krakenpfm.ch');
 const securityFile = await call('/.well-known/security.txt'); assert.equal(securityFile.status, 200); assert.match(securityFile.body, /Contact: mailto:kai@krakenpfm.ch/);
 const home = await call('/');
-const assets = [...new Set([...home.body.matchAll(/(?:src|href)="(\/(?:media|fonts|assets)\/[^"?#]+)"/g)].map(match => match[1]))];
+const bootstrap=home.body.match(/<script type="module" id="kraken-home-start" src="([^"]+)" data-entry="([^"]+)"/);
+assert.ok(bootstrap, 'Home starts its interactive layer after the server-rendered paint');
+assert.doesNotMatch(home.body,/rel="modulepreload"/);
+const imageHintAt=home.body.search(/imagesrcset=/i);
+assert.ok(imageHintAt>=0 && imageHintAt<home.body.indexOf('rel="stylesheet"'), 'Responsive hero discovery precedes CSS');
+const sourceSets = [...home.body.matchAll(/\b(?:srcset|imagesrcset)="([^"]+)"/gi)]
+  .flatMap(match => match[1].split(',').map(source => source.trim().split(/\s+/)[0]));
+const assets = [...new Set([
+  ...[...home.body.matchAll(/(?:src|href)="(\/(?:media|fonts|assets)\/[^"?#]+)"/g)].map(match => match[1]),
+  ...sourceSets.filter(source => /^\/(?:media|fonts|assets)\//.test(source)),
+  bootstrap[2],
+])];
 for (const path of assets) {
   const response = await call(path); assert.equal(response.status, 200, path);
   assert.match(response.headers['cache-control'], /immutable/, path);
+  if(path.endsWith('.avif')) assert.match(response.headers['content-type'], /image\/avif/);
 }
 for (const path of ['/seo-page-home-de.html', '/server.cjs', '/private-key.pem', '/assets/unpublished.js.map']) assert.equal((await call(path)).status, 404, path);
 assert.equal((await call('/unknown-kraken-preview-route')).status, 404);

@@ -11,9 +11,9 @@ Los cambios están preparados en una rama para revisión. No constituyen una apr
 - Se separaron los documentos públicos de los diccionarios HSE y empleo retirados. Los módulos de términos y privacidad no dependen de estos diccionarios.
 - La privacidad identifica Kraken PFM y enlaza al Impressum para la identidad jurídica completa. Conserva Vercel, Firebase/Firestore en Estados Unidos, Payrexx, Resend con región Irlanda y Outlook. Describe el borrador anónimo de 24 horas y distingue tokens de sesión, idioma y cookies.
 
-## Decisiones pendientes
+## Decisiones del propietario
 
-1. **Precio cerrado frente a estimación preliminar.** La sección 2 todavía indica que el cálculo en línea es «unverbindlich»/preliminar, mientras la interfaz ofrece un paquete de precio fijo. El propietario debe decidir la regla contractual. No se ha ocultado esta contradicción ni cambiado la fórmula de precios.
+1. **Precio cerrado confirmado por el propietario el 25 de noviembre de 2026.** La sección 2 ya establece un precio fijo para los datos y el alcance seleccionados. Si cambian los datos o se solicitan trabajos adicionales, se acuerda el cambio antes de modificar el importe. Una solicitud no confirma una fecha. La misma regla se publica en las seis lenguas y en el calculador. No cambia la fórmula de precios. La versión es `kraken-2026-11-25-fixed-scope`; las reservas existentes mantienen la versión aceptada y sus importes.
 2. **Cuándo se cobra.** La sección 2 mantiene el anticipo express del 15 % y la sección 5 conserva pago en siete días, interés del 5 % y recordatorios de 20/50 CHF. Deben confirmarse frente a las modalidades efectivamente configuradas en el calculador y Payrexx.
 3. **Cancelación.** Se conserva la regla existente: más de 48 horas sin cargo; menos de 48 horas, 50 %; menos de 12 horas, ausencia o cancelación en destino, 100 %. El propietario debe confirmar que esta es su política vigente.
 4. **Garantía.** La sección 8 mantiene aviso escrito en 24 horas con protocolo/fotos, entrega en 72 horas y vivienda vacía y sin uso, con las exclusiones originales. Requiere confirmación expresa del propietario antes de publicar el cambio.
@@ -22,3 +22,5 @@ Los cambios están preparados en una rama para revisión. No constituyen una apr
 7. **Revisión jurídica.** El propietario debe revisar la versión completa, especialmente responsabilidad, pagos y cancelación. La edición no añade reglas legales ni certifica su validez.
 
 La comprobación de estructura de privacidad se apoyó en la información oficial del [PFPDT sobre el deber de información](https://www.edoeb.admin.ch/en/duty-to-provide-information) y en el [artículo 19 de la LPD en Fedlex](https://www.fedlex.admin.ch/eli/cc/2022/491/en). Esto no sustituye la revisión de las condiciones comerciales concretas.
+
+La regla comercial de precio cerrado procede de la confirmación explícita del propietario. La información y aceptación de condiciones antes de la solicitud se mantiene conforme a la [orientación del portal oficial de pymes sobre condiciones generales](https://www.kmu.admin.ch/fr/conditions-generales-de-vente). No se reinterpretan como aceptadas condiciones nuevas para una reserva antigua. Esta referencia no certifica la validez jurídica de todo el documento.

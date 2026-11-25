@@ -38,12 +38,17 @@ export async function renderSeoHtml(root) {
         import {seoFragmentName,LEGAL_DOCUMENT_PATHS,HOME_APP_SSR_MARKER} from './src/seo/render-contract.ts';
         import {bookingText} from './src/booking/uiCopy.ts';
         import {publicHref} from './src/routing/site-paths.ts';
+        import {HERO_DAY,heroImage} from './src/home/hero-media.ts';
         export const routes=[...INDEXABLE_PATHS,...LEGAL_DOCUMENT_PATHS]; export const filename=seoFragmentName;
         const noop=()=>{};
         const wrap=(language,child)=>renderToStaticMarkup(<I18nProvider initialLanguage={language}>{child}</I18nProvider>);
         export const header=language=>wrap(language,<div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div>);
         export const footer=language=>wrap(language,<Footer onNavigate={noop}/>);
-        export const home=language=>HOME_APP_SSR_MARKER+renderToString(<Application initialLanguage={language==='de'?'de-CH':language}/>);
+        export const home=language=>{
+          const image=heroImage(HERO_DAY).source;
+          const preload=image?renderToStaticMarkup(<link rel="preload" as="image" type={image.type} imageSrcSet={image.srcSet} imageSizes={image.sizes} fetchPriority="high"/>):'';
+          return HOME_APP_SSR_MARKER+preload+renderToString(<Application initialLanguage={language==='de'?'de-CH':language}/>);
+        };
         export const local=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div><LocalSeoContent route={resolveLocalSeoRoute(pathname)} language={language}/><Footer onNavigate={noop}/></>);
         export const legal=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div>{pathname==='/impressum'?<ImpressumPage onNavigate={noop}/>:pathname==='/gdpr'?<GDPRPage/>:<TermsPage onNavigate={noop}/>}<Footer onNavigate={noop}/></>);
         export const quote=language=>{const t=key=>bookingText(language,key);return wrap(language,<>

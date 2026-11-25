@@ -1,8 +1,10 @@
 import { createHomeScope } from './lifecycle.js';
 import { resolveKaiState } from './scene-state.js';
 import { createSceneAutoplay } from './scene-autoplay.js';
-import { mediaAsset, responsiveImage } from '../../src/media/images.ts';
+import { mediaAsset } from '../../src/media/images.ts';
+import { HERO_DAY, HERO_NIGHT, HERO_ROOM_SIZES, heroImage } from '../../src/home/hero-media.ts';
 import { createInitialClothingGate, kaiSpriteTargetWidth, seasonalKaiClothing } from './scene-sprites.js';
+import { createSceneMediaGate } from './scene-loading.js';
 export function initApartmentScene(homeRoot, { t = source => source, getLocale = () => 'de-CH' } = {}) {
     const scope = createHomeScope();
     const byId = id => homeRoot.querySelector('#' + id);
@@ -15,6 +17,7 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     const openButton = $('#sceneOpen');
     const kai = $('#sceneKai');
     const room = $('#sceneRoom');
+    const roomAvif = $('#sceneRoomAvif');
     const landscape = $('#sceneLandscape');
     const kaiImage = new Image();
     let mediaReady = false;
@@ -50,6 +53,16 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     let sceneVisible = false;
     const clothingGate = createInitialClothingGate(scope, () => updateScene());
     const autoplay = createSceneAutoplay(scope, { play: animateTask, stop: stopTask });
+    const mediaGate = createSceneMediaGate(scope, {
+        image: room,
+        isVisible: () => sceneVisible,
+        onReady: () => {
+            mediaReady = true;
+            canvas.style.setProperty('--kh-holiday-decor', `url("${mediaAsset('/home-approved/assets/holiday-decor.webp')}")`);
+            updateScene();
+            syncMotion();
+        },
+    });
     function prepareKaiSprite() {
         if (!mediaReady || (!clothingGate.isReady() && overrides.clothing === 'auto')) return;
         const warm = canvas.dataset.clothing === 'warm';
@@ -69,10 +82,7 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
         kaiImage.src = source;
     }
     function hydrateSceneMedia() {
-        if (mediaReady) return;
-        mediaReady = true;
-        canvas.style.setProperty('--kh-holiday-decor', `url("${mediaAsset('/home-approved/assets/holiday-decor.webp')}")`);
-        prepareKaiSprite();
+        mediaGate.request();
     }
     function syncMotion() {
         const paused = document.hidden || !sceneVisible || reducedMotion.matches || overrides.motion === 'still';
@@ -161,8 +171,13 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
         const kaiState = resolveKaiState({ phase, temperatureC: observation?.temperatureC, clothing, service: selectedService });
         const preview = Object.values(overrides).some(value => value !== 'auto');
         Object.assign(canvas.dataset, { season, celebration, phase, weather, clothing: kaiState.clothing, lights: kaiState.lightsOn ? 'on' : 'off' });
-        const roomProps = responsiveImage(kaiState.lightsOn ? '/home-approved/assets/hero-room-day-v4.webp' : '/home-approved/assets/hero-room-night-v4.webp', room.sizes || '(max-width:1080px) 120vw, 78vw');
+        const roomMedia = heroImage(kaiState.lightsOn ? HERO_DAY : HERO_NIGHT, room.sizes || HERO_ROOM_SIZES);
+        const roomProps = roomMedia.fallback;
         if (mediaReady && room.getAttribute('src') !== roomProps.src) {
+            if (roomAvif && roomMedia.source) {
+                roomAvif.srcset = roomMedia.source.srcSet;
+                roomAvif.sizes = roomMedia.source.sizes;
+            }
             room.srcset = roomProps.srcSet || '';
             room.sizes = roomProps.sizes || '';
             room.src = roomProps.src;

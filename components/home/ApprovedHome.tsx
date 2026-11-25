@@ -9,7 +9,8 @@ import PublicPriceGuide from '../PublicPriceGuide';
 import FeaturedMoveoutOffer from './FeaturedMoveoutOffer';
 import CustomerReviews from './CustomerReviews';
 import { publicHref } from '../../src/routing/site-paths';
-import { mediaAsset, responsiveImage } from '../../src/media/images';
+import { mediaAsset } from '../../src/media/images';
+import { HERO_DAY, heroImage } from '../../src/home/hero-media';
 import { initDeferredHomeMedia } from './deferred-media';
 import { whyTranslations } from './whyTranslations';
 import { initApprovedHome } from './app';
@@ -36,6 +37,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
   const quoteHref = publicHref('/quote', language);
   const serviceHref = (service: HomeService) => publicHref('/quote?service=' + service, language);
   const rootRef = useRef<HTMLDivElement>(null);
+  const roomImage = heroImage(HERO_DAY);
   const navigateRef = useRef(onNavigate);
   navigateRef.current = onNavigate;
   useEffect(() => {
@@ -142,7 +144,10 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
               <path className="scene-wipe" d="M831 247q20 25 6 55t-2 55"></path>
             </g>
           </svg>
-          <img className="scene-room" id="sceneRoom" {...responsiveImage('/home-approved/assets/hero-room-day-v4.webp','(max-width:1080px) 120vw, 78vw')} alt="" fetchPriority="high" aria-hidden="true" />
+          <picture style={{display:'contents'}}>
+            {roomImage.source && <source id="sceneRoomAvif" {...roomImage.source} />}
+            <img className="scene-room" id="sceneRoom" {...roomImage.fallback} alt="" fetchPriority="high" aria-hidden="true" />
+          </picture>
           <svg className="scene-box-branding" viewBox="0 0 1536 1024" aria-hidden="true">
             <g transform="translate(1354 667) skewY(-17)"><svg width="55" height="23.6" viewBox="4 283 1016 436"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g>
             <g transform="translate(1338 744) skewY(-17)"><svg width="80" height="34.33" viewBox="4 283 1016 436"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g>

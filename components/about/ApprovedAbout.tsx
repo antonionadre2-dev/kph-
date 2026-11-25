@@ -1,3 +1,4 @@
+import "../../src/styles/route-utilities.css";
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from '../../i18n';
 import ApprovedHeader from '../home/ApprovedHeader';

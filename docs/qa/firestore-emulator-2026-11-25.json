@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-25",
+  "localOnly": true,
+  "productionRulesApplied": false,
+  "projectId": "demo-kraken-rules-audit",
+  "host": "127.0.0.1:8189",
+  "runtime": "jdk-21.0.13.1+2",
+  "runtimeSha256": "848feb1906c7de79de4f8391636042193fbd46eff86e26299506c4656f62c260",
+  "checksumVerified": true,
+  "tests": 6,
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "serverNamespaces": 12,
+  "applicationAllowedFields": 19,
+  "emulatorStopped": true,
+  "temporaryRuntimeRemoved": true,
+  "cases": [
+    "public forms and attachment limits",
+    "owner queries and immutable price/status",
+    "verified staff and completed requests",
+    "application schema, injection and ownership",
+    "public intake staff authorization",
+    "all twelve server namespaces default-deny"
+  ]
+}

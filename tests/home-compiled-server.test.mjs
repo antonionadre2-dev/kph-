@@ -20,7 +20,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
       'server.ts', 'seoConfig.ts', 'i18n.ts', 'src/locale.ts', 'src/data/locations.ts',
       'components/home/homeTranslations.ts', 'components/contact/contactTranslations.ts', 'components/services/servicesTranslations.ts',
       'src/kai/types.ts', 'src/contact/routing-server.ts', 'src/booking/pricing.ts', 'src/booking/publicPricing.ts',
-      'src/booking/uiCopy.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',
+      'src/booking/uiCopy.ts', 'src/booking/terms.ts', 'src/home/paint-start.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',
       ...['server', 'src/seo', 'src/routing', 'src/i18n'].flatMap(folder => readdirSync(path.join(root, folder)).filter(name => name.endsWith('.ts')).map(name => `${folder}/${name}`)),
     ];
     for (const name of new Set(names)) {
@@ -41,7 +41,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
     writeFileSync(path.join(directory, 'dist/assets/index-12345678.css'), '.scene-room{width:100%}');
     writeFileSync(path.join(directory, 'dist/index.html'), '<html lang="de-CH"><head><title>fixture</title><link rel="stylesheet" crossorigin href="/shared.css"><link rel="stylesheet" crossorigin href="/assets/index-12345678.css"></head><body><div id="root">OLD_TEMPLATE</div><!-- kraken-root-end --></body></html>');
     for (const language of ['de', 'en', 'es', 'pt', 'it', 'fr']) for (const route of [...INDEXABLE_PATHS, ...LEGAL_DOCUMENT_PATHS]) {
-      const marker=route==='/'?HOME_APP_SSR_MARKER+'<link rel="preload" as="image" href="/test-room.webp"/>':'';
+      const marker=route==='/'?HOME_APP_SSR_MARKER+'<link rel="preload" as="image" href="/test-room.webp"/><link rel="preload" as="image" type="image/avif" imageSrcSet="/test-room.avif 960w" imageSizes="100vw"/>':'';
       writeFileSync(path.join(directory, 'dist', seoFragmentName(route, language)), marker+`<link rel="stylesheet" href="/shared.css"><main id="main"><h1>${route} ${language}</h1><p>RENDERED_BODY</p></main>`);
     }
     const driver = `
@@ -73,6 +73,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
           if(route==='/'){
             assert.match(result.body,/id="root" data-kraken-home-ssr="true"/);
             assert.ok(result.body.indexOf('/test-room.webp')<result.body.indexOf('<link rel="stylesheet"'), 'Image discovery precedes the stylesheet');
+            assert.ok(result.body.indexOf('/test-room.avif')<result.body.indexOf('<link rel="stylesheet"'), 'Responsive preload without href is retained in the head');
             assert.doesNotMatch(result.body.slice(result.body.indexOf('<div id="root"')),/test-room\.webp|kraken-home-app-ssr/);
           }else{
             assert.doesNotMatch(result.body,/data-kraken-home-ssr="true"/);

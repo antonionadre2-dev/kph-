@@ -12,8 +12,8 @@ const documents = {
         "content": "Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für Fensterreinigung, Umzugsreinigung, regelmässige Reinigung, Grundreinigung und kleine Umzüge von Kraken PFM (Kraken, wir) für Privathaushalte. Abweichende Bedingungen gelten nur bei schriftlicher Akzeptanz."
       },
       {
-        "title": "2. Angebote, Schätzungen & Vertragsabschluss",
-        "content": "Ein Vertrag kommt durch die Bestätigung einer Offerte oder Online-Buchung zustande. Der Leistungsumfang definiert sich über die Buchungsbestätigung. Schätzungen des Online-Rechners sind unverbindlich. Unrichtige Angaben berechtigen Kraken zu Preisanpassungen. Express-Buchungen erfordern 15% Anzahlung."
+        "title": "2. Angebote, Festpreis & Vertragsabschluss",
+        "content": "Der Online-Rechner zeigt einen Festpreis für Ihre angegebenen Daten und ausgewählten Leistungen. Bei unverändertem Umfang bleibt dieser Preis gleich. Eine Anfrage allein bestätigt noch keinen Termin. Ein Vertrag kommt durch die Bestätigung einer Offerte oder Online-Buchung zustande. Der Leistungsumfang ergibt sich aus der Buchungsbestätigung. Abweichende Angaben oder zusätzliche Arbeiten stimmen wir mit Ihnen ab, bevor der Preis geändert wird. Express-Buchungen erfordern 15% Anzahlung."
       },
       {
         "title": "3. Preise, MwSt. & Zuschläge",
@@ -77,7 +77,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Version der Bedingungen",
-    "lastUpdated": "Bedingungsversion: kraken-2026-11-25 · Redaktionelle Prüfung: 25.11.2026",
+    "lastUpdated": "Bedingungsversion: kraken-2026-11-25-fixed-scope · Redaktionelle Prüfung: 25.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Schweiz",
     "backHome": "Zurück zur Startseite"
   },
@@ -90,8 +90,8 @@ const documents = {
         "content": "These terms apply to window cleaning, end-of-tenancy cleaning, regular cleaning, deep cleaning and small moves provided by Kraken PFM (Kraken, we) for private households. Different conditions apply only if accepted in writing."
       },
       {
-        "title": "2. Offers, Estimates & Contract Conclusion",
-        "content": "A contract is concluded when you confirm an offer or booking. The booking confirmation defines the scope. Estimates from the online calculator are preliminary. Incorrect information entitles Kraken to adjust pricing. Express bookings require a 15% deposit."
+        "title": "2. Quotes, fixed prices & contract formation",
+        "content": "The calculator shows a fixed price for the details and services you selected. With the same scope, that price remains unchanged. An enquiry alone does not confirm an appointment. A contract is formed by confirmation of a quote or online booking. The booking confirmation defines the scope. Different details or additional work are agreed with you before changing the price. Express bookings require a 15% deposit."
       },
       {
         "title": "3. Prices, VAT & Surcharges",
@@ -155,7 +155,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Terms version",
-    "lastUpdated": "Terms version: kraken-2026-11-25 · Editorial review: 25.11.2026",
+    "lastUpdated": "Terms version: kraken-2026-11-25-fixed-scope · Editorial review: 25.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Switzerland",
     "backHome": "Back to Home"
   },
@@ -168,8 +168,8 @@ const documents = {
         "content": "Estas condiciones se aplican a la limpieza de ventanas, de fin de alquiler, periódica, a fondo y a las pequeñas mudanzas que presta Kraken PFM (Kraken, nosotros) a hogares particulares. Las condiciones distintas solo se aplican si se aceptan por escrito."
       },
       {
-        "title": "2. Ofertas, Estimaciones y Formalización del Contrato",
-        "content": "El contrato se formaliza cuando confirma un presupuesto o una reserva. El alcance se define en la confirmación de reserva. Las estimaciones del calculador en línea son preliminares. La información incorrecta autoriza a Kraken a ajustar los precios. Las reservas express requieren un anticipo del 15%."
+        "title": "2. Presupuestos, precio cerrado y contratación",
+        "content": "El calculador muestra un precio cerrado para los datos y servicios seleccionados. Si el alcance no cambia, el precio se mantiene. Una solicitud no confirma por sí sola una fecha. El contrato se formaliza al confirmar un presupuesto o una reserva en línea. La confirmación define el alcance. Los cambios de datos o trabajos adicionales se acuerdan con usted antes de modificar el precio. Las reservas exprés requieren un anticipo del 15%."
       },
       {
         "title": "3. Precios, IVA y Recargos",
@@ -233,7 +233,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Versión de las condiciones",
-    "lastUpdated": "Versión de condiciones: kraken-2026-11-25 · Revisión editorial: 25.11.2026",
+    "lastUpdated": "Versión de condiciones: kraken-2026-11-25-fixed-scope · Revisión editorial: 25.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Suiza",
     "backHome": "Volver al Inicio"
   },
@@ -246,8 +246,8 @@ const documents = {
         "content": "Estas condições aplicam-se à limpeza de janelas, de fim de arrendamento, regular, a fundo e às pequenas mudanças prestadas pela Kraken PFM (Kraken, nós) a casas particulares. Condições diferentes só se aplicam se forem aceites por escrito."
       },
       {
-        "title": "2. Ofertas, Estimativas & Conclusão do Contrato",
-        "content": "O contrato é formalizado quando confirma um orçamento ou uma reserva. O âmbito é definido na confirmação da reserva. As estimativas da calculadora em linha são aproximadas. Informações incorretas autorizam a Kraken a ajustar os preços. As reservas express requerem um adiantamento de 15%."
+        "title": "2. Orçamentos, preço fixo e contratação",
+        "content": "A calculadora mostra um preço fixo para os dados e serviços selecionados. Se o âmbito não mudar, o preço mantém-se. Um pedido, por si só, não confirma uma data. O contrato é celebrado com a confirmação de um orçamento ou reserva online. A confirmação define o âmbito. Alterações aos dados ou trabalhos adicionais são acordados consigo antes de alterar o preço. As reservas expresso exigem um adiantamento de 15%."
       },
       {
         "title": "3. Preços, IVA & Sobretaxas",
@@ -311,7 +311,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Versão das condições",
-    "lastUpdated": "Versão das condições: kraken-2026-11-25 · Revisão editorial: 25.11.2026",
+    "lastUpdated": "Versão das condições: kraken-2026-11-25-fixed-scope · Revisão editorial: 25.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Suíça",
     "backHome": "Regressar à Página de Início"
   },
@@ -324,8 +324,8 @@ const documents = {
         "content": "Queste condizioni si applicano alla pulizia di finestre, di fine locazione, regolare, a fondo e ai piccoli traslochi forniti da Kraken PFM (Kraken, noi) per abitazioni private. Condizioni diverse si applicano solo se accettate per iscritto."
       },
       {
-        "title": "2. Offerte, Stime & Conclusione del Contratto",
-        "content": "Il contratto si perfeziona quando conferma un preventivo o una prenotazione. La conferma definisce la portata del servizio. Le stime del calcolatore online sono indicative. Informazioni errate autorizzano Kraken ad adeguare i prezzi. Le prenotazioni express richiedono un acconto del 15%."
+        "title": "2. Preventivi, prezzo fisso e contratto",
+        "content": "Il calcolatore mostra un prezzo fisso per i dati e i servizi selezionati. A parità di portata, il prezzo rimane invariato. Una richiesta da sola non conferma un appuntamento. Il contratto si conclude con la conferma di un preventivo o di una prenotazione online. La conferma definisce la portata. Dati diversi o lavori aggiuntivi vengono concordati con lei prima di modificare il prezzo. Le prenotazioni express richiedono un acconto del 15%."
       },
       {
         "title": "3. Prezzi, IVA & Maggiorazioni",
@@ -389,7 +389,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Versione delle condizioni",
-    "lastUpdated": "Versione delle condizioni: kraken-2026-11-25 · Revisione editoriale: 25.11.2026",
+    "lastUpdated": "Versione delle condizioni: kraken-2026-11-25-fixed-scope · Revisione editoriale: 25.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Svizzera",
     "backHome": "Ritorna alla Home page"
   },
@@ -402,8 +402,8 @@ const documents = {
         "content": "Ces conditions s’appliquent au nettoyage des vitres, de fin de bail, régulier, en profondeur et aux petits déménagements fournis par Kraken PFM (Kraken, nous) pour les particuliers. Des conditions différentes ne s’appliquent que si elles sont acceptées par écrit."
       },
       {
-        "title": "2. Offres, Estimations & Conclusion de Contrat",
-        "content": "Un contrat est conclu lorsque vous confirmez une offre ou une réservation. La confirmation définit l’étendue de la prestation. Les estimations du calculateur en ligne sont provisoires. Des informations incorrectes autorisent Kraken à ajuster le prix. Les réservations express nécessitent un acompte de 15%."
+        "title": "2. Devis, prix fixe et conclusion du contrat",
+        "content": "Le calculateur affiche un prix fixe pour les données et prestations sélectionnées. Si l’étendue reste identique, ce prix ne change pas. Une demande seule ne confirme pas un rendez-vous. Le contrat est conclu par la confirmation d’un devis ou d’une réservation en ligne. La confirmation définit l’étendue. Des données différentes ou des travaux supplémentaires sont convenus avec vous avant toute modification du prix. Les réservations express exigent un acompte de 15%."
       },
       {
         "title": "3. Tarifs, TVA & Majorations",
@@ -467,7 +467,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Version des conditions",
-    "lastUpdated": "Version des conditions : kraken-2026-11-25 · Révision éditoriale : 25.11.2026",
+    "lastUpdated": "Version des conditions : kraken-2026-11-25-fixed-scope · Révision éditoriale : 25.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Suisse",
     "backHome": "Retour à l'Accueil"
   }

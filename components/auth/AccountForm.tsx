@@ -1,3 +1,4 @@
+import "../../src/styles/route-utilities.css";
 import React, { useState, useRef, useEffect, type FormEvent } from 'react';
 import { useAuth } from '../Auth';
 import { useTranslation } from '../../i18n';
