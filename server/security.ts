@@ -4,11 +4,11 @@ export const ENFORCED_CSP = "frame-ancestors 'self'; object-src 'none'; base-uri
 /** Start resource restrictions in report-only mode; existing auth/payment integrations keep working. */
 export const REPORT_ONLY_CSP = [
   "default-src 'self'", "base-uri 'self'", "object-src 'none'",
-  "script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com",
+  "script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com",
   "style-src 'self' 'unsafe-inline'", "font-src 'self'",
   "img-src 'self' data: blob: https:", "media-src 'self' blob:",
   "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com",
-  "frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com",
+  "frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com",
   "form-action 'self' https://*.payrexx.com", "worker-src 'self' blob:",
 ].join('; ');
 export function securityHeaders(_req: Request, res: Response, next: NextFunction): void {

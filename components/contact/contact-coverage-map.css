@@ -1,0 +1,47 @@
+#kraken-contact-real .kr-contact-coverage {
+  min-width:0;
+  padding:clamp(16px,2.1vw,26px);
+  color:#153b5b;
+  background:#fff;
+  border:1px solid #dce6ed;
+  border-radius:24px;
+  box-shadow:0 10px 34px #062d5208;
+}
+#kraken-contact-real .kr-contact-coverage-heading { margin:0 0 20px; }
+#kraken-contact-real .kr-contact-coverage-eyebrow { margin:0 0 9px; color:#486b7a; font-size:.875rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; line-height:1.5; }
+#kraken-contact-real .kr-contact-coverage-heading h2 { margin:0 0 10px; font-size:clamp(23px,2.2vw,30px); line-height:1.18; letter-spacing:-.035em; font-weight:800; color:#062d52; }
+#kraken-contact-real .kr-contact-coverage-subtitle { margin:0; font-size:1rem; line-height:1.6; color:#587183; }
+#kraken-contact-real .kr-contact-coverage-figure { margin:0; }
+#kraken-contact-real .kr-contact-coverage-map { position:relative; width:100%; aspect-ratio:var(--coverage-map-aspect); border:1px solid #dbe5df; border-radius:18px; background:#edf3e4; }
+#kraken-contact-real .kr-contact-coverage-map>picture,#kraken-contact-real .kr-contact-coverage-map img { display:block; width:100%; height:100%; border-radius:17px; object-fit:contain; }
+/* The tip is the exact geographic anchor; the glass droplet stays above it. */
+#kraken-contact-real .kr-contact-coverage-marker { position:absolute; left:var(--coverage-marker-x); z-index:1; display:grid; width:44px; height:44px; place-items:center; transform:translate(-50%,-100%); color:#062d52; text-decoration:none; border-radius:12px; outline-offset:4px; }
+#kraken-contact-real .kr-contact-coverage-pin { position:absolute; left:8px; bottom:5.8px; display:grid; place-items:center; width:28px; height:28px; border:1px solid #fffffff5; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:linear-gradient(135deg,#fffffffa,#edf5ecda); box-shadow:inset 0 1px 0 #fff,0 4px 12px #062d522b; backdrop-filter:blur(6px); }
+#kraken-contact-real .kr-contact-coverage-pin>span { position:relative; display:block; width:18px; height:18px; border:1px solid #153b5b; border-radius:50%; background:#062d52; box-shadow:inset 0 1px 2px #ffffff45; transform:rotate(45deg); }
+#kraken-contact-real .kr-contact-coverage-pin>span:after { position:absolute; top:4px; right:4px; width:5px; height:5px; border-radius:50%; background:#b7f3d7; content:''; }
+#kraken-contact-real .kr-contact-coverage-label { position:absolute; left:calc(100% + 5px); top:50%; transform:translateY(-50%); padding:7px 10px; border:1px solid #ffffffef; border-radius:12px; color:#062d52; background:#fffffff2; box-shadow:0 3px 10px #062d5212; font-size:.875rem; font-weight:800; line-height:1.4; white-space:nowrap; backdrop-filter:blur(6px); }
+#kraken-contact-real .kr-contact-coverage-marker:hover .kr-contact-coverage-pin,#kraken-contact-real .kr-contact-coverage-marker:focus-visible .kr-contact-coverage-pin { background:#d6fae8; box-shadow:0 0 0 4px #b7f3d77d,0 4px 12px #062d522b; }
+#kraken-contact-real .kr-contact-coverage-marker:hover .kr-contact-coverage-label,#kraken-contact-real .kr-contact-coverage-marker:focus-visible .kr-contact-coverage-label { background:#e1faed; text-decoration:underline; text-underline-offset:3px; }
+#kraken-contact-real .kr-contact-coverage-marker:focus-visible { outline:3px solid #062d52; }
+#kraken-contact-real .kr-contact-coverage-attribution { margin-top:8px; color:#627681; font-size:.75rem; line-height:1.65; }
+#kraken-contact-real .kr-contact-coverage-attribution a { color:inherit; text-decoration:underline; text-decoration-color:#aabac4; text-underline-offset:2px; }
+#kraken-contact-real .kr-contact-coverage-attribution a:focus-visible { outline:2px solid #062d52; outline-offset:3px; }
+#kraken-contact-real .kr-contact-coverage-note { margin:18px 0 12px; color:#486376; font-size:1rem; line-height:1.65; }
+#kraken-contact-real .kr-contact-coverage-regions { display:flex; gap:8px; flex-wrap:wrap; }
+#kraken-contact-real .kr-contact-coverage-regions>a { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:44px; padding:8px 12px; color:#062d52; background:#f3f8fc; border:1px solid #dce6ed; border-radius:12px; font-size:.875rem; font-weight:800; line-height:1.4; text-decoration:none; }
+#kraken-contact-real .kr-contact-coverage-regions>a:hover,#kraken-contact-real .kr-contact-coverage-regions>a:focus-visible { color:#062d52; background:#e0f8ed; border-color:#86bbab; text-decoration:underline; text-underline-offset:3px; }
+#kraken-contact-real .kr-contact-coverage-regions>a:focus-visible { outline:3px solid #062d52; outline-offset:3px; }
+@media(max-width:600px) {
+  #kraken-contact-real .kr-contact-coverage-map { aspect-ratio:var(--coverage-mobile-aspect); }
+  #kraken-contact-real .kr-contact-coverage-marker { left:var(--coverage-marker-mobile-x); }
+  #kraken-contact-real .kr-contact-coverage-label { top:calc(100% + 5px); left:50%; transform:translateX(-50%); padding:6px 8px; font-size:.875rem; }
+}
+@media(min-width:1200px) {
+  #kraken-contact-real .kr-contact-coverage-marker { width:56px; height:56px; }
+  #kraken-contact-real .kr-contact-coverage-pin { left:10px; bottom:7.45px; width:36px; height:36px; }
+  #kraken-contact-real .kr-contact-coverage-pin>span { width:23px; height:23px; }
+  #kraken-contact-real .kr-contact-coverage-pin>span:after { top:5px; right:5px; width:6px; height:6px; }
+}
+@media(prefers-reduced-transparency:reduce) {
+  #kraken-contact-real .kr-contact-coverage-pin,#kraken-contact-real .kr-contact-coverage-label { backdrop-filter:none; background:#fff; }
+}

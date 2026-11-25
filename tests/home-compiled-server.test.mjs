@@ -21,7 +21,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
       'components/home/homeTranslations.ts', 'components/contact/contactTranslations.ts', 'components/services/servicesTranslations.ts',
       'src/kai/types.ts', 'src/contact/routing-server.ts', 'src/booking/pricing.ts', 'src/booking/publicPricing.ts',
       'src/booking/uiCopy.ts', 'src/booking/terms.ts', 'src/home/paint-start.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',
-      ...['server', 'src/seo', 'src/routing', 'src/i18n'].flatMap(folder => readdirSync(path.join(root, folder)).filter(name => name.endsWith('.ts')).map(name => `${folder}/${name}`)),
+      ...['server', 'src/seo', 'src/routing', 'src/i18n', 'src/contact'].flatMap(folder => readdirSync(path.join(root, folder)).filter(name => name.endsWith('.ts')).map(name => `${folder}/${name}`)),
     ];
     for (const name of new Set(names)) {
       const output = ts.transpileModule(readFileSync(path.join(root, name), 'utf8'), { fileName: name, compilerOptions: options }).outputText;

@@ -8,6 +8,7 @@ import { getEndOfTenancyMetadata, getEndOfTenancyOfferRows } from './end-of-tena
 import { getPublicPriceOffers } from '../booking/publicPricing.ts';
 import { getHomeFaqs, getServicePageFaqs } from './page-faqs.ts';
 import { getRegionalPageMetadata } from './regional-metadata.ts';
+import { getContactCopy } from '../contact/contact-copy.ts';
 
 export { normalizeCanonicalPath } from '../../seoConfig.ts';
 
@@ -128,7 +129,7 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
     about: { '@id': businessId },
   };
   const schema: StructuredData[] = [website, business, page];
-  let visibleFaqs = canonicalPath === '/' ? getHomeFaqs(locale) : getRegionalPageMetadata(canonicalPath,locale)?.faqs;
+  let visibleFaqs = legacyPath === '/kontakt' ? getContactCopy(locale).faqs : canonicalPath === '/' ? getHomeFaqs(locale) : getRegionalPageMetadata(canonicalPath,locale)?.faqs;
   if (canonicalPath !== '/') {
     const breadcrumbs: { name: string; item: string }[] = [
       { name: SITE_IDENTITY.shortName, item: localizedCanonicalUrl('/', locale) },

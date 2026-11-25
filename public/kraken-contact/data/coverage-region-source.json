@@ -1,0 +1,120 @@
+{
+  "generated": "2026-11-25",
+  "description": "Processed static swisstopo base vectors. No simulated terrain, route, radius, service polygon, office or live data.",
+  "attribution": "© swisstopo, © FDFA, © FOEN, © FOCP, © SAC, © Naturefriends Switzerland, © opentransportdata.swiss",
+  "terms": "https://www.geo.admin.ch/en/vector-tiles-service-available-services-and-data",
+  "ogdTerms": "https://www.swisstopo.admin.ch/en/terms-of-use-free-geodata-and-geoservices",
+  "documentation": "https://docs.geo.admin.ch/visualize-data/vector-tiles.html",
+  "bounds": [
+    7.96,
+    47.28875604010329,
+    9.28,
+    47.79
+  ],
+  "projection": "Web Mercator; north up; equal x/y scale",
+  "viewport": [
+    800,
+    450
+  ],
+  "mobileCrop": {
+    "x": 250,
+    "y": 0,
+    "width": 300,
+    "height": 450,
+    "note": "A true SVG viewBox crop of the same projected geometry; no stretching or moved coordinates."
+  },
+  "simplification": "Douglas–Peucker, maximum deviation 0.35 SVG units; coordinates rounded to 0.1 SVG unit.",
+  "layers": {
+    "land": 3840,
+    "waterAreas": 184,
+    "rivers": 896,
+    "roads": 4058
+  },
+  "sources": [
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/534/356.pbf",
+      "sha256": "09bb129fbff210835b4c5762d4f8a10d772650c403ebd88dae954bc3362e6d81",
+      "bytes": 253
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/535/356.pbf",
+      "sha256": "09bb129fbff210835b4c5762d4f8a10d772650c403ebd88dae954bc3362e6d81",
+      "bytes": 253
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/536/356.pbf",
+      "sha256": "ef02516bc9a68e106354f6cdbdee7bd988ed4200430770b5ad319eeff7fc8834",
+      "bytes": 51353
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/537/356.pbf",
+      "sha256": "5448e26b97a4b1cb9d4a9f9bc6e50a02a7e3eff51f7db85026d4649919c0ff83",
+      "bytes": 2198
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/538/356.pbf",
+      "sha256": "da269a132c9a4bf2f96e5cb10c0fb34d8f9971c387a89a8a31b39cb4890a2ab5",
+      "bytes": 1201
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/534/357.pbf",
+      "sha256": "7283e5c1926b59fe970c9b56334ff3721c540e1ee5123bc8210702cb5deeb1ed",
+      "bytes": 137023
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/535/357.pbf",
+      "sha256": "a9f0f741673c3e024f3b1a3b73dd8a3a075d42a79e03bb651292a7105b39656b",
+      "bytes": 217199
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/536/357.pbf",
+      "sha256": "c8220fad605fa4427519b8c0d926fef6385811467e7ba0f66b63ede3d2213a0d",
+      "bytes": 666939
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/537/357.pbf",
+      "sha256": "47742fca1aa9764d83441ca45d3d50fa1c1ca7595dc1b60b18710bf470f449d0",
+      "bytes": 471604
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/538/357.pbf",
+      "sha256": "39601d6d66993214ca8910fdaa43ee1a531b9e0b9cfec1b87e977be23d45b1d4",
+      "bytes": 268942
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/534/358.pbf",
+      "sha256": "ec8515460e2dcf485abbe975532251a680b6c41a9d3d2a9c42e8ac14fbcb18b6",
+      "bytes": 753037
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/535/358.pbf",
+      "sha256": "7a0e17f6efbb767cc8e9aac829092ce25293234de8bf7c08653b7e4ee49e944e",
+      "bytes": 895375
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/536/358.pbf",
+      "sha256": "5670725b5660f9744738db6b6a16503d776bb898f910a3c8893c430999cd1a4a",
+      "bytes": 1164913
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/537/358.pbf",
+      "sha256": "5e7d42a4fe93ca433c67badc9aac4371a7384076fad9320be2f5c84aba86830b",
+      "bytes": 668831
+    },
+    {
+      "url": "https://vectortiles.geo.admin.ch/tiles/ch.swisstopo.base.vt/v1.0.0/10/538/358.pbf",
+      "sha256": "8d1c2a372a483f249034a22e39518ca18eda8b3843770467b0fdb0c9d9b87ec4",
+      "bytes": 670943
+    }
+  ],
+  "asset": {
+    "path": "/kraken-contact/assets/coverage-region.svg",
+    "bytes": 521780,
+    "sha256": "984697af11c77ae54e2c7e1ee04e597774201e512f2bc0612e5b38777682d7cd"
+  },
+  "mobileAsset": {
+    "path": "/kraken-contact/assets/coverage-region-mobile.svg",
+    "bytes": 521782,
+    "sha256": "3b76950bcfca44767d65dae30ea61d659d7156592a699a7b5ec84c09e21eca34"
+  }
+}

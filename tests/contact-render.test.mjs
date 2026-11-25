@@ -7,7 +7,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getMetadataForPath } from '../seoConfig.ts';
 import { getApprovedPageMetadata } from '../src/seo/local-metadata.ts';
-import { contactText } from '../components/contact/contactTranslations.ts';
+import { getContactCopy } from '../src/contact/contact-copy.ts';
+import { getPageSeo } from '../src/seo/metadata.ts';
 import { homeText } from '../components/home/homeTranslations.ts';
 import { publicHref } from '../src/routing/site-paths.ts';
 
@@ -26,45 +27,37 @@ try {
   render = createRequire(import.meta.url)(outfile).render;
 } finally { rmSync(temporary, { recursive: true, force: true }); }
 
-test('Contact initial HTML keeps verified contact information and localized calculator links without map JavaScript', () => {
+const escape = value => value.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+test('redesigned contact renders native enquiry, coverage and direct destinations in six languages', () => {
   for (const language of languages) {
-    const html = render(language);
-    assert.equal((html.match(/<h1\b/g) || []).length, 1, language);
-    assert.equal((html.match(/id="kraken-contact-real"/g) || []).length, 1, language);
-    assert.match(html, /Seewadelstrasse 3/);
-    assert.match(html, /8203 Schaffhausen/);
-    assert.match(html, /href="tel:\+41774505705"/);
-    assert.match(html, /href="mailto:kai@krakenpfm.ch"/);
-    assert.match(html, /09:00/);
-    assert.match(html, /19:00/);
-    assert.match(html, /Europe\/Zurich/);
+    const html = render(language), copy=getContactCopy(language);
+    assert.equal((html.match(/<h1\b/g)||[]).length,1);
+    for(const text of [copy.hero.title,copy.hero.intro,copy.hero.hours,copy.person.name,copy.person.role,...copy.faqs.flatMap(faq=>[faq.question,faq.answer])])assert.ok(html.includes(escape(text)),language+': '+text);
+    assert.match(html,/href="tel:\+41774505705"/);
+    assert.match(html,/href="https:\/\/wa.me\/41774505705"/);
+    assert.match(html,/href="mailto:kai@krakenpfm.ch"/);
     assert.ok(html.includes('href="'+publicHref('/quote',language)+'"'));
-    assert.ok(html.includes(contactText(language, 'Konzeptbilder · keine Fotos des Standorts')), language);
-    assert.ok(html.includes(homeText(language,'Reinigung & kleine Umzüge').replace(/&/g,'&amp;')));
-    assert.match(html, /swisstopo/);
-    assert.match(html, /OpenStreetMap/);
-    assert.match(html, /openrouteservice/);
-    assert.doesNotMatch(html, /<iframe|data:image\/|(?:CHF|EUR)\s*\d/);
-    assert.ok(html.includes(contactText(language, 'Näher dran.')), language);
-    assert.ok(html.includes(contactText(language, 'Persönlich für Sie da.')), language);
+    assert.ok(html.includes('href="'+publicHref('/gdpr',language)+'"'));
+    assert.ok(html.indexOf('contact-message-section')<html.indexOf('kr-contact-coverage'));
+    assert.ok(html.indexOf('contact-intro-hours')<html.indexOf('contact-message-section'));
+    assert.match(html,/coverage-region\.svg/);
+    assert.match(html,/swisstopo/);
+    assert.match(html,/name="postalCode"/);
+    const phone=html.match(/<input[^>]*name="phone"[^>]*>/)?.[0];
+    assert.ok(phone&&!phone.includes('required'));
+    assert.doesNotMatch(html,/contact-(?:exterior|interior|marker)\.webp|Europe\/Zurich|kr-result|kr-geography|kr-gallery|<iframe|data:image\/|(?:CHF|EUR)\s*\d|name="subject"|contact-response-time/);
   }
 });
 
-test('Contact metadata follows all six locales and keeps a single public canonical', () => {
-  for (const language of [...languages, 'de-CH']) {
-    const meta = getMetadataForPath(`/kontakt?lang=${language}`);
-    assert.equal(meta.title, getApprovedPageMetadata('/kontakt', language).title);
-    assert.equal(meta.h1, `${contactText(language, 'Näher dran.')} ${contactText(language, 'Persönlich für Sie da.')}`);
-    assert.equal(meta.canonical, 'https://krakenpfm.ch/kontakt');
-    assert.equal(meta.pageType, 'kontakt');
-    assert.deepEqual(meta.hreflangs, []);
-    assert.match(meta.description, /09:00/);
-    assert.match(meta.description, /19:00/);
-    assert.doesNotMatch(meta.description, /(?:CHF|EUR)\s*\d|GPS/);
-    if (!language.startsWith('de')) assert.notEqual(meta.title, getMetadataForPath('/kontakt', 'de').title);
+test('contact production canonicals, alternates and metadata follow the selected language', () => {
+  for(const language of languages){
+    const path=publicHref('/kontakt',language),meta=getPageSeo(path,language),copy=getContactCopy(language);
+    assert.equal(meta.canonical,'https://krakenpfm.ch'+path);
+    assert.equal(meta.title,copy.meta.title);
+    assert.equal(meta.h1,copy.hero.title);
+    assert.equal(meta.hreflangs.length,7);
+    assert.ok(meta.hreflangs.some(alt=>alt.lang==='x-default'));
   }
-  assert.equal(getMetadataForPath('/kontakt?hl=es').title, getMetadataForPath('/kontakt', 'es').title);
-  assert.equal(getMetadataForPath('/kontakt/', 'fr').canonical, 'https://krakenpfm.ch/kontakt');
 });
 
 test('the supplied route data preserves independent examples in both directions', () => {

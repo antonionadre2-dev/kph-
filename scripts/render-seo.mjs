@@ -39,11 +39,12 @@ export async function renderSeoHtml(root) {
         import {bookingText} from './src/booking/uiCopy.ts';
         import {publicHref} from './src/routing/site-paths.ts';
         import {HERO_DAY,heroImage} from './src/home/hero-media.ts';
+        import {getContactCopy} from './src/contact/contact-copy.ts';
         export const routes=[...INDEXABLE_PATHS,...LEGAL_DOCUMENT_PATHS]; export const filename=seoFragmentName;
         const noop=()=>{};
         const wrap=(language,child)=>renderToStaticMarkup(<I18nProvider initialLanguage={language}>{child}</I18nProvider>);
-        export const header=language=>wrap(language,<div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div>);
-        export const footer=language=>wrap(language,<Footer onNavigate={noop}/>);
+        export const header=(language,page='local')=>wrap(language,<div className="kraken-home"><ApprovedHeader onNavigate={noop} page={page} contactQuoteLabel={page==='contact'?getContactCopy(language).hero.calculate:undefined}/></div>);
+        export const footer=(language,contactPage=false)=>wrap(language,<Footer onNavigate={noop} contactPage={contactPage}/>);
         export const home=language=>{
           const image=heroImage(HERO_DAY).source;
           const preload=image?renderToStaticMarkup(<link rel="preload" as="image" type={image.type} imageSrcSet={image.srcSet} imageSizes={image.sizes} fetchPriority="high"/>):'';
@@ -71,7 +72,7 @@ export async function renderSeoHtml(root) {
           const kind = ({ '/leistungen': 'services', '/ueber-uns': 'about', '/kontakt': 'contact' })[pathname];
           const fragment = readFileSync(path.join(root, `dist/${kind}-content-${language}.html`), 'utf8');
           const extra = fragment.match(/<link rel="stylesheet" href="[^"]+">/g) || [];
-          styles += extra.join(''); body = header + fragment.replace(/<link rel="stylesheet" href="[^"]+">/g, '') + footer;
+          styles += extra.join(''); body = (pathname === '/kontakt' ? render.header(language,'contact') : header) + fragment.replace(/<link rel="stylesheet" href="[^"]+">/g, '') + (pathname === '/kontakt' ? render.footer(language,true) : footer);
         } else if (pathname === '/offerte') {
           styles += stylesFor('components/calculator/CalculatorRoute.tsx'); body = render.quote(language);
         } else if (['/impressum','/gdpr','/terms'].includes(pathname)) {

@@ -446,7 +446,7 @@ const App: React.FC = () => {
       {!isReviewPage && !isApprovedHome && <Header onNavigate={handleNavigate} currentPage={page as any} />}
       {isLocalSeo && <div className="kraken-home"><ApprovedHeader onNavigate={handleNavigate} page="local" /></div>}
       {renderPage()}
-      <Footer onNavigate={handleNavigate} />
+      <Footer onNavigate={handleNavigate} contactPage={page === 'kontakt'} />
       {mounted && !isReviewPage && (
         <Suspense fallback={null}>
           <CookieConsent onNavigate={handleNavigate} />
