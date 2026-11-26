@@ -1,0 +1,81 @@
+{
+  "clips": [
+    {
+      "file": "B1-precio-escritorio.gif",
+      "width": 1280,
+      "height": 900,
+      "durationMs": 1720,
+      "bytes": 2283975,
+      "sha256": "bdf6255cd33c7240796eece2f6e2ece2463ffefe41bfd6425d6dccf233efb010",
+      "verifiedGeometry": true
+    },
+    {
+      "file": "B1-precio-movil.gif",
+      "width": 375,
+      "height": 812,
+      "durationMs": 1940,
+      "bytes": 1026884,
+      "sha256": "f5c0c49d70acea9ed6ade2bc6ac497f453b23782d6427844916153a0b8e402f2",
+      "verifiedGeometry": true
+    },
+    {
+      "file": "B2-envio-confirmacion.gif",
+      "width": 1280,
+      "height": 900,
+      "durationMs": 2600,
+      "bytes": 3219887,
+      "sha256": "4f14f9720e1c8bc1f05fabd5c54b6ea059bc4ec9c0c0663d18f09fb6707fa582",
+      "verifiedGeometry": true
+    },
+    {
+      "file": "B3-boton-y-localidad.gif",
+      "width": 375,
+      "height": 812,
+      "durationMs": 2430,
+      "bytes": 1568964,
+      "sha256": "d933e5e483eddfb55d0c3ee10d82e2f3faa580bc9498cfab51800e66d079c2a1",
+      "verifiedGeometry": true
+    },
+    {
+      "file": "B4-kai-movil.gif",
+      "width": 375,
+      "height": 812,
+      "durationMs": 2200,
+      "bytes": 1824128,
+      "sha256": "54a0e06d998236df282024db5734b5d1e731439914b3f325916c199cd5170045",
+      "verifiedGeometry": true
+    },
+    {
+      "file": "B5-pasos-movil.gif",
+      "width": 375,
+      "height": 812,
+      "durationMs": 1500,
+      "bytes": 815504,
+      "sha256": "a93fbf138e5c85f852edb82384fe680cbf9878204d37315e8666608840187a14",
+      "verifiedGeometry": true
+    },
+    {
+      "file": "B6-desplegable-movil.gif",
+      "width": 375,
+      "height": 812,
+      "durationMs": 2250,
+      "bytes": 894538,
+      "sha256": "8bf1746275c9b777c9108d54c40dc790b3e033ca21c0c97800abe685c3f43294",
+      "verifiedGeometry": true
+    },
+    {
+      "file": "B7-carrusel-manual.gif",
+      "width": 1280,
+      "height": 900,
+      "durationMs": 10040,
+      "bytes": 11417230,
+      "sha256": "39613ef0a80526d0cbd0a41504dbfee9fb2349aaada7200874e4dc0430bbd1a2",
+      "verifiedGeometry": true
+    }
+  ],
+  "selectionCount": 8,
+  "excluded": [
+    "B2-envio-error"
+  ],
+  "source": "Actual browser screencast JPEG frames; independently checked geometry, delays and original source hashes; no resizing, padding or interpolation."
+}

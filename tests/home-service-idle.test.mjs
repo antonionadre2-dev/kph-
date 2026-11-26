@@ -6,6 +6,7 @@ function fixture(options = {}) {
   let now = 0, next = 0;
   const timers = new Map(), views = [], preferences = [];
   const controller = createServicePreviewController({
+    initiallyPaused: false,
     schedule(fn, delay) { const id = ++next; timers.set(id, { at: now + delay, fn }); return id; },
     cancel(id) { timers.delete(id); },
     render(state) { views.push({ ...state }); },
@@ -23,6 +24,21 @@ function fixture(options = {}) {
   }
   return { controller, tick, timers, views, preferences };
 }
+
+test('the default preview never arms autoplay; manual views work with reduced motion', () => {
+  const controller = createServicePreviewController({ schedule() { throw new Error('Unexpected autoplay'); } });
+  controller.setVisible(true);
+  assert.equal(controller.snapshot().enabled, false);
+  assert.equal(controller.snapshot().index, -1);
+  controller.step(1); assert.equal(controller.snapshot().index, 0);
+  controller.step(1); assert.equal(controller.snapshot().index, 1);
+  controller.step(-1); assert.equal(controller.snapshot().index, 0);
+  controller.setReducedMotion(true);
+  controller.step(-1); assert.equal(controller.snapshot().index, 1);
+  assert.equal(controller.snapshot().enabled, false);
+  controller.toggle(); assert.equal(controller.snapshot().enabled, false);
+  controller.destroy();
+});
 
 test('requires 30 continuous visible seconds and resets when the section or document is hidden', () => {
   const { controller, tick, timers } = fixture();
@@ -112,17 +128,21 @@ test('mount uses live language, cancels on a modal and cleans up before a React 
   });
   let language = 'es';
   const first = initServicePreview(root, { getLanguage: () => language });
-  assert.equal(button.attributes.get('aria-label'), 'Pausar la vista automática de imágenes');
-  context.mock.timers.tick(29_000); modal = true; dialogChange();
+  assert.equal(button.attributes.get('aria-label'), 'Iniciar la vista de imágenes');
+  context.mock.timers.tick(90_000); assert.equal(grid.dataset.previewActive, undefined);
+  button.dispatchEvent(new Event('click'));
+  assert.equal(grid.dataset.previewActive, '0');
+  modal = true; dialogChange();
   context.mock.timers.tick(100_000); assert.equal(grid.dataset.previewActive, undefined);
   modal = false; dialogChange(); context.mock.timers.tick(29_999);
   assert.equal(grid.dataset.previewActive, undefined);
   context.mock.timers.tick(1); assert.equal(grid.dataset.previewActive, '0');
   language = 'fr'; root.dispatchEvent(new Event('kraken:languagechange'));
-  assert.equal(status.textContent, 'Découvrez le nettoyage à domicile');
+  assert.equal(status.textContent, 'Découvrez le nettoyage de fin de bail');
   first(); assert.equal(grid.dataset.previewActive, undefined); assert.equal(disconnects, 2);
   const second = initServicePreview(root, { getLanguage: () => 'pt' });
-  context.mock.timers.tick(30_000); assert.equal(grid.dataset.previewActive, '0');
+  context.mock.timers.tick(90_000); assert.equal(grid.dataset.previewActive, undefined);
+  button.dispatchEvent(new Event('click')); assert.equal(grid.dataset.previewActive, '0');
   second(); context.mock.timers.tick(100_000);
   assert.equal(grid.dataset.previewActive, undefined); assert.equal(disconnects, 4);
 });

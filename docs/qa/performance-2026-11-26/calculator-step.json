@@ -1,0 +1,17 @@
+{
+  "animation": "0.2s",
+  "focused": "kr-calc-step-title",
+  "panel": {
+    "bottom": 1689.8828125,
+    "height": 1589.7578125,
+    "left": 16,
+    "right": 359,
+    "top": 100.125,
+    "width": 343,
+    "x": 16,
+    "y": 100.125
+  },
+  "scrollWidth": 375,
+  "title": "¿Dónde y cuándo le viene bien?",
+  "width": 375
+}

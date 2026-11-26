@@ -5,6 +5,7 @@ import { mediaAsset } from '../../src/media/images.ts';
 import { HERO_DAY, HERO_NIGHT, HERO_ROOM_SIZES, heroImage } from '../../src/home/hero-media.ts';
 import { createInitialClothingGate, kaiSpriteTargetWidth, seasonalKaiClothing } from './scene-sprites.js';
 import { createSceneMediaGate } from './scene-loading.js';
+import { sceneCalendar } from '../../src/home/scene-calendar.ts';
 export function initApartmentScene(homeRoot, { t = source => source, getLocale = () => 'de-CH' } = {}) {
     const scope = createHomeScope();
     const byId = id => homeRoot.querySelector('#' + id);
@@ -16,8 +17,10 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     const $ = selector => homeRoot.querySelector(selector);
     const openButton = $('#sceneOpen');
     const kai = $('#sceneKai');
-    const room = $('#sceneRoom');
-    const roomAvif = $('#sceneRoomAvif');
+    const desktopRoom = $('#sceneRoom');
+    const mobileRoom = $('#sceneRoomMobile');
+    const mobileViewport = matchMedia('(max-width: 767px)');
+    const activeRoom = () => mobileViewport.matches && mobileRoom ? mobileRoom : desktopRoom;
     const landscape = $('#sceneLandscape');
     const kaiImage = new Image();
     let mediaReady = false;
@@ -30,12 +33,8 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     const weatherNames = { sun: 'Sonne', cloudy: 'Wolken', rain: 'Regen', snow: 'Schnee', sleet: 'Schneeregen', fog: 'Nebel', unknown: 'Wetter nicht verfügbar' };
     const phaseNames = { dawn: 'Morgen', day: 'Tag', evening: 'Abend', night: 'Nacht' };
     const holidayNames = { none: 'ohne Fest', christmas: 'Weihnachten', newyear: 'Neujahr' };
-    let dateFormatter, timeFormatter;
+    let timeFormatter;
     function refreshFormatters() {
-        dateFormatter = new Intl.DateTimeFormat(getLocale(), {
-            timeZone: 'Europe/Zurich', month: '2-digit', day: '2-digit',
-            hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
-        });
         timeFormatter = new Intl.DateTimeFormat(getLocale(), {
             timeZone: 'Europe/Zurich', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
         });
@@ -54,13 +53,16 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     const clothingGate = createInitialClothingGate(scope, () => updateScene());
     const autoplay = createSceneAutoplay(scope, { play: animateTask, stop: stopTask });
     const mediaGate = createSceneMediaGate(scope, {
-        image: room,
+        image: activeRoom,
         isVisible: () => sceneVisible,
         onReady: () => {
             mediaReady = true;
+            createPrecipitation();
             canvas.style.setProperty('--kh-holiday-decor', `url("${mediaAsset('/home-approved/assets/holiday-decor.webp')}")`);
             updateScene();
             syncMotion();
+            // The base room has decoded and painted; climate never delays that first image.
+            scope.timeout(fetchWeather, 0);
         },
     });
     function prepareKaiSprite() {
@@ -94,35 +96,6 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
         motionToggle.setAttribute('aria-label', label);
         motionToggle.title = label;
         motionToggle.querySelector('[data-scene-motion-label]').textContent = label;
-    }
-    function zurichParts(date) {
-        return Object.fromEntries(dateFormatter.formatToParts(date)
-            .filter(part => part.type !== 'literal')
-            .map(part => [part.type, Number(part.value)]));
-    }
-    function seasonFor(month) {
-        return month >= 3 && month <= 5 ? 'spring'
-            : month >= 6 && month <= 8 ? 'summer'
-                : month >= 9 && month <= 11 ? 'autumn' : 'winter';
-    }
-    function celebrationFor({ month, day }) {
-        if (month === 12 && day >= 1 && day <= 26)
-            return 'christmas';
-        if ((month === 12 && day >= 27) || (month === 1 && day <= 6))
-            return 'newyear';
-        return 'none';
-    }
-    function phaseFor({ hour, minute }, season) {
-        // Seasonal lighting bands, not an assertion of exact astronomical sunrise.
-        const [morning, evening] = { spring: [7, 20], summer: [6, 21], autumn: [7, 18], winter: [8, 17] }[season];
-        const time = hour + minute / 60;
-        if (time < morning - .75 || time >= evening + .5)
-            return 'night';
-        if (time < morning + .5)
-            return 'dawn';
-        if (time >= evening - 1)
-            return 'evening';
-        return 'day';
     }
     function currentObservation(now) {
         if (!weatherData || weatherData.available === false || !Array.isArray(weatherData.timeseries))
@@ -159,21 +132,22 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     }
     function updateScene() {
         const now = new Date();
-        const parts = zurichParts(now);
-        const automaticSeason = seasonFor(parts.month);
-        const season = overrides.season === 'auto' ? automaticSeason : overrides.season;
-        const celebration = overrides.celebration === 'auto' ? celebrationFor(parts) : overrides.celebration;
-        const phase = overrides.phase === 'auto' ? phaseFor(parts, automaticSeason) : overrides.phase;
+        const calendar = sceneCalendar(now);
+        const season = overrides.season === 'auto' ? calendar.season : overrides.season;
+        const celebration = overrides.celebration === 'auto' ? calendar.celebration : overrides.celebration;
+        const phase = overrides.phase === 'auto' ? calendar.phase : overrides.phase;
         const observation = currentObservation(now);
         const observedWeather = conditionFor(observation);
         const weather = overrides.weather === 'auto' ? observedWeather : overrides.weather;
-        const clothing = overrides.clothing === 'auto' && !observation ? seasonalKaiClothing(parts.month) : overrides.clothing;
+        const clothing = overrides.clothing === 'auto' && !observation ? seasonalKaiClothing(calendar.month) : overrides.clothing;
         const kaiState = resolveKaiState({ phase, temperatureC: observation?.temperatureC, clothing, service: selectedService });
         const preview = Object.values(overrides).some(value => value !== 'auto');
         Object.assign(canvas.dataset, { season, celebration, phase, weather, clothing: kaiState.clothing, lights: kaiState.lightsOn ? 'on' : 'off' });
+        const room = activeRoom();
+        const roomAvif = room === mobileRoom ? $('#sceneRoomMobileAvif') : $('#sceneRoomAvif');
         const roomMedia = heroImage(kaiState.lightsOn ? HERO_DAY : HERO_NIGHT, room.sizes || HERO_ROOM_SIZES);
         const roomProps = roomMedia.fallback;
-        if (mediaReady && room.getAttribute('src') !== roomProps.src) {
+        if (room.getAttribute('src') !== roomProps.src) {
             if (roomAvif && roomMedia.source) {
                 roomAvif.srcset = roomMedia.source.srcSet;
                 roomAvif.sizes = roomMedia.source.sizes;
@@ -246,7 +220,7 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
         weatherTimer = scope.timeout(fetchWeather, Math.max(1000, nextFetchAt - Date.now()));
     }
     async function fetchWeather() {
-        if (scope.disposed || document.hidden || weatherRequest)
+        if (scope.disposed || !mediaReady || document.hidden || weatherRequest)
             return;
         if (Date.now() < nextFetchAt) {
             scheduleWeather();
@@ -386,7 +360,7 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     let resizeTimer;
     scope.on(window, 'resize', () => {
         scope.clearTimeout(resizeTimer);
-        resizeTimer = scope.timeout(prepareKaiSprite, 120);
+        resizeTimer = scope.timeout(() => { updateScene(); prepareKaiSprite(); }, 120);
     });
     const visibility = scope.observer(entries => {
         const entry = entries.at(-1);
@@ -400,8 +374,6 @@ export function initApartmentScene(homeRoot, { t = source => source, getLocale =
     // Warm and night variants are requested by their CSS only when they are needed.
     scope.cleanup(() => { if (dialog.open)
         dialog.close(); document.body.classList.remove('kraken-home-scene-dialog-open'); $('#sceneRain').replaceChildren(); $('#sceneSnow').replaceChildren(); kaiImage.src = ''; });
-    createPrecipitation();
     tickClock();
-    fetchWeather();
     return () => scope.dispose();
 }

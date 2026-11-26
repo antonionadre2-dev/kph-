@@ -1,0 +1,26 @@
+/* Numeric feedback uses CSS only; alternating names restart an active pulse
+   without remounting either desktop or mobile's polite live region. */
+.kr-calc-total{--kr-calc-price-rest:#edf7fe}
+.kr-calc-mobile-price{--kr-calc-price-rest:transparent}
+.kr-calc-price-pulse-a{animation:kr-calc-price-pulse-a .3s ease-out}
+.kr-calc-price-pulse-b{animation:kr-calc-price-pulse-b .3s ease-out}
+@keyframes kr-calc-price-pulse-a{from{background-color:var(--kr-mint,#b7f2d6)}to{background-color:var(--kr-calc-price-rest,transparent)}}
+@keyframes kr-calc-price-pulse-b{from{background-color:var(--kr-mint,#b7f2d6)}to{background-color:var(--kr-calc-price-rest,transparent)}}
+
+/* The requested completion mark is the one 400 ms animation exception. Its
+   static wrappers rotate the two bars; only scaleX changes while they draw. */
+.kr-calc-completion-check{position:relative;display:inline-block;width:28px;height:28px;flex:none;color:inherit}
+.kr-calc-completion-check>span{position:absolute;height:10%;transform-origin:left center}
+.kr-calc-completion-check .kr-calc-check-short{left:20%;top:48%;width:24%;transform:rotate(45deg)}
+.kr-calc-completion-check .kr-calc-check-long{left:36.5%;top:65%;width:59%;transform:rotate(-45deg)}
+.kr-calc-completion-check>span>span{display:block;width:100%;height:100%;border-radius:99px;background:currentColor;transform-origin:left center}
+.kr-calc-check-short>span{animation:kr-calc-check-short .4s ease-out both}
+.kr-calc-check-long>span{animation:kr-calc-check-long .4s ease-out both}
+.kr-journey-success-mark .kr-calc-completion-check{width:27px;height:27px}
+@keyframes kr-calc-check-short{from{transform:scaleX(0)}35%,to{transform:scaleX(1)}}
+@keyframes kr-calc-check-long{from,35%{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(max-width:520px){.kr-journey-success-mark .kr-calc-completion-check{width:23px;height:23px}}
+@media(prefers-reduced-motion:reduce){
+  .kr-calc-price-pulse-a,.kr-calc-price-pulse-b{animation:none!important}
+  .kr-calc-completion-check>span>span{animation:none!important;transform:scaleX(1)}
+}

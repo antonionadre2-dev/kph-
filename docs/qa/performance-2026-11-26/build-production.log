@@ -1,0 +1,94 @@
+Skipping "install" command...
+
+> copy-of-kraken-properties-and-facilities-management@0.0.0 build:vercel
+> node scripts/build-vercel.mjs
+
+Generated robots.txt and sitemap.xml (144 canonical language URLs across 24 reviewed pages).
+vite v6.4.3 building for production...
+transforming...
+✓ 2642 modules transformed.
+Circular chunk: index -> vendor-react -> index. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "vendor-react" to be bundled into the chunk "index".
+rendering chunks...
+computing gzip size...
+dist/index.html                                 7.46 kB │ gzip:   2.06 kB
+dist/.vite/manifest.json                       16.49 kB │ gzip:   2.16 kB
+dist/assets/AccountForm-DbAdo7gY.css            1.39 kB │ gzip:   0.62 kB
+dist/assets/legal-BwrydFhV.css                  4.42 kB │ gzip:   1.11 kB
+dist/assets/FloatingMascot-BMeKYBgA.css         9.63 kB │ gzip:   2.72 kB
+dist/assets/KontaktPage-2mh6pQoP.css           17.08 kB │ gzip:   3.40 kB
+dist/assets/ApprovedServices-DtRrMAdn.css      19.65 kB │ gzip:   3.82 kB
+dist/assets/LocalSeoContent-B4h16TkQ.css       22.90 kB │ gzip:   4.92 kB
+dist/assets/ApprovedAbout-7-MkYWCi.css         38.53 kB │ gzip:   7.33 kB
+dist/assets/CalculatorRoute-BrrziaJn.css       39.56 kB │ gzip:   8.41 kB
+dist/assets/service-calculator-dhUWRR2X.css    42.45 kB │ gzip:   8.77 kB
+dist/assets/route-utilities-D8X00yII.css       54.86 kB │ gzip:   8.70 kB
+dist/assets/Dashboard-o4jVYqxH.css             63.71 kB │ gzip:  11.04 kB
+dist/assets/index-HP3ySUQ1.css                175.72 kB │ gzip:  32.49 kB
+dist/assets/LoginPage-BBjU3pu5.js               0.25 kB │ gzip:   0.20 kB
+dist/assets/RegisterPage-D8NAa5cP.js            0.26 kB │ gzip:   0.20 kB
+dist/assets/arrow-left-T9HIIaVr.js              0.35 kB │ gzip:   0.27 kB
+dist/assets/message-circle-863KLr6Q.js          0.43 kB │ gzip:   0.32 kB
+dist/assets/KrakenServiceIcon-C_NMSWRB.js       0.49 kB │ gzip:   0.35 kB
+dist/assets/CoverageHubPage-CxzxTlaG.js         0.51 kB │ gzip:   0.34 kB
+dist/assets/RegionHubPage-D1af6Miy.js           0.52 kB │ gzip:   0.34 kB
+dist/assets/SeoServiceCityPage-CZYnVFUa.js      0.53 kB │ gzip:   0.34 kB
+dist/assets/phone-Clhov06f.js                   0.84 kB │ gzip:   0.44 kB
+dist/assets/map-pin-B0Lut_Eq.js                 0.95 kB │ gzip:   0.48 kB
+dist/assets/x-C9Gwx2xY.js                       1.51 kB │ gzip:   0.49 kB
+dist/assets/createLucideIcon-Hm5ZvFAf.js        2.59 kB │ gzip:   0.81 kB
+dist/assets/TermsPage-D-LIuDBh.js               2.59 kB │ gzip:   1.05 kB
+dist/assets/icons-C8bnN_ov.js                   3.57 kB │ gzip:   0.98 kB
+dist/assets/index-BZKseLQo.js                   3.92 kB │ gzip:   1.87 kB
+dist/assets/CustomerAccessRoute-BCweywXG.js     4.42 kB │ gzip:   1.87 kB
+dist/assets/customerAccessCopy-BSOZDgXt.js      4.75 kB │ gzip:   2.17 kB
+dist/assets/AccountForm-CIZ1zg8Q.js             5.04 kB │ gzip:   2.19 kB
+dist/assets/CookieConsent-BCBfuJya.js           7.62 kB │ gzip:   1.82 kB
+dist/assets/draft-D4mi-dpi.js                   9.00 kB │ gzip:   3.69 kB
+dist/assets/FloatingMascot-DJOro6Jt.js         16.17 kB │ gzip:   5.72 kB
+dist/assets/KontaktPage-B1TmMJk1.js            18.67 kB │ gzip:   6.06 kB
+dist/assets/copy-CBfrJaWs.js                   18.78 kB │ gzip:   6.65 kB
+dist/assets/ImpressumPage-Df5HP_sy.js          20.97 kB │ gzip:   6.82 kB
+dist/assets/contact-copy-j66VhgCU.js           28.11 kB │ gzip:   8.71 kB
+dist/assets/purify.es-Csrj9YNg.js              28.14 kB │ gzip:  10.69 kB
+dist/assets/ReviewInvitePage-D0PIaUh5.js       28.34 kB │ gzip:  10.38 kB
+dist/assets/terms-BAdU0vxV.js                  32.07 kB │ gzip:  12.40 kB
+dist/assets/ApprovedServices-DF-LjEW5.js       33.23 kB │ gzip:   7.52 kB
+dist/assets/GDPRPage-KeQg6ywL.js               41.77 kB │ gzip:  13.69 kB
+dist/assets/servicesTranslations-IGEmwe61.js   44.26 kB │ gzip:  15.79 kB
+dist/assets/client-ZShwAPta.js                 45.27 kB │ gzip:  14.58 kB
+dist/assets/CommercialQuotePage-DKNPD-T6.js    57.89 kB │ gzip:  18.84 kB
+dist/assets/ApprovedAbout-BLYXyCSe.js          88.53 kB │ gzip:  27.25 kB
+dist/assets/page-faqs-0SAAswuN.js              94.97 kB │ gzip:  30.51 kB
+dist/assets/uiCopy-BzZkboqx.js                117.05 kB │ gzip:  41.00 kB
+dist/assets/proxy-Bzjqo3pY.js                 120.91 kB │ gzip:  39.59 kB
+dist/assets/index.es-DIRz69ZC.js              160.00 kB │ gzip:  53.72 kB
+dist/assets/vendor-react-yN8X17CV.js          193.77 kB │ gzip:  60.52 kB
+dist/assets/html2canvas.esm-B0tyYwQk.js       202.36 kB │ gzip:  48.04 kB
+dist/assets/LocalSeoContent-BB3QFdD4.js       233.98 kB │ gzip:  66.51 kB
+dist/assets/index.esm-Cou69UmR.js             236.48 kB │ gzip:  47.66 kB
+dist/assets/CalculatorRoute-CptEnl-D.js       239.97 kB │ gzip:  76.99 kB
+dist/assets/index-DLUgUbPI.js                 328.26 kB │ gzip: 107.93 kB
+dist/assets/firebase-C29YyqA1.js              338.67 kB │ gzip:  85.47 kB
+dist/assets/legacy-translations-CTu55u_1.js   527.05 kB │ gzip: 160.65 kB
+dist/assets/Dashboard-q5IgTy0k.js             599.00 kB │ gzip: 180.90 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 6.54s
+Vercel ready: frontend public/assets on CDN; dist/*.html for Express. No Node bundle, stats or source maps published.
+Using TypeScript 5.8.3 (local user-provided)
+{
+  "status": "ok",
+  "outputDir": "/Users/Projects/Documents/Codex/2026-11-20/files-pasted-by-the-user-abre/outputs/performance-microanimations-2026-11-26/production-worktree/.vercel/output",
+  "outputDirRelative": ".vercel/output",
+  "target": "production",
+  "message": "Build completed successfully.",
+  "next": [
+    {
+      "command": "vercel deploy --local-config .vercel/performance-build-config.json",
+      "when": "Deploy the build output"
+    }
+  ]
+}

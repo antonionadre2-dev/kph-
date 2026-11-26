@@ -8,6 +8,8 @@ import { pricingUiText } from '../src/booking/pricingUiCopy';
 import { bookingLanguage, bookingLineLabel, bookingText } from '../src/booking/uiCopy';
 import { BOOKING_TERMS_VERSION } from '../src/booking/terms';
 import CalculatorNudges from './CalculatorNudges';
+import {CalculatorCompletionCheck,CalculatorPriceSurface,CalculatorSubmitButton} from './CalculatorFeedback';
+import {createCalculatorSubmissionGate} from '../src/booking/calculatorInteractions.ts';
 import KrakenServiceIcon from './KrakenServiceIcon';
 import QuoteRecoveryCard from './QuoteRecoveryCard';
 import KrakenJourney, { JourneyEmailPreview, type JourneyPhase } from './KrakenJourney';
@@ -256,12 +258,13 @@ function PriceSummary({ quote, text, language, money, hasSelection = false }: { 
   const from = quote?.priceType === 'from' && typeof quote.fromPriceCents === 'number';
   const priceLabel = from ? pricingUiText(language, 'fromLabel') : estimated ? pricingUiText(language, 'estimate') : text(manual ? 'individual' : 'priceLive');
   const shownTotal = from ? pricingUiText(language, 'fromPrice', { price: money(quote.fromPriceCents!) }) : manual ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—';
+  const shownAmount = from ? quote.fromPriceCents! : manual ? null : quote?.totalCents ?? null;
   return <>
     <p className="kr-calc-summary-label">{priceLabel}</p>
-    <div className="kr-calc-total" aria-live="polite" aria-atomic="true">
+    <CalculatorPriceSurface className="kr-calc-total" amount={shownAmount}>
       <span>{estimated ? pricingUiText(language, 'estimate') : text(manual ? 'manualPrice' : 'currentTotal')}</span>
       <strong>{shownTotal}</strong>
-    </div>
+    </CalculatorPriceSurface>
     {quote && <p className="kr-calc-final-price">{pricingUiText(language, 'finalPrice')}</p>}
     {!quote && <p className="kr-calc-empty"><ClipboardList aria-hidden="true" />{text(hasSelection ? 'checkRequired' : 'selectToStart')}</p>}
     {quote && <p className="kr-calc-price-note"><Info aria-hidden="true" />{from ? pricingUiText(language, 'fromHint') : estimated ? pricingUiText(language, 'estimateHint') : text(manual ? 'manualPrice' : 'fixedForScope')}</p>}
@@ -349,6 +352,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const verifiedSuccess = useRef('');
   const verifyingPayment = useRef('');
   const idempotency = useRef<CalculatorSubmission | null>(null);
+  const submissionGate=useRef(createCalculatorSubmissionGate());
   const submittedResult = useRef<HTMLElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const stepPanelRef = useRef<HTMLElement>(null);
@@ -356,7 +360,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const finalConsentRef = useRef<HTMLInputElement>(null);
   const [today] = useState(localToday);
 
-  useEffect(() => () => { if (demoTimer.current) clearTimeout(demoTimer.current); }, []);
+  useEffect(() => () => { if (demoTimer.current) clearTimeout(demoTimer.current); submissionGate.current.cancel(); }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -738,6 +742,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
 
   const submitRequest = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if(submissionGate.current.busy)return;
     if (wizardStep < 2) { nextStep(); return; }
     for (let index = 0; index < 2; index++) {
       const issue = stepIssue(index as WizardStep);
@@ -745,10 +750,12 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     }
     if (!termsAccepted) { setError(text('checkRequired')); finalConsentRef.current?.focus(); return; }
     if (preview && demoEnabled && selection && quote && !submitting) {
-      setError(''); setSubmitting(true); setJourneyPhase('request');
       const snapshot=createDemoBooking(selection,customer,requestedDate,requestedTime,locale);
+      const release=submissionGate.current.acquire();
+      if(!release)return;
+      setError(''); setSubmitting(true); setJourneyPhase('request');
       demoTimer.current=setTimeout(() => {
-        setBooking(snapshot); setSubmitting(false); setJourneyPhase(null);
+        setBooking(snapshot); setSubmitting(false); setJourneyPhase(null); release();
         window.requestAnimationFrame(() => submittedResult.current?.focus());
       },1800);
       return;
@@ -764,6 +771,8 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
       pricingVersion: quote.pricingVersion, acceptedTotalCents: quote.totalCents,
       ...(recoveryAccess ? { recovery: recoveryAccess } : {}),
     };
+    const release=submissionGate.current.acquire();
+    if(!release)return;
     setSubmitting(true); setJourneyPhase('request');
     try {
       idempotency.current = await calculatorSubmission(payload, idempotency.current, randomId);
@@ -793,7 +802,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
         revealIssue({ step: 2, message: text('termsUpdated'), fieldId: 'kr-calc-final-consent' });
       }
       else setError(text(cause instanceof BookingApiError && cause.status === 409 ? 'priceChanged' : 'networkError'));
-    } finally { setSubmitting(false); setJourneyPhase(null); }
+    } finally { release(); setSubmitting(false); setJourneyPhase(null); }
   };
 
   const refreshStatus = async () => {
@@ -832,6 +841,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     }
   };
   const reset = () => {
+    submissionGate.current.cancel();
     browserAccessUi.current.clear(); setBookingEntryPending(false);
     clearCalculatorDraft(); idempotency.current = null;
     if (demoTimer.current) clearTimeout(demoTimer.current);
@@ -969,6 +979,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const stepTitleKeys = ['configureTitle', 'planTitle', 'reviewReady'] as const;
   const nextLabel = ['continueSchedule', 'continueReview'][wizardStep] || 'stepReview';
   const liveTotal = quote?.priceType === 'from' && typeof quote.fromPriceCents === 'number' ? pricingText('fromPrice', { price: money(quote.fromPriceCents) }) : manualReview ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—';
+  const liveAmount=quote?.priceType==='from' && typeof quote.fromPriceCents==='number' ? quote.fromPriceCents : manualReview ? null : quote?.totalCents??null;
   const reviewDate = requestedDate && Number.isFinite(Date.parse(`${requestedDate}T12:00:00Z`)) ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: 'Europe/Zurich' }).format(new Date(`${requestedDate}T12:00:00Z`)) : '—';
   const focusConsent = () => {
     finalConsentRef.current?.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
@@ -1033,7 +1044,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
 
       {booking ? <section ref={submittedResult} tabIndex={-1} className="kr-calc-result" aria-labelledby="kr-calc-result-title">
         <div className="kr-calc-result-heading">
-          <span className="kr-calc-result-icon">{paid ? <CheckCircle2 aria-hidden="true" /> : held ? <CalendarDays aria-hidden="true" /> : <ClipboardList aria-hidden="true" />}</span>
+          <span className="kr-calc-result-icon">{paid || booking.scheduling.status==='requested' && !pending && !changedPayment && !needsReschedule ? <CalculatorCompletionCheck /> : held ? <CalendarDays aria-hidden="true" /> : <ClipboardList aria-hidden="true" />}</span>
           <div><p className="kr-calc-eyebrow">{text('reference')} · {booking.reference || booking.bookingId}</p><h2 id="kr-calc-result-title">{text(testPaid ? 'testTitle' : changedPayment ? 'paymentChangedTitle' : needsReschedule ? 'rescheduleTitle' : paid ? (depositPercent < 100 ? 'depositPaidTitle' : 'paidTitle') : pending ? 'pendingTitle' : holdHasExpired ? 'holdExpiredTitle' : held ? 'heldTitle' : 'receivedTitle')}</h2>
             <p>{text(testPaid ? 'testBody' : changedPayment ? 'inactiveReceipt' : needsReschedule ? 'rescheduleBody' : paid ? 'paidBody' : pending ? 'pendingBody' : holdHasExpired ? 'holdExpiredBody' : held ? 'heldBody' : 'receivedBody')}</p>
             {!preview && booking.scheduling.status === 'requested' && !paid && !testPaid && !changedPayment && <p>{text('paymentNextStep')}</p>}</div>
@@ -1142,7 +1153,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
               {CONFIRMATION_WINDOW_COPY[locale] && <p className="kr-calc-request-note">{CONFIRMATION_WINDOW_COPY[locale]}</p>}
               {wizardStep < 2 ? <><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} onClick={nextStep}>{text(nextLabel)}</button><p className="kr-calc-request-note">{text('bookingJourney')}</p></> : <>
                 <label className="kr-calc-consent"><input id="kr-calc-final-consent" ref={finalConsentRef} type="checkbox" required checked={termsAccepted} disabled={submitting} onChange={event => setTermsAccepted(event.target.checked)} /><span>{preview&&demoEnabled?journey.demoConsent:<>{text('termsPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/terms', locale)}`} target="_blank" rel="noopener noreferrer">{text('terms')}</a> {text('privacyPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/gdpr', locale)}`} target="_blank" rel="noopener noreferrer">{text('privacy')}</a> {text('readSuffix')}</>}</span></label>
-                <button type="submit" className="kr-calc-primary" disabled={(preview?!demoEnabled:!config?.available) || !quote || submitting || !termsAccepted}>{submitting ? <LoaderCircle className="kr-calc-spin" aria-hidden="true" /> : <ClipboardList aria-hidden="true" />}{preview&&demoEnabled?journey.demoSubmit:text(submitting ? 'submitting' : manualReview ? 'manualSubmit' : 'requestSubmit')}</button>
+                <CalculatorSubmitButton busy={submitting} disabled={(preview?!demoEnabled:!config?.available) || !quote || !termsAccepted} label={preview&&demoEnabled?journey.demoSubmit:text(manualReview?'manualSubmit':'requestSubmit')} busyLabel={text('submitting')} />
                 <p className="kr-calc-request-note">{preview?journey.demoNote:text('requestNote')}</p>
                 {!preview && (configLoading ? <p className="kr-calc-status-note" role="status">{text('loadingConfig')}</p> : !config?.available && <div className="kr-calc-unavailable" role="status"><p>{text('unavailable')}</p><button type="button" className="kr-calc-text-button" onClick={() => setConfigAttempt(value => value + 1)}>{text('retry')}</button></div>)}
               </>}
@@ -1154,7 +1165,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
             <div className="kr-calc-help"><img src="/calculator-approved/assets/kai-help.webp" alt="" width="72" height="88" loading="lazy" aria-hidden="true" /><div><h3>{text('kaiGuide')}</h3><p>{text('kaiGuideHint')}</p><p>{text('helpHours')}</p><a className="kr-calc-contact-link" href={publicHref('/kontakt', locale)} target="_blank" rel="noopener noreferrer">{text('contactPage')}<ChevronDown aria-hidden="true" /></a><a href="tel:+41774505705"><Phone aria-hidden="true" />+41 77 450 57 05</a><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></div></div>
             </details>
           </div>
-          <div className="kr-calc-mobile-bar"><div className="kr-calc-mobile-price"><span>{quote?.priceType === 'estimate' ? pricingText('estimate') : quote?.priceType === 'from' ? pricingText('fromLabel') : text('currentTotal')}</span><strong aria-live="polite">{liveTotal}</strong><small>{pricingText('finalPrice')}</small></div><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} aria-controls={wizardStep === 2 ? 'kr-calc-final-consent' : 'kr-calc-step-title'} onClick={wizardStep === 2 ? focusConsent : nextStep}>{text(wizardStep === 2 ? 'stepReview' : 'nextStep')}</button></div>
+          <div className="kr-calc-mobile-bar"><CalculatorPriceSurface className="kr-calc-mobile-price" amount={liveAmount}><span>{quote?.priceType === 'estimate' ? pricingText('estimate') : quote?.priceType === 'from' ? pricingText('fromLabel') : text('currentTotal')}</span><strong>{liveTotal}</strong><small>{pricingText('finalPrice')}</small></CalculatorPriceSurface><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} aria-controls={wizardStep === 2 ? 'kr-calc-final-consent' : 'kr-calc-step-title'} onClick={wizardStep === 2 ? focusConsent : nextStep}>{text(wizardStep === 2 ? 'stepReview' : 'nextStep')}</button></div>
         </form>
       </>}
     </div>

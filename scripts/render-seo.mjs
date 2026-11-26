@@ -38,7 +38,7 @@ export async function renderSeoHtml(root) {
         import {seoFragmentName,LEGAL_DOCUMENT_PATHS,HOME_APP_SSR_MARKER} from './src/seo/render-contract.ts';
         import {bookingText} from './src/booking/uiCopy.ts';
         import {publicHref} from './src/routing/site-paths.ts';
-        import {HERO_DAY,heroImage} from './src/home/hero-media.ts';
+        import {HERO_DAY,HERO_DESKTOP_MEDIA,heroImage} from './src/home/hero-media.ts';
         import {getContactCopy} from './src/contact/contact-copy.ts';
         export const routes=[...INDEXABLE_PATHS,...LEGAL_DOCUMENT_PATHS]; export const filename=seoFragmentName;
         const noop=()=>{};
@@ -47,7 +47,7 @@ export async function renderSeoHtml(root) {
         export const footer=(language,contactPage=false)=>wrap(language,<Footer onNavigate={noop} contactPage={contactPage}/>);
         export const home=language=>{
           const image=heroImage(HERO_DAY).source;
-          const preload=image?renderToStaticMarkup(<link rel="preload" as="image" type={image.type} imageSrcSet={image.srcSet} imageSizes={image.sizes} fetchPriority="high"/>):'';
+          const preload=image?renderToStaticMarkup(<link id="hero-room-preload" rel="preload" as="image" media={HERO_DESKTOP_MEDIA} type={image.type} imageSrcSet={image.srcSet} imageSizes={image.sizes} fetchPriority="high"/>):'';
           return HOME_APP_SSR_MARKER+preload+renderToString(<Application initialLanguage={language==='de'?'de-CH':language}/>);
         };
         export const local=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div><LocalSeoContent route={resolveLocalSeoRoute(pathname)} language={language}/><Footer onNavigate={noop}/></>);

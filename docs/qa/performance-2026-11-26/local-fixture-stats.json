@@ -1,0 +1,11 @@
+{
+  "scope": "localhost fixture only",
+  "submissions": 2,
+  "receipts": 1,
+  "lookups": 1,
+  "blocked": 1,
+  "recordsInMemoryBeforeShutdown": 1,
+  "productionRequestsCreated": 0,
+  "paymentsCreated": 0,
+  "emailsSent": 0
+}

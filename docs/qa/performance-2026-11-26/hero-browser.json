@@ -1,0 +1,122 @@
+[
+  {
+    "comparisonSections": 0,
+    "phase": "night",
+    "preloads": [
+      {
+        "id": "hero-room-preload",
+        "media": "(min-width: 768px)",
+        "srcset": "/media/hero-room-night-v4-320-d7f1de47a6df.avif 320w, /media/hero-room-night-v4-640-5d49b8fe26d9.avif 640w, /media/hero-room-night-v4-768-a50a5824afe3.avif 768w, /media/hero-room-night-v4-960-430899cbaa7f.avif 960w, /media/hero-room-night-v4-1536-4307658a0c56.avif 1536w"
+      },
+      {
+        "id": "",
+        "media": "",
+        "srcset": "/media/logo-160-ecadc5489b3f.webp 160w, /media/logo-320-c6ec024cf74e.webp 320w, /media/logo-640-2d3545a30c7c.webp 640w, /media/logo-960-afdba55dc4b2.webp 960w, /media/logo-1024-27039a1adbfe.webp 1024w"
+      }
+    ],
+    "rooms": [
+      {
+        "box": {
+          "bottom": 0,
+          "height": 0,
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "complete": true,
+        "display": "none",
+        "id": "sceneRoom",
+        "loading": "eager",
+        "naturalWidth": 1,
+        "opacity": "1",
+        "priority": "high",
+        "src": "data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%221%22%20height=%221%22/%3E"
+      },
+      {
+        "box": {
+          "bottom": 987.015625,
+          "height": 250,
+          "left": 0,
+          "right": 375,
+          "top": 737.015625,
+          "width": 375,
+          "x": 0,
+          "y": 737.015625
+        },
+        "complete": true,
+        "display": "block",
+        "id": "sceneRoomMobile",
+        "loading": "lazy",
+        "naturalWidth": 375,
+        "opacity": "1",
+        "priority": "low",
+        "src": "http://127.0.0.1:3047/media/hero-room-night-v4-640-5d49b8fe26d9.avif"
+      }
+    ],
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "comparisonSections": 0,
+    "phase": "night",
+    "preloads": [
+      {
+        "id": "hero-room-preload",
+        "media": "(min-width: 768px)",
+        "srcset": "/media/hero-room-night-v4-320-d7f1de47a6df.avif 320w, /media/hero-room-night-v4-640-5d49b8fe26d9.avif 640w, /media/hero-room-night-v4-768-a50a5824afe3.avif 768w, /media/hero-room-night-v4-960-430899cbaa7f.avif 960w, /media/hero-room-night-v4-1536-4307658a0c56.avif 1536w"
+      },
+      {
+        "id": "",
+        "media": "",
+        "srcset": "/media/logo-160-ecadc5489b3f.webp 160w, /media/logo-320-c6ec024cf74e.webp 320w, /media/logo-640-2d3545a30c7c.webp 640w, /media/logo-960-afdba55dc4b2.webp 960w, /media/logo-1024-27039a1adbfe.webp 1024w"
+      }
+    ],
+    "rooms": [
+      {
+        "box": {
+          "bottom": 784.328125,
+          "height": 565.328125,
+          "left": 408,
+          "right": 1256,
+          "top": 219,
+          "width": 848,
+          "x": 408,
+          "y": 219
+        },
+        "complete": true,
+        "display": "block",
+        "id": "sceneRoom",
+        "loading": "eager",
+        "naturalWidth": 848,
+        "opacity": "1",
+        "priority": "high",
+        "src": "http://127.0.0.1:3047/media/hero-room-night-v4-960-430899cbaa7f.avif"
+      },
+      {
+        "box": {
+          "bottom": 0,
+          "height": 0,
+          "left": 0,
+          "right": 0,
+          "top": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "complete": true,
+        "display": "none",
+        "id": "sceneRoomMobile",
+        "loading": "lazy",
+        "naturalWidth": 1,
+        "opacity": "1",
+        "priority": "low",
+        "src": "data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%221%22%20height=%221%22/%3E"
+      }
+    ],
+    "scrollWidth": 1280,
+    "width": 1280
+  }
+]

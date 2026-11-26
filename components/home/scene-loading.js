@@ -16,17 +16,18 @@ export function createSceneMediaGate(scope, { image, isVisible, onReady, request
     for (const id of frames) cancelFrame(id);
     frames.clear();
   });
-  return {
+  const gate = {
     request() {
       if (disposed || scope.disposed || pending || ready || !isVisible()) return;
       pending = true;
+      const currentImage = typeof image === 'function' ? image() : image;
       Promise.resolve().then(() => {
         if (disposed || scope.disposed) return;
-        if (typeof image.decode === 'function') return image.decode();
-        if (image.complete) return;
+        if (typeof currentImage.decode === 'function') return currentImage.decode();
+        if (currentImage.complete) return;
         return new Promise(resolve => {
-          scope.on(image, 'load', resolve, { once: true });
-          scope.on(image, 'error', resolve, { once: true });
+          scope.on(currentImage, 'load', resolve, { once: true });
+          scope.on(currentImage, 'error', resolve, { once: true });
         });
       }).catch(() => {
         // A failed base image must not permanently disable the scene controls.
@@ -35,10 +36,12 @@ export function createSceneMediaGate(scope, { image, isVisible, onReady, request
         frame(() => frame(() => {
           pending = false;
           if (!isVisible()) return;
+          if (typeof image === 'function' && image() !== currentImage) { gate.request(); return; }
           ready = true;
           onReady();
         }));
       });
     },
   };
+  return gate;
 }

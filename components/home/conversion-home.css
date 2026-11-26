@@ -22,9 +22,10 @@
 .kraken-home .hero-guarantee a { text-decoration:underline; text-underline-offset:3px; }
 :root .kraken-home .hero-service-details { font-size:var(--kr-text-sm); text-align:left; justify-content:flex-start; margin-top:4px; min-height:44px; }
 .kraken-home .hero-scene-controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:8px; }
-:root .kraken-home .hero-scene-controls .scene-open { min-height:44px; margin:0; padding:6px 9px; max-width:calc(100% - 52px); border:1px solid var(--kr-line); border-radius:var(--kr-button-radius); background:var(--kr-surface); box-shadow:none; backdrop-filter:none; }
+:root .kraken-home .hero-scene-controls .scene-open { width:240px; min-height:44px; margin:0; padding:6px 9px; max-width:calc(100% - 52px); border:1px solid var(--kr-line); border-radius:var(--kr-button-radius); background:var(--kr-surface); box-shadow:none; backdrop-filter:none; }
 :root .kraken-home .hero-scene-controls .scene-open-weather { display:none; }
-:root .kraken-home .hero-scene-controls .scene-open-copy strong { font-size:var(--kr-text-sm); }
+:root .kraken-home .hero-scene-controls .scene-open-copy { flex:1; min-width:0; }
+:root .kraken-home .hero-scene-controls .scene-open-copy strong { font-size:var(--kr-text-sm); font-variant-numeric:tabular-nums; }
 :root .kraken-home .hero-scene-controls .scene-open-copy>span { font-size:var(--kr-text-sm); }
 :root .kraken-home .hero-scene-controls .scene-open-settings { width:17px; margin-left:0; }
 :root .kraken-home .hero-scene-controls .scene-motion-toggle { min-height:44px; width:44px; margin:0; border-radius:var(--kr-button-radius); background:var(--kr-surface); border-color:var(--kr-line); }
@@ -58,7 +59,6 @@
   .kraken-home .hero-price-amount { font-size:1.75rem; }
   .kraken-home .hero-guarantee { margin-top:12px; }
   :root .kraken-home .hero-service-details { margin-top:0; }
-  :root .kraken-home .hero-visual { width:calc(132.65% - 42.45px); margin:0 0 0 calc(26.45px - 32.65%); }
   :root .kraken-home .header-contact-inner { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:calc(100% - 32px); gap:0 8px; }
   :root .kraken-home .header-contact-bar a { font-size:13px; min-height:44px; }
   :root .kraken-home .header-contact-bar .header-quote-action { grid-column:1/-1; width:100%; margin:0 0 8px; }
@@ -66,6 +66,17 @@
   :root .kraken-home .site-header .brand-logo { width:96px; height:42px; flex:none; }
   :root .kraken-home .site-header .brand-logo img { width:96px; height:96px; top:-27px; }
   :root .kraken-home .site-header .brand-descriptor { flex:1; min-width:0; max-width:160px; padding:0; border:0; font-size:12px; }
+}
+/* Below the copy, reserve the same 3:2 scene box without an oversized canvas or crop. */
+@media(max-width:767px){
+  :root .kraken-home .hero-visual { width:100%; max-width:100%; margin:0; }
+  .kraken-home .scene-room-desktop { display:none; }
+}
+@media(min-width:768px){
+  .kraken-home .scene-room-mobile { display:none; }
+}
+@media(prefers-reduced-motion:reduce){
+  .kraken-home .hero-scene-controls .scene-motion-toggle { display:none; }
 }
 @media(max-width:420px){
   :root .kraken-home .site-header .brand-lockup { align-items:flex-start; flex-direction:column; gap:0; }

@@ -1,0 +1,11 @@
+.kraken-home .kr-photo-comparison{max-width:900px;margin:0 auto 28px}
+.kraken-home .kr-photo-comparison-view{position:relative;overflow:hidden;border-radius:20px;background:#f3f8fb}
+.kraken-home .kr-photo-comparison-view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.kraken-home .kr-photo-comparison-before{position:absolute;inset:0}
+.kraken-home .kr-photo-comparison-divider{position:absolute;top:0;bottom:0;width:3px;background:#a4f5d1;transform:translateX(-50%)}
+.kraken-home .kr-photo-comparison-label{position:absolute;top:14px;left:14px;padding:5px 12px;border-radius:8px;background:#05294be8;color:white;font-size:14px}
+.kraken-home .kr-photo-comparison-label--after{left:auto;right:14px}
+.kraken-home .kr-photo-comparison figcaption{display:flex;justify-content:space-between;gap:16px;margin-top:12px}
+.kraken-home .kr-photo-comparison output{min-width:4ch;text-align:right;font-variant-numeric:tabular-nums}
+.kraken-home .kr-photo-comparison input{width:100%;min-height:44px;accent-color:#073d6b}
+.kraken-home .kr-photo-comparison input:focus-visible{outline:3px solid #16734f;outline-offset:3px}

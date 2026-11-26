@@ -10,6 +10,7 @@ import { subscribeKaiOpen } from '../src/kai/open';
 import './KaiAssistant.css';
 import { responsiveImage } from '../src/media/images';
 import { shouldSubmitKaiMessage, kaiLauncherClearance, kaiCalculatorNavigationTarget } from '../src/kai/ui';
+import { waitForKaiTyping, kaiMessageScrollBehavior } from './kaiMotion';
 
 const SESSION_KEY = 'kraken_kai_request_v1';
 const MAX_MESSAGE = 1200;
@@ -53,6 +54,9 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
   const [pendingOpen, setPendingOpen] = useState(false);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  const [typingVisible, setTypingVisible] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [, refreshMessageAnimations] = useState(0);
   const [error, setError] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [mode, setMode] = useState<'ai' | 'guided'>('guided');
@@ -69,6 +73,7 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
   const nearBottom = useRef(true);
   const request = useRef<AbortController | null>(null);
   const lastMessage = useRef('');
+  const incomingMessages = useRef(new WeakSet<KaiMessage>());
 
   useEffect(() => {
     // A visitor may speak a different language from the surrounding page.
@@ -83,6 +88,31 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
     catch { /* The mounted assistant still retains the request in memory. */ }
   }, [draft, messages]);
   useEffect(() => () => request.current?.abort(), []);
+  useEffect(() => {
+    const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => {
+      setReducedMotion(preference.matches);
+      if (preference.matches && thread.current) thread.current.scrollTo({ top: thread.current.scrollTop, behavior: 'auto' });
+    };
+    update();
+    preference.addEventListener('change', update);
+    return () => preference.removeEventListener('change', update);
+  }, []);
+  useEffect(() => {
+    setTypingVisible(false);
+    if (!busy) return;
+    return waitForKaiTyping(() => setTypingVisible(true), () => !!request.current && !request.current.signal.aborted);
+  }, [busy]);
+  useEffect(() => {
+    if (reducedMotion) { incomingMessages.current = new WeakSet(); return; }
+    if (!messages.some(message => incomingMessages.current.has(message))) return;
+    // Remove eligibility even if a dialog closes before animationend fires.
+    const timer = setTimeout(() => {
+      messages.forEach(message => incomingMessages.current.delete(message));
+      refreshMessageAnimations(version => version + 1);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [messages, reducedMotion]);
   useEffect(() => {
     if (!['consultation', 'calculator-demo'].includes(currentPage)) { setLauncherClearance(16); return; }
     let priceBar: Element | null = null;
@@ -125,11 +155,12 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
   useEffect(() => () => document.body.classList.remove('kai-assistant-open'), []);
   useEffect(() => {
     if (open && view === 'chat' && nearBottom.current && thread.current) {
-      thread.current.scrollTo({ top: thread.current.scrollHeight, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      thread.current.scrollTo({ top: thread.current.scrollHeight, behavior: kaiMessageScrollBehavior(reducedMotion) });
     }
-  }, [open, view, messages, busy]);
+  }, [open, view, messages, busy, typingVisible, reducedMotion]);
 
   function close() {
+    incomingMessages.current = new WeakSet();
     dialog.current?.close();
     setOpen(false);
     const target = opener.current?.isConnected ? opener.current : launcher.current;
@@ -154,6 +185,10 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
     setQuote(undefined); setContactCard(false); setSuggestions([]);
     setDraft(previous => ({ ...previous, service, services: previous.services.length > 1 && previous.services.includes(service) ? previous.services : [service] }));
   }
+  function appendMessage(message: KaiMessage) {
+    incomingMessages.current.add(message);
+    setMessages(previous => [...previous, message]);
+  }
   async function send(text = input, retry = false) {
     const message = text.trim();
     if (!message || message.length > MAX_MESSAGE || busy) return;
@@ -162,13 +197,14 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
     const prior = retryIndex >= 0 ? messages.slice(0, retryIndex) : duplicateRetry ? messages.slice(0, -1) : messages;
     const history = prior.slice(-20).map(item => ({ role: item.role, text: item.text.slice(0, 1800) }));
     while (history.reduce((sum, item) => sum + item.text.length, 0) > 14000) history.shift();
-    if (!duplicateRetry) setMessages(previous => [...previous, { role: 'user', text: message }]);
+    if (!duplicateRetry) appendMessage({ role: 'user', text: message });
     lastMessage.current = message;
     nearBottom.current = true;
     setInput('');
     setError(false);
     setQuote(undefined);
     setContactCard(false);
+    setTypingVisible(false);
     setBusy(true);
     const controller = new AbortController();
     request.current = controller;
@@ -183,7 +219,7 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
       setDraft(cleanDraft(data.draft, normalizeHomeLanguage(data.draft.language)));
       setQuote(data.quote);
       setContactCard(data.contactCard === true);
-      setMessages(previous => [...previous, { role: 'assistant', text: data.message.slice(0, 2400) }]);
+      appendMessage({ role: 'assistant', text: data.message.slice(0, 2400) });
       setSuggestions(data.suggestions.filter(item => typeof item === 'string').slice(0, 4));
       setMode(data.mode);
       // A successful guided fallback remains useful; provider failures are not a customer error.
@@ -258,7 +294,8 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
         <div className="kai-thread" ref={thread} role="log" aria-live="polite" aria-relevant="additions" aria-label={kt('chat')} tabIndex={0}
           onScroll={event => { const element = event.currentTarget; nearBottom.current = element.scrollHeight - element.scrollTop - element.clientHeight < 80; }}>
           <div className="kai-message kai-message-assistant"><p>{kt('welcome')}</p><p>{kt('helper')}</p></div>
-          {messages.map((message, index) => <div className={`kai-message kai-message-${message.role}`} key={index}><span className="kai-message-author">{message.role === 'assistant' ? 'Kai' : '●'}</span><p>{message.text}</p></div>)}
+          {messages.map((message, index) => <div className={`kai-message kai-message-${message.role}${!reducedMotion && incomingMessages.current.has(message) ? ' kai-message-new' : ''}`} key={index}
+            onAnimationEnd={event => { if (event.target === event.currentTarget) { incomingMessages.current.delete(message); refreshMessageAnimations(version => version + 1); } }}><span className="kai-message-author">{message.role === 'assistant' ? 'Kai' : '●'}</span><p>{message.text}</p></div>)}
           {contactCard && <section className="kai-contact-card" aria-label={kt('contact')}>
             <h3>{kt('contact')}</h3>
             <a href="tel:+41774505705">+41 77 450 57 05</a>
@@ -266,7 +303,7 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
             <a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a>
           </section>}
           {quote && draft.service && !contactCard && <button type="button" className="kai-primary kai-price-continue" disabled={busy} onClick={continueToCalculator}>{kt('chooseDate')}</button>}
-          {busy && <p className="kai-working" role="status">{kt('busy')}</p>}
+          {busy && typingVisible && <p className="kai-working" role="status"><span className="kai-visually-hidden">{kt('busy')}</span><span className="kai-typing-dots" aria-hidden="true"><span /><span /><span /></span></p>}
         {error && <div className="kai-error" role="alert"><p>{kt('error')}</p><button type="button" disabled={busy} onClick={() => send(lastMessage.current, true)}>{kt('retry')}</button></div>}
         </div>
         {!contactCard && suggestions.length > 0 && <div className="kai-suggestions">{suggestions.map(suggestion => <button key={suggestion} type="button" disabled={busy} onClick={() => send(suggestion)}>{suggestion}</button>)}</div>}

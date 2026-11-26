@@ -1,4 +1,4 @@
-import manifest from './manifest.json';
+import manifest from './manifest.json' with { type: 'json' };
 
 interface ImageVariant { src: string; width: number; height: number; bytes: number }
 interface OptimizedImage { width: number; height: number; hasAlpha: boolean; kind: string; originalBytes: number; variants: ImageVariant[] }

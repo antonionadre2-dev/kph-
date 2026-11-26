@@ -24,3 +24,12 @@ test('an image decode error still leaves scene controls usable and queued frames
   const f=fixture(()=>Promise.reject(Error('image unavailable')));f.gate.request();await settle();f.paint();f.paint();assert.equal(f.activated,1);
   const cancelled=fixture(()=>Promise.resolve());cancelled.gate.request();await settle();assert.equal(cancelled.queued,1);cancelled.dispose();assert.equal(cancelled.queued,0);cancelled.paint();assert.equal(cancelled.activated,0);
 });
+test('responsive media activation decodes the visible image, never the hidden desktop placeholder on mobile',async()=>{
+  let mobile=true, desktopDecodes=0, mobileDecodes=0, activated=0, next=0;
+  const desktop={decode:()=>{desktopDecodes++;return Promise.resolve();}},phone={decode:()=>{mobileDecodes++;return Promise.resolve();}},frames=new Map();
+  const gate=createSceneMediaGate({disposed:false,cleanup(){}},{image:()=>mobile?phone:desktop,isVisible:()=>true,onReady:()=>activated++,requestFrame:fn=>{frames.set(++next,fn);return next;},cancelFrame:id=>frames.delete(id)});
+  const paint=()=>{const queued=[...frames.values()];frames.clear();queued.forEach(fn=>fn());};
+  gate.request();await settle();assert.equal(mobileDecodes,1);assert.equal(desktopDecodes,0);
+  mobile=false;paint();paint();await settle();assert.equal(desktopDecodes,1);assert.equal(activated,0);
+  paint();paint();assert.equal(activated,1);
+});

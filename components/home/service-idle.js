@@ -3,7 +3,7 @@ const WAIT_MS = 30_000;
 const VIEW_MS = 6_500;
 
 /** A finite tour with an injectable clock. It never clicks, focuses or navigates. */
-export function createServicePreviewController({ count = 2, initiallyPaused = false, render = () => {}, remember = () => {}, canRun = () => true, schedule = setTimeout, cancel = clearTimeout } = {}) {
+export function createServicePreviewController({ count = 2, initiallyPaused = true, render = () => {}, remember = () => {}, canRun = () => true, schedule = setTimeout, cancel = clearTimeout } = {}) {
   let visible = false;
   let reducedMotion = false;
   let enabled = !initiallyPaused;
@@ -50,7 +50,7 @@ export function createServicePreviewController({ count = 2, initiallyPaused = fa
     setReducedMotion(value) {
       if (destroyed || reducedMotion === value) return;
       reducedMotion = value;
-      if (value) index = -1;
+      if (value) { index = -1; enabled = false; }
       arm();
     },
     interact() {
@@ -65,18 +65,37 @@ export function createServicePreviewController({ count = 2, initiallyPaused = fa
       enabled = true; remember(false);
       if (visible) start(); else arm();
     },
+    step(direction) {
+      if (destroyed) return;
+      clear(); enabled = false;
+      index = index < 0 ? (direction < 0 ? count - 1 : 0) : (index + direction + count) % count;
+      phase = reducedMotion ? 'static' : 'paused';
+      remember(true); emit();
+    },
     destroy() { clear(); destroyed = true; },
   };
 }
 
 const copy = {
-  de: { automatic: 'Automatische Bildvorschau', paused: 'Bildvorschau pausiert', complete: 'Beide Ansichten entdeckt', pause: 'Automatische Bildvorschau pausieren', play: 'Bildvorschau starten', views: ['Ihr Zuhause entdecken', 'Ihre Wohnungsabgabe entdecken'] },
-  en: { automatic: 'Automatic image preview', paused: 'Image preview paused', complete: 'Both views explored', pause: 'Pause automatic image preview', play: 'Start image preview', views: ['Explore home cleaning', 'Explore move-out cleaning'] },
-  es: { automatic: 'Vista automática de imágenes', paused: 'Vista de imágenes en pausa', complete: 'Has visto ambas opciones', pause: 'Pausar la vista automática de imágenes', play: 'Iniciar la vista de imágenes', views: ['Descubre la limpieza de tu hogar', 'Descubre la limpieza de fin de contrato'] },
-  fr: { automatic: 'Aperçu automatique des images', paused: 'Aperçu des images en pause', complete: 'Les deux vues sont présentées', pause: 'Mettre l’aperçu automatique en pause', play: 'Lancer l’aperçu des images', views: ['Découvrez le nettoyage à domicile', 'Découvrez le nettoyage de fin de bail'] },
-  it: { automatic: 'Anteprima automatica delle immagini', paused: 'Anteprima delle immagini in pausa', complete: 'Entrambe le viste sono state mostrate', pause: 'Metti in pausa l’anteprima automatica', play: 'Avvia l’anteprima delle immagini', views: ['Scopri le pulizie di casa', 'Scopri le pulizie di fine locazione'] },
-  pt: { automatic: 'Pré-visualização automática', paused: 'Pré-visualização em pausa', complete: 'As duas vistas foram apresentadas', pause: 'Pausar a pré-visualização automática', play: 'Iniciar a pré-visualização', views: ['Descubra a limpeza da sua casa', 'Descubra a limpeza de fim de contrato'] },
+  de: { automatic: 'Automatische Bildvorschau', paused: 'Bildvorschau pausiert', complete: 'Beide Ansichten entdeckt', pause: 'Automatische Bildvorschau pausieren', play: 'Bildvorschau starten', views: ['Ihre Wohnungsabgabe entdecken', 'Ihr Zuhause entdecken'] },
+  en: { automatic: 'Automatic image preview', paused: 'Image preview paused', complete: 'Both views explored', pause: 'Pause automatic image preview', play: 'Start image preview', views: ['Explore move-out cleaning', 'Explore home cleaning'] },
+  es: { automatic: 'Vista automática de imágenes', paused: 'Vista de imágenes en pausa', complete: 'Ha visto ambas opciones', pause: 'Pausar la vista automática de imágenes', play: 'Iniciar la vista de imágenes', views: ['Descubra la limpieza de fin de alquiler', 'Descubra la limpieza de su hogar'] },
+  fr: { automatic: 'Aperçu automatique des images', paused: 'Aperçu des images en pause', complete: 'Les deux vues sont présentées', pause: 'Mettre l’aperçu automatique en pause', play: 'Lancer l’aperçu des images', views: ['Découvrez le nettoyage de fin de bail', 'Découvrez le nettoyage à domicile'] },
+  it: { automatic: 'Anteprima automatica delle immagini', paused: 'Anteprima delle immagini in pausa', complete: 'Entrambe le viste sono state mostrate', pause: 'Metti in pausa l’anteprima automatica', play: 'Avvia l’anteprima delle immagini', views: ['Pulizie di fine locazione', 'Pulizie di casa'] },
+  pt: { automatic: 'Pré-visualização automática', paused: 'Pré-visualização em pausa', complete: 'As duas vistas foram apresentadas', pause: 'Pausar a pré-visualização automática', play: 'Iniciar a pré-visualização', views: ['Descubra a limpeza de fim de contrato', 'Descubra a limpeza da sua casa'] },
 };
+const manualCopy = {
+  de: { previous: 'Vorherige Bildansicht', next: 'Nächste Bildansicht', reduced: 'Manuelle Bildvorschau · Bewegung reduziert' },
+  en: { previous: 'Previous image view', next: 'Next image view', reduced: 'Manual image preview · reduced motion' },
+  es: { previous: 'Vista de imagen anterior', next: 'Siguiente vista de imagen', reduced: 'Vista manual · movimiento reducido' },
+  pt: { previous: 'Vista de imagem anterior', next: 'Vista de imagem seguinte', reduced: 'Pré-visualização manual · movimento reduzido' },
+  it: { previous: 'Vista immagine precedente', next: 'Vista immagine successiva', reduced: 'Anteprima manuale · movimento ridotto' },
+  fr: { previous: 'Vue précédente', next: 'Vue suivante', reduced: 'Aperçu manuel · mouvement réduit' },
+};
+export function servicePreviewLabels(language) {
+  const key = String(language).toLowerCase().split('-')[0];
+  return { ...(copy[key] || copy.de), ...(manualCopy[key] || manualCopy.de) };
+}
 
 /** Own every observer and listener for one React Home mount. */
 export function initServicePreview(homeRoot, { getLanguage = () => 'de' } = {}) {
@@ -86,14 +105,16 @@ export function initServicePreview(homeRoot, { getLanguage = () => 'de' } = {}) 
   const cards = grid ? [...grid.querySelectorAll('.service-card')] : [];
   const controls = homeRoot.querySelector('#servicePreviewControls');
   const button = homeRoot.querySelector('#servicePreviewToggle');
+  const previous = homeRoot.querySelector('#servicePreviewPrevious');
+  const next = homeRoot.querySelector('#servicePreviewNext');
   const status = homeRoot.querySelector('#servicePreviewStatus');
   if (!section || !grid || cards.length < 2 || !controls || !button || !status) return;
 
   const storageKey = 'kraken.services.preview.paused';
-  let initiallyPaused = false;
-  try { initiallyPaused = sessionStorage.getItem(storageKey) === '1'; } catch { /* A UI preference only. */ }
+  // Every visit starts still, including visitors with the old autoplay preference.
+  const initiallyPaused = true;
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  const labels = () => copy[String(getLanguage()).toLowerCase().split('-')[0]] || copy.de;
+  const labels = () => servicePreviewLabels(getLanguage());
   function hasVisibleCard() {
     if (document.hidden || document.querySelector('dialog[open]')) return false;
     // Kai and any other accessible modal also cancel the continuous idle wait.
@@ -108,14 +129,20 @@ export function initServicePreview(homeRoot, { getLanguage = () => 'de' } = {}) 
   }
   function render(state) {
     const text = labels();
-    controls.hidden = state.reducedMotion;
+    controls.hidden = false;
     if (state.index < 0) delete grid.dataset.previewActive;
     else grid.dataset.previewActive = String(state.index);
     cards.forEach((card, index) => card.classList.toggle('is-idle-featured', index === state.index));
     controls.classList.toggle('is-paused', !state.enabled);
     const label = state.enabled ? text.pause : text.play;
     button.setAttribute('aria-label', label); button.title = label;
-    status.textContent = state.phase === 'playing' ? text.views[state.index] || text.automatic : state.phase === 'complete' ? text.complete : !state.enabled ? text.paused : text.automatic;
+    button.setAttribute('aria-pressed', String(state.enabled && !state.reducedMotion));
+    button.disabled = state.reducedMotion;
+    for (const [control, key] of [[previous, 'previous'], [next, 'next']]) {
+      if (!control) continue;
+      control.disabled = false; control.setAttribute('aria-label', text[key]); control.title = text[key];
+    }
+    status.textContent = state.index >= 0 ? text.views[state.index] || text.paused : state.reducedMotion ? text.reduced : state.phase === 'complete' ? text.complete : !state.enabled ? text.paused : text.automatic;
   }
   const controller = createServicePreviewController({
     count: cards.length,
@@ -141,6 +168,8 @@ export function initServicePreview(homeRoot, { getLanguage = () => 'de' } = {}) 
   }, { passive: true });
   scope.on(section, 'pointerleave', () => { pointer = null; }, { passive: true });
   scope.on(button, 'click', () => { syncVisibility(); controller.toggle(); });
+  if (previous) scope.on(previous, 'click', () => controller.step(-1));
+  if (next) scope.on(next, 'click', () => controller.step(1));
   const updateMotion = () => { controller.setReducedMotion(motion.matches); syncVisibility(); };
   scope.on(motion, 'change', updateMotion);
   scope.on(document, 'visibilitychange', syncVisibility);

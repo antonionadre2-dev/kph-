@@ -1,0 +1,32 @@
+{
+  "typing": {
+    "observedAfterMs": 859,
+    "dots": 3,
+    "duration": "0.2s"
+  },
+  "result": {
+    "dialog": {
+      "bottom": 804,
+      "height": 690,
+      "left": 8,
+      "right": 367,
+      "top": 114,
+      "width": 359,
+      "x": 8,
+      "y": 114
+    },
+    "messages": [
+      "Hola. ¿En qué podemos ayudarle?Elija un servicio o describa brevemente lo que necesita.",
+      "●Necesito limpieza de fin de alquiler para 3,5 habitaciones y 85 m².",
+      "Kai3.5 habitaciones, 85 m²: CHF 690 Precio cerrado para el servicio base, con garantía de entrega según las condiciones. Precio final, sin IVA. Los extras y los cambios de alcance se detallan en el calculador. ¿En qué localidad o código postal es el servicio?"
+    ],
+    "scrollWidth": 375,
+    "thread": {
+      "height": 306,
+      "scrollHeight": 521,
+      "top": 215
+    },
+    "typingStillVisible": false,
+    "width": 375
+  }
+}
