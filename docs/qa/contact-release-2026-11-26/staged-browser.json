@@ -1,0 +1,637 @@
+{
+  "origin": "https://kpfm-mkp0gokpc-antonionadre2-5701s-projects.vercel.app",
+  "commit": "712ed32",
+  "readOnly": true,
+  "completed": true,
+  "contactChecks": 12,
+  "otherPageChecks": 8,
+  "configuration": {
+    "http": 200,
+    "available": true,
+    "paymentReady": true,
+    "emailReady": true,
+    "mode": "live",
+    "depositPercent": 15
+  },
+  "reports": [
+    {
+      "language": "de",
+      "width": 375,
+      "http": 200,
+      "path": "/kontakt",
+      "overflow": false,
+      "title": "Wir kommen zu Ihnen.",
+      "mapReady": true,
+      "mapLinks": [
+        "/reinigung/region-zuerich",
+        "/reinigung/region-winterthur",
+        "/reinigung/kanton-schaffhausen",
+        "/reinigung/region-zuerich",
+        "/reinigung/region-winterthur",
+        "/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "Das Formular ist derzeit nicht verfügbar. Sie erreichen uns per WhatsApp, Telefon oder E-Mail.Erneut versuchen",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 186,
+        "logoWidth": 96,
+        "logoHeight": 42,
+        "descriptor": "Reinigung & kleine Umzüge",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": {
+        "opened": true,
+        "closed": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "language": "de",
+      "width": 1440,
+      "http": 200,
+      "path": "/kontakt",
+      "overflow": false,
+      "title": "Wir kommen zu Ihnen.",
+      "mapReady": true,
+      "mapLinks": [
+        "/reinigung/region-zuerich",
+        "/reinigung/region-winterthur",
+        "/reinigung/kanton-schaffhausen",
+        "/reinigung/region-zuerich",
+        "/reinigung/region-winterthur",
+        "/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "Das Formular ist derzeit nicht verfügbar. Sie erreichen uns per WhatsApp, Telefon oder E-Mail.Erneut versuchen",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 139,
+        "logoWidth": 150,
+        "logoHeight": 66,
+        "descriptor": "Reinigung & kleine Umzüge",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": null
+    },
+    {
+      "language": "en",
+      "width": 375,
+      "http": 200,
+      "path": "/en/kontakt",
+      "overflow": false,
+      "title": "We come to you.",
+      "mapReady": true,
+      "mapLinks": [
+        "/en/reinigung/region-zuerich",
+        "/en/reinigung/region-winterthur",
+        "/en/reinigung/kanton-schaffhausen",
+        "/en/reinigung/region-zuerich",
+        "/en/reinigung/region-winterthur",
+        "/en/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "The form is currently unavailable. You can contact us by WhatsApp, telephone or email.Try again",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 186,
+        "logoWidth": 96,
+        "logoHeight": 42,
+        "descriptor": "Cleaning & small moves",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": {
+        "opened": true,
+        "closed": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "language": "en",
+      "width": 1440,
+      "http": 200,
+      "path": "/en/kontakt",
+      "overflow": false,
+      "title": "We come to you.",
+      "mapReady": true,
+      "mapLinks": [
+        "/en/reinigung/region-zuerich",
+        "/en/reinigung/region-winterthur",
+        "/en/reinigung/kanton-schaffhausen",
+        "/en/reinigung/region-zuerich",
+        "/en/reinigung/region-winterthur",
+        "/en/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "The form is currently unavailable. You can contact us by WhatsApp, telephone or email.Try again",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 139,
+        "logoWidth": 150,
+        "logoHeight": 66,
+        "descriptor": "Cleaning & small moves",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": null
+    },
+    {
+      "language": "es",
+      "width": 375,
+      "http": 200,
+      "path": "/es/kontakt",
+      "overflow": false,
+      "title": "Nos desplazamos a su hogar.",
+      "mapReady": true,
+      "mapLinks": [
+        "/es/reinigung/region-zuerich",
+        "/es/reinigung/region-winterthur",
+        "/es/reinigung/kanton-schaffhausen",
+        "/es/reinigung/region-zuerich",
+        "/es/reinigung/region-winterthur",
+        "/es/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "El formulario no está disponible en este momento. Puede contactar con nosotros por WhatsApp, teléfono o correo electrónico.Volver a intentarlo",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 186,
+        "logoWidth": 96,
+        "logoHeight": 42,
+        "descriptor": "Limpieza y pequeñas mudanzas",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": {
+        "opened": true,
+        "closed": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "language": "es",
+      "width": 1440,
+      "http": 200,
+      "path": "/es/kontakt",
+      "overflow": false,
+      "title": "Nos desplazamos a su hogar.",
+      "mapReady": true,
+      "mapLinks": [
+        "/es/reinigung/region-zuerich",
+        "/es/reinigung/region-winterthur",
+        "/es/reinigung/kanton-schaffhausen",
+        "/es/reinigung/region-zuerich",
+        "/es/reinigung/region-winterthur",
+        "/es/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "El formulario no está disponible en este momento. Puede contactar con nosotros por WhatsApp, teléfono o correo electrónico.Volver a intentarlo",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 139,
+        "logoWidth": 150,
+        "logoHeight": 66,
+        "descriptor": "Limpieza y pequeñas mudanzas",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": null
+    },
+    {
+      "language": "pt",
+      "width": 375,
+      "http": 200,
+      "path": "/pt/kontakt",
+      "overflow": false,
+      "title": "Vamos até sua casa.",
+      "mapReady": true,
+      "mapLinks": [
+        "/pt/reinigung/region-zuerich",
+        "/pt/reinigung/region-winterthur",
+        "/pt/reinigung/kanton-schaffhausen",
+        "/pt/reinigung/region-zuerich",
+        "/pt/reinigung/region-winterthur",
+        "/pt/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "O formulário não está disponível neste momento. Pode contactar-nos por WhatsApp, telefone ou email.Tentar novamente",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 186,
+        "logoWidth": 96,
+        "logoHeight": 42,
+        "descriptor": "Limpeza e pequenas mudanças",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": {
+        "opened": true,
+        "closed": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "language": "pt",
+      "width": 1440,
+      "http": 200,
+      "path": "/pt/kontakt",
+      "overflow": false,
+      "title": "Vamos até sua casa.",
+      "mapReady": true,
+      "mapLinks": [
+        "/pt/reinigung/region-zuerich",
+        "/pt/reinigung/region-winterthur",
+        "/pt/reinigung/kanton-schaffhausen",
+        "/pt/reinigung/region-zuerich",
+        "/pt/reinigung/region-winterthur",
+        "/pt/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "O formulário não está disponível neste momento. Pode contactar-nos por WhatsApp, telefone ou email.Tentar novamente",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 139,
+        "logoWidth": 150,
+        "logoHeight": 66,
+        "descriptor": "Limpeza e pequenas mudanças",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": null
+    },
+    {
+      "language": "it",
+      "width": 375,
+      "http": 200,
+      "path": "/it/kontakt",
+      "overflow": false,
+      "title": "Veniamo a casa sua.",
+      "mapReady": true,
+      "mapLinks": [
+        "/it/reinigung/region-zuerich",
+        "/it/reinigung/region-winterthur",
+        "/it/reinigung/kanton-schaffhausen",
+        "/it/reinigung/region-zuerich",
+        "/it/reinigung/region-winterthur",
+        "/it/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "Il modulo non è attualmente disponibile. Può contattarci tramite WhatsApp, telefono o e-mail.Riprovi",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 186,
+        "logoWidth": 96,
+        "logoHeight": 42,
+        "descriptor": "Pulizie e piccoli traslochi",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": {
+        "opened": true,
+        "closed": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "language": "it",
+      "width": 1440,
+      "http": 200,
+      "path": "/it/kontakt",
+      "overflow": false,
+      "title": "Veniamo a casa sua.",
+      "mapReady": true,
+      "mapLinks": [
+        "/it/reinigung/region-zuerich",
+        "/it/reinigung/region-winterthur",
+        "/it/reinigung/kanton-schaffhausen",
+        "/it/reinigung/region-zuerich",
+        "/it/reinigung/region-winterthur",
+        "/it/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "Il modulo non è attualmente disponibile. Può contattarci tramite WhatsApp, telefono o e-mail.Riprovi",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 139,
+        "logoWidth": 150,
+        "logoHeight": 66,
+        "descriptor": "Pulizie e piccoli traslochi",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": null
+    },
+    {
+      "language": "fr",
+      "width": 375,
+      "http": 200,
+      "path": "/fr/kontakt",
+      "overflow": false,
+      "title": "Nous venons chez vous.",
+      "mapReady": true,
+      "mapLinks": [
+        "/fr/reinigung/region-zuerich",
+        "/fr/reinigung/region-winterthur",
+        "/fr/reinigung/kanton-schaffhausen",
+        "/fr/reinigung/region-zuerich",
+        "/fr/reinigung/region-winterthur",
+        "/fr/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "Le formulaire est actuellement indisponible. Vous pouvez nous contacter par WhatsApp, téléphone ou e-mail.Réessayer",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 186,
+        "logoWidth": 96,
+        "logoHeight": 42,
+        "descriptor": "Nettoyage et petits déménagements",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": {
+        "opened": true,
+        "closed": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "language": "fr",
+      "width": 1440,
+      "http": 200,
+      "path": "/fr/kontakt",
+      "overflow": false,
+      "title": "Nous venons chez vous.",
+      "mapReady": true,
+      "mapLinks": [
+        "/fr/reinigung/region-zuerich",
+        "/fr/reinigung/region-winterthur",
+        "/fr/reinigung/kanton-schaffhausen",
+        "/fr/reinigung/region-zuerich",
+        "/fr/reinigung/region-winterthur",
+        "/fr/reinigung/kanton-schaffhausen"
+      ],
+      "submitDisabled": true,
+      "formNotice": "Le formulaire est actuellement indisponible. Vous pouvez nous contacter par WhatsApp, téléphone ou e-mail.Réessayer",
+      "directLinks": [
+        "https://wa.me/41774505705",
+        "tel:+41774505705",
+        "mailto:kai@krakenpfm.ch"
+      ],
+      "header": {
+        "height": 139,
+        "logoWidth": 150,
+        "logoHeight": 66,
+        "descriptor": "Nettoyage et petits déménagements",
+        "bar": true,
+        "special": false
+      },
+      "headerMatches": true,
+      "focus": {
+        "active": true,
+        "outline": "solid",
+        "width": "3px"
+      },
+      "faqOpen": true,
+      "faqClosed": true,
+      "menu": null
+    }
+  ],
+  "otherPages": [
+    {
+      "language": "de",
+      "kind": "services",
+      "http": 200,
+      "path": "/leistungen",
+      "overflow": false,
+      "title": "Reinigung undkleine Umzüge.Passend zu Ihnen.",
+      "selectedService": null,
+      "liveTotal": null,
+      "estimateLabel": null,
+      "depositPreview": null
+    },
+    {
+      "language": "de",
+      "kind": "about",
+      "http": 200,
+      "path": "/ueber-uns",
+      "overflow": false,
+      "title": "Persönlich da.Mit Erfahrung.Für Ihr Zuhause.",
+      "selectedService": null,
+      "liveTotal": null,
+      "estimateLabel": null,
+      "depositPreview": null
+    },
+    {
+      "language": "de",
+      "kind": "end",
+      "http": 200,
+      "path": "/offerte",
+      "overflow": false,
+      "title": "Erstellen Sie Ihre Offerte.",
+      "selectedService": "UmzugsreinigungAusgewählt",
+      "liveTotal": "CHF 560.00",
+      "estimateLabel": "Ihr Preis · live berechnet",
+      "depositPreview": null
+    },
+    {
+      "language": "de",
+      "kind": "moving",
+      "http": 200,
+      "path": "/offerte",
+      "overflow": false,
+      "title": "Erstellen Sie Ihre Offerte.",
+      "selectedService": "Kleiner UmzugAusgewählt",
+      "liveTotal": "CHF 250.00",
+      "estimateLabel": "Richtpreis",
+      "depositPreview": "Die Anzahlung beträgt 15 % des Mindestauftrags, einschliesslich Anfahrt und gegebenenfalls Reinigung und Kombi-Rabatt.Vorgesehene Anzahlung: CHF 37.50. Zahlung erst nach Terminfreigabe."
+    },
+    {
+      "language": "es",
+      "kind": "services",
+      "http": 200,
+      "path": "/es/leistungen",
+      "overflow": false,
+      "title": "Limpieza ypequeñas mudanzas.A su medida.",
+      "selectedService": null,
+      "liveTotal": null,
+      "estimateLabel": null,
+      "depositPreview": null
+    },
+    {
+      "language": "es",
+      "kind": "about",
+      "http": 200,
+      "path": "/es/ueber-uns",
+      "overflow": false,
+      "title": "Atención personal.Con experiencia.Para su hogar.",
+      "selectedService": null,
+      "liveTotal": null,
+      "estimateLabel": null,
+      "depositPreview": null
+    },
+    {
+      "language": "es",
+      "kind": "end",
+      "http": 200,
+      "path": "/es/offerte",
+      "overflow": false,
+      "title": "Prepare su presupuesto.",
+      "selectedService": "Limpieza de fin de alquilerSeleccionado",
+      "liveTotal": "560,00 CHF",
+      "estimateLabel": "Su precio · calculado al momento",
+      "depositPreview": null
+    },
+    {
+      "language": "es",
+      "kind": "moving",
+      "http": 200,
+      "path": "/es/offerte",
+      "overflow": false,
+      "title": "Prepare su presupuesto.",
+      "selectedService": "Mudanza pequeñaSeleccionado",
+      "liveTotal": "250,00 CHF",
+      "estimateLabel": "Precio orientativo",
+      "depositPreview": "El anticipo es el 15 % del encargo mínimo, incluido desplazamiento y, si corresponde, limpieza y descuento combinado.Anticipo previsto: 37,50 CHF. Pago tras aprobar la cita."
+    }
+  ],
+  "errors": [],
+  "blockedMutations": [],
+  "blockedExternal": [],
+  "blockers": [],
+  "pass": true
+}

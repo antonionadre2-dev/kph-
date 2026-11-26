@@ -21,7 +21,7 @@ export function ContactContent({ language, onNavigate = () => {} }: { language: 
   const copy = getContactCopy(language);
   const responseTime = getContactResponseTime(language);
   return <main id="main" className="contact-page-main">
-    <section id="kraken-contact-real" className="contact-shell" aria-labelledby="contact-title">
+    <section id="kraken-contact-real" className="contact-shell container" aria-labelledby="contact-title">
       <header className="contact-intro">
         <div className="contact-intro-copy">
           <p className="contact-eyebrow">{copy.hero.eyebrow}</p>
@@ -31,9 +31,9 @@ export function ContactContent({ language, onNavigate = () => {} }: { language: 
         <p className="contact-intro-hours"><Clock3 aria-hidden="true" />{copy.hero.hours}</p>
         <div className="contact-intro-actions">
           <div className="contact-actions">
-            <a className="contact-action contact-action--primary" href={publicHref('/quote', language)}><Calculator aria-hidden="true" />{copy.hero.calculate}</a>
-            <a className="contact-action contact-action--secondary contact-action--whatsapp" href="https://wa.me/41774505705" target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />{copy.hero.whatsapp}</a>
-            <a className="contact-action contact-action--secondary" href="tel:+41774505705"><Phone aria-hidden="true" />{copy.hero.call}</a>
+            <a className="contact-action kr-button kr-button--primary" href={publicHref('/quote', language)}><Calculator aria-hidden="true" />{copy.hero.calculate}</a>
+            <a className="contact-action kr-button kr-button--secondary" href="https://wa.me/41774505705" target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />{copy.hero.whatsapp}</a>
+            <a className="contact-action kr-button kr-button--secondary" href="tel:+41774505705"><Phone aria-hidden="true" />{copy.hero.call}</a>
           </div>
           {responseTime ? <p className="contact-response-time">{responseTime}</p> : null}
         </div>
@@ -53,7 +53,7 @@ export function ContactContent({ language, onNavigate = () => {} }: { language: 
           <a href="tel:+41774505705"><Phone aria-hidden="true" /><span><small>{copy.person.phoneLabel}</small><strong>+41 77 450 57 05</strong></span></a>
           <a href="mailto:kai@krakenpfm.ch"><Mail aria-hidden="true" /><span><small>{copy.person.emailLabel}</small><strong>kai@krakenpfm.ch</strong></span></a>
           <p><Clock3 aria-hidden="true" /><span><small>{copy.person.hoursLabel}</small><strong>{copy.hero.hours}</strong></span></p>
-          <button className="contact-kai-action" type="button" aria-haspopup="dialog" aria-controls="kai-assistant" onClick={event => requestKaiOpen(null, event.currentTarget)}><MessageCircle aria-hidden="true" />{kaiText(language, 'open')}</button>
+          <button className="contact-kai-action kr-button kr-button--secondary" type="button" aria-haspopup="dialog" aria-controls="kai-assistant" onClick={event => requestKaiOpen(null, event.currentTarget)}><MessageCircle aria-hidden="true" />{kaiText(language, 'open')}</button>
         </div>
       </section>
 
@@ -68,7 +68,7 @@ export function ContactContent({ language, onNavigate = () => {} }: { language: 
 export default function KontaktPage({ onNavigate }: { onNavigate: (path: string) => void }) {
   const { language } = useTranslation();
   return <div className="kraken-home kraken-contact-page" lang={language}>
-    <ApprovedHeader onNavigate={onNavigate} page="contact" contactQuoteLabel={getContactCopy(language).hero.calculate} />
+    <ApprovedHeader onNavigate={onNavigate} page="contact" />
     <ContactContent language={language} onNavigate={onNavigate} />
   </div>;
 }
