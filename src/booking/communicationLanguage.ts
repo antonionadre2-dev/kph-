@@ -1,11 +1,15 @@
 import { normalizeEmailLanguage } from '../../integrations/email-collection/language.mjs';
-import { languageFromSearch } from '../locale';
+import { pathLanguage } from '../routing/site-paths.ts';
 import type { SiteLanguage } from '../locale';
 
-/** Restore a saved communication choice only when navigation has no explicit locale. */
-export function communicationLanguageToRestore(saved: unknown, search: string): SiteLanguage | null {
-  if (languageFromSearch(search)) return null;
-  try { return normalizeEmailLanguage(saved) as SiteLanguage; } catch { return null; }
+/** Reading a booking is never permission to change the visitor's interface language. */
+export function communicationLanguageToRestore(_saved: unknown, _location: string): SiteLanguage | null {
+  return null;
+}
+
+/** Explicit route/query selection wins; browser language and saved booking language have no role. */
+export function bookingRequestLanguage(siteLanguage: unknown, location: string): string {
+  try { return normalizeEmailLanguage(pathLanguage(location) || siteLanguage); } catch { return 'de'; }
 }
 
 /** A different page language is an opportunity to ask, never an implicit update. */

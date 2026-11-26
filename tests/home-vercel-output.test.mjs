@@ -159,3 +159,15 @@ test('security.txt is published without exposing other hidden files', () => {
     assert.equal(existsSync(path.join(root, '.vercel/output/static/.well-known/private.json')), false);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
+
+test('the verified frontend manifest cannot be omitted or changed after packaging',()=>{
+  const {root,trackedPublicFiles,write}=fixture();
+  try{
+    prepareVercelOutput(root,{trackedPublicFiles});
+    const filename=path.join(root,'.vercel/output/frontend-asset-manifest.json');
+    const manifest=readFileSync(filename,'utf8');assert.equal(JSON.parse(manifest).assets.length,2);
+    write('.vercel/output/frontend-asset-manifest.json','{}\n');
+    assert.throws(()=>prepareVercelOutput(root,{trackedPublicFiles,verifyOnly:true}),/changed frontend asset manifest/);
+    rmSync(filename);assert.throws(()=>prepareVercelOutput(root,{trackedPublicFiles,verifyOnly:true}),/changed frontend asset manifest/);
+  }finally{rmSync(root,{recursive:true,force:true});}
+});

@@ -63,7 +63,7 @@ const CookieConsent: React.FC<CookieConsentProps> = ({ onNavigate }) => {
   return (
     <div 
       id="cookie-consent-banner"
-      className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.08)] z-[100] p-5 md:p-6 animate-slide-up"
+      className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.08)] z-[150] p-5 md:p-6 animate-slide-up"
     >
       <div className="max-w-7xl mx-auto">
         {!isCustomizing ? (

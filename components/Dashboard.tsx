@@ -1,5 +1,6 @@
 import { escapedDocumentRecord, DOCUMENT_PREVIEW_CSP, documentDraftLabel, documentPreviewBlocked, documentPreviewDate, connectPreviewPrint } from '../src/security/documentPreview';
 import './private-tools.css';
+import { BookingOperationsPanel } from './BookingOperationsPanel';
 import React, { useState, useEffect, useRef } from 'react';
 import { identityScope, emailDraftHref, emailPreviewDocument, isClientEditableStatus } from '../src/auth/dashboard-safety';
 import { normalizeHomeLanguage, homeText } from './home/homeTranslations';
@@ -185,7 +186,6 @@ const Dashboard: React.FC = () => {
   const [emailHistoryClientFilter, setEmailHistoryClientFilter] = useState('');
   const [showEmailHistory, setShowEmailHistory] = useState(false);
   const [emailHistory, setEmailHistory] = useState<Array<{id:string;requestId:string;clientName:string;clientEmail:string;subject:string;sentAt:string;status:'sent'|'pending'|'error';amount:string;}>>([]);
-  const [confirmationStatuses, setConfirmationStatuses] = useState<Record<string,'confirmed'|'pending'|'none'>>({});
   useEffect(() => {
     if (selectedRequest) {
       setAdminNotesText(selectedRequest.notes || '');
@@ -241,7 +241,7 @@ const Dashboard: React.FC = () => {
     setIsFormOpen(false);setAdminNotesText('');setActionAlert(null);setSearchQuery('');setCareerSearchQuery('');setMessageSearchQuery('');setEmailHistoryClientFilter('');
     setNewRequest({client:'',email:'',phone:'',address:'',service:'',date:'',priority:'Medium',amount:'',notes:'',mediaUrlString:''});
     setSelectedEmailRequest(null);setEmailModalOpen(false);setEmailTo('');setEmailCC('');setEmailSubject('');setEmailBody('');
-    setEmailHistory([]);setConfirmationStatuses({});setPreviewFile(null);setDisplayIdentity(activeIdentity);
+    setEmailHistory([]);setPreviewFile(null);setDisplayIdentity(activeIdentity);
     try { localStorage.removeItem('kraken_email_history');localStorage.removeItem('kraken_confirm_status'); } catch { /* No private history is kept in browser storage. */ }
     return () => { identity.current=''; };
   },[activeIdentity]);
@@ -829,12 +829,6 @@ const Dashboard: React.FC = () => {
     catch { setActionAlert(safetyCopy[2]); }
   };
 
-  const markConfirmed = (requestId: string, status: 'confirmed' | 'pending' | 'none') => {
-    const n = { ...confirmationStatuses, [requestId]: status };
-    setConfirmationStatuses(n);
-
-  };
-
   const doResendEmail = (entry: { requestId: string }) => {
     const req = requests.find(r => r.id === entry.requestId);
     if (req) handleSendEmail(req);
@@ -851,7 +845,6 @@ const Dashboard: React.FC = () => {
     sent: emailHistory.filter(e => e.status === 'sent').length,
     pending: emailHistory.filter(e => e.status === 'pending').length,
     error: emailHistory.filter(e => e.status === 'error').length,
-    confirmed: Object.values(confirmationStatuses).filter(s => s === 'confirmed').length,
   };
 
   if(displayIdentity!==activeIdentity)return <main id="main" aria-busy="true" />;
@@ -940,6 +933,8 @@ const Dashboard: React.FC = () => {
                 </div>
             </div>
         </div>
+
+        {isStaff && <BookingOperationsPanel key={user?.uid} />}
 
         {/* Section Navigation Tabs */}
         <div className="flex items-center gap-3 mb-8 border-b border-slate-200 pb-4 overflow-x-auto [&_button]:shrink-0 [&_button]:whitespace-nowrap">
@@ -1701,18 +1696,6 @@ const Dashboard: React.FC = () => {
                   >
                     <Mail size={11} /> Email
                   </motion.button>
-                  {confirmationStatuses[req.id] === 'confirmed' && (
-                    <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-[8px] font-black">OK</span>
-                  )}
-                  <motion.button
-                    whileHover={{ scale: 1.08 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => { e.stopPropagation(); markConfirmed(req.id, confirmationStatuses[req.id] === 'confirmed' ? 'none' : 'confirmed'); }}
-                    className={`px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${confirmationStatuses[req.id] === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-slate-100 hover:bg-green-50 text-slate-400 hover:text-green-600'}`}
-                    title="Toggle Client Approval"
-                  >
-                    <Check size={11} /> {confirmationStatuses[req.id] === 'confirmed' ? dt.approved : dt.approve}
-                  </motion.button>
                                                          {(isStaff || req.status === 'Pending') && (
                                                              <motion.button 
                                                                  whileHover={{ scale: 1.15, color: "#f43f5e" }}
@@ -1899,7 +1882,6 @@ const Dashboard: React.FC = () => {
               { label: dt.delivered, value: emailStats.sent, color: 'text-green-600', bg: 'bg-green-50', icon: '✅' },
               { label: dt.filterPending, value: emailStats.pending, color: 'text-yellow-500', bg: 'bg-yellow-50', icon: '⏳' },
               { label: dt.failed, value: emailStats.error, color: 'text-red-500', bg: 'bg-red-50', icon: '❌' },
-              { label: dt.confirmed, value: emailStats.confirmed, color: 'text-[#00d4ff]', bg: 'bg-slate-50', icon: '🎯' },
             ] as const).map((stat, i) => (
               <div key={i} className={`${stat.bg} px-3 py-3 text-center`}>
                 <div className="text-base">{stat.icon}</div>
@@ -1932,7 +1914,6 @@ const Dashboard: React.FC = () => {
                       <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider">{dt.thTo}</th>
                       <th className="px-3 py-2.5 text-right font-black uppercase tracking-wider">{dt.thCHF}</th>
                       <th className="px-3 py-2.5 text-center font-black uppercase tracking-wider">{dt.thStatus}</th>
-                      <th className="px-3 py-2.5 text-center font-black uppercase tracking-wider">{dt.thConfirmed}</th>
                       <th className="px-3 py-2.5 text-center font-black uppercase tracking-wider">{dt.thAction}</th>
                     </tr></thead>
                     <tbody>
@@ -1946,13 +1927,6 @@ const Dashboard: React.FC = () => {
                             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold ${entry.status==='sent'?'bg-green-100 text-green-700':entry.status==='pending'?'bg-yellow-100 text-yellow-600':'bg-red-100 text-red-600'}`}>
                               {entry.status==='sent'?dt.delivered:entry.status==='pending'?dt.filterPending:dt.failed}
                             </span>
-                          </td>
-                          <td className="px-3 py-2.5 text-center">
-                            <select value={confirmationStatuses[entry.requestId]||'none'} onChange={e => markConfirmed(entry.requestId, e.target.value as 'confirmed'|'pending'|'none')} className="text-[10px] border border-slate-200 rounded px-1 py-0.5 focus:outline-none focus:ring-1 focus:ring-[#00d4ff] bg-white">
-                              <option value="none">— {dt.filterAll} —</option>
-                              <option value="pending">{dt.filterPending}</option>
-                              <option value="confirmed">{dt.confirmed}</option>
-                            </select>
                           </td>
                           <td className="px-3 py-2.5 text-center">
                             <button onClick={() => doResendEmail(entry)} className="px-2 py-1 rounded-md bg-[#0f1b2d] text-white text-[9px] font-bold hover:bg-slate-700 transition-colors">{dt.resend}</button>

@@ -1,10 +1,11 @@
-import { cpSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { cpSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { INDEXABLE_PATHS } from '../src/seo/crawl-policy.ts';
 import { seoFragmentName, LEGAL_DOCUMENT_PATHS } from '../src/seo/render-contract.ts';
+import { frontendAssetManifest } from './frontend-asset-contract.mjs';
 
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
 const seoPages = languages.flatMap(language => INDEXABLE_PATHS.map(pathname => seoFragmentName(pathname, language)));
@@ -99,6 +100,8 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
   if (!referencesFor(html).length) throw new Error('The built HTML has no frontend bundle references.');
   const references = [...new Set(runtimeHtml.flatMap(({ source }) => referencesFor(source)))];
   for (const reference of references) if (!files.has(reference)) throw new Error(`Built HTML references an unpublished frontend file: ${reference}`);
+  const frontendManifest = frontendAssetManifest(files,runtimeHtml);
+  const frontendManifestPath = path.join(output,'frontend-asset-manifest.json');
 
   const staticDirectory = path.join(output, 'static');
   if (!verifyOnly) {
@@ -130,6 +133,9 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
       throw new Error(`Missing or changed function HTML: dist/${name}`);
     }
   }
+  const serializedManifest = JSON.stringify(frontendManifest,null,2)+'\n';
+  if (!verifyOnly) writeFileSync(frontendManifestPath,serializedManifest);
+  if (!existsSync(frontendManifestPath) || readFileSync(frontendManifestPath,'utf8') !== serializedManifest) throw new Error('Missing or changed frontend asset manifest. Prepare and verify the complete prebuilt output before deployment.');
   return {
     version: 3,
     function: 'index.func',
@@ -138,6 +144,7 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
     homeAssets: homeFiles.length,
     htmlBundleReferences: references.length,
     generatedBundles: [...files.keys()].filter(name => name.startsWith('assets/')).length,
+    frontendDependenciesVerified: frontendManifest.assets.length,
     seoPageFragments: seoPages.length,
     legalDocumentFragments: legalPages.length,
     seoShellFragments: seoShells.length,

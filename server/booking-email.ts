@@ -1,6 +1,7 @@
 import { journeyCopy } from '../src/booking/journeyCopy.ts';
 import { bookingLineLabel, bookingText } from '../src/booking/uiCopy.ts';
 import { BookingError } from './booking-store.ts';
+import { safeProviderName } from './booking-mail-safety.ts';
 
 const escape=(value:unknown)=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]!));
 const money=(cents:number)=>`CHF ${(cents/100).toFixed(2)}`;
@@ -34,6 +35,8 @@ export function createResendEmailAdapter(apiKey:string, fetcher:typeof fetch=fet
     const parsed=await response.json().catch(()=>null);
     if(!response.ok) {
       const error:any=new BookingError('EMAIL_PROVIDER_REJECTED',503);
+      error.providerStatus=response.status;
+      error.providerName=safeProviderName(parsed?.name);
       const retryable=response.status===429 && ['rate_limit_exceeded','daily_quota_exceeded','monthly_quota_exceeded'].includes(parsed?.name);
       error.definitelyNotSent=retryable || (response.status>=400 && response.status<500 && ![408,409,429].includes(response.status));
       if(retryable) {

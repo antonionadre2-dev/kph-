@@ -24,7 +24,8 @@ test('a previous sent or uncertain delivery remains tied to its real provider st
       assert.equal(bookingMailStatusKey(state, true, ready), 'mailFailed');
     }
   }
-  assert.match(bookingText('es', 'mailFailed'), /no está confirmado.*Contacte.*antes de intentar otro envío/s);
+  assert.match(bookingText('es', 'mailFailed'), /solicitud está guardada.*confirmar el envío.*Conserve su referencia.*recuperar el acceso/s);
+  assert.doesNotMatch(bookingText('es', 'mailFailed'), /no llegó|no se ha enviado|reintentaremos|enviaremos automáticamente/i);
 });
 
 test('saved quote recovery requires both explicit recovery enablement and email readiness', () => {

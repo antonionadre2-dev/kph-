@@ -87,6 +87,20 @@
           "order": "ASCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "kraken_bookings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "reference",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "customer.email",
+          "order": "ASCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

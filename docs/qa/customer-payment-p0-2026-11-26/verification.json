@@ -1,0 +1,886 @@
+{
+  "date": "2026-11-26",
+  "codeDeployment": false,
+  "actualPayrexxPayment": false,
+  "actualEmailSent": false,
+  "pricingSourceChanged": false,
+  "tests": {
+    "total": 511,
+    "passed": 505,
+    "skipped": 6,
+    "failed": 0
+  },
+  "typecheck": true,
+  "prebuilt": {
+    "version": 3,
+    "function": "index.func",
+    "runtime": "nodejs24.x",
+    "staticFiles": 449,
+    "homeAssets": 20,
+    "htmlBundleReferences": 11,
+    "generatedBundles": 59,
+    "frontendDependenciesVerified": 61,
+    "seoPageFragments": 144,
+    "legalDocumentFragments": 18,
+    "seoShellFragments": 6,
+    "runtimeHtmlFilesVerified": 193,
+    "sha256Verified": 449,
+    "missing": 0
+  },
+  "httpAssets": {
+    "origin": "http://127.0.0.1:3042",
+    "assetCount": 61,
+    "checks": [
+      {
+        "path": "/assets/AccountForm-DbAdo7gY.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/AccountForm-G7wOlkZh.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/ApprovedAbout-7-MkYWCi.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/ApprovedAbout-fIj5qZlm.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/ApprovedServices-DtRrMAdn.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/ApprovedServices-JpBrYPjU.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/CalculatorRoute-B_6fP05I.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/CalculatorRoute-oXfjog_Q.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/CommercialQuotePage-CLAst91C.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/CookieConsent-DEmEkMwl.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/CoverageHubPage-hejspJDy.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/CustomerAccessRoute-CWwpD7Rv.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/Dashboard-WlyRRXwF.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/Dashboard-o4jVYqxH.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/FloatingMascot-C4r2zc7m.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/FloatingMascot-DDXyW6HG.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/GDPRPage-TNIErDCc.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/ImpressumPage-CLxKtsuZ.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/KontaktPage-Cy52F78r.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/KontaktPage-XEanqgkz.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/KrakenServiceIcon-Bc0U-jCa.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/LocalSeoContent-B4h16TkQ.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/LocalSeoContent-oMGX0KLE.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/LoginPage--rBn-xaK.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/RegionHubPage-CgqmV1am.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/RegisterPage-jWwn5by6.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/ReviewInvitePage-o54IPYgM.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/SeoServiceCityPage-D9tNaky3.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/TermsPage-DUvcDvSx.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/arrow-left-qp-ryAm1.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/client-Bj50MHfc.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/contact-copy-j66VhgCU.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/copy-BRySRHUu.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/createLucideIcon-BEWMX-49.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/customerAccessCopy-Cs924Tcu.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/draft-BgFnoGW4.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/firebase-C29YyqA1.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/html2canvas.esm-B0tyYwQk.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/icons-DltS-eMM.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/index-Ci3vZBL8.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/index-DN1llIdj.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/index-okck47j0.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/index.es-BzwDPLZc.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/index.esm-Cou69UmR.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/legacy-translations-CTu55u_1.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/legal-BwrydFhV.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/map-pin-DFtkJIJL.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/message-circle-C2qlu8Sa.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/page-faqs-CrNI-F6l.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/phone-CU2EkMJ4.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/proxy-BOpCc5Le.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/purify.es-Csrj9YNg.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/route-utilities-D8X00yII.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/service-calculator-gcTs4ad6.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/servicesTranslations-CwWWs2fV.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/terms-D7IutaZL.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/uiCopy-qe9wPZ8h.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/vendor-react-B-GZaW7G.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/assets/x-t5OHsSCf.js",
+        "status": 200,
+        "mime": "text/javascript; charset=utf-8",
+        "sha256Verified": true
+      },
+      {
+        "path": "/fonts/manrope-latin-ext.27eccb1f8944.woff2",
+        "status": 200,
+        "mime": "font/woff2",
+        "sha256Verified": true
+      },
+      {
+        "path": "/fonts/manrope-latin.8bd97e6bbbc1.woff2",
+        "status": 200,
+        "mime": "font/woff2",
+        "sha256Verified": true
+      }
+    ]
+  },
+  "browserSyntheticFlow": {
+    "kind": "synthetic-ui-test-on-local-prebuilt",
+    "realExternalPayment": false,
+    "realEmail": false,
+    "checks": [
+      {
+        "name": "end alias selects configuration",
+        "passed": true
+      },
+      {
+        "name": "terms opens a protected new tab",
+        "passed": true
+      },
+      {
+        "name": "terms does not leave calculator",
+        "passed": true
+      },
+      {
+        "name": "reload preserves summary step",
+        "passed": true
+      },
+      {
+        "name": "consent is never restored",
+        "passed": true
+      },
+      {
+        "name": "contact survives reload",
+        "passed": true
+      },
+      {
+        "name": "appointment survives reload",
+        "passed": true
+      },
+      {
+        "name": "persistent draft contains no contact or note",
+        "passed": true
+      },
+      {
+        "name": "first submission was a simulated lost response",
+        "passed": true
+      },
+      {
+        "name": "retry keeps its submission identity",
+        "passed": true
+      },
+      {
+        "name": "explicit German request stays German",
+        "passed": true
+      },
+      {
+        "name": "stored English does not change interface",
+        "passed": true
+      },
+      {
+        "name": "failed email copy says request is saved",
+        "passed": true
+      },
+      {
+        "name": "submitted draft contacts are cleared",
+        "passed": true
+      },
+      {
+        "name": "personal access is established only once",
+        "passed": true
+      },
+      {
+        "name": "recovery uses a browser cookie",
+        "passed": true
+      },
+      {
+        "name": "closed-tab view recovers through browser route",
+        "passed": true
+      },
+      {
+        "name": "cookie recovery does not renew establishment",
+        "passed": true
+      },
+      {
+        "name": "payment needs explicit terms",
+        "passed": true
+      },
+      {
+        "name": "approved deposit navigates to provider only once",
+        "passed": true
+      },
+      {
+        "name": "no browser runtime errors",
+        "passed": true
+      }
+    ]
+  },
+  "aliases": {
+    "kind": "local-prebuilt-browser",
+    "aliasChecks": 30,
+    "checks": [
+      {
+        "language": "de",
+        "service": "end",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "de",
+        "service": "windows",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "de",
+        "service": "regular",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "de",
+        "service": "deep",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "de",
+        "service": "moving",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "en",
+        "service": "end",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "en",
+        "service": "windows",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "en",
+        "service": "regular",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "en",
+        "service": "deep",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "en",
+        "service": "moving",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "es",
+        "service": "end",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "es",
+        "service": "windows",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "es",
+        "service": "regular",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "es",
+        "service": "deep",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "es",
+        "service": "moving",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "fr",
+        "service": "end",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "fr",
+        "service": "windows",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "fr",
+        "service": "regular",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "fr",
+        "service": "deep",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "fr",
+        "service": "moving",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "it",
+        "service": "end",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "it",
+        "service": "windows",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "it",
+        "service": "regular",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "it",
+        "service": "deep",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "it",
+        "service": "moving",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "pt",
+        "service": "end",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "pt",
+        "service": "windows",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "pt",
+        "service": "regular",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "pt",
+        "service": "deep",
+        "selected": true,
+        "languagePreserved": true
+      },
+      {
+        "language": "pt",
+        "service": "moving",
+        "selected": true,
+        "languagePreserved": true
+      }
+    ],
+    "smallestWidth": {
+      "viewport": 320,
+      "scroll": 320
+    },
+    "createdBookings": 0
+  },
+  "legacyRedirects": {
+    "checks": [
+      {
+        "language": "de",
+        "status": 301,
+        "destination": "/offerte?service=end"
+      },
+      {
+        "language": "en",
+        "status": 301,
+        "destination": "/en/offerte?service=end"
+      },
+      {
+        "language": "es",
+        "status": 301,
+        "destination": "/es/offerte?service=end"
+      },
+      {
+        "language": "fr",
+        "status": 301,
+        "destination": "/fr/offerte?service=end"
+      },
+      {
+        "language": "it",
+        "status": 301,
+        "destination": "/it/offerte?service=end"
+      },
+      {
+        "language": "pt",
+        "status": 301,
+        "destination": "/pt/offerte?service=end"
+      }
+    ]
+  },
+  "recoveryResponsive": {
+    "checks": [
+      {
+        "width": 320,
+        "recoveryFormVisible": true,
+        "metrics": {
+          "viewport": 320,
+          "scrollWidth": 320
+        },
+        "submitHeight": 48.390625
+      },
+      {
+        "width": 1024,
+        "recoveryFormVisible": true,
+        "metrics": {
+          "viewport": 1024,
+          "scrollWidth": 1024
+        },
+        "submitHeight": 48.390625
+      }
+    ]
+  },
+  "before": {
+    "warning": "Broken public 76e8cb4 deployment before authorised restoration; not normal design baseline",
+    "kind": "public-readonly-before",
+    "createdBookings": 0,
+    "results": [
+      {
+        "width": 360,
+        "file": "calculator-360.png",
+        "metrics": {
+          "viewport": 360,
+          "scrollWidth": 1024,
+          "height": 6196
+        },
+        "hasConfiguration": 0
+      },
+      {
+        "width": 390,
+        "file": "calculator-390.png",
+        "metrics": {
+          "viewport": 390,
+          "scrollWidth": 1024,
+          "height": 6351
+        },
+        "hasConfiguration": 0
+      },
+      {
+        "width": 768,
+        "file": "calculator-768.png",
+        "metrics": {
+          "viewport": 768,
+          "scrollWidth": 1024,
+          "height": 8371
+        },
+        "hasConfiguration": 0
+      },
+      {
+        "width": 1440,
+        "file": "calculator-1440.png",
+        "metrics": {
+          "viewport": 1440,
+          "scrollWidth": 1440,
+          "height": 12378
+        },
+        "hasConfiguration": 0
+      }
+    ]
+  },
+  "after": {
+    "source": "local verified prebuilt artifact; external booking/email/payment disabled",
+    "checks": [
+      {
+        "width": 360,
+        "status": 200,
+        "metrics": {
+          "viewport": 360,
+          "scrollWidth": 360,
+          "height": 5391
+        },
+        "errors": [],
+        "missingAssets": [],
+        "optionalCookies": "declined through visible button",
+        "bookingsCreated": 0
+      },
+      {
+        "width": 390,
+        "status": 200,
+        "metrics": {
+          "viewport": 390,
+          "scrollWidth": 390,
+          "height": 5265
+        },
+        "errors": [],
+        "missingAssets": [],
+        "optionalCookies": "declined through visible button",
+        "bookingsCreated": 0
+      },
+      {
+        "width": 768,
+        "status": 200,
+        "metrics": {
+          "viewport": 768,
+          "scrollWidth": 768,
+          "height": 3830
+        },
+        "errors": [],
+        "missingAssets": [],
+        "optionalCookies": "declined through visible button",
+        "bookingsCreated": 0
+      },
+      {
+        "width": 1440,
+        "status": 200,
+        "metrics": {
+          "viewport": 1440,
+          "scrollWidth": 1440,
+          "height": 2733
+        },
+        "errors": [],
+        "missingAssets": [],
+        "optionalCookies": "declined through visible button",
+        "bookingsCreated": 0
+      }
+    ]
+  },
+  "authorisedRestorationOnly": {
+    "restoredDeployment": "dpl_HhSgibCcgkX6v3TuqMMYHAHkbidr",
+    "approvedByOwner": true,
+    "createdBookings": 0,
+    "testPayments": 0,
+    "checks": [
+      {
+        "width": 390,
+        "status": 200,
+        "interactiveCalculator": true,
+        "missingAssets": [],
+        "errors": [],
+        "metrics": {
+          "viewport": 390,
+          "scrollWidth": 390
+        }
+      },
+      {
+        "width": 1440,
+        "status": 200,
+        "interactiveCalculator": true,
+        "missingAssets": [],
+        "errors": [],
+        "metrics": {
+          "viewport": 1440,
+          "scrollWidth": 1440
+        }
+      }
+    ]
+  },
+  "performance": {
+    "lighthouse": null,
+    "lcp": null,
+    "fcp": null,
+    "reason": "P6 not started; P0 external provider verification pending"
+  },
+  "pending": [
+    "Legitimate Payrexx authentication recovery",
+    "Verified Payrexx TEST payment and authenticated webhook",
+    "Real mailbox delivery and recovery link verification",
+    "Remote configuration and deployment review"
+  ]
+}
