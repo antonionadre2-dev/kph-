@@ -59,6 +59,11 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
       });
       try{
         assert.equal((await call('/api/health')).status,200);
+        const explicitGerman=await call('/?lang=de');
+        assert.equal(explicitGerman.status,200);
+        assert.equal(explicitGerman.headers.location,undefined);
+        assert.match(explicitGerman.body,/<html lang="de-CH"/);
+        assert.ok(explicitGerman.body.includes('rel="canonical" href="https://krakenpfm.ch/"'));
         for(const language of ['de','en','es','pt','it','fr'])for(const route of INDEXABLE_PATHS){
           const destination=publicHref(route,language),result=await call(destination);
           assert.equal(result.status,200,destination);assert.ok(result.body.includes('RENDERED_BODY'),destination);
@@ -86,6 +91,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
           ['/services/zurich/end-of-tenancy?hl=fr','/fr/umzugsreinigung/zuerich'],
           ['/reinigung/uster?lang=it','/it/reinigung/region-zuerich'],['/reinigung/neuhausen-am-rheinfall','/reinigung/kanton-schaffhausen'],
           ['/en/about?lang=es','/en/ueber-uns'],['/de/offerte','/offerte'],
+          ['/index.html?lang=de','/?lang=de'],['/about?lang=de','/ueber-uns?lang=de'],['/en/index.html','/en/'],
         ]){const result=await call(source);assert.equal(result.status,301,source);assert.equal(result.headers.location,destination);}
         for(const route of ['/services/zurich/gardening','/reinigung-zurich-property-managers','/commercial','/en/blog/iot-smart-facility-management-schweizer-bueros']){
           const result=await call(route);assert.equal(result.status,410,route);assert.equal(result.headers['x-robots-tag'],'noindex, follow');

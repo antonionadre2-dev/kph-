@@ -1,0 +1,79 @@
+[
+  {
+    "code": "de",
+    "before": "21871C41A0915692C47309B1DA955EA2",
+    "after": "21871C41A0915692C47309B1DA955EA2",
+    "aria": "Kraken Properties & Facilities Management – Startseite",
+    "company": "Properties & Facilities Management",
+    "footer": "Reinigung & kleine Umzüge",
+    "language": "de-CH",
+    "tagline": "Reinigung & kleine Umzüge",
+    "noReload": true
+  },
+  {
+    "code": "en",
+    "before": "21871C41A0915692C47309B1DA955EA2",
+    "after": "21871C41A0915692C47309B1DA955EA2",
+    "aria": "Kraken Properties & Facilities Management – Home",
+    "company": "Properties & Facilities Management",
+    "footer": "Cleaning & small moves",
+    "language": "en",
+    "tagline": "Cleaning & small moves",
+    "noReload": true
+  },
+  {
+    "code": "es",
+    "before": "21871C41A0915692C47309B1DA955EA2",
+    "after": "21871C41A0915692C47309B1DA955EA2",
+    "aria": "Kraken Properties & Facilities Management – Inicio",
+    "company": "Properties & Facilities Management",
+    "footer": "Limpieza y pequeñas mudanzas",
+    "language": "es",
+    "tagline": "Limpieza y pequeñas mudanzas",
+    "noReload": true
+  },
+  {
+    "code": "pt",
+    "before": "21871C41A0915692C47309B1DA955EA2",
+    "after": "21871C41A0915692C47309B1DA955EA2",
+    "aria": "Kraken Properties & Facilities Management – Início",
+    "company": "Properties & Facilities Management",
+    "footer": "Limpeza e pequenas mudanças",
+    "language": "pt",
+    "tagline": "Limpeza e pequenas mudanças",
+    "noReload": true
+  },
+  {
+    "code": "it",
+    "before": "21871C41A0915692C47309B1DA955EA2",
+    "after": "21871C41A0915692C47309B1DA955EA2",
+    "aria": "Kraken Properties & Facilities Management – Home",
+    "company": "Properties & Facilities Management",
+    "footer": "Pulizie e piccoli traslochi",
+    "language": "it",
+    "tagline": "Pulizie e piccoli traslochi",
+    "noReload": true
+  },
+  {
+    "code": "fr",
+    "before": "21871C41A0915692C47309B1DA955EA2",
+    "after": "21871C41A0915692C47309B1DA955EA2",
+    "aria": "Kraken Properties & Facilities Management – Accueil",
+    "company": "Properties & Facilities Management",
+    "footer": "Nettoyage et petits déménagements",
+    "language": "fr",
+    "tagline": "Nettoyage et petits déménagements",
+    "noReload": true
+  },
+  {
+    "code": "es",
+    "before": "21871C41A0915692C47309B1DA955EA2",
+    "after": "21871C41A0915692C47309B1DA955EA2",
+    "aria": "Kraken Properties & Facilities Management – Inicio",
+    "company": "Properties & Facilities Management",
+    "footer": "Limpieza y pequeñas mudanzas",
+    "language": "es",
+    "tagline": "Limpieza y pequeñas mudanzas",
+    "noReload": true
+  }
+]

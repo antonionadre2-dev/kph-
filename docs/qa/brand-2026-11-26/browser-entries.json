@@ -1,0 +1,80 @@
+[
+  {
+    "kind": "savedFrenchHome",
+    "url": "https://krakenpfm.ch/fr/",
+    "aria": "Kraken Properties & Facilities Management – Accueil",
+    "company": "Properties & Facilities Management",
+    "footer": "Nettoyage et petits déménagements",
+    "language": "fr",
+    "tagline": "Nettoyage et petits déménagements"
+  },
+  {
+    "kind": "query",
+    "code": "de",
+    "url": "https://krakenpfm.ch/",
+    "aria": "Kraken Properties & Facilities Management – Startseite",
+    "company": "Properties & Facilities Management",
+    "footer": "Reinigung & kleine Umzüge",
+    "language": "de-CH",
+    "tagline": "Reinigung & kleine Umzüge"
+  },
+  {
+    "kind": "query",
+    "code": "en",
+    "url": "https://krakenpfm.ch/en/",
+    "aria": "Kraken Properties & Facilities Management – Home",
+    "company": "Properties & Facilities Management",
+    "footer": "Cleaning & small moves",
+    "language": "en",
+    "tagline": "Cleaning & small moves"
+  },
+  {
+    "kind": "query",
+    "code": "es",
+    "url": "https://krakenpfm.ch/es/",
+    "aria": "Kraken Properties & Facilities Management – Inicio",
+    "company": "Properties & Facilities Management",
+    "footer": "Limpieza y pequeñas mudanzas",
+    "language": "es",
+    "tagline": "Limpieza y pequeñas mudanzas"
+  },
+  {
+    "kind": "query",
+    "code": "pt",
+    "url": "https://krakenpfm.ch/pt/",
+    "aria": "Kraken Properties & Facilities Management – Início",
+    "company": "Properties & Facilities Management",
+    "footer": "Limpeza e pequenas mudanças",
+    "language": "pt",
+    "tagline": "Limpeza e pequenas mudanças"
+  },
+  {
+    "kind": "query",
+    "code": "it",
+    "url": "https://krakenpfm.ch/it/",
+    "aria": "Kraken Properties & Facilities Management – Home",
+    "company": "Properties & Facilities Management",
+    "footer": "Pulizie e piccoli traslochi",
+    "language": "it",
+    "tagline": "Pulizie e piccoli traslochi"
+  },
+  {
+    "kind": "query",
+    "code": "fr",
+    "url": "https://krakenpfm.ch/fr/",
+    "aria": "Kraken Properties & Facilities Management – Accueil",
+    "company": "Properties & Facilities Management",
+    "footer": "Nettoyage et petits déménagements",
+    "language": "fr",
+    "tagline": "Nettoyage et petits déménagements"
+  },
+  {
+    "kind": "reloadFrench",
+    "url": "https://krakenpfm.ch/fr/",
+    "aria": "Kraken Properties & Facilities Management – Accueil",
+    "company": "Properties & Facilities Management",
+    "footer": "Nettoyage et petits déménagements",
+    "language": "fr",
+    "tagline": "Nettoyage et petits déménagements"
+  }
+]

@@ -6,6 +6,8 @@ import { I18nProvider, useTranslation } from '../i18n.ts';
 import { languageFromSearch, languageSelectionUrl, localizedNavigationUrl, normalizeSiteLanguage, resolveSiteLanguage, restoredLanguageUrl } from '../src/locale.ts';
 import { publicHref, pathLanguage } from '../src/routing/site-paths.ts';
 import { getPageSeo } from '../src/seo/metadata.ts';
+import { getRouteDisposition } from '../src/routing/route-policy.ts';
+import { homeHydrationLanguage } from '../src/routing/hydration.ts';
 
 test('URL language and hl override saved preferences, including homepage and regional aliases', () => {
   for (const language of ['de', 'en', 'fr', 'it', 'es', 'pt'] as const) {
@@ -19,6 +21,40 @@ test('URL language and hl override saved preferences, including homepage and reg
   assert.equal(resolveSiteLanguage(), 'de-CH');
   assert.equal(normalizeSiteLanguage('constructor'), null);
   assert.equal(normalizeSiteLanguage('https://example.com'), null);
+});
+
+test('an explicit German entry survives HTTP normalization before overriding a saved Spanish preference', () => {
+  const origin = 'https://krakenpfm.ch';
+  for (const entry of ['/?lang=de', '/?hl=de', '/?lang=de-CH', '/index.html?lang=de', '/about?lang=de&utm=a&utm=b#story-london']) {
+    let destination = entry;
+    const first = getRouteDisposition(destination);
+    if (first.status === 301) destination = first.location!;
+    assert.equal(getRouteDisposition(destination).status, 200, entry);
+    const url = new URL(destination, origin);
+    const selected = resolveSiteLanguage({ pathname: url.pathname, search: url.search, saved: 'es' });
+    assert.equal(selected, 'de', entry);
+    const normalized = restoredLanguageUrl(url.href, selected)!;
+    assert.ok(normalized);
+    const final = new URL(normalized, origin);
+    assert.equal(final.searchParams.has('lang'), false);
+    assert.equal(final.searchParams.has('hl'), false);
+    assert.deepEqual(final.searchParams.getAll('utm'), url.searchParams.getAll('utm'));
+    assert.equal(final.hash, url.hash);
+    assert.equal(resolveSiteLanguage({ pathname: final.pathname, search: final.search, saved: selected }), 'de');
+    assert.equal(getPageSeo(url.href).canonical, getPageSeo(final.href).canonical);
+    assert.equal(getPageSeo(url.href).language, 'de-CH');
+  }
+  assert.deepEqual(getRouteDisposition('/?lang=de'), { status: 200 });
+  assert.equal(getPageSeo('/?lang=de').canonical, origin + '/');
+  assert.equal(homeHydrationLanguage({ marked: 'true', pathname: '/', search: '?lang=de', saved: 'es', ssrLanguage: 'de-CH' }), 'de-CH');
+  assert.equal(restoredLanguageUrl(origin + '/?lang=de', 'es'), null);
+});
+
+test('non-German query redirects and an explicit prefixed locale keep their existing precedence', () => {
+  for (const language of ['en', 'es', 'fr', 'it', 'pt']) {
+    assert.deepEqual(getRouteDisposition('/?lang=' + language), { status: 301, location: '/' + language + '/' });
+    assert.deepEqual(getRouteDisposition('/' + language + '/?lang=de'), { status: 301, location: '/' + language + '/' });
+  }
 });
 
 test('language choice preserves unrelated query and hash, and removes a stale hl alias', () => {
@@ -106,5 +142,10 @@ test('provider starts in the homepage URL language even when storage access is b
       localStorage: { getItem: () => 'fr' }
     } as unknown as Window & typeof globalThis;
     assert.match(renderToString(React.createElement(I18nProvider, null, React.createElement(Probe))), />fr<\/span>/);
+    globalThis.window = {
+      location: { pathname: '/', search: '?lang=de' },
+      localStorage: { getItem: () => 'es' }
+    } as unknown as Window & typeof globalThis;
+    assert.match(renderToString(React.createElement(I18nProvider, null, React.createElement(Probe))), />de<\/span>/);
   } finally { globalThis.window = previousWindow; }
 });
