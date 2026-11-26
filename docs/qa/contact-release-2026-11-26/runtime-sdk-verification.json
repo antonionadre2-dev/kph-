@@ -1,0 +1,43 @@
+{
+  "runtime": "nodejs24.x",
+  "framework": "express",
+  "handler": "server.js",
+  "environmentKeys": [],
+  "checks": [
+    {
+      "name": "firebase-admin/app",
+      "packaged": true,
+      "loaded": true
+    },
+    {
+      "name": "firebase-admin/firestore",
+      "packaged": true,
+      "loaded": true
+    },
+    {
+      "name": "firebase-admin/auth",
+      "packaged": true,
+      "loaded": true
+    },
+    {
+      "name": "@google-cloud/firestore",
+      "packaged": true,
+      "loaded": true
+    },
+    {
+      "name": "google-auth-library",
+      "packaged": true,
+      "loaded": true
+    },
+    {
+      "name": "svix",
+      "packaged": true,
+      "loaded": true
+    },
+    {
+      "name": "@vercel/functions",
+      "packaged": true,
+      "loaded": true
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "queriesWereProjected": true,
+  "noCustomerFieldsRequested": true,
+  "results": [
+    {
+      "collection": "kraken_bookings",
+      "status": 403,
+      "errorCode": "PERMISSION_DENIED",
+      "publicReadDenied": true
+    },
+    {
+      "collection": "kraken_booking_outbox",
+      "status": 403,
+      "errorCode": "PERMISSION_DENIED",
+      "publicReadDenied": true
+    },
+    {
+      "collection": "kraken_booking_rate_limits",
+      "status": 403,
+      "errorCode": "PERMISSION_DENIED",
+      "publicReadDenied": true
+    },
+    {
+      "collection": "contact_messages",
+      "status": 403,
+      "errorCode": "PERMISSION_DENIED",
+      "publicReadDenied": true
+    }
+  ]
+}

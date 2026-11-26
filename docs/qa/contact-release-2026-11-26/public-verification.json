@@ -1,0 +1,479 @@
+{
+  "origin": "https://krakenpfm.ch",
+  "deploymentId": "dpl_62bcrbNJ5yWbwCvST2eG23Po4UEZ",
+  "sourceCommit": "712ed32f5ee6ebf5c927a8e045111e11f87bb8ac",
+  "production": true,
+  "readOnly": true,
+  "bookingsCreated": 0,
+  "paymentsCreated": 0,
+  "emailsSent": 0,
+  "health": {
+    "status": "ok"
+  },
+  "booking": {
+    "available": true,
+    "paymentReady": true,
+    "emailReady": true,
+    "mode": "live",
+    "termsVersion": "kraken-2026-11-26-pricing-moving",
+    "depositPercent": 15
+  },
+  "contact": {
+    "available": false,
+    "challenge": null
+  },
+  "verifiedAssets": 61,
+  "assets": [
+    {
+      "path": "/assets/AccountForm-DbAdo7gY.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/AccountForm-x6ZvHqou.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/ApprovedAbout-7-MkYWCi.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/ApprovedAbout-CD2TGpId.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/ApprovedServices-B3I1XAIA.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/ApprovedServices-DtRrMAdn.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/CalculatorRoute-32WSZIZL.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/CalculatorRoute-B_6fP05I.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/CommercialQuotePage-DRlJpnlA.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/CookieConsent-X0qK3cbE.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/CoverageHubPage-Chqj0bsQ.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/CustomerAccessRoute-CcMSiPvj.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/Dashboard-B1hjA41a.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/Dashboard-o4jVYqxH.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/FloatingMascot-C4r2zc7m.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/FloatingMascot-Dnrzrx3f.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/GDPRPage-DTK8k5A0.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/ImpressumPage-BIsRG14r.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/KontaktPage-2mh6pQoP.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/KontaktPage-C2pLcKQh.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/KrakenServiceIcon-CGvHzomV.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/LocalSeoContent-B4h16TkQ.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/LocalSeoContent-Bo81R_D1.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/LoginPage-7_Oj8WaT.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/RegionHubPage-TFwTgWZf.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/RegisterPage-xPkZQJSi.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/ReviewInvitePage-Cz7SqrgG.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/SeoServiceCityPage-DfRQUO89.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/TermsPage-DVka-3-s.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/arrow-left-Buklqyz6.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/client-D1kS3EXR.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/contact-copy-j66VhgCU.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/copy-DvprMC3o.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/createLucideIcon-tALulkBQ.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/customerAccessCopy-g-nmOU5c.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/draft-7aXMRnz6.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/firebase-CqD1SPar.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/html2canvas.esm-B0tyYwQk.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/icons-DGqn8PUA.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/index-BWFyKEhl.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/index-CgDQBoqy.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/index-CmVz9O5b.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/index.es-XB3didB2.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/index.esm-vJv__KVU.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/legacy-translations-CTu55u_1.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/legal-BwrydFhV.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/map-pin-DzGlbe8W.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/message-circle-BMq3i1-I.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/page-faqs-D4_w61T8.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/phone-BpVazv0g.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/proxy-Cqb5TDcd.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/purify.es-Csrj9YNg.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/route-utilities-D8X00yII.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/service-calculator-CBGdh8RU.css",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/servicesTranslations-JQZvVScc.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/terms-C3N8FJZL.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/uiCopy-DU4Dw6he.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/vendor-react-DYgVAozS.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/assets/x-DnMEkX1S.js",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/fonts/manrope-latin-ext.27eccb1f8944.woff2",
+      "status": 200,
+      "sha256Verified": true
+    },
+    {
+      "path": "/fonts/manrope-latin.8bd97e6bbbc1.woff2",
+      "status": 200,
+      "sha256Verified": true
+    }
+  ],
+  "pages": [
+    {
+      "requested": "/kontakt",
+      "canonicalPath": "/kontakt",
+      "width": 1440,
+      "status": 200,
+      "metrics": {
+        "viewport": 1440,
+        "scrollWidth": 1440
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/es/kontakt",
+      "canonicalPath": "/es/kontakt",
+      "width": 375,
+      "status": 200,
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/en/kontakt",
+      "canonicalPath": "/en/kontakt",
+      "width": 375,
+      "status": 200,
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/fr/kontakt",
+      "canonicalPath": "/fr/kontakt",
+      "width": 375,
+      "status": 200,
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/it/kontakt",
+      "canonicalPath": "/it/kontakt",
+      "width": 375,
+      "status": 200,
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/pt/kontakt",
+      "canonicalPath": "/pt/kontakt",
+      "width": 375,
+      "status": 200,
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/",
+      "canonicalPath": "/",
+      "width": 1440,
+      "status": 200,
+      "metrics": {
+        "viewport": 1440,
+        "scrollWidth": 1440
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/es/leistungen",
+      "canonicalPath": "/es/leistungen",
+      "width": 375,
+      "status": 200,
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/es/about",
+      "canonicalPath": "/es/ueber-uns",
+      "width": 1440,
+      "status": 200,
+      "metrics": {
+        "viewport": 1440,
+        "scrollWidth": 1440
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/quote?service=end&lang=de",
+      "canonicalPath": "/offerte",
+      "width": 375,
+      "status": 200,
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    },
+    {
+      "requested": "/quote?service=moving&lang=es",
+      "canonicalPath": "/es/offerte",
+      "width": 375,
+      "status": 200,
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375
+      },
+      "errors": [],
+      "missingAssets": [],
+      "mutations": 0
+    }
+  ],
+  "passed": true
+}

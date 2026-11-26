@@ -1,0 +1,16 @@
+{
+  "version": 3,
+  "function": "index.func",
+  "runtime": "nodejs24.x",
+  "staticFiles": 449,
+  "homeAssets": 20,
+  "htmlBundleReferences": 11,
+  "generatedBundles": 59,
+  "frontendDependenciesVerified": 61,
+  "seoPageFragments": 144,
+  "legalDocumentFragments": 18,
+  "seoShellFragments": 6,
+  "runtimeHtmlFilesVerified": 193,
+  "sha256Verified": 449,
+  "missing": 0
+}
