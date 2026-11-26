@@ -4,6 +4,8 @@ import { homeText, normalizeHomeLanguage } from './homeTranslations';
 import { HomeLanguageSelector } from './HomeLanguageSelector';
 import { publicHref } from '../../src/routing/site-paths';
 import { responsiveImage } from '../../src/media/images';
+import BrandIdentity from '../BrandIdentity';
+import { getBrandTranslation } from '../../src/i18n/public-translations';
 import './design-system.css';
 import './conversion-home.css';
 
@@ -47,9 +49,9 @@ export default function ApprovedHeader({ servicesPage = false, page, accountCont
         </div>
       </nav>
       <div className="header-inner container">
-        <a className="brand-lockup" href={href('/')} aria-label={t('Kraken – Startseite')}>
+        <a className="brand-lockup kr-brand-link" href={href('/')} aria-label={getBrandTranslation(language, 'header.logoAria')}>
           <span className="brand-logo"><img {...responsiveImage('/home-approved/assets/logo.webp','160px')} alt="Kraken" /></span>
-          <span className="brand-descriptor">{t('Reinigung & kleine Umzüge')}</span>
+          <BrandIdentity language={language} />
         </a>
         <nav className="desktop-nav" aria-label={t('Hauptnavigation')}>{links}</nav>
         <div className="header-actions"><HomeLanguageSelector /><button className="icon-button menu-toggle" id="menuToggle" ref={toggle} type="button"

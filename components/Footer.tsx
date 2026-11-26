@@ -6,6 +6,8 @@ import { homeText, normalizeHomeLanguage } from './home/homeTranslations';
 import { footerText } from './home/footerTranslations';
 import { siteConfig } from './home/site-config';
 import { responsiveImage } from '../src/media/images';
+import BrandIdentity from './BrandIdentity';
+import { getBrandTranslation } from '../src/i18n/public-translations';
 import './home/approved-home.css';
 import './home/responsive-fixes.css';
 import './home/home-language.css';
@@ -45,7 +47,7 @@ export function FooterContent({ language, contactPage = false }: { language: str
       <div className="container">
         <div className="footer-invitation"><div><p className="eyebrow">{t('Einfach miteinander sprechen')}</p><h2>{t('Reinigung und kleine Umzüge für Ihr Zuhause')}</h2></div><div><p>{t('Erzählen Sie uns, wobei wir helfen dürfen.')}</p><a className="button button-mint kr-button kr-button--primary" href={href('/quote')}>{t('Offerte berechnen')}</a></div></div>
         <div className="footer-grid">
-          <div className="footer-brand"><a className="logo logo-light" href={href('/')} aria-label={t('Kraken – Startseite')}><img {...responsiveImage('/home-approved/assets/logo.webp','160px')} alt="Kraken" loading="lazy" /></a><p>{t('Reinigung und kleine Umzüge.')}<br />{t('Für private Haushalte.')}<br />{t('Für ein leichteres Ankommen.')}</p><p className="footer-tax">{t('Es wird keine Mehrwertsteuer verrechnet.')}</p></div>
+          <div className="footer-brand"><a className="kr-footer-brand-link" href={href('/')} aria-label={getBrandTranslation(language, 'header.logoAria')}><span className="logo logo-light"><img {...responsiveImage('/home-approved/assets/logo.webp','160px')} alt="Kraken" loading="lazy" /></span><BrandIdentity language={language} /></a><p>{t('Reinigung und kleine Umzüge.')}<br />{t('Für private Haushalte.')}<br />{t('Für ein leichteres Ankommen.')}</p><p className="footer-tax">{t('Es wird keine Mehrwertsteuer verrechnet.')}</p></div>
           <div className="footer-contact"><h3>{t('Hier sind wir zu Hause')}</h3><address>Kraken PFM<br />Seewadelstrasse 3<br />{t('8203 Schaffhausen, Schweiz')}</address><p className="footer-hours">{ft('hours')}<span>{ft('localTime')}</span>{!contactPage && <span>{ft('visits')}</span>}</p><a className="footer-map" href="https://www.google.com/maps/search/?api=1&query=Seewadelstrasse%203%2C%208203%20Schaffhausen%2C%20Schweiz" target="_blank" rel="noopener noreferrer">{t('Adresse auf Google Maps')}</a><a className="footer-contact-link" href="tel:+41774505705"><FooterIcon name="phone" />+41 77 450 57 05</a><a className="footer-contact-link" href="mailto:kai@krakenpfm.ch"><FooterIcon name="mail" />kai@krakenpfm.ch</a></div>
           <div className="footer-services"><h3>{t('So helfen wir Ihnen')}</h3><nav aria-label={t('Leistungen im Footer')}>
             {serviceInformationLinks.map(({service,section,label})=><a key={service} href={href('/leistungen#'+section)}>{t(label)}</a>)}

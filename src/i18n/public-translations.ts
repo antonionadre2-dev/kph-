@@ -1,6 +1,11 @@
+import { KRAKEN_COMPANY_DESCRIPTOR } from './brand.ts';
+export { KRAKEN_COMPANY_DESCRIPTOR } from './brand.ts';
+
 /** Small public interface copy. Service content has dedicated translated sources. */
 export const publicTranslations = {
   "en": {
+    "header.tagline": "Cleaning & small moves",
+    "header.logoAria": `Kraken ${KRAKEN_COMPANY_DESCRIPTOR} – Home`,
     "nav.services": "Services",
     "nav.private": "Private",
     "nav.about": "About Us",
@@ -29,6 +34,8 @@ export const publicTranslations = {
     "footer.allLocations": "All Locations (Hub)"
   },
   "de-CH": {
+    "header.tagline": "Reinigung & kleine Umzüge",
+    "header.logoAria": `Kraken ${KRAKEN_COMPANY_DESCRIPTOR} – Startseite`,
     "nav.services": "Dienstleistungen",
     "nav.private": "Privatkunden",
     "nav.about": "Über uns",
@@ -57,6 +64,8 @@ export const publicTranslations = {
     "footer.allLocations": "Alle Standorte (Hub)"
   },
   "de": {
+    "header.tagline": "Reinigung & kleine Umzüge",
+    "header.logoAria": `Kraken ${KRAKEN_COMPANY_DESCRIPTOR} – Startseite`,
     "nav.services": "Dienstleistungen",
     "nav.private": "Privatkunden",
     "nav.about": "Über uns",
@@ -85,6 +94,8 @@ export const publicTranslations = {
     "footer.allLocations": "Alle Standorte (Hub)"
   },
   "fr": {
+    "header.tagline": "Nettoyage et petits déménagements",
+    "header.logoAria": `Kraken ${KRAKEN_COMPANY_DESCRIPTOR} – Accueil`,
     "nav.services": "Services",
     "nav.private": "Clients Privés",
     "nav.about": "À Propos",
@@ -113,6 +124,8 @@ export const publicTranslations = {
     "footer.allLocations": "Toutes les Localisations (Hub)"
   },
   "it": {
+    "header.tagline": "Pulizie e piccoli traslochi",
+    "header.logoAria": `Kraken ${KRAKEN_COMPANY_DESCRIPTOR} – Home`,
     "nav.services": "Servizi",
     "nav.private": "Clienti Privati",
     "nav.about": "Chi Siamo",
@@ -141,6 +154,8 @@ export const publicTranslations = {
     "footer.allLocations": "Tutte le Sedi (Hub)"
   },
   "es": {
+    "header.tagline": "Limpieza y pequeñas mudanzas",
+    "header.logoAria": `Kraken ${KRAKEN_COMPANY_DESCRIPTOR} – Inicio`,
     "nav.services": "Servicios",
     "nav.private": "Privado",
     "nav.about": "Sobre Nosotros",
@@ -169,6 +184,8 @@ export const publicTranslations = {
     "footer.allLocations": "Todas las Ubicaciones (Hub)"
   },
   "pt": {
+    "header.tagline": "Limpeza e pequenas mudanças",
+    "header.logoAria": `Kraken ${KRAKEN_COMPANY_DESCRIPTOR} – Início`,
     "nav.services": "Serviços",
     "nav.private": "Clientes Privados",
     "nav.about": "Sobre Nós",
@@ -197,3 +214,17 @@ export const publicTranslations = {
     "footer.allLocations": "Todas as Localizações (Hub)"
   }
 };
+
+export type BrandTranslationKey = 'header.tagline' | 'header.logoAria';
+type BrandTranslationDictionary = Partial<Record<string, Partial<Record<BrandTranslationKey, string>>>>;
+
+/** The same public dictionary for provider-free SSR, with a narrowly scoped German fallback. */
+export function getBrandTranslation(language: unknown, key: BrandTranslationKey, dictionary: BrandTranslationDictionary = publicTranslations): string {
+  const locale = typeof language === 'string' ? language.trim().toLowerCase().replaceAll('_', '-').split('-')[0] : 'de';
+  const lookup = (code: string) => Object.prototype.hasOwnProperty.call(dictionary, code)
+    && Object.prototype.hasOwnProperty.call(dictionary[code] || {}, key) ? dictionary[code]?.[key] : undefined;
+  const text = lookup(locale);
+  const german = lookup('de');
+  return typeof text === 'string' && text.trim() ? text
+    : typeof german === 'string' && german.trim() ? german : publicTranslations.de[key];
+}
