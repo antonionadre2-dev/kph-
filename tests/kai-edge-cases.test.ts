@@ -14,6 +14,30 @@ const selected=(service:KaiDraft['service'],fields:KaiDraft['fields']={}):KaiDra
 const extracted=(message:string,draft=emptyKaiDraft('de'))=>extractKaiDraft(parseKaiRequest(request(message,draft)),now);
 const transfer=(draft:KaiDraft)=>applyKaiBookingTransfer({choice:null,selection:null,customer:{name:'',email:'',phone:'',address:'',postalCode:'',city:''},requestedDate:'',notes:''},draft,'replace');
 
+test('singular room and bathroom quantities remain structured in all six languages',()=>{
+  for(const message of ['1 Zimmer, 1 Bad','1 room, 1 bathroom','1 habitación, 1 baño','1 divisão, 1 casa de banho','1 locale, 1 bagno','1 pièce, 1 salle de bain']){
+    const draft=extracted(message,selected('end'));
+    assert.equal(draft.fields.rooms,'1',message);
+    assert.equal(draft.fields.bathrooms,'1',message);
+  }
+});
+
+test('English four hours is a quantity, not a French oven extra, and every week is retained',async()=>{
+  const result=await respondKai(request('I need regular cleaning every week for four hours in Zurich'),offline);
+  assert.equal(result.draft.fields.hours,'4');
+  assert.equal(result.draft.fields.frequency,'every week');
+  assert.equal(result.draft.fields.priorities,undefined);
+  assert.equal(result.quote?.amountCents,16_000);
+  assert.equal(result.missing.includes('frequency'),false);
+});
+
+test('unknown window types show only the shared minimum without inventing a draft window type',async()=>{
+  const result=await respondKai(request('Was kostet eine Fensterreinigung?'),offline);
+  assert.deepEqual(result.quote,{currency:'CHF',amountCents:12_000,priceType:'from'});
+  assert.equal(result.draft.fields.windowType,undefined);
+  assert.match(result.message,/ab CHF 120/);
+});
+
 test('dates roll forward using the Swiss calendar, including year rollover and a future leap day',()=>{
   for(const [message,expected] of [
     ['15. Dezember','2026-12-15'],['am 12. Dezember','2026-12-12'],['28.12.','2026-12-28'],

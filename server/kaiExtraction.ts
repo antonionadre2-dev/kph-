@@ -89,9 +89,9 @@ export function extractDraft(request:KaiAssistantRequest, clean:(value:string)=>
   if(route&&(draft.service==='moving'||inventoryPattern.test(text))){put('origin',route[1]);put('destination',route[2].split(/\s+(?:with|mit|con|com|avec|tengo|tenho|ho)\s+/iu)[0]);}
   const postcode=text.match(/(?:postcode|post code|zip|plz|codigo postal|code postal|cap)\s*[:=-]?\s*([1-9]\d{3})\b/)?.[1] || [...text.matchAll(/\b([1-9]\d{3})\b/g)].map(match=>match[1]).find(code=>!/^20[2-9]\d$/.test(code));
   put('postcode',postcode);
-  put('rooms',numbered.match(/(?<![\d.,])\b(\d+(?:[.,]\d)?)\s*[-]?\s*(?:zimmer|rooms?|habitaciones|divisoes|locali|pieces)\b/)?.[1]?.replace(',','.'));
+  put('rooms',numbered.match(/(?<![\d.,])\b(\d+(?:[.,]\d)?)\s*[-]?\s*(?:zimmer|rooms?|habitacion(?:es)?|divisoes|divisao|local[ei]|pieces?)\b/)?.[1]?.replace(',','.'));
   put('bedrooms',numbered.match(/(?<![\d.,])\b(\d+)\s*(?:bedrooms?|schlafzimmer|dormitorios|quartos|camere|chambres)\b/)?.[1]);
-  put('bathrooms',numbered.match(/(?<![\d.,])\b(\d+)\s*(?:bathrooms?|badezimmer|bader|banos|casas? de banho|bagni|salles? de bain)\b/)?.[1]);
+  put('bathrooms',numbered.match(/(?<![\d.,])\b(\d+)\s*(?:bathrooms?|badezimmer|bader|bad|banos?|casas? de banho|bagn[oi]|salles? de bain)\b/)?.[1]);
   put('area',numbered.match(/(?<![\d.,])\b(\d+(?:[.,]\d{1,2})?)\s*(?:m[²2]|quadratmeter|square met(?:res|ers)|metros? cuadrados?|metri quadrati|metres? carres?)\b/u)?.[1]?.replace(',','.')
     ||numbered.match(/(?<![\d.,])\b(\d+(?:[.,]\d{1,2})?)\s*m²/u)?.[1]?.replace(',','.'));
   put('hours',numbered.match(/(?<![\d.,])\b(\d+(?:[.,]\d{1,2})?)\s*(?:stunden?|hours?|horas?|ore|heures?|h)\b/)?.[1]?.replace(',','.'));
