@@ -1,0 +1,31 @@
+{
+  "area": "85",
+  "launcher": {
+    "bottom": 716,
+    "height": 58,
+    "left": 307,
+    "right": 363,
+    "top": 658,
+    "width": 56,
+    "x": 307,
+    "y": 658
+  },
+  "postcode": "8000",
+  "priceBar": {
+    "bottom": 812,
+    "height": 83.59375,
+    "left": 0,
+    "right": 375,
+    "top": 728.40625,
+    "width": 375,
+    "x": 0,
+    "y": 728.40625
+  },
+  "rooms": "3.5",
+  "scrollWidth": 375,
+  "url": "/es/offerte?service=end",
+  "viewport": {
+    "height": 812,
+    "width": 375
+  }
+}

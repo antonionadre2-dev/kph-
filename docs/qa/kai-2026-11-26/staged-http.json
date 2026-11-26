@@ -1,0 +1,2753 @@
+{
+  "deploymentId": null,
+  "origin": "https://kpfm-5bw9h0onr-antonionadre2-5701s-projects.vercel.app",
+  "readOnly": true,
+  "requestsCreated": 0,
+  "paymentsCreated": 0,
+  "emailsSent": 0,
+  "api": [
+    {
+      "path": "/api/health",
+      "status": 200,
+      "body": {
+        "status": "ok"
+      }
+    },
+    {
+      "path": "/api/booking/config",
+      "status": 200,
+      "body": {
+        "available": true,
+        "paymentReady": true,
+        "emailReady": true,
+        "mode": "live",
+        "termsVersion": "kraken-2026-11-26-pricing-moving",
+        "depositPercent": 15
+      }
+    },
+    {
+      "path": "/api/contact/intake/config",
+      "status": 200,
+      "body": {
+        "available": false,
+        "challenge": null
+      }
+    },
+    {
+      "path": "/api/contact/config",
+      "status": 200,
+      "body": {
+        "geocoding": true,
+        "routing": {
+          "available": false,
+          "provider": "openrouteservice"
+        },
+        "coverage": "CH"
+      }
+    },
+    {
+      "path": "/api/booking/operator/requests",
+      "status": 401,
+      "body": {
+        "code": "UNAUTHORIZED"
+      }
+    }
+  ],
+  "verifiedAssets": 449,
+  "assets": [
+    {
+      "path": "/.well-known/security.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/about-approved/assets/kai-comic-cover.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kai-evolution.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kai-help-deep.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kai-help-end.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kai-help-moving.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kai-help-regular.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kai-help-windows.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kai-rheinfall-awakening.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kai-story.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kai.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/about-approved/assets/kraken-icons.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/android-chrome-192x192.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/android-chrome-512x512.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/android-chrome-maskable-192x192.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/android-chrome-maskable-512x512.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/apple-touch-icon.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/assets/AccountForm-CJr0gsm4.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/AccountForm-DbAdo7gY.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/ApprovedAbout-7-MkYWCi.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/ApprovedAbout-DIGEDgZU.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/ApprovedServices-DDTe4EPt.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/ApprovedServices-DtRrMAdn.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/arrow-left-0GN5XLO_.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/CalculatorRoute-B_6fP05I.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/CalculatorRoute-CNCx61ZP.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/client-CEnf-7W-.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/CommercialQuotePage-BT9dnZEz.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/contact-copy-j66VhgCU.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/CookieConsent-Dv8m17Kr.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/copy-i7IwzPfW.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/CoverageHubPage-B2lwW_Sa.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/createLucideIcon-DaIpbQBg.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/customerAccessCopy-CcKJM8tM.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/CustomerAccessRoute-dR0x6V2z.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/Dashboard-Bk87nc_u.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/Dashboard-o4jVYqxH.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/draft-CKPoPJql.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/firebase-C29YyqA1.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/FloatingMascot-aiUkQauy.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/FloatingMascot-B5EDQ8cL.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/GDPRPage-B8a5GchG.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/html2canvas.esm-B0tyYwQk.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/icons-CZ_NqclJ.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/ImpressumPage-BiT-2YGx.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/index-BWFyKEhl.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/index-Ct5AZYgx.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/index-DPk7m9GY.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/index.es-DRLjutM3.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/index.esm-Cou69UmR.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/KontaktPage-2mh6pQoP.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/KontaktPage-Btjr5zRd.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/KrakenServiceIcon-BZi_eM61.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/legacy-translations-CTu55u_1.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/legal-BwrydFhV.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/LocalSeoContent-B4h16TkQ.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/LocalSeoContent-DTbVmzy_.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/LoginPage-Ch650VDX.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/map-pin-Chvp_cQw.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/message-circle-DlPWBPyO.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/page-faqs-BrjsDqRJ.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/phone-_4CzjGwi.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/proxy-ehlvf2f5.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/purify.es-Csrj9YNg.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/RegionHubPage-CoNQlwn1.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/RegisterPage-B9tPTDjh.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/ReviewInvitePage-D7EPaoxQ.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/route-utilities-D8X00yII.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/SeoServiceCityPage-DeNVKiNH.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/service-calculator-CBGdh8RU.css",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/servicesTranslations-CNyQuzMQ.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/terms-1Kr6-3-k.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/TermsPage-BGoWWfZM.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/uiCopy-W85YN6M8.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/vendor-react-Di0_fz0r.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/x-CcAc-zCS.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/calculator-approved/assets/kai-help.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/calculator-approved/assets/kai-savings.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/calculator-approved/assets/kai.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/calculator-approved/assets/kraken-emoji-appointment.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/calculator-approved/assets/kraken-emoji-construction.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/calculator-approved/assets/kraken-emoji-deep.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/calculator-approved/assets/kraken-emoji-end-of-tenancy.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/calculator-approved/assets/kraken-emoji-mail.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/calculator-approved/assets/kraken-emoji-moving.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/calculator-approved/assets/kraken-emoji-regular.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/calculator-approved/assets/kraken-emoji-windows.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/calculator-approved/assets/logo.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/car-detailing-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/chatgpt-image-aug12-093031.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/chatgpt-image-aug12-093316.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/chatgpt-image-aug12.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/chatgpt-image-aug20.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/chatgpt-image-jun-13-1.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/chatgpt-image-jun-13-2.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/ChatGPT%20Image%20Aug%2012%2C%202026%2C%2009_30_31%20AM.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/ChatGPT%20Image%20Aug%2012%2C%202026%2C%2009_33_16%20AM%20copy.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/ChatGPT%20Image%20Aug%2020%2C%202026%2C%2006_37_46%20PM.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/ChatGPT%20Image%20Jul%201%2C%202026%2C%2010_36_53%20AM.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/ChatGPT%20Image%20Jul%2016%2C%202026%2C%2003_06_15%20AM.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/ChatGPT%20Image%20Jul%2018%2C%202026%2C%2007_40_06%20PM.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/ChatGPT%20Image%20Jun%2029%2C%202026%2C%2002_32_15%20AM.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/ChatGPT%2520Image%2520Aug%252020%2C%25202026%2C%252006_37_46%2520PM.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/cinematic-design-workspace.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/comic-promotion.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/common-area-cleaning-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/daily-recurring-cleaning-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/deep-cleaning-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/despues-limpieza-experiencia.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/despues-limpieza-experiencia.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/evolucion-mascota-kraken.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/exterior-cleaning-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/favicon-128x128.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/favicon-16x16.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/favicon-256x256.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/favicon-32x32.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/favicon-48x48.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/favicon-512x512.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/favicon-64x64.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/favicon-96x96.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/favicon-head.html",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/favicon-master-1024.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/favicon.ico",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/vnd.microsoft.icon"
+    },
+    {
+      "path": "/favicon.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/fonts/manrope-latin-ext.27eccb1f8944.woff2",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "font/woff2"
+    },
+    {
+      "path": "/fonts/manrope-latin.8bd97e6bbbc1.woff2",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "font/woff2"
+    },
+    {
+      "path": "/fonts/Manrope-OFL.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/furniture-moving-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/gardening-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/gutter-cleaning-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/hero-room-day-v4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/hero-room-night-v4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/holiday-decor.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/kai-rest-v3.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/kai-tasks-cold-v3.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/kai-tasks.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/kai-windows-cold-v3.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/kai-windows.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/kai.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/kraken-icons.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/home-approved/assets/logo.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/seasons-window.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/service-deep-v5.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/service-end-v5.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/service-moving-v6.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/service-regular-v5.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/service-scenes-branded-v4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/service-windows-v5.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/services-hero-v5.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/home-approved/assets/transit-loading-v4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/image-gen-1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/image-gen-2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/image-gen-3.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/image-gen-4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/image-gen-5.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/image-gen-6.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/imagen-01-google-ai.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/imagen-02-google-ai.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/imagen-google-ai-compatible-desktop.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/imagen-google-ai-compatible-mobile.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/imagen-google-ai-compatible.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/industrial-maintenance-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai-1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai-2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai-3.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai-imagen-1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai-imagen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai-jul16-interview.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai-webp-aug17-1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai-webp-aug17-2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai-webp-aug17-3.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20about%20us.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20blog.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20build%20your%20quote.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20careers.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20comics.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20health%20and%20safety.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20privacy.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20reviews.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20security.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20services.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20sustainability.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20terms%20and%20condition.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20winterthur_opt.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20winterthur.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kai%20zurich.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kraken-contact/assets/contact-exterior.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kraken-contact/assets/contact-interior.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kraken-contact/assets/coverage-region-mobile.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/kraken-contact/assets/coverage-region.svg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/kraken-contact/assets/logo-kraken-azul.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kraken-contact/data/contact-map-data.json",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/json; charset=utf-8"
+    },
+    {
+      "path": "/kraken-contact/data/coverage-region-source.json",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/json; charset=utf-8"
+    },
+    {
+      "path": "/kraken-contact/licenses/D3_LICENSE.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/kraken-contact/licenses/LUCIDE_LICENSE.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/kraken-contact/licenses/MANROPE_OFL.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/kraken-contact/licenses/MANROPE_SOURCE.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/kraken-contact/licenses/PBF_LICENSE.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/kraken-contact/licenses/POINT_GEOMETRY_LICENSE.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/kraken-contact/licenses/VECTOR_TILE_LICENSE.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/kraken-contact/vendor/d3-7.9.0.min.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/kraken-emails/assets/email-appointment_reminder.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-balance_due.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-booking_confirmed.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-booking_updated.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-cancellation_confirmed.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-cancellation_received.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-deposit_received.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-details_required.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-issue_received.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-issue_resolved.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-magic_link.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-moving_guide.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-payment_failed.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-payment_pending.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-payment_received.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-payment_requested.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-quote_ready.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-quote_reminder_1.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-quote_reminder_2.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-quote_saved.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-recurring_updated.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-recurring_visit.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-refund_issued.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-request_received.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-reschedule_proposed.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-review_requested.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-service_completed.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-support_received.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-support_reply.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/email-team_on_the_way.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-emails/assets/kraken-logo.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-og-1200x630.jpg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/jpeg"
+    },
+    {
+      "path": "/kraken-og-1200x630.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-og-1200x630.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/kraken-og-fallback-600x315.jpg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/jpeg"
+    },
+    {
+      "path": "/kraken-original-1731x909.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/kraken-social-square-1200x1200.jpg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/jpeg"
+    },
+    {
+      "path": "/kraken-x-card-1200x600.jpg",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/jpeg"
+    },
+    {
+      "path": "/logo-kraken-azul.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/logo-kraken-blanco.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/mascota-kraken-homepage-200.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/mascota-kraken-homepage-500.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/mascota-kraken-homepage-800.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/mascota-kraken-homepage.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/Mastering%20the%20chaos%20of%20property%20management.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/Mastering%20the%20chaos%20of%20property%20management%202-2.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/media/hero-room-day-v4-1536-376c8e828d28.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/hero-room-day-v4-1536-e42e777e4a60.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/hero-room-day-v4-320-258d13a4b0d8.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/hero-room-day-v4-320-9a71b8b6ce94.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/hero-room-day-v4-640-0eb1604f05a2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/hero-room-day-v4-640-a0701572a2d0.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/hero-room-day-v4-768-26fc137e6b42.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/hero-room-day-v4-960-877bf2e090d7.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/hero-room-day-v4-960-b2c99bf7006b.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/hero-room-night-v4-1536-281dea691b91.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/hero-room-night-v4-1536-4307658a0c56.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/hero-room-night-v4-320-13256d8bd483.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/hero-room-night-v4-320-d7f1de47a6df.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/hero-room-night-v4-640-34b17e365670.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/hero-room-night-v4-640-5d49b8fe26d9.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/hero-room-night-v4-768-a50a5824afe3.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/hero-room-night-v4-960-0de1b8acda0a.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/hero-room-night-v4-960-430899cbaa7f.avif",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/avif"
+    },
+    {
+      "path": "/media/holiday-decor-1774-5d95f8538ba4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/home-start-1bd2d517f12f.js",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/javascript; charset=utf-8"
+    },
+    {
+      "path": "/media/kai-1254-4320a96553d6.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-320-f23758300de2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-640-27d3378a7ce8.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-960-b0b0f1b23072.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-comic-cover-1055-2fb4110f23d0.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-comic-cover-320-058b79fde70c.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-comic-cover-640-6ca9d06452de.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-comic-cover-960-b176559c0983.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-evolution-1672-8b257147da61.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-evolution-320-a3205c798a43.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-evolution-640-7eca39ff6d8d.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-evolution-960-b8769926fa3e.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-deep-1672-4410e77957da.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-deep-320-b19c4bb38c32.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-deep-640-b851598281e5.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-deep-960-a21f4f9e08c9.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-end-1672-4c5fe928f727.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-end-320-80a1be32bcc9.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-end-640-9cf0eb730ba2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-end-960-6df88fead4ff.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-moving-1672-9640de1c4962.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-moving-320-e3fb7a7ce3cb.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-moving-640-76f860f9bbe7.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-moving-960-337474d60b57.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-regular-1672-1572b7203315.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-regular-320-4e20e32d9724.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-regular-640-4c0a5c0f2b28.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-regular-960-437a1a2cd30d.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-windows-1672-8067904534c3.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-windows-320-4cc38f3a611e.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-windows-640-1857fe3d0e4f.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-help-windows-960-4cf4344e70f5.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-rest-v3-1774-a9e3baba59a4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-rest-v3-768-d238943dbe80.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-rheinfall-awakening-1672-189c90a89612.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-rheinfall-awakening-320-26fd8690f97c.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-rheinfall-awakening-640-5b7e376fc72f.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-rheinfall-awakening-960-2fe605932dfe.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-story-1254-6f4160e59e2a.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-story-320-b330296510cd.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-story-640-3ca9d044b7cb.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-story-960-505018951215.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-tasks-1536-03b4772d8c3a.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-tasks-768-5de31a064af2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-tasks-cold-v3-1536-90021ea024b8.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-tasks-cold-v3-768-4af21f7c81b4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-windows-1774-2b8b6aa6cd6d.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-windows-768-d5870834425b.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-windows-cold-v3-1774-d5fc62c527a2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/kai-windows-cold-v3-768-325ca54b000e.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/logo-1024-27039a1adbfe.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/logo-160-ecadc5489b3f.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/logo-320-c6ec024cf74e.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/logo-640-2d3545a30c7c.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/logo-960-afdba55dc4b2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/season-autumn-320-bd407f549de4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/season-autumn-627-69765a132464.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/season-spring-320-c10c402561f9.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/season-spring-627-e5553f502867.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/season-summer-320-eabd17c44200.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/season-summer-627-b8174ca2b03e.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/season-winter-320-52c367511466.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/season-winter-627-2befde5090e5.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/seasons-window-1254-6f89e028ec75.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-deep-v5-1254-be83e5d5b25c.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-deep-v5-320-e7eb06e7a2de.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-deep-v5-640-eee647a8c239.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-deep-v5-960-2c1ccc178cdd.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-end-v5-1254-f6ff2c4de734.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-end-v5-320-a5d24b2de099.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-end-v5-640-394b61611934.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-end-v5-960-ea2a39d62a35.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-moving-v6-1254-69c59e816b43.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-moving-v6-320-dad13ccadb4f.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-moving-v6-640-d41292d0fde4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-moving-v6-960-7f473decbc76.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-regular-v5-1254-99a1cfbddfb8.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-regular-v5-320-a7ff248ba12b.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-regular-v5-640-33c8a8d26997.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-regular-v5-960-675e2a4e568d.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-scenes-branded-v4-2172-03756b4dba4d.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-windows-v5-1254-a22f2ff6a66f.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-windows-v5-320-e2537cd8cfb8.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-windows-v5-640-d47f28f714c4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/service-windows-v5-960-e8739c2f4d24.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/services-hero-v5-1254-16bb5880fcf4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/services-hero-v5-320-cbd944c020a9.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/services-hero-v5-640-f93d1c23aa32.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/services-hero-v5-960-e134baf5b261.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-boxes-v1-1254-5b4cd9b34e6f.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-boxes-v1-320-c20f1dde7346.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-boxes-v1-640-5f6322db38d4.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-boxes-v1-960-bd2b17a45adf.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-chairs-v1-1254-9c00a6290604.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-chairs-v1-320-b02fc4650d4d.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-chairs-v1-640-a206457aa510.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-chairs-v1-960-d531341ac6f2.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-empty-v1-1254-e1f8c10cec60.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-empty-v1-320-afcc6212ffd3.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-empty-v1-640-b77fd1a9e801.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-empty-v1-960-771170924392.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-furniture-v1-1254-c530f9866be9.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-furniture-v1-320-971dc6d2e40e.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-furniture-v1-640-b79724ac0a9b.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-furniture-v1-960-0cb4183815e3.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-loading-v4-1254-402ef9e503bc.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-overview-v1-1254-5a5d4427a0fb.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-overview-v1-320-9ce6f574cd63.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-overview-v1-640-a025dc3110f6.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/media/transit-overview-v1-960-63d5bcb48954.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/modern-office-greenery-mascot.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/nuestra-historia-hero.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/nuestra-historia-hero.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/office-cleaning-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/oficina-moderna-homepage.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/oven-after.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/oven-before.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/payrexx-checkout-banner.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/payrexx-checkout-banner.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/pest-control-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/portada-interior-apartamento.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/retail-cleaning-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "text/plain; charset=utf-8"
+    },
+    {
+      "path": "/schaffhausen-1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-bar-restaurante.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-bar-restaurante.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-escaleras.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-escaleras.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-industrial.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-industrial.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-retail.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-retail.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-showroom.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/servicio-comercial-limpieza-showroom.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-canalones.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-control-plagas.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-jardineria.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-lavado-coche.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-limpieza-apartamento.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-limpieza-cocina.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-limpieza-exterior.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-limpieza-oficina-casa.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-limpieza-tapiceria-1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-limpieza-ventanas-1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-mudanza-cajas-1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-mudanza-cajas.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-pulido-suelos-1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/servicio-privado-residuos-desalojo.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/site.webmanifest",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/manifest+json; charset=utf-8"
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "application/xml"
+    },
+    {
+      "path": "/sobre-nosotros-bienvenida-familia-equipo.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sobre-nosotros-equipo-con-cliente-en-zurich.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sobre-nosotros-equipo-viaje-con-maletas.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sobre-nosotros-retrato-equipo-uniforme.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sobre-nosotros-reunion-consultoria-propiedad.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sobre-nosotros-reunion-equipo-kraken.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sustainability-circular.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/sustainability-circular.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sustainability-diversity.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/sustainability-diversity.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sustainability-hero.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/sustainability-hero.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sustainability-logistics.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/sustainability-logistics.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sustainability-ops.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/sustainability-ops.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sustainability-partner.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/sustainability-partner.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/sustainability-people.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/sustainability-people.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/test_fixed.png",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/png"
+    },
+    {
+      "path": "/test_fixed.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/transit-quality/transit-boxes-v1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/transit-quality/transit-chairs-v1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/transit-quality/transit-empty-v1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/transit-quality/transit-furniture-v1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/transit-quality/transit-overview-v1.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/waste-management-schaffhausen.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/winterthur.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    },
+    {
+      "path": "/zurich.webp",
+      "status": 200,
+      "sha256Verified": true,
+      "mime": "image/webp"
+    }
+  ]
+}
