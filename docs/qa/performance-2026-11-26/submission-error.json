@@ -1,0 +1,15 @@
+{
+  "busy": {
+    "busy": true,
+    "disabled": true,
+    "spinner": true
+  },
+  "error": {
+    "describedBy": "kr-calc-email-error",
+    "error": [
+      "Introduzca un correo electrónico válido."
+    ],
+    "focused": "",
+    "invalid": "true"
+  }
+}

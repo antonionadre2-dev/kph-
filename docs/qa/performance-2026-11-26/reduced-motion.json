@@ -1,0 +1,66 @@
+{
+  "home375": {
+    "playDisabled": true,
+    "reduced": true,
+    "scrollWidth": 375,
+    "width": 375,
+    "manualActive": "0",
+    "open": {
+      "animation": "none",
+      "classes": "",
+      "open": true
+    },
+    "closed": true
+  },
+  "calc375": {
+    "buttonTransition": "0s",
+    "prices": [
+      {
+        "animation": "none",
+        "classes": "kai-thread",
+        "text": "Hola. ¿En qué podemos ayudarle?Elija un servicio o describa brevemente lo que necesita.●Necesito limpieza de fin de alquiler para 3,5 habitaciones y 85 m².Kai3.5 habitaciones, 85 m²: CHF 690 Precio cerrado para el servicio base, con garantía de entrega según las condiciones. Precio final, sin IVA. Los extras y los cambios de alcance se detallan en el calculador. ¿En qué localidad o código postal es el servicio?"
+      },
+      {
+        "animation": "none",
+        "classes": "kr-calc-total",
+        "text": "Total actual690,00 CHF"
+      },
+      {
+        "animation": "none",
+        "classes": "kr-calc-mobile-price",
+        "text": "Total actual690,00 CHFPrecio final – sin IVA"
+      }
+    ],
+    "scrollWidth": 375,
+    "width": 375,
+    "step": {
+      "animation": "none",
+      "focus": "kr-calc-step-title",
+      "step": "1"
+    }
+  },
+  "calc1280": {
+    "animation": "none",
+    "scrollWidth": 1280,
+    "width": 1280
+  },
+  "kai": {
+    "historyNewCount": 0,
+    "after": {
+      "animations": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "newCount": 0,
+      "scrollBehavior": "auto"
+    }
+  },
+  "home1280": {
+    "playDisabled": true,
+    "reduced": true,
+    "scrollWidth": 1280,
+    "width": 1280
+  }
+}

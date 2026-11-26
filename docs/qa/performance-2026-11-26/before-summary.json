@@ -1,0 +1,118 @@
+[
+  {
+    "report": "before-desktop.report.json",
+    "LCP_ms": 335.04949999999997,
+    "CLS": 1.158459981282552e-05,
+    "TBT_ms": 0,
+    "FCP_ms": 295.04949999999997,
+    "lcpElement": [
+      {
+        "selector": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoom",
+        "snippet": "<img class=\"scene-room\" id=\"sceneRoom\" src=\"https://krakenpfm.ch/media/hero-room-night-v4-960-430899cbaa7f.avif\" srcset=\"/media/hero-room-night-v4-320-13256d8bd483.webp 320w, /media/hero-room-nig\u2026\" sizes=\"(max-width:760px) calc(132.65vw - 42.45px), (max-width:1100px) calc(132.65\u2026\" width=\"1536\" height=\"1024\" alt=\"\" fetchpriority=\"high\" aria-hidden=\"true\">",
+        "boundingRect": {
+          "top": 219,
+          "bottom": 784,
+          "left": 408,
+          "right": 1256,
+          "width": 848,
+          "height": 565
+        }
+      }
+    ],
+    "formFactor": "desktop",
+    "viewport": {
+      "mobile": false,
+      "width": 1280,
+      "height": 900,
+      "deviceScaleFactor": 1,
+      "disabled": false
+    }
+  },
+  {
+    "report": "before-mobile-1.report.json",
+    "LCP_ms": 1431.426,
+    "CLS": 0.0005627449404256353,
+    "TBT_ms": 172,
+    "FCP_ms": 1073.426,
+    "lcpElement": [
+      {
+        "selector": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoom",
+        "snippet": "<img class=\"scene-room\" id=\"sceneRoom\" src=\"https://krakenpfm.ch/media/hero-room-night-v4-640-5d49b8fe26d9.avif\" srcset=\"/media/hero-room-night-v4-320-13256d8bd483.webp 320w, /media/hero-room-nig\u2026\" sizes=\"(max-width:760px) calc(132.65vw - 42.45px), (max-width:1100px) calc(132.65\u2026\" width=\"1536\" height=\"1024\" alt=\"\" fetchpriority=\"high\" aria-hidden=\"true\">",
+        "boundingRect": {
+          "top": 737,
+          "bottom": 1040,
+          "left": -96,
+          "right": 359,
+          "width": 455,
+          "height": 303
+        }
+      }
+    ],
+    "formFactor": "mobile",
+    "viewport": {
+      "mobile": true,
+      "width": 375,
+      "height": 812,
+      "deviceScaleFactor": 1,
+      "disabled": false
+    }
+  },
+  {
+    "report": "before-mobile-2.report.json",
+    "LCP_ms": 1508.114,
+    "CLS": 0.0005627449404256353,
+    "TBT_ms": 404,
+    "FCP_ms": 1069.114,
+    "lcpElement": [
+      {
+        "selector": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoom",
+        "snippet": "<img class=\"scene-room\" id=\"sceneRoom\" src=\"https://krakenpfm.ch/media/hero-room-night-v4-640-5d49b8fe26d9.avif\" srcset=\"/media/hero-room-night-v4-320-13256d8bd483.webp 320w, /media/hero-room-nig\u2026\" sizes=\"(max-width:760px) calc(132.65vw - 42.45px), (max-width:1100px) calc(132.65\u2026\" width=\"1536\" height=\"1024\" alt=\"\" fetchpriority=\"high\" aria-hidden=\"true\">",
+        "boundingRect": {
+          "top": 737,
+          "bottom": 1040,
+          "left": -96,
+          "right": 359,
+          "width": 455,
+          "height": 303
+        }
+      }
+    ],
+    "formFactor": "mobile",
+    "viewport": {
+      "mobile": true,
+      "width": 375,
+      "height": 812,
+      "deviceScaleFactor": 1,
+      "disabled": false
+    }
+  },
+  {
+    "report": "before-mobile-3.report.json",
+    "LCP_ms": 1364.817,
+    "CLS": 0,
+    "TBT_ms": 144,
+    "FCP_ms": 1064.817,
+    "lcpElement": [
+      {
+        "selector": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoom",
+        "snippet": "<img class=\"scene-room\" id=\"sceneRoom\" src=\"https://krakenpfm.ch/media/hero-room-night-v4-640-5d49b8fe26d9.avif\" srcset=\"/media/hero-room-night-v4-320-13256d8bd483.webp 320w, /media/hero-room-nig\u2026\" sizes=\"(max-width:760px) calc(132.65vw - 42.45px), (max-width:1100px) calc(132.65\u2026\" width=\"1536\" height=\"1024\" alt=\"\" fetchpriority=\"high\" aria-hidden=\"true\">",
+        "boundingRect": {
+          "top": 737,
+          "bottom": 1040,
+          "left": -96,
+          "right": 359,
+          "width": 455,
+          "height": 303
+        }
+      }
+    ],
+    "formFactor": "mobile",
+    "viewport": {
+      "mobile": true,
+      "width": 375,
+      "height": 812,
+      "deviceScaleFactor": 1,
+      "disabled": false
+    }
+  }
+]

@@ -1,0 +1,178 @@
+{
+  "method": "Lighthouse13.6.0,3sequentialmobile375x812DPR1auditsand1desktop1280x900DPR1,headlessfreshprofiles,simulatedthrottling",
+  "beforeMobile": {
+    "LCP_ms": 1431.426,
+    "CLS": 0.0005627449404256353,
+    "TBT_ms": 172,
+    "FCP_ms": 1069.114
+  },
+  "afterMobile": {
+    "LCP_ms": 1373.5655000000002,
+    "CLS": 0,
+    "TBT_ms": 272,
+    "FCP_ms": 1067.5435
+  },
+  "beforeDesktop": {
+    "report": "before-desktop.report.json",
+    "LCP_ms": 335.04949999999997,
+    "CLS": 0.00001158459981282552,
+    "TBT_ms": 0,
+    "FCP_ms": 295.04949999999997,
+    "lcpElement": [
+      {
+        "selector": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoom",
+        "snippet": "<img class=\"scene-room\" id=\"sceneRoom\" src=\"https://krakenpfm.ch/media/hero-room-night-v4-960-430899cbaa7f.avif\" srcset=\"/media/hero-room-night-v4-320-13256d8bd483.webp 320w, /media/hero-room-nig…\" sizes=\"(max-width:760px) calc(132.65vw - 42.45px), (max-width:1100px) calc(132.65…\" width=\"1536\" height=\"1024\" alt=\"\" fetchpriority=\"high\" aria-hidden=\"true\">",
+        "boundingRect": {
+          "top": 219,
+          "bottom": 784,
+          "left": 408,
+          "right": 1256,
+          "width": 848,
+          "height": 565
+        }
+      }
+    ],
+    "formFactor": "desktop",
+    "viewport": {
+      "mobile": false,
+      "width": 1280,
+      "height": 900,
+      "deviceScaleFactor": 1,
+      "disabled": false
+    }
+  },
+  "afterDesktop": {
+    "report": "after-desktop.report.json",
+    "LCP_ms": 434.253,
+    "CLS": 0,
+    "TBT_ms": 1,
+    "FCP_ms": 394.253,
+    "lcpElement": [
+      {
+        "type": "node",
+        "lhId": "page-0-IMG",
+        "path": "1,HTML,1,BODY,0,DIV,0,DIV,3,DIV,3,MAIN,0,SECTION,0,DIV,1,DIV,0,DIV,1,PICTURE,2,IMG",
+        "selector": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoom",
+        "boundingRect": {
+          "top": 219,
+          "bottom": 784,
+          "left": 408,
+          "right": 1256,
+          "width": 848,
+          "height": 565
+        },
+        "snippet": "<img class=\"scene-room scene-room-desktop\" id=\"sceneRoom\" src=\"https://krakenpfm.ch/media/hero-room-night-v4-960-430899cbaa7f.avif\" srcset=\"/media/hero-room-night-v4-320-13256d8bd483.webp 320w, /media/hero-room-nig…\" sizes=\"(max-width:767px) 100vw, (max-width:1100px) calc(132.65vw - 63.67px), (min…\" width=\"1536\" height=\"1024\" alt=\"\" loading=\"eager\" fetchpriority=\"high\" aria-hidden=\"true\">",
+        "nodeLabel": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoom"
+      }
+    ],
+    "formFactor": "desktop",
+    "viewport": {
+      "mobile": false,
+      "width": 1280,
+      "height": 900,
+      "deviceScaleFactor": 1,
+      "disabled": false
+    }
+  },
+  "mobileRuns": [
+    {
+      "report": "after-mobile-1.report.json",
+      "LCP_ms": 1373.5655000000002,
+      "CLS": 0,
+      "TBT_ms": 287,
+      "FCP_ms": 1066.5655000000002,
+      "lcpElement": [
+        {
+          "type": "node",
+          "lhId": "page-0-IMG",
+          "path": "1,HTML,1,BODY,0,DIV,0,DIV,3,DIV,3,MAIN,0,SECTION,0,DIV,1,DIV,0,DIV,2,PICTURE,2,IMG",
+          "selector": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoomMobile",
+          "boundingRect": {
+            "top": 737,
+            "bottom": 987,
+            "left": 0,
+            "right": 375,
+            "width": 375,
+            "height": 250
+          },
+          "snippet": "<img class=\"scene-room scene-room-mobile\" id=\"sceneRoomMobile\" src=\"https://krakenpfm.ch/media/hero-room-night-v4-640-5d49b8fe26d9.avif\" srcset=\"/media/hero-room-night-v4-320-13256d8bd483.webp 320w, /media/hero-room-nig…\" sizes=\"(max-width:767px) 100vw, (max-width:1100px) calc(132.65vw - 63.67px), (min…\" width=\"1536\" height=\"1024\" alt=\"\" loading=\"lazy\" fetchpriority=\"low\" aria-hidden=\"true\">",
+          "nodeLabel": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoomMobile"
+        }
+      ],
+      "formFactor": "mobile",
+      "viewport": {
+        "mobile": true,
+        "width": 375,
+        "height": 812,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      }
+    },
+    {
+      "report": "after-mobile-2.report.json",
+      "LCP_ms": 2117.5434999999998,
+      "CLS": 0,
+      "TBT_ms": 270,
+      "FCP_ms": 1067.5435,
+      "lcpElement": [
+        {
+          "type": "node",
+          "lhId": "page-0-IMG",
+          "path": "1,HTML,1,BODY,0,DIV,0,DIV,3,DIV,3,MAIN,0,SECTION,0,DIV,1,DIV,0,DIV,2,PICTURE,2,IMG",
+          "selector": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoomMobile",
+          "boundingRect": {
+            "top": 737,
+            "bottom": 987,
+            "left": 0,
+            "right": 375,
+            "width": 375,
+            "height": 250
+          },
+          "snippet": "<img class=\"scene-room scene-room-mobile\" id=\"sceneRoomMobile\" src=\"https://krakenpfm.ch/media/hero-room-night-v4-640-5d49b8fe26d9.avif\" srcset=\"/media/hero-room-night-v4-320-13256d8bd483.webp 320w, /media/hero-room-nig…\" sizes=\"(max-width:767px) 100vw, (max-width:1100px) calc(132.65vw - 63.67px), (min…\" width=\"1536\" height=\"1024\" alt=\"\" loading=\"lazy\" fetchpriority=\"low\" aria-hidden=\"true\">",
+          "nodeLabel": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoomMobile"
+        }
+      ],
+      "formFactor": "mobile",
+      "viewport": {
+        "mobile": true,
+        "width": 375,
+        "height": 812,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      }
+    },
+    {
+      "report": "after-mobile-3.report.json",
+      "LCP_ms": 1370.492,
+      "CLS": 0,
+      "TBT_ms": 272,
+      "FCP_ms": 1070.492,
+      "lcpElement": [
+        {
+          "type": "node",
+          "lhId": "page-0-IMG",
+          "path": "1,HTML,1,BODY,0,DIV,0,DIV,3,DIV,3,MAIN,0,SECTION,0,DIV,1,DIV,0,DIV,2,PICTURE,2,IMG",
+          "selector": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoomMobile",
+          "boundingRect": {
+            "top": 737,
+            "bottom": 987,
+            "left": 0,
+            "right": 375,
+            "width": 375,
+            "height": 250
+          },
+          "snippet": "<img class=\"scene-room scene-room-mobile\" id=\"sceneRoomMobile\" src=\"https://krakenpfm.ch/media/hero-room-night-v4-640-5d49b8fe26d9.avif\" srcset=\"/media/hero-room-night-v4-320-13256d8bd483.webp 320w, /media/hero-room-nig…\" sizes=\"(max-width:767px) 100vw, (max-width:1100px) calc(132.65vw - 63.67px), (min…\" width=\"1536\" height=\"1024\" alt=\"\" loading=\"lazy\" fetchpriority=\"low\" aria-hidden=\"true\">",
+          "nodeLabel": "div.hero-visual > div#sceneCanvas > picture > img#sceneRoomMobile"
+        }
+      ],
+      "formFactor": "mobile",
+      "viewport": {
+        "mobile": true,
+        "width": 375,
+        "height": 812,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      }
+    }
+  ]
+}

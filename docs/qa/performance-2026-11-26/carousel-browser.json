@@ -1,0 +1,21 @@
+{
+  "before": {
+    "paused": "false",
+    "widths": [
+      686.5234375,
+      473.4765625
+    ]
+  },
+  "manual": {
+    "active": "0",
+    "status": "Descubra la limpieza de fin de alquiler"
+  },
+  "after": {
+    "active": "1",
+    "paused": "false",
+    "widths": [
+      686.5234375,
+      473.4765625
+    ]
+  }
+}

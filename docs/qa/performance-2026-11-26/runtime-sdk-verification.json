@@ -1,0 +1,37 @@
+[
+  {
+    "module": "firebase-admin/app",
+    "file": "node_modules/firebase-admin/lib/app/index.js",
+    "passed": true
+  },
+  {
+    "module": "firebase-admin/firestore",
+    "file": "node_modules/firebase-admin/lib/firestore/index.js",
+    "passed": true
+  },
+  {
+    "module": "@google-cloud/firestore",
+    "file": "node_modules/@google-cloud/firestore/build/src/index.js",
+    "passed": true
+  },
+  {
+    "module": "google-auth-library",
+    "file": "node_modules/google-auth-library/build/src/index.js",
+    "passed": true
+  },
+  {
+    "module": "svix",
+    "file": "node_modules/svix/dist/index.mjs",
+    "passed": true
+  },
+  {
+    "module": "@vercel/functions",
+    "file": "node_modules/@vercel/functions/index.js",
+    "passed": true
+  },
+  {
+    "module": "@google/genai",
+    "file": "node_modules/@google/genai/dist/node/index.mjs",
+    "passed": true
+  }
+]
