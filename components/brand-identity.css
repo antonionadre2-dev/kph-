@@ -80,7 +80,8 @@
   }
 }
 @media (max-width: 359.98px) {
-  :root .kraken-home .site-header .kr-brand-link .brand-logo { width: 76px; height: 34px; }
-  :root .kraken-home .site-header .kr-brand-link .brand-logo img { width: 76px; height: 76px; top: -21px; }
-  .kraken-home .site-header .kr-brand-tagline { hyphens: auto; }
+  :root .kraken-home .site-header .brand-lockup.kr-brand-link { gap: 4px; }
+  :root .kraken-home .site-header .kr-brand-link .brand-logo { width: 56px; height: 25px; }
+  :root .kraken-home .site-header .kr-brand-link .brand-logo img { width: 56px; height: 56px; top: -15px; }
+  .kraken-home .site-header .kr-brand-identity { padding-left: 4px; }
 }
