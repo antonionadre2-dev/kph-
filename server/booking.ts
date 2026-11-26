@@ -11,6 +11,8 @@ import { createRecoveryHandler } from '../integrations/recovery/http.mjs';
 import { createFirestoreRecoveryStore } from '../integrations/recovery/firestore-store.mjs';
 import { bookingAppointmentStart, bookingEmailLinks, collectionConfiguration, createCustomerNotification, notificationForBooking, prepareCustomerEnvelope, selectedEmailSnapshot } from './customer-notifications.ts';
 import { languageForBackgroundEmail, normalizeEmailLanguage } from '../integrations/email-collection/index.mjs';
+import type { PaymentEmailScheduler } from './booking-lifecycle.ts';
+import { runPayrexxConnectionCheckOnce } from './payrexx-connection-check.ts';
 import firebaseConfig from '../firebase-applet-config.json' with {type:'json'};
 
 export { BOOKING_TERMS_VERSION };
@@ -124,7 +126,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       await authenticated(id,access);
       if(!payment)throw new BookingError('PAYMENT_NOT_CONFIGURED',503);
       if(input?.termsAccepted!==true)throw new BookingError('TERMS_REQUIRED');
-      language(input.language); // Checkout presentation never changes the saved communication preference.
+      const presentationLanguage=language(input.language); // Checkout presentation never changes the saved communication preference.
       const claimed=await store.mutate(id,current=>{
         if(!checkoutTermsMatch(input.termsVersion,current.termsVersion))throw new BookingError('TERMS_REQUIRED');
         if(input.acceptedQuoteRevision!==current.quoteRevision)throw new BookingError('PRICE_CHANGED',409);
@@ -139,7 +141,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       });
       if(claimed.checkout.link)return {link:claimed.checkout.link};
       try {
-        const gateway=await payment.create(claimed,token(id),Math.max(1,Math.floor((claimed.checkout.expiresAt-clock())/60000)));
+        const gateway=await payment.create(claimed,token(id),Math.max(1,Math.floor((claimed.checkout.expiresAt-clock())/60000)),presentationLanguage);
         await store.mutateWithMail(id,current=>({...current,checkout:{...current.checkout,gatewayId:gateway.id,link:gateway.link,status:'created'},payment:{...current.payment,status:'pending',checkoutExpiresAt:new Date(current.checkout.expiresAt).toISOString()}}),record=>emailCollectionEnabled?mailJob(record,'notification','payment_requested',`${id}:gateway:${gateway.id}`):null);
         if(emailCollectionEnabled)try{await service.runDue({jobId:`${id}:payment_requested:${digest(`${id}:gateway:${gateway.id}`).slice(0,24)}`,limit:1});}catch{console.warn('[booking:email-dispatch]',{phase:'payment-request'});}
         return {link:gateway.link};
@@ -148,7 +150,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         throw new BookingError('PAYMENT_RECONCILIATION_REQUIRED',503);
       }
     },
-    async reconcile(id:string) {
+    async reconcile(id:string,{scheduleEmails}:{scheduleEmails?:PaymentEmailScheduler}={}) {
       const current=await store.get(id);if(!current?.checkout?.gatewayId || !payment)throw new BookingError('PAYMENT_NOT_STARTED',409);
       let verified:any;
       try {verified=await payment.verify(current);}catch(cause){if(cause instanceof BookingError && cause.status===409)await store.mutate(id,record=>({...record,payment:{...record.payment,status:'reconciliation_required'},revision:record.revision+1}));throw cause;}
@@ -183,13 +185,24 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       }
       if(recoveryService)await recoveryService.recordBookingEvent({bookingId:id,revision:next.revision,status:next.scheduling.status==='confirmed'?'confirmed':next.status,mode:next.mode,paymentStatus:next.payment.status,service:next.quote.service,region:['Zürich','Schaffhausen','Winterthur'].find(region=>next.customer.city.toLowerCase()===region.toLowerCase()),occurredAt:new Date(next.confirmedAt||clock()).toISOString(),draftId:next.recoveryId});
       if(['paid','test_paid'].includes(next.payment.status)) {
-        try {
-          await service.runDue({jobId:`${id}:receipt:${next.checkout.reference}`,limit:1});
-          if(emailCollectionEnabled)await service.runDue({jobId:`${id}:booking_confirmed:${digest(`${id}:appointment:${next.checkout.reference}`).slice(0,24)}`,limit:1});
-          return await store.get(id) || next;
-        } catch {
-          console.warn('[booking:email-dispatch]',{phase:'receipt'});
+        const dispatch=async()=>{
+          try {
+            await service.runDue({jobId:`${id}:receipt:${next.checkout.reference}`,limit:1});
+            if(emailCollectionEnabled)await service.runDue({jobId:`${id}:booking_confirmed:${digest(`${id}:appointment:${next.checkout.reference}`).slice(0,24)}`,limit:1});
+            return await store.get(id) || next;
+          } catch {
+            console.warn('[booking:email-dispatch]',{phase:'receipt'});
+            return next;
+          }
+        };
+        // The payment and its exact outbox jobs are already durable above.
+        // Only the webhook supplies a host lifecycle scheduler; reads await.
+        const pending=dispatch();
+        if(scheduleEmails){
+          try {if(scheduleEmails(pending))return next;}
+          catch {console.warn('[booking:email-dispatch]',{phase:'lifecycle-fallback'});}
         }
+        return await pending;
       }
       return next;
     },
@@ -284,7 +297,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
 }
 
 interface Runtime { service:ReturnType<typeof createBookingService>|null; recovery:any; handleRecovery:any; store:BookingStore|null; auth:any; origin:string; mode:string; paymentReady:boolean; emailReady:boolean; customerAccess:boolean; secret:string; }
-export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.now}:{env?:NodeJS.ProcessEnv;fetcher?:typeof fetch;clock?:()=>number}={}) {
+export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.now,schedulePaymentEmails}:{env?:NodeJS.ProcessEnv;fetcher?:typeof fetch;clock?:()=>number;schedulePaymentEmails?:PaymentEmailScheduler}={}) {
   let initialization:Promise<Runtime>|null=null;
   const initialize=()=>initialization ||= (async()=>{
     let origin='https://krakenpfm.ch';try{origin=new URL(env.APP_URL||origin).origin;}catch{}
@@ -322,7 +335,8 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       const store=createFirestoreBookingStore(db);
       phase='services';
       const mode=['live','test'].includes(env.PAYREXX_MODE||'')?env.PAYREXX_MODE!:'unconfigured';
-      const paymentReady=Boolean(env.PAYREXX_INSTANCE&&env.PAYREXX_API_SECRET&&mode!=='unconfigured'&&origin.startsWith('https://'));
+      const webhookReady=Boolean(env.PAYREXX_WEBHOOK_SECRET?.trim());
+      const paymentReady=Boolean(env.PAYREXX_INSTANCE&&env.PAYREXX_API_SECRET&&webhookReady&&mode!=='unconfigured'&&origin.startsWith('https://'));
       const payment=paymentReady?createPayrexxAdapter({instance:env.PAYREXX_INSTANCE!,secret:env.PAYREXX_API_SECRET!,mode:mode as 'live'|'test',origin},fetcher):null;
       const emailReady=Boolean(env.RESEND_API_KEY&&env.BOOKING_EMAIL_FROM&&origin.startsWith('https://'));
       const providerEmail=emailReady?createResendEmailAdapter(env.RESEND_API_KEY!,fetcher):null;
@@ -374,6 +388,14 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
         if(JSON.stringify(req.body||{}).length>32768)throw new BookingError('BODY_TOO_LARGE',413);
       }
       if(req.path==='/api/booking/config'&&req.method==='GET') {
+        if(runtime.paymentReady&&env.VERCEL==='1'){
+          try {
+            const check=await runPayrexxConnectionCheckOnce({enabledUntil:env.PAYREXX_CONNECTION_CHECK_UNTIL,instance:env.PAYREXX_INSTANCE!,apiSecret:env.PAYREXX_API_SECRET!,fetchImpl:fetcher,now:clock});
+            if(check)console.info('[booking:payrexx-connection-check]',check);
+          }catch{
+            console.warn('[booking:payrexx-connection-check]',{authStatus:'provider_unavailable',methodsChecked:false,liveCHFOneTimeAvailable:null,testCHFOneTimeAvailable:null,unknownModePresent:null});
+          }
+        }
         if(runtime.service) {
           const nonce=crypto.randomBytes(24).toString('base64url'),expires=clock()+3600000,value=`${nonce}.${expires}`;
           const signature=crypto.createHmac('sha256',runtime.secret).update(value).digest('base64url');
@@ -447,7 +469,7 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       const reference=payload.transaction?.referenceId||payload.transaction?.invoice?.referenceId;
       const id=/^([A-Za-z0-9_-]{24})-r\d+$/.exec(reference||'')?.[1];
       if(!id)throw new BookingError('UNKNOWN_REFERENCE',404);
-      await runtime.service.reconcile(id);
+      await runtime.service.reconcile(id,{scheduleEmails:schedulePaymentEmails});
       return res.json({received:true});
     }catch(cause){return res.status(cause instanceof BookingError?cause.status:503).json({code:cause instanceof BookingError?cause.code:'PAYMENT_VERIFICATION_UNAVAILABLE'});}
   };

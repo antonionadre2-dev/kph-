@@ -1,4 +1,5 @@
 import { BookingError } from './booking-store.ts';
+import { normalizeEmailLanguage } from '../integrations/email-collection/language.mjs';
 
 export interface PayrexxConfig { instance:string; secret:string; mode:'live'|'test'; origin:string; }
 /** The reference/amount/mode below come from the persisted booking, never the browser. */
@@ -13,9 +14,11 @@ export function createPayrexxAdapter(config:PayrexxConfig, fetcher:typeof fetch=
     return result.data[0];
   }
   return {
-    async create(booking:any, token:string, minutes:number) {
-      const back=`${config.origin}/quote?booking=${booking.bookingId}&lang=${booking.language}#access=${token}`;
-      const gateway=await request('POST','Gateway/',{amount:booking.payment.amountDueNowCents,currency:'CHF',vatRate:0,referenceId:booking.checkout.reference,purpose:`Kraken PFM · ${booking.reference} · 15%`,language:booking.language,validity:minutes,successRedirectUrl:back,failedRedirectUrl:back,cancelRedirectUrl:back});
+    async create(booking:any, token:string, minutes:number, checkoutLanguage:unknown=booking.language) {
+      let presentationLanguage:string;
+      try{presentationLanguage=normalizeEmailLanguage(checkoutLanguage);}catch{throw new BookingError('INVALID_LANGUAGE');}
+      const back=`${config.origin}/quote?booking=${booking.bookingId}&lang=${presentationLanguage}#access=${token}`;
+      const gateway=await request('POST','Gateway/',{amount:booking.payment.amountDueNowCents,currency:'CHF',vatRate:0,referenceId:booking.checkout.reference,purpose:`Kraken PFM · ${booking.reference} · 15%`,language:presentationLanguage,validity:minutes,successRedirectUrl:back,failedRedirectUrl:back,cancelRedirectUrl:back});
       const url=new URL(gateway.link);
       // Never send a customer to a URL supplied by a browser or unexpected provider host.
       if(url.protocol!=='https:' || !(url.hostname===`${config.instance}.payrexx.com` || url.hostname===`${config.instance}.payrexx.ch`))throw new BookingError('INVALID_CHECKOUT_URL',503);
@@ -35,6 +38,9 @@ export function createPayrexxAdapter(config:PayrexxConfig, fetcher:typeof fetch=
       if(paid.length>1)throw new BookingError('PAYMENT_RECONCILIATION_REQUIRED',409);
       const terminal=matches.findLast(({transaction}:any)=>['refunded','partially-refunded','refund_pending','chargeback','disputed'].includes(transaction.status));
       const row=terminal || paid[0] || matches[matches.length-1], transaction=row.transaction;
+      // A settled result must identify a real provider transaction. Stringifying
+      // a missing or malformed ID must never turn it into a paid booking.
+      if(!Number.isSafeInteger(transaction.id) || transaction.id<=0)throw new BookingError('PAYMENT_MISMATCH',409);
       const currency=typeof row.invoice.currency==='string'?row.invoice.currency:row.invoice.currency?.code;
       const expectedMode=config.mode==='live'?'LIVE':'TEST';
       const instance=transaction.instance?.name || transaction.instance?.subdomain;

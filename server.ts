@@ -18,6 +18,7 @@ import { createKaiAssistantHandler } from "./server/kaiAssistant.ts";
 import { createContactRoutingHandlers } from "./src/contact/routing-server.ts";
 import { createContactIntakeHandlers } from "./server/contact-intake.ts";
 import { createBookingHandlers } from "./server/booking.ts";
+import { createVercelPaymentEmailScheduler } from "./server/booking-lifecycle.ts";
 // No need to define currentDirname or use import.meta.url as they are unused and cause a parse-time SyntaxError in bundled CommonJS on startup.
 
 dotenv.config();
@@ -52,7 +53,7 @@ async function configureApplication() {
 
   app.use(compression());
   app.use(sameOriginCors);
-  const booking = createBookingHandlers();
+  const booking = createBookingHandlers({schedulePaymentEmails:createVercelPaymentEmailScheduler(runningOnVercel)});
   app.post('/api/booking/payrexx/webhook', express.raw({ type: 'application/json', limit: '32kb' }), booking.webhook);
   app.post('/api/booking/email/webhook', express.raw({ type: 'application/json', limit: '32kb' }), booking.emailWebhook);
   const contactIntake = createContactIntakeHandlers();
