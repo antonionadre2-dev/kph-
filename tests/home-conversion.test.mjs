@@ -8,6 +8,7 @@ import { getPublicPriceOffers } from '../src/booking/publicPricing.ts';
 import { publicPriceText } from '../src/booking/publicPricingCopy.ts';
 import { homeText } from '../components/home/homeTranslations.ts';
 import { publicHref } from '../src/routing/site-paths.ts';
+import { getKaiFact } from '../src/kai/facts.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const bundle = await build({
@@ -31,6 +32,7 @@ new Function('require', 'module', 'exports', bundle.outputFiles[0].text)(createR
 const { render, renderHeader, renderFooter, renderReviews } = module.exports;
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
 const decode = value => value.replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'");
+const escapeMarkup = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#x27;');
 
 test('the first homepage action sells the calculated move-out package with the real service and canonical locale', () => {
   const offer = getPublicPriceOffers().find(item=>item.service==='end');
@@ -51,7 +53,13 @@ test('the first homepage action sells the calculated move-out package with the r
     assert.ok(main.includes(homeText(language,'Abnahmegarantie beim Pauschalpaket')));
     assert.ok(main.includes(homeText(language,'Für den vereinbarten Reinigungsumfang gemäss Auftragsbestätigung und AGB. Stundenreinigung ohne Abnahmegarantie.')));
     assert.ok(main.includes('href="'+publicHref('/terms',language)+'"'));
-    assert.doesNotMatch(main.replace(/<style\b[^>]*>[\s\S]*?<\/style>/g,'').replace(/<[^>]+>/g,''), /100\s*%/);
+    // The guarantee/insurance marketing blocks cannot make blanket 100% claims.
+    // The shared FAQ separately reproduces the legitimate existing cancellation charge of 100%.
+    const marketing=main.slice(0,main.indexOf('<section class="faq-section'));
+    assert.ok(marketing.length>0);
+    assert.doesNotMatch(marketing.replace(/<style\b[^>]*>[\s\S]*?<\/style>/g,'').replace(/<[^>]+>/g,''), /100\s*%/);
+    assert.ok(main.includes(escapeMarkup(getKaiFact('cancellation',language).answer)));
+    assert.ok(main.includes(escapeMarkup(getKaiFact('guarantee',language).answer)));
     assert.doesNotMatch(main, /AggregateRating|itemtype="[^"]*Review/);
   }
 });

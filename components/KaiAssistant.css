@@ -1,7 +1,7 @@
 body.kai-assistant-open { overflow: hidden; }
 .kai-assistant, .kai-assistant-launcher { font-family: Inter, Arial, sans-serif; color: #163451; box-sizing: border-box; }
 .kai-assistant *, .kai-assistant *::before, .kai-assistant *::after { box-sizing: border-box; }
-.kai-assistant-launcher { position: fixed; z-index: 55; bottom: max(16px, env(safe-area-inset-bottom)); right: max(16px, env(safe-area-inset-right)); display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 4px 16px 4px 4px; border: 1px solid #d7e5eb; border-radius: 999px; background: #fff; box-shadow: 0 8px 26px #12344f24; cursor: pointer; font-size: 14px; font-weight: 700; }
+.kai-assistant-launcher { position: fixed; z-index: 55; bottom: max(var(--kai-launcher-clearance, 16px), env(safe-area-inset-bottom)); right: max(16px, env(safe-area-inset-right)); display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 4px 16px 4px 4px; border: 1px solid #d7e5eb; border-radius: 999px; background: #fff; box-shadow: 0 8px 26px #12344f24; cursor: pointer; font-size: 14px; font-weight: 700; }
 .kai-assistant-launcher img { width: 48px; height: 48px; object-fit: cover; border-radius: 50%; }
 .kai-assistant-launcher[hidden] { display: none !important; }
 .kai-assistant { --kai-edge: 16px; position: fixed; inset: auto max(var(--kai-edge), env(safe-area-inset-right)) calc(var(--kraken-viewport-bottom, 0px) + max(var(--kai-edge), env(safe-area-inset-bottom))) auto; width: 440px; max-width: calc(100vw - 32px); height: 690px; max-height: calc(var(--kraken-viewport-height, 100dvh) - var(--kai-edge) * 2 - env(safe-area-inset-top) - env(safe-area-inset-bottom)); margin: 0; padding: 0; border: 1px solid #d7e7ed; border-radius: 24px; overflow: hidden; background: #f7fbfd; box-shadow: 0 24px 90px #0c2b4a45; }
@@ -31,6 +31,11 @@ body.kai-assistant-open { overflow: hidden; }
 .kai-message p + p { margin-top: 6px; }
 .kai-message-user { margin-left: auto; background: #163b62; color: #fff; border-color: #163b62; border-radius: 14px 14px 4px 14px; }
 .kai-message-author { display: block; margin-bottom: 3px; font-size: 11px; font-weight: 700; }
+.kai-contact-card { margin: 0 0 12px; padding: 14px; border: 1px solid #a9d8c6; border-radius: 16px; background: #e8f8f0; display: flex; flex-wrap: wrap; gap: 7px; }
+.kai-contact-card h3 { width: 100%; margin: 0 0 4px; font-size: 16px; line-height: 1.4; }
+.kai-contact-card a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; max-width: 100%; padding: 9px 12px; border: 1px solid #b5d4ce; border-radius: 10px; background: #fff; color: #143e56; font-size: 14px; font-weight: 650; text-decoration: none; overflow-wrap: anywhere; }
+.kai-contact-card a:last-child { flex-basis: 100%; }
+.kai-price-continue { margin: 0 0 14px; }
 .kai-working { margin: 10px 0; font-size: 14px; color: #49667c; }
 .kai-composer { display: flex; align-items: flex-end; flex: 0 0 auto; gap: 8px; margin: 0; padding: 10px 12px; border-top: 1px solid #dce6ec; background: #fff; }
 .kai-composer textarea, .kai-summary-field input, .kai-summary-field textarea, .kai-summary-field select { min-width: 0; width: 100%; font: inherit; font-size: 16px; line-height: 1.45; padding: 10px 11px; border: 1px solid #bdcfdb; border-radius: 11px; background: #fff; color: #193b56; }
@@ -62,8 +67,11 @@ body.kai-assistant-open { overflow: hidden; }
 .kai-visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 600px) {
   .kai-assistant { --kai-edge: 8px; width: calc(100vw - 16px); max-width: calc(100vw - 16px); border-radius: 20px; }
-  .kai-assistant-launcher { padding: 4px; width: 56px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); }
+  .kai-assistant-launcher { padding: 4px; width: 56px; right: 12px; bottom: max(var(--kai-launcher-clearance, 12px), env(safe-area-inset-bottom)); }
   .kai-assistant-launcher > span { display: none; }
+  .kai-quick-services { flex-wrap: wrap; gap: 6px; }
+  .kai-quick-services button { flex: 1 1 calc(50% - 6px); padding: 7px 8px; white-space: normal; line-height: 1.3; }
+  .kai-has-conversation .kai-guided-notice, .kai-has-conversation .kai-quick-services { display: none; }
 }
 @media (max-height: 560px) {
   .kai-assistant-header { padding: 6px 10px; }

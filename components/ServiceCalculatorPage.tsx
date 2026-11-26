@@ -593,9 +593,8 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     const transfer = consumeKaiTransfer();
     if (!transfer) return;
     consumeHomeCalculatorRequest();
-    setKaiSummary(transfer.draft);
     if (booking || bookingAccess || submitting || openingPayment || recoveryLoading || returnMissing) {
-      setKaiConflicts(['notes']); return; // An existing booking or restoration is never edited by a chat transfer.
+      setKaiSummary(transfer.draft); setKaiConflicts(['notes']); return; // An existing booking or restoration is never edited by a chat transfer.
     }
     let current = kaiCurrent.current!;
     if (current.choice && current.selection) interruptedSelections.current.set(current.choice, { selection: { ...current.selection }, touched: [...touchedSelection.current] });
@@ -603,11 +602,14 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     const remembered = desired && desired !== current.choice ? interruptedSelections.current.get(desired) : null;
     if (remembered && desired) current = { ...current, choice: desired, selection: { ...remembered.selection }, touchedSelection: remembered.touched };
     const applied = applyKaiBookingTransfer(current, transfer.draft, transfer.policy);
+    setKaiSummary(Object.keys(applied.remainingFields).length ? { ...transfer.draft, fields:applied.remainingFields } : null);
     touchedSelection.current = new Set(applied.touchedSelection || []);
     intentHandled.current = true;
     setChoice(applied.choice); setSelection(applied.selection); setCustomer(applied.customer);
     setRequestedDate(applied.requestedDate); setNotes(applied.notes); setKaiConflicts(applied.conflicts);
     setWizardStep(0); setLegacyImported(false); setUnsupportedIntent(false); setTermsAccepted(false); setError(''); setFieldErrors({});
+    // Bring the populated controls and their existing live price summary into view.
+    focusStep();
     // Facts and interrupted configurations remain in memory; nothing is written to legacy personal-data storage.
   };
   useEffect(() => {

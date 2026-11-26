@@ -1,5 +1,7 @@
 import { localText } from './local-translations.ts';
-import { homeText } from '../../components/home/homeTranslations.ts';
+import { getKaiFaqs, type KaiFactTopic } from '../kai/facts.ts';
+export { getHomeFaqs } from '../kai/facts.ts';
+import type { KaiService } from '../kai/types.ts';
 const faqAnswers = {
   windows: {
     question: 'Welche Fensterseiten können gereinigt werden?',
@@ -25,14 +27,8 @@ export function getServicePageFaqs(service: string | undefined, language: string
     { question: 'Kann ich Reinigung und kleinen Umzug zusammen anfragen?', answer: 'Ja. Geben Sie beide Aufgaben, die Adressen und die gewünschten Termine an. Wir klären den Umfang und ob sich die Reihenfolge für Ihren Auftrag abstimmen lässt.' },
     { question: 'Wo ist Kraken PFM ansässig?', answer: 'Kraken PFM ist an der Seewadelstrasse 3, 8203 Schaffhausen ansässig. Von dort planen wir Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur.' },
   ];
-  return faqs.map(faq => ({ question: localText(language,faq.question), answer: localText(language,faq.answer) }));
+  const topics: KaiFactTopic[] = service === 'end' ? ['included', 'guarantee', 'payment'] : ['included', 'payment'];
+  const kaiService = ['windows', 'end', 'regular', 'deep', 'moving'].includes(service || '') ? service as KaiService : undefined;
+  return [...faqs.map(faq => ({ question: localText(language,faq.question), answer: localText(language,faq.answer) })),
+    ...getKaiFaqs(language, topics, kaiService).map(({question, answer}) => ({question, answer}))];
 }
-
-const HOME_FAQS = [
-  ['Übernehmen Sie auch kleine Aufträge?', 'Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen mit 1–4 Zimmern und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.'],
-  ['Wie plane ich meinen Auftrag?', 'Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.'],
-  ['Wird Mehrwertsteuer verrechnet?', 'Es wird keine Mehrwertsteuer verrechnet. Die Angaben zu Ihrem Auftrag erhalten Sie im Rechner und in Ihrer persönlichen Bestätigung.'],
-  ['In welchen Regionen ist Kraken tätig?', 'Wir unterstützen Privathaushalte in Zürich, Schaffhausen und Winterthur. Geben Sie Ihre Postleitzahl an, damit wir Ihren Auftrag und die Anfahrt gemeinsam prüfen können.'],
-  ['Welches Fahrzeug nutzen Sie für kleine Umzüge?', 'Wir nutzen einen Ford Transit. Teilen Sie uns mit, welche Möbel und Kartons transportiert werden sollen und wie die Zugänge aussehen. So können wir Fahrzeug, Helfer und benötigte Fahrten passend abstimmen.'],
-];
-export function getHomeFaqs(language: string) { return HOME_FAQS.map(([question,answer]) => ({question:homeText(language,question),answer:homeText(language,answer)})); }

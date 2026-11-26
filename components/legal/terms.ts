@@ -1,5 +1,6 @@
 import type { TermsTranslation } from './types';
-import { routeLanguage } from '../../src/routing/site-paths';
+import { routeLanguage } from '../../src/routing/site-paths.ts';
+import { PUBLIC_POLICY_CONTENT } from '../../src/kai/policyContent.ts';
 
 // Editorial cleanup of the existing document; commercial conditions require owner review.
 const documents = {
@@ -13,7 +14,7 @@ const documents = {
       },
       {
         "title": "2. Angebote, Festpreis & Vertragsabschluss",
-        "content": "Der Online-Rechner zeigt bei Festpreisleistungen den Preis für Ihre angegebenen Daten und ausgewählten Leistungen. Bei unverändertem Umfang bleibt dieser Preis gleich. Umzüge nach Aufwand zeigen einen Richtpreis; abgerechnet wird nach der Mindestdauer in 15-Minuten-Schritten. Umzüge mit einem Ab-Preis benötigen vor der Preisbestätigung Fotos oder eine Besichtigung; bis dahin ist keine Zahlung möglich. Eine Anfrage allein bestätigt noch keinen Termin. Ein Vertrag kommt durch die Bestätigung einer Offerte oder Online-Buchung zustande. Der Leistungsumfang ergibt sich aus der Buchungsbestätigung. Abweichende Angaben oder zusätzliche Arbeiten stimmen wir mit Ihnen ab, bevor der Preis geändert wird. Die bestehende Anzahlung von 15 % bleibt unverändert; bei Umzügen nach Aufwand bezieht sie sich auf den Mindestauftrag einschliesslich Anfahrt und gegebenenfalls kombinierter Reinigung und Rabatt."
+        "content": "Der Online-Rechner zeigt bei Festpreisleistungen den Preis für Ihre angegebenen Daten und ausgewählten Leistungen. Bei unverändertem Umfang bleibt dieser Preis gleich. Umzüge nach Aufwand zeigen einen Richtpreis; abgerechnet wird nach der Mindestdauer in 15-Minuten-Schritten. Umzüge mit einem Ab-Preis benötigen vor der Preisbestätigung Fotos oder eine Besichtigung; bis dahin ist keine Zahlung möglich. Eine Anfrage allein bestätigt noch keinen Termin. Ein Vertrag kommt durch die Bestätigung einer Offerte oder Online-Buchung zustande. Der Leistungsumfang ergibt sich aus der Buchungsbestätigung. Abweichende Angaben oder zusätzliche Arbeiten stimmen wir mit Ihnen ab, bevor der Preis geändert wird. " + PUBLIC_POLICY_CONTENT.de.deposit
       },
       {
         "title": "3. Preise, MwSt. & Zuschläge",
@@ -25,11 +26,11 @@ const documents = {
       },
       {
         "title": "5. Zahlungsbedingungen & Verzug",
-        "content": "Zahlungen erfolgen über Payrexx, Banküberweisung oder QR-Rechnung. Der Restbetrag ist innert 7 Tagen fällig. Bei Zahlungsverzug fallen 5% Verzugszins sowie Mahngebühren von CHF 20.00 (2. Mahnung) und CHF 50.00 (3. Mahnung) an. Inkassokosten gehen zu Lasten des Kunden."
+        "content": PUBLIC_POLICY_CONTENT.de.payment + " Bei Zahlungsverzug fallen 5% Verzugszins sowie Mahngebühren von CHF 20.00 (2. Mahnung) und CHF 50.00 (3. Mahnung) an. Inkassokosten gehen zu Lasten des Kunden."
       },
       {
         "title": "6. Stornierungen, Terminverschiebungen & Nichterscheinen",
-        "content": "Stornierungen müssen schriftlich erfolgen. Gebühren: >48h vor Start: kostenlos; <48h: 50% des Preises; <12h, Nichterscheinen oder Absage vor Ort: 100% des Preises. Eine kostenlose Verschiebung ist >24h vor Start nach Verfügbarkeit zulässig."
+        "content": PUBLIC_POLICY_CONTENT.de.cancellation
       },
       {
         "title": "7. Wiederkehrende Reinigungen und Kündigung",
@@ -37,7 +38,7 @@ const documents = {
       },
       {
         "title": "8. Umzugsreinigung — Abnahmegarantie",
-        "content": "Beinhaltet kostenlose Mängelbehebung bei offizieller Wohnungsübergabe (Abgabeprotokoll). Gültig, wenn: (a) Kraken innert 24h schriftlich mit Protokoll/Fotos benachrichtigt wird; (b) Übergabe innert 72h nach Reinigung stattfindet; (c) Objekt unbewohnt und ungenutzt blieb. Normaler Verschleiss, Schäden oder ausgeschlossene Bereiche sind nicht gedeckt."
+        "content": PUBLIC_POLICY_CONTENT.de.guarantee
       },
       {
         "title": "9. Umzugs- & Transportdienstleistungen",
@@ -53,11 +54,11 @@ const documents = {
       },
       {
         "title": "12. Haftung & Versicherung",
-        "content": "Angaben zu einer allfälligen Versicherungsdeckung ergeben sich aus den einschlägigen Versicherungsunterlagen und der schriftlichen Offerte. Fragen dazu klären Sie vor dem Auftrag mit Kraken."
+        "content": PUBLIC_POLICY_CONTENT.de.insurance
       },
       {
         "title": "13. Subunternehmer, spezialisierte Partner & Ablehnungsrecht",
-        "content": "Kraken kann qualifizierte Drittspezialisten beiziehen, bleibt jedoch alleiniger Vertragspartner. Kraken behält sich das Recht vor, Arbeiten abzulehnen oder einzustellen, wenn vor Ort unzumutbare Sicherheits- oder Gesundheitsrisiken bestehen."
+        "content": PUBLIC_POLICY_CONTENT.de.team + " Kraken behält sich das Recht vor, Arbeiten abzulehnen oder einzustellen, wenn vor Ort unzumutbare Sicherheits- oder Gesundheitsrisiken bestehen."
       },
       {
         "title": "14. Höhere Gewalt (Force Majeure)",
@@ -91,7 +92,7 @@ const documents = {
       },
       {
         "title": "2. Quotes, fixed prices & contract formation",
-        "content": "The calculator shows the price for your declared details and selected scope for fixed-price services. With the same scope, that price stays unchanged. Hourly moves show an estimate; actual work is billed in 15-minute increments after the minimum duration. Moves with a starting price require photos or a visit before the final price is confirmed; payment is unavailable until then. An enquiry alone does not confirm an appointment. A contract is formed by confirmation of a quote or online booking. The booking confirmation defines the scope. Different details or additional work are agreed with you before the price changes. The existing 15% deposit stays unchanged; for hourly moves it is based on the minimum order including travel and any combined cleaning and discount."
+        "content": "The calculator shows the price for your declared details and selected scope for fixed-price services. With the same scope, that price stays unchanged. Hourly moves show an estimate; actual work is billed in 15-minute increments after the minimum duration. Moves with a starting price require photos or a visit before the final price is confirmed; payment is unavailable until then. An enquiry alone does not confirm an appointment. A contract is formed by confirmation of a quote or online booking. The booking confirmation defines the scope. Different details or additional work are agreed with you before the price changes. " + PUBLIC_POLICY_CONTENT.en.deposit
       },
       {
         "title": "3. Prices, VAT & Surcharges",
@@ -103,11 +104,11 @@ const documents = {
       },
       {
         "title": "5. Payment Terms & Default",
-        "content": "Payments are processed via Payrexx, bank transfer, or QR-bill. Balance is due within 7 days of invoice. Default interest of 5% p.a. applies, plus reminder fees of CHF 20.00 (2nd reminder) and CHF 50.00 (3rd reminder). Collection costs are borne by the client."
+        "content": PUBLIC_POLICY_CONTENT.en.payment + " Default interest of 5% p.a. applies, plus reminder fees of CHF 20.00 (2nd reminder) and CHF 50.00 (3rd reminder). Collection costs are borne by the client."
       },
       {
         "title": "6. Cancellations, Rescheduling & No-Shows",
-        "content": "Cancellations must be in writing. Fees: >48 hours notice: free; <48 hours: 50% of price; <12 hours, no-show, or cancellation at door: 100% of price. One free rescheduling is permitted >24 hours prior, subject to availability."
+        "content": PUBLIC_POLICY_CONTENT.en.cancellation
       },
       {
         "title": "7. Recurring cleaning and termination",
@@ -115,7 +116,7 @@ const documents = {
       },
       {
         "title": "8. End-of-Tenancy Cleaning — Handover Guarantee",
-        "content": "Includes free rectification of landlord-identified cleaning deficiencies. Valid if: (a) notified in writing within 24h of inspection with protocol/photos; (b) inspection is within 72h of cleaning; (c) property remained unoccupied. Does not cover wear and tear, structural defects, or excluded items."
+        "content": PUBLIC_POLICY_CONTENT.en.guarantee
       },
       {
         "title": "9. Moving & Transport Services",
@@ -131,11 +132,11 @@ const documents = {
       },
       {
         "title": "12. Liability & Insurance",
-        "content": "Information about any applicable insurance cover is set out in the relevant policy documents and written quote. Please clarify questions with Kraken before the job."
+        "content": PUBLIC_POLICY_CONTENT.en.insurance
       },
       {
         "title": "13. Subcontractors, Specialized Partners & Right of Refusal",
-        "content": "Kraken may engage qualified third-party specialists but remains the sole contractual partner. Kraken reserves the right to refuse or terminate service if conditions pose safety or health risks."
+        "content": PUBLIC_POLICY_CONTENT.en.team + " Kraken reserves the right to refuse or terminate service if conditions pose safety or health risks."
       },
       {
         "title": "14. Force Majeure",
@@ -169,7 +170,7 @@ const documents = {
       },
       {
         "title": "2. Presupuestos, precio cerrado y contratación",
-        "content": "El calculador muestra el precio correspondiente a los datos declarados y al alcance elegido para los servicios de precio fijo. Con el mismo alcance, ese precio no cambia. Las mudanzas por horas muestran una estimación; el trabajo real se factura en tramos de 15 minutos después de la duración mínima. Las mudanzas con precio desde requieren fotos o una visita antes de confirmar el precio definitivo; hasta entonces no se puede pagar. Una solicitud por sí sola no confirma la cita. El contrato se formaliza al confirmar un presupuesto o una reserva online. La confirmación de la reserva define el alcance. Cualquier dato distinto o trabajo adicional se acuerda con usted antes de cambiar el precio. El anticipo existente del 15 % se mantiene; en las mudanzas por horas se calcula sobre el encargo mínimo, incluido el desplazamiento y, si corresponde, la limpieza y el descuento combinado."
+        "content": "El calculador muestra el precio correspondiente a los datos declarados y al alcance elegido para los servicios de precio fijo. Con el mismo alcance, ese precio no cambia. Las mudanzas por horas muestran una estimación; el trabajo real se factura en tramos de 15 minutos después de la duración mínima. Las mudanzas con precio desde requieren fotos o una visita antes de confirmar el precio definitivo; hasta entonces no se puede pagar. Una solicitud por sí sola no confirma la cita. El contrato se formaliza al confirmar un presupuesto o una reserva online. La confirmación de la reserva define el alcance. Cualquier dato distinto o trabajo adicional se acuerda con usted antes de cambiar el precio. " + PUBLIC_POLICY_CONTENT.es.deposit
       },
       {
         "title": "3. Precios, IVA y Recargos",
@@ -181,11 +182,11 @@ const documents = {
       },
       {
         "title": "5. Condiciones de Pago y Mora",
-        "content": "Pagos vía Payrexx, transferencia o QR-bill. El saldo vence a los 7 días de la factura. Mora automática tras vencer plazo, con un interés anual del 5% y cargos por reclamación de 20,00 CHF (2ª reclamación) y 50,00 CHF (3ª reclamación). Costes de cobro a cargo del cliente."
+        "content": PUBLIC_POLICY_CONTENT.es.payment + " Mora automática tras vencer plazo, con un interés anual del 5% y cargos por reclamación de 20,00 CHF (2ª reclamación) y 50,00 CHF (3ª reclamación). Costes de cobro a cargo del cliente."
       },
       {
         "title": "6. Cancelaciones, Aplazamientos y No Presentación",
-        "content": "Cancelaciones por escrito. Tasas: >48 horas de antelación: gratis; <48 horas: 50% del importe; <12 horas, no presentación o cancelación en puerta: 100% del presupuesto. Un aplazamiento gratuito es permitido >24 horas antes, según disponibilidad."
+        "content": PUBLIC_POLICY_CONTENT.es.cancellation
       },
       {
         "title": "7. Limpiezas periódicas y rescisión",
@@ -193,7 +194,7 @@ const documents = {
       },
       {
         "title": "8. Limpieza de Final de Arrendamiento — Garantía de Entrega",
-        "content": "Garantía de entrega (Wohnungsabgabe): subsanación gratuita de deficiencias. Válido si: (a) notificado por escrito en 24h tras inspección con protocolo/fotos; (b) inspección en 72h tras limpieza; (c) propiedad desocupada e inutilizada. No cubre daños estructurales, desgaste o áreas excluidas."
+        "content": PUBLIC_POLICY_CONTENT.es.guarantee
       },
       {
         "title": "9. Servicios de Mudanza y Transporte",
@@ -209,11 +210,11 @@ const documents = {
       },
       {
         "title": "12. Responsabilidad Civil y Seguros",
-        "content": "La información sobre una posible cobertura de seguro figura en la documentación de la póliza y el presupuesto escrito correspondientes. Aclare sus dudas con Kraken antes del encargo."
+        "content": PUBLIC_POLICY_CONTENT.es.insurance
       },
       {
         "title": "13. Subcontratistas, Socios Especializados y Derecho de Rechazo",
-        "content": "Kraken puede contratar terceros cualificados pero sigue siendo el único socio contractual. Kraken puede rechazar o suspender el servicio si hay riesgos de seguridad o salud."
+        "content": PUBLIC_POLICY_CONTENT.es.team + " Kraken puede rechazar o suspender el servicio si hay riesgos de seguridad o salud."
       },
       {
         "title": "14. Fuerza Mayor",
@@ -247,7 +248,7 @@ const documents = {
       },
       {
         "title": "2. Orçamentos, preço fixo e contratação",
-        "content": "A calculadora mostra o preço dos dados declarados e dos serviços escolhidos nas modalidades de preço fixo. Com o mesmo âmbito, esse preço não muda. As mudanças à hora mostram uma estimativa; o trabalho real é faturado em períodos de 15 minutos após a duração mínima. As mudanças com preço desde exigem fotografias ou visita antes da confirmação do preço final; até lá não é possível pagar. Um pedido por si só não confirma a marcação. O contrato é celebrado pela confirmação de um orçamento ou reserva online. A confirmação define o âmbito. Dados diferentes ou trabalhos adicionais são acordados consigo antes de alterar o preço. O sinal existente de 15 % mantém-se; nas mudanças à hora é calculado sobre o serviço mínimo, incluindo deslocação e, quando aplicável, limpeza e desconto combinado."
+        "content": "A calculadora mostra o preço dos dados declarados e dos serviços escolhidos nas modalidades de preço fixo. Com o mesmo âmbito, esse preço não muda. As mudanças à hora mostram uma estimativa; o trabalho real é faturado em períodos de 15 minutos após a duração mínima. As mudanças com preço desde exigem fotografias ou visita antes da confirmação do preço final; até lá não é possível pagar. Um pedido por si só não confirma a marcação. O contrato é celebrado pela confirmação de um orçamento ou reserva online. A confirmação define o âmbito. Dados diferentes ou trabalhos adicionais são acordados consigo antes de alterar o preço. " + PUBLIC_POLICY_CONTENT.pt.deposit
       },
       {
         "title": "3. Preços, IVA & Sobretaxas",
@@ -259,11 +260,11 @@ const documents = {
       },
       {
         "title": "5. Condições de Pagamento & Mora",
-        "content": "Pagamentos seguros via Payrexx, transferência ou fatura QR. O saldo restante vence 7 dias após a fatura. A mora é automática após o vencimento, com juros anuais de 5% e taxas de cobrança de CHF 20.00 (2º aviso) e CHF 50.00 (3º aviso). Os custos de cobrança judicial são suportados pelo cliente."
+        "content": PUBLIC_POLICY_CONTENT.pt.payment + " A mora é automática após o vencimento, com juros anuais de 5% e taxas de cobrança de CHF 20.00 (2º aviso) e CHF 50.00 (3º aviso). Os custos de cobrança judicial são suportados pelo cliente."
       },
       {
         "title": "6. Cancelamentos, Adiamentos & Não-Comparência",
-        "content": "Os cancelamentos devem ser feitos por escrito. Taxas: aviso >48 horas: gratuito; <48 horas: 50% do valor; <12 horas, não-comparência ou cancelamento no local: 100% do orçamento. É permitido um adiamento gratuito com aviso >24 horas, sujeito a disponibilidade."
+        "content": PUBLIC_POLICY_CONTENT.pt.cancellation
       },
       {
         "title": "7. Limpezas regulares e rescisão",
@@ -271,7 +272,7 @@ const documents = {
       },
       {
         "title": "8. Limpeza de Final de Arrendamento — Garantia de Entrega",
-        "content": "Inclui a correção gratuita de quaisquer deficiências detetadas pelo senhorio na vistoria oficial (Abgabeprotokoll). Condições: (a) comunicado por escrito em 24h com protocolo/fotos; (b) vistoria em até 72h após a limpeza; (c) imóvel mantido desocupado e sem uso. Não cobre desgaste normal, danos estruturais ou áreas excluídas."
+        "content": PUBLIC_POLICY_CONTENT.pt.guarantee
       },
       {
         "title": "9. Serviços de Mudança & Logística",
@@ -287,11 +288,11 @@ const documents = {
       },
       {
         "title": "12. Responsabilidade Civil & Seguros",
-        "content": "A informação sobre uma eventual cobertura de seguro consta dos documentos da apólice e do orçamento escrito correspondentes. Esclareça as suas dúvidas com a Kraken antes do serviço."
+        "content": PUBLIC_POLICY_CONTENT.pt.insurance
       },
       {
         "title": "13. Subempreiteiros, Parceiros Especializados & Direito de Recusa",
-        "content": "A Kraken pode subcontratar parceiros qualificados mas permanece como único parceiro contratual. A Kraken reserva o direito de recusar ou suspender o serviço se existirem riscos para a saúde ou segurança das equipas."
+        "content": PUBLIC_POLICY_CONTENT.pt.team + " A Kraken reserva o direito de recusar ou suspender o serviço se existirem riscos para a saúde ou segurança das equipas."
       },
       {
         "title": "14. Força Maior",
@@ -325,7 +326,7 @@ const documents = {
       },
       {
         "title": "2. Preventivi, prezzo fisso e contratto",
-        "content": "Il calcolatore mostra il prezzo dei dati dichiarati e delle prestazioni scelte per i servizi a prezzo fisso. A parità di prestazioni, il prezzo resta invariato. I traslochi a ore mostrano una stima; il lavoro effettivo viene fatturato a intervalli di 15 minuti dopo la durata minima. I traslochi con prezzo a partire da richiedono foto o un sopralluogo prima della conferma del prezzo definitivo; fino ad allora non è possibile pagare. Una richiesta da sola non conferma la data. Il contratto si conclude con la conferma di un preventivo o di una prenotazione online. La conferma definisce le prestazioni. Dati diversi o lavori aggiuntivi vengono concordati prima di cambiare il prezzo. L’acconto esistente del 15% resta invariato; per i traslochi a ore è calcolato sull’incarico minimo, inclusi trasferta ed eventuali pulizia e sconto combinato."
+        "content": "Il calcolatore mostra il prezzo dei dati dichiarati e delle prestazioni scelte per i servizi a prezzo fisso. A parità di prestazioni, il prezzo resta invariato. I traslochi a ore mostrano una stima; il lavoro effettivo viene fatturato a intervalli di 15 minuti dopo la durata minima. I traslochi con prezzo a partire da richiedono foto o un sopralluogo prima della conferma del prezzo definitivo; fino ad allora non è possibile pagare. Una richiesta da sola non conferma la data. Il contratto si conclude con la conferma di un preventivo o di una prenotazione online. La conferma definisce le prestazioni. Dati diversi o lavori aggiuntivi vengono concordati prima di cambiare il prezzo. " + PUBLIC_POLICY_CONTENT.it.deposit
       },
       {
         "title": "3. Prezzi, IVA & Maggiorazioni",
@@ -337,11 +338,11 @@ const documents = {
       },
       {
         "title": "5. Termini di Pagamento & Mora",
-        "content": "Pagamenti sicuri tramite Payrexx, bonifico o polizza QR. Il saldo è esigibile entro 7 giorni dalla fatturazione. La mora è automatica alla scadenza, con un interesse annuo del 5% e spese di sollecito di CHF 20.00 (2° sollecito) e CHF 50.00 (3° sollecito). Le spese di recupero crediti sono a carico del cliente."
+        "content": PUBLIC_POLICY_CONTENT.it.payment + " La mora è automatica alla scadenza, con un interesse annuo del 5% e spese di sollecito di CHF 20.00 (2° sollecito) e CHF 50.00 (3° sollecito). Le spese di recupero crediti sono a carico del cliente."
       },
       {
         "title": "6. Cancellazioni, Rinvii & Mancata Presentazione",
-        "content": "Le cancellazioni devono essere formate per iscritto. Penali: preavviso >48 ore: gratuito; <48 ore: 50% del prezzo; <12 ore, mancata presentazione o cancellazione sul posto: 100% del preventivo. Un rinvio gratuito è consentito >24 ore prima dell'intervento, previa disponibilità."
+        "content": PUBLIC_POLICY_CONTENT.it.cancellation
       },
       {
         "title": "7. Pulizie regolari e risoluzione",
@@ -349,7 +350,7 @@ const documents = {
       },
       {
         "title": "8. Pulizia di Fine Locazione — Garanzia di Consegna",
-        "content": "Include la risoluzione gratuita di qualsiasi lacuna riscontrata dal locatore durante il collaudo ufficiale (Abgabeprotokoll). Condizioni: (a) notifica scritta entro 24h con protocollo/foto; (b) collaudo ufficiale entro 72h dalla pulizia; (c) immobile rimasto sfitto e inutilizzato. Esclude la normale usura, difetti strutturali ed elementi esclusi."
+        "content": PUBLIC_POLICY_CONTENT.it.guarantee
       },
       {
         "title": "9. Servizi di Trasloco & Logistica",
@@ -365,11 +366,11 @@ const documents = {
       },
       {
         "title": "12. Responsabilità Civile & Assicurazioni",
-        "content": "Le informazioni su un’eventuale copertura assicurativa risultano dai relativi documenti di polizza e dal preventivo scritto. Chiarisca le sue domande con Kraken prima dell’incarico."
+        "content": PUBLIC_POLICY_CONTENT.it.insurance
       },
       {
         "title": "13. Subappaltatori, Partner Specializzati & Diritto di Rifiuto",
-        "content": "Kraken è libera di avvalersi di subappaltatori specializzati ma rimane l'unico partner contrattuale. Kraken si riserva di annullare o sospendere il servizio se le condizioni compromettono la salute o la sicurezza del personale."
+        "content": PUBLIC_POLICY_CONTENT.it.team + " Kraken si riserva di annullare o sospendere il servizio se le condizioni compromettono la salute o la sicurezza del personale."
       },
       {
         "title": "14. Forza Maggiore",
@@ -403,7 +404,7 @@ const documents = {
       },
       {
         "title": "2. Devis, prix fixe et conclusion du contrat",
-        "content": "Le calculateur indique le prix correspondant aux données déclarées et aux prestations choisies pour les services au forfait. À prestations identiques, ce prix reste inchangé. Les déménagements selon le temps passé affichent une estimation ; le travail réel est facturé par tranches de 15 minutes après la durée minimale. Les déménagements avec un prix dès nécessitent des photos ou une visite avant confirmation du prix définitif ; aucun paiement n’est possible avant cela. Une demande seule ne confirme pas de rendez-vous. Le contrat est conclu par la confirmation d’un devis ou d’une réservation en ligne. La confirmation définit les prestations. Toute donnée différente ou prestation supplémentaire est convenue avec vous avant de modifier le prix. L’acompte existant de 15 % reste inchangé ; pour les déménagements selon le temps passé, il est calculé sur le minimum, déplacement et éventuels nettoyage et réduction combinée compris."
+        "content": "Le calculateur indique le prix correspondant aux données déclarées et aux prestations choisies pour les services au forfait. À prestations identiques, ce prix reste inchangé. Les déménagements selon le temps passé affichent une estimation ; le travail réel est facturé par tranches de 15 minutes après la durée minimale. Les déménagements avec un prix dès nécessitent des photos ou une visite avant confirmation du prix définitif ; aucun paiement n’est possible avant cela. Une demande seule ne confirme pas de rendez-vous. Le contrat est conclu par la confirmation d’un devis ou d’une réservation en ligne. La confirmation définit les prestations. Toute donnée différente ou prestation supplémentaire est convenue avec vous avant de modifier le prix. " + PUBLIC_POLICY_CONTENT.fr.deposit
       },
       {
         "title": "3. Tarifs, TVA & Majorations",
@@ -415,11 +416,11 @@ const documents = {
       },
       {
         "title": "5. Modalités de Règlement & Retards",
-        "content": "Règlements sécurisés via Payrexx, virement ou QR-facture. Le solde est exigible sous 7 jours dès facturation. Tout retard entraîne un intérêt moratoire légal de 5% par an et des frais de sommation de CHF 20.00 (2e rappel) et CHF 50.00 (3e rappel). Les frais de recouvrement incombent au client."
+        "content": PUBLIC_POLICY_CONTENT.fr.payment + " Tout retard entraîne un intérêt moratoire légal de 5% par an et des frais de sommation de CHF 20.00 (2e rappel) et CHF 50.00 (3e rappel). Les frais de recouvrement incombent au client."
       },
       {
         "title": "6. Annulations, Reports & Non-Présentation",
-        "content": "Toute annulation doit être formulée par écrit. Indemnités: préavis >48 heures: gratuit; <48 heures: 50% du prix; <12 heures, non-présentation ou annulation sur place: 100% du devis. Un report gratuit est toléré >24 heures avant l'intervention, selon nos disponibilités."
+        "content": PUBLIC_POLICY_CONTENT.fr.cancellation
       },
       {
         "title": "7. Nettoyages réguliers et résiliation",
@@ -427,7 +428,7 @@ const documents = {
       },
       {
         "title": "8. Nettoyage de Fin de Bail — Garantie de Remise",
-        "content": "Comprend la rectification gratuite de toute lacune signalée par le bailleur lors de l'état des lieux officiel (Abgabeprotokoll). Conditions: (a) notification écrite sous 24h avec protocole/photos; (b) visite d'état des lieux sous 72h après nettoyage; (c) logement resté inoccupé et inutilisé. Exclut l'usure normale, défauts du bâtiment et éléments exclus."
+        "content": PUBLIC_POLICY_CONTENT.fr.guarantee
       },
       {
         "title": "9. Services de Déménagement & Logistique",
@@ -443,11 +444,11 @@ const documents = {
       },
       {
         "title": "12. Responsabilité & Assurances",
-        "content": "Les informations sur une éventuelle couverture d’assurance figurent dans les documents de police correspondants et le devis écrit. Veuillez clarifier vos questions avec Kraken avant la prestation."
+        "content": PUBLIC_POLICY_CONTENT.fr.insurance
       },
       {
         "title": "13. Sous-traitants, Partenaires Agréés & Droit de Refus",
-        "content": "Kraken est libre de s'adjoindre des sous-traitants spécialisés mais demeure le seul interlocuteur contractuel. Kraken se réserve d'annuler ou suspendre l'acte si les conditions compromettent la santé ou la sécurité."
+        "content": PUBLIC_POLICY_CONTENT.fr.team + " Kraken se réserve d'annuler ou suspendre l'acte si les conditions compromettent la santé ou la sécurité."
       },
       {
         "title": "14. Force Majeure",

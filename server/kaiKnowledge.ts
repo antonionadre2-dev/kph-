@@ -1,23 +1,27 @@
 import { homeText, normalizeHomeLanguage, type HomeLanguage } from '../components/home/homeTranslations.ts';
 import type { KaiField, KaiService } from '../src/kai/types.ts';
+import { getKaiFact, KAI_CONTACT, KAI_FACT_TOPICS } from '../src/kai/facts.ts';
+export { getKaiFact, getKaiFaqs, KAI_CONTACT, KAI_FACT_TOPICS } from '../src/kai/facts.ts';
+export type { KaiFact, KaiFactTopic } from '../src/kai/facts.ts';
 
 /** Approved public-site facts. No price catalogue or unverified vehicle capacity. */
 export const KAI_KNOWLEDGE = Object.freeze({
   company: 'Kraken PFM – Reinigung & kleine Umzüge',
   regions: ['Zürich', 'Schaffhausen', 'Winterthur'],
-  email: 'kai@krakenpfm.ch',
-  phone: '+41 77 450 57 05',
-  address: 'Seewadelstrasse 3, 8203 Schaffhausen, Schweiz',
+  email: KAI_CONTACT.email,
+  phone: KAI_CONTACT.phone,
+  address: KAI_CONTACT.address,
   vehicle: 'Ford Transit; exact dimensions, capacity and number of trips require personal confirmation.',
-  vat: 'Es wird keine Mehrwertsteuer verrechnet.',
+  vat: getKaiFact('vat', 'de').answer,
+  facts: Object.fromEntries(KAI_FACT_TOPICS.map(topic => [topic, getKaiFact(topic, 'de')])),
   services: {
-    windows: 'Window cleaning: quantity, window type and accessibility; scope clarified personally. Prices are calculated in the service calculator; Kai does not quote prices.',
+    windows: 'Window cleaning: quantity, window type and safe accessibility; exact scope agreed before the job.',
     end: 'End-of-tenancy cleaning: home size, condition, handover date and agreed scope.',
     regular: 'Regular household cleaning: home size, frequency and priority tasks.',
     deep: 'Deep household cleaning: rooms, areas needing attention and priorities.',
     moving: 'Small moves: origin, destination, furniture/boxes, access and date.',
   },
-  preparation: 'Describe the work and access in the calculator. Scope, preparation and arrangements are confirmed personally. Do not promise availability, guarantees, discounts or a vehicle fit.',
+  preparation: 'Describe the work and access in the calculator. Use the shared facts for conditions and only the calculator pricing function for money. Never promise availability, discounts, reservations or a vehicle fit.',
 });
 
 const copy = {
@@ -112,6 +116,8 @@ const questionRows = {
   origin: ['In welcher Ortschaft holen wir die Sachen ab?', 'Which town are we collecting from?', '¿En qué localidad recogemos las cosas?', 'Em que localidade recolhemos os bens?', 'In quale località ritiriamo gli oggetti?', 'Dans quelle localité faut-il récupérer les affaires ?'],
   destination: ['In welche Ortschaft soll der Umzug gehen?', 'Which town are you moving to?', '¿A qué localidad se dirige la mudanza?', 'Para que localidade será a mudança?', 'Verso quale località è diretto il trasloco?', 'Vers quelle localité déménagez-vous ?'],
   rooms: ['Wie viele Zimmer hat Ihre Wohnung ungefähr?', 'About how many rooms does your apartment have?', '¿Cuántas habitaciones tiene aproximadamente la vivienda?', 'Quantas divisões tem aproximadamente a casa?', 'Quanti locali ha circa l’appartamento?', 'Combien de pièces compte approximativement votre appartement ?'],
+  area: ['Wie gross ist die Wohnfläche in m²?', 'What is the floor area in m²?', '¿Cuál es la superficie en m²?', 'Qual é a área em m²?', 'Qual è la superficie in m²?', 'Quelle est la surface en m² ?'],
+  hours: ['Wie viele Arbeitsstunden wünschen Sie?', 'How many labour hours would you like?', '¿Cuántas horas de trabajo desea?', 'Quantas horas de trabalho pretende?', 'Quante ore di lavoro desidera?', 'Combien d’heures de travail souhaitez-vous ?'],
   bedrooms: ['Wie viele Schlafzimmer sind zu reinigen?', 'How many bedrooms need cleaning?', '¿Cuántos dormitorios hay que limpiar?', 'Quantos quartos precisam de limpeza?', 'Quante camere da letto vanno pulite?', 'Combien de chambres faut-il nettoyer ?'],
   bathrooms: ['Wie viele Badezimmer sind zu reinigen?', 'How many bathrooms need cleaning?', '¿Cuántos baños hay que limpiar?', 'Quantas casas de banho precisam de limpeza?', 'Quanti bagni vanno puliti?', 'Combien de salles de bain faut-il nettoyer ?'],
   frequency: ['Wie oft wünschen Sie die Reinigung?', 'How often would you like cleaning?', '¿Con qué frecuencia desea la limpieza?', 'Com que frequência pretende a limpeza?', 'Con quale frequenza desidera la pulizia?', 'À quelle fréquence souhaitez-vous le nettoyage ?'],

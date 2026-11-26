@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { emptyKaiDraft, KAI_FIELDS, type KaiDraft } from '../src/kai/types.ts';
-import { applyKaiToCalculation, consumeKaiTransfer, getKaiTransferPreview, KAI_TRANSFER_EVENT, KAI_TRANSFER_KEY, normalizeKaiDraft, prepareKaiTransfer, subscribeKaiTransfers, registerKaiCalculationPreview } from '../src/kai/draft.ts';
+import { applyKaiToCalculation, consumeKaiTransfer, getKaiTransferPreview, kaiDraftFieldLabel, KAI_TRANSFER_EVENT, KAI_TRANSFER_KEY, normalizeKaiDraft, prepareKaiTransfer, subscribeKaiTransfers, registerKaiCalculationPreview } from '../src/kai/draft.ts';
 
 function storageFixture() {
   const values = new Map<string, string>();
@@ -95,9 +95,22 @@ test('regular/deep counts use bedrooms, preserve uncertain totals as notes and r
   assert.deepEqual(uncertain.config, {});
   assert.equal(uncertain.contact.date, undefined);
   assert.match(String(uncertain.contact.notes), /3\.5/);
-  assert.match(String(applyKaiToCalculation({}, {}, draft('deep', { date: 'tomorrow' }), 'preserve').contact.notes), /tomorrow/);
+  assert.equal(applyKaiToCalculation({}, {}, draft('deep', { date: 'tomorrow' }), 'preserve').contact.notes,undefined);
   const deep = applyKaiToCalculation({}, {}, draft('deep', { bedrooms: '2', frequency: 'Every 3 Months' }), 'preserve');
   assert.deepEqual(deep.config, { bedrooms: 2 }); // Frequency belongs to regular in the selected-service Kai contract.
+});
+
+test('fractional rooms and area remain structured through the legacy-safe transfer boundary', () => {
+  const incoming=draft('end',{rooms:'3.5',area:'85.75',bathrooms:'1',date:'3.5'});
+  const result=applyKaiToCalculation({}, {}, incoming,'preserve');
+  assert.deepEqual(result.config,{roomsCount:3.5,bathroomsCount:1,areaM2:85.75});
+  assert.equal(result.contact.date,undefined);
+  assert.equal(result.contact.notes,undefined);
+  for (const language of ['de','en','es','pt','it','fr'] as const) {
+    assert.ok(kaiDraftFieldLabel('area',language).includes('m²'));
+    assert.ok(kaiDraftFieldLabel('hours',language).length>2);
+    for (const field of KAI_FIELDS) assert.ok(kaiDraftFieldLabel(field,language),`${language}:${field}`);
+  }
 });
 
 test('moving transfers addresses/inventory verbatim and never infers floors, lift, weights, capacity or one trip', () => {

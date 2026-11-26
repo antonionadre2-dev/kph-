@@ -3,7 +3,7 @@ import type { HomeLanguage } from '../../components/home/homeTranslations.ts';
 
 export type KaiService = HomeService;
 export const KAI_SERVICES: readonly KaiService[] = ['windows', 'end', 'regular', 'deep', 'moving'];
-export const KAI_FIELDS = ['city', 'postcode', 'origin', 'destination', 'rooms', 'bedrooms', 'bathrooms', 'frequency', 'inventory', 'originAccess', 'destinationAccess', 'date', 'windowsCount', 'windowType', 'windowAccess', 'priorities', 'notes'] as const;
+export const KAI_FIELDS = ['city', 'postcode', 'origin', 'destination', 'rooms', 'bedrooms', 'bathrooms', 'frequency', 'inventory', 'originAccess', 'destinationAccess', 'date', 'windowsCount', 'windowType', 'windowAccess', 'priorities', 'notes', 'area', 'hours'] as const;
 export type KaiField = typeof KAI_FIELDS[number];
 export type KaiDraft = {
   version: 1;
@@ -23,14 +23,16 @@ export type KaiAssistantResponse = {
   suggestions: string[];
   actions: KaiAction[];
   mode: 'ai' | 'guided';
+  quote?: { amountCents: number; currency: 'CHF'; priceType: 'fixed' | 'from' | 'estimate' };
+  contactCard?: boolean;
   error?: 'provider_unavailable' | 'invalid_response' | 'rate_limited';
 };
 export const KAI_SERVICE_FIELDS: Record<KaiService, readonly KaiField[]> = {
   windows: ['city', 'postcode', 'windowsCount', 'windowType', 'windowAccess', 'date', 'notes'],
-  end: ['city', 'postcode', 'rooms', 'bathrooms', 'date', 'priorities', 'notes'],
-  regular: ['city', 'postcode', 'bedrooms', 'bathrooms', 'frequency', 'priorities', 'notes'],
-  deep: ['city', 'postcode', 'bedrooms', 'bathrooms', 'priorities', 'date', 'notes'],
-  moving: ['origin', 'destination', 'postcode', 'inventory', 'originAccess', 'destinationAccess', 'date', 'notes'],
+  end: ['city', 'postcode', 'rooms', 'bathrooms', 'date', 'priorities', 'notes', 'area'],
+  regular: ['city', 'postcode', 'bedrooms', 'bathrooms', 'frequency', 'priorities', 'notes', 'area', 'hours'],
+  deep: ['city', 'postcode', 'bedrooms', 'bathrooms', 'priorities', 'date', 'notes', 'area', 'hours'],
+  moving: ['origin', 'destination', 'postcode', 'inventory', 'originAccess', 'destinationAccess', 'date', 'notes', 'rooms', 'hours'],
 };
 export function emptyKaiDraft(language: HomeLanguage = 'de'): KaiDraft {
   return { version: 1, language, service: null, services: [], fields: {}, deferred: [] };

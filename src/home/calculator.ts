@@ -1,5 +1,5 @@
 /** Homepage hand-off only. Prices and requests belong to the service calculator. */
-import { pathLanguage, publicHref } from '../routing/site-paths';
+import { pathLanguage, publicHref } from '../routing/site-paths.ts';
 export type HomeService = 'windows' | 'end' | 'regular' | 'deep' | 'moving';
 export const CALCULATOR_ROUTE = '/offerte';
 export const CALCULATOR_SERVICE_STORAGE_KEY = 'kraken_preselected_service';

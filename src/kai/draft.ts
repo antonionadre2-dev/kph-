@@ -49,7 +49,9 @@ export function normalizeKaiDraft(value: unknown): KaiDraft | null {
     if (typeof text !== 'string' || text.length > 2000) return null;
     length += text.length;
     if (length > 12000) return null;
-    if (text.trim()) fields[key] = text.trim();
+    // A legacy free-text date must never become a date input or a residual note.
+    // Natural-language dates are resolved by the server before this boundary.
+    if (text.trim() && (key !== 'date' || validDate(text.trim()))) fields[key] = text.trim();
   }
   return {
     version: 1, language: value.language as KaiDraft['language'], service: value.service as KaiDraft['service'],
@@ -114,8 +116,10 @@ export function consumeKaiTransfer(storage: StorageAccess | null = browserStorag
 }
 
 function nonEmpty(value: unknown): boolean { return value !== undefined && value !== null && value !== ''; }
-function integer(text: string | undefined): number | null {
-  return text !== undefined && /^\d{1,2}$/.test(text.trim()) && Number(text) <= 20 ? Number(text) : null;
+function quantity(text: string | undefined, step = 1, max = 20): number | null {
+  if (text === undefined || !/^\d{1,5}(?:[.,]\d{1,2})?$/.test(text.trim())) return null;
+  const value = Number(text.replace(',', '.'));
+  return value <= max && Math.abs(value / step - Math.round(value / step)) < 1e-7 ? value : null;
 }
 function validDate(text: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
@@ -147,12 +151,12 @@ function postcodeIn(text: string | undefined): string | undefined {
 }
 
 const fieldLabels: Record<KaiDraft['language'], readonly string[]> = {
-  de: ['Ort', 'Postleitzahl', 'Startadresse', 'Zieladresse', 'Zimmer', 'Schlafzimmer', 'Badezimmer', 'Häufigkeit', 'Inventar', 'Zugang am Startort', 'Zugang am Zielort', 'Wunschtermin', 'Anzahl Fenster', 'Fenstertyp', 'Fensterzugang', 'Prioritäten', 'Hinweise'],
-  en: ['City', 'Postcode', 'Origin', 'Destination', 'Rooms', 'Bedrooms', 'Bathrooms', 'Frequency', 'Inventory', 'Origin access', 'Destination access', 'Preferred date', 'Number of windows', 'Window type', 'Window access', 'Priorities', 'Notes'],
-  es: ['Localidad', 'Código postal', 'Origen', 'Destino', 'Habitaciones', 'Dormitorios', 'Baños', 'Frecuencia', 'Inventario', 'Acceso en origen', 'Acceso en destino', 'Fecha preferida', 'Número de ventanas', 'Tipo de ventanas', 'Acceso a ventanas', 'Prioridades', 'Notas'],
-  pt: ['Localidade', 'Código postal', 'Origem', 'Destino', 'Divisões', 'Quartos', 'Casas de banho', 'Frequência', 'Inventário', 'Acesso na origem', 'Acesso no destino', 'Data preferida', 'Número de janelas', 'Tipo de janelas', 'Acesso às janelas', 'Prioridades', 'Notas'],
-  it: ['Località', 'Codice postale', 'Partenza', 'Destinazione', 'Stanze', 'Camere da letto', 'Bagni', 'Frequenza', 'Inventario', 'Accesso alla partenza', 'Accesso alla destinazione', 'Data preferita', 'Numero di finestre', 'Tipo di finestre', 'Accesso alle finestre', 'Priorità', 'Note'],
-  fr: ['Localité', 'Code postal', 'Départ', 'Destination', 'Pièces', 'Chambres', 'Salles de bains', 'Fréquence', 'Inventaire', 'Accès au départ', 'Accès à destination', 'Date souhaitée', 'Nombre de fenêtres', 'Type de fenêtres', 'Accès aux fenêtres', 'Priorités', 'Notes'],
+  de: ['Ort', 'Postleitzahl', 'Startadresse', 'Zieladresse', 'Zimmer', 'Schlafzimmer', 'Badezimmer', 'Häufigkeit', 'Inventar', 'Zugang am Startort', 'Zugang am Zielort', 'Wunschtermin', 'Anzahl Fenster', 'Fenstertyp', 'Fensterzugang', 'Prioritäten', 'Hinweise', 'Fläche (m²)', 'Arbeitsstunden'],
+  en: ['City', 'Postcode', 'Origin', 'Destination', 'Rooms', 'Bedrooms', 'Bathrooms', 'Frequency', 'Inventory', 'Origin access', 'Destination access', 'Preferred date', 'Number of windows', 'Window type', 'Window access', 'Priorities', 'Notes', 'Area (m²)', 'Working hours'],
+  es: ['Localidad', 'Código postal', 'Origen', 'Destino', 'Habitaciones', 'Dormitorios', 'Baños', 'Frecuencia', 'Inventario', 'Acceso en origen', 'Acceso en destino', 'Fecha preferida', 'Número de ventanas', 'Tipo de ventanas', 'Acceso a ventanas', 'Prioridades', 'Notas', 'Superficie (m²)', 'Horas de trabajo'],
+  pt: ['Localidade', 'Código postal', 'Origem', 'Destino', 'Divisões', 'Quartos', 'Casas de banho', 'Frequência', 'Inventário', 'Acesso na origem', 'Acesso no destino', 'Data preferida', 'Número de janelas', 'Tipo de janelas', 'Acesso às janelas', 'Prioridades', 'Notas', 'Área (m²)', 'Horas de trabalho'],
+  it: ['Località', 'Codice postale', 'Partenza', 'Destinazione', 'Stanze', 'Camere da letto', 'Bagni', 'Frequenza', 'Inventario', 'Accesso alla partenza', 'Accesso alla destinazione', 'Data preferita', 'Numero di finestre', 'Tipo di finestre', 'Accesso alle finestre', 'Priorità', 'Note', 'Superficie (m²)', 'Ore di lavoro'],
+  fr: ['Localité', 'Code postal', 'Départ', 'Destination', 'Pièces', 'Chambres', 'Salles de bains', 'Fréquence', 'Inventaire', 'Accès au départ', 'Accès à destination', 'Date souhaitée', 'Nombre de fenêtres', 'Type de fenêtres', 'Accès aux fenêtres', 'Priorités', 'Notes', 'Surface (m²)', 'Heures de travail'],
 };
 export function kaiDraftFieldLabel(field: KaiField, language: KaiDraft['language']): string {
   return fieldLabels[language][KAI_FIELDS.indexOf(field)];
@@ -184,12 +188,16 @@ export function applyKaiToCalculation(existingContact: Data, existingServiceConf
   if (fields.date && validDate(fields.date)) assign(contact, 'date', fields.date, 'date');
   if (draft.service === 'end' || draft.service === 'regular' || draft.service === 'deep') {
     const roomField = draft.service === 'end' ? 'rooms' : 'bedrooms';
-    const roomCount = integer(fields[roomField]);
-    const baths = integer(fields.bathrooms);
+    const roomCount = quantity(fields[roomField], draft.service === 'end' ? .5 : 1);
+    const baths = quantity(fields.bathrooms);
     if (roomCount !== null) assign(config, draft.service === 'end' ? 'roomsCount' : 'bedrooms', roomCount, roomField);
     if (baths !== null) assign(config, draft.service === 'end' ? 'bathroomsCount' : 'bathrooms', baths, 'bathrooms');
     const recurring = fields.frequency && frequency(fields.frequency, draft.service);
     if (recurring) assign(config, 'frequency', recurring, 'frequency');
+    const area = quantity(fields.area, .01, 10_000);
+    if (draft.service === 'end' && area !== null && area > 0) assign(config, 'areaM2', area, 'area');
+    const hours = quantity(fields.hours, .25, 168);
+    if ((draft.service === 'regular' || draft.service === 'deep') && hours !== null && hours > 0) assign(config, 'hours', hours, 'hours');
   }
   if (draft.service === 'moving') {
     if (fields.origin) assign(config, 'fromAddress', fields.origin, 'origin');
