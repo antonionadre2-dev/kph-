@@ -38,7 +38,16 @@ export function languageSelectionUrl(href: string, language: SiteLanguage): stri
 /** A restored preference gets the same explicit URL as a visitor's language selection. */
 export function restoredLanguageUrl(href: string, language: SiteLanguage): string | null {
   const url = new URL(href);
-  if (pathLanguage(href) || language === 'de' || language === 'de-CH') return null;
+  const explicit = pathLanguage(href);
+  const german = language === 'de' || language === 'de-CH';
+  if (explicit) {
+    // The server preserves this unprefixed entry choice until i18n has resolved
+    // and persisted it. Canonical metadata remains the ordinary German URL.
+    if (!german || explicit !== 'de' || pathLanguage(url.pathname)) return null;
+    const normalized = languageSelectionUrl(href, language);
+    return normalized !== url.pathname + url.search + url.hash ? normalized : null;
+  }
+  if (german) return null;
   return languageSelectionUrl(href, language);
 }
 

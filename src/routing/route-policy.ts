@@ -38,6 +38,17 @@ export function getRouteDisposition(pathOrUrl: string): { status: 200 | 301 | 40
   const replacement = new URL(target || pathname, 'https://krakenpfm.ch');
   replacement.search = url.search;
   replacement.hash = url.hash;
-  const location = publicHref(replacement.pathname + replacement.search + replacement.hash, language);
+  let location = publicHref(replacement.pathname + replacement.search + replacement.hash, language);
+  // German has no URL prefix. Keep an explicit query choice until the browser
+  // has persisted it, otherwise a saved non-German preference would win after a 301.
+  const explicitQueryLanguage = pathLanguage('/' + url.search);
+  if (language === 'de' && explicitQueryLanguage === 'de') {
+    const destination = new URL(location, 'https://krakenpfm.ch');
+    const selectedQuery = new URLSearchParams(url.search);
+    selectedQuery.delete('hl');
+    selectedQuery.set('lang', 'de');
+    destination.search = selectedQuery.toString();
+    location = destination.pathname + destination.search + destination.hash;
+  }
   return location !== url.pathname + url.search + url.hash ? { status: 301, location } : { status: 200 };
 }

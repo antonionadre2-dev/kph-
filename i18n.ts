@@ -49,10 +49,23 @@ export const I18nProvider: React.FC<{ children: ReactNode; initialLanguage?: Lan
   }, []);
 
 
+  // Persist before removing an explicit German query: the resulting default URL
+  // has no locale prefix, so location listeners must already see this choice.
+  useEffect(() => {
+    try { if (typeof window !== 'undefined') window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language); }
+    catch { /* Language also travels in navigation URLs. */ }
+  }, [language]);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const restored = restoredLanguageUrl(window.location.href, language);
     if (!restored) return;
+    if (language === 'de' || language === 'de-CH') {
+      try {
+        const saved = normalizeSiteLanguage(window.localStorage.getItem(LANGUAGE_STORAGE_KEY));
+        if (saved !== 'de' && saved !== 'de-CH') return;
+      } catch { return; /* Retain the explicit query if storage cannot preserve it. */ }
+    }
     window.history.replaceState(window.history.state, '', restored);
     window.dispatchEvent(new Event(LOCALE_LOCATION_EVENT));
   }, [language]);
@@ -67,11 +80,6 @@ export const I18nProvider: React.FC<{ children: ReactNode; initialLanguage?: Lan
       window.removeEventListener(LOCALE_LOCATION_EVENT, syncLanguage);
     };
   }, []);
-
-  useEffect(() => {
-    try { if (typeof window !== 'undefined') window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language); }
-    catch { /* Language also travels in navigation URLs. */ }
-  }, [language]);
 
   useEffect(() => {
     if (activeToast && activeToast.show) {

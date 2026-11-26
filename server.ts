@@ -211,7 +211,8 @@ async function configureApplication() {
     }
     if (/^\/(?:en\/|es\/|pt\/|it\/|fr\/)?index\.html$/.test(pathname)) {
       const query = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
-      return res.redirect(301, publicHref('/' + query, pathLanguage(req.originalUrl) || 'de'));
+      const disposition = getRouteDisposition(req.originalUrl);
+      return res.redirect(301, disposition.location || publicHref('/' + query, pathLanguage(req.originalUrl) || 'de'));
     }
     if (pathname.endsWith('.html')) {
       res.setHeader('X-Robots-Tag', 'noindex, follow');
