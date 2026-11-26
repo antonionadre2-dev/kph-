@@ -19,8 +19,8 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
     const names = [
       'src/auth/access.ts', 'server.ts', 'seoConfig.ts', 'i18n.ts', 'src/locale.ts', 'src/data/locations.ts',
       'components/home/homeTranslations.ts', 'components/contact/contactTranslations.ts', 'components/services/servicesTranslations.ts',
-      'src/kai/types.ts', 'src/contact/routing-server.ts', 'src/booking/pricing.ts', 'src/booking/publicPricing.ts',
-      'src/booking/uiCopy.ts', 'src/booking/terms.ts', 'src/home/paint-start.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',
+      'src/kai/types.ts', 'src/contact/routing-server.ts', 'src/booking/pricing.ts', 'src/booking/publicPricing.ts', 'src/booking/publicPricingCopy.ts',
+      'src/booking/uiCopy.ts', 'src/booking/pricingConfig.ts', 'src/booking/pricingUiCopy.ts', 'src/booking/terms.ts', 'src/home/paint-start.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',
       ...['server', 'src/seo', 'src/routing', 'src/i18n', 'src/contact'].flatMap(folder => readdirSync(path.join(root, folder)).filter(name => name.endsWith('.ts')).map(name => `${folder}/${name}`)),
     ];
     for (const name of new Set(names)) {

@@ -1,3 +1,6 @@
+import { pricingUiText } from './pricingUiCopy.ts';
+import { pricingConfig } from './pricingConfig.ts';
+
 /** Customer-facing copy, in the six languages already offered by Kraken. */
 export type BookingLanguage = 'de' | 'en' | 'es' | 'fr' | 'it' | 'pt';
 const order: BookingLanguage[] = ['de', 'en', 'es', 'fr', 'it', 'pt'];
@@ -366,6 +369,8 @@ export function bookingLanguage(language: string): BookingLanguage {
 }
 
 export function bookingText(language: string, key: string, params: Record<string, string | number> = {}): string {
+  const pricing = pricingUiText(language, key, {excess: pricingConfig.endOfTenancy.maxExcessAreaM2, distance: pricingConfig.moving.fixed.maxDistanceKm, ...params});
+  if (pricing !== key) return pricing;
   let result = copy[key]?.[order.indexOf(bookingLanguage(language))] || copy[key]?.[0] || key;
   Object.entries(params).forEach(([name, value]) => { result = result.replaceAll(`{${name}}`, String(value)); });
   return result;
@@ -384,12 +389,20 @@ const lineKeys: Record<string, string> = {
   'windows-roller-shutters': 'rollerShutters', 'windows-difficult-access': 'difficultAccess', 'windows-minimum': 'minCharge',
 };
 
-export function bookingLineLabel(language: string, line: { id: string; label: string; params?: Record<string, unknown> }): string {
+export function bookingLineLabel(language: string, line: { id: string; label: string; unitPriceCents?: number; totalCents?: number; params?: Record<string, unknown> }): string {
+  const money = (value: number) => `CHF ${(value / 100).toLocaleString(bookingLanguage(language) === 'de' ? 'de-CH' : bookingLanguage(language), {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  if (line.id === 'eot-extra-area') {
+    const label = pricingUiText(language, 'line.eot-extra-area', {area: Number(line.params?.excessM2 || 0), rate: money(line.unitPriceCents ?? pricingConfig.endOfTenancy.excessAreaRateCents)});
+    return label + (line.params?.capped ? pricingUiText(language, 'line.area-cap', {amount: money(line.totalCents ?? 0), cap: money(Number(line.params.capCents || 0))}) : '');
+  }
+  const movingKey = line.id === 'moving-hourly' ? `line.moving-hourly-${line.params?.team === 2 ? 'two' : 'one'}` : `line.${line.id}`;
+  const translated = pricingUiText(language, movingKey, {helpers: Number(line.params?.helpers || 0)});
+  if (translated !== movingKey) return translated;
   if (line.id === 'eot-package') return bookingText(language, 'eotPackage', {
     rooms: Number(line.params?.tierRooms || 0).toLocaleString(bookingLanguage(language)),
     area: Number(line.params?.maxAreaM2 || 0),
   });
-  if (line.id === 'regular-labour' && line.params?.frequency === 'once') return bookingText(language, 'deep');
+  if (line.id === 'regular-labour' && (line.params?.cleaningKind === 'deep' || (!line.params?.cleaningKind && line.params?.frequency === 'once'))) return bookingText(language, 'deep');
   if (line.id === 'construction-base') return bookingText(language, 'construction');
   return lineKeys[line.id] ? bookingText(language, lineKeys[line.id]) : line.label;
 }

@@ -13,15 +13,15 @@ const documents = {
       },
       {
         "title": "2. Angebote, Festpreis & Vertragsabschluss",
-        "content": "Der Online-Rechner zeigt einen Festpreis für Ihre angegebenen Daten und ausgewählten Leistungen. Bei unverändertem Umfang bleibt dieser Preis gleich. Eine Anfrage allein bestätigt noch keinen Termin. Ein Vertrag kommt durch die Bestätigung einer Offerte oder Online-Buchung zustande. Der Leistungsumfang ergibt sich aus der Buchungsbestätigung. Abweichende Angaben oder zusätzliche Arbeiten stimmen wir mit Ihnen ab, bevor der Preis geändert wird. Express-Buchungen erfordern 15% Anzahlung."
+        "content": "Der Online-Rechner zeigt bei Festpreisleistungen den Preis für Ihre angegebenen Daten und ausgewählten Leistungen. Bei unverändertem Umfang bleibt dieser Preis gleich. Umzüge nach Aufwand zeigen einen Richtpreis; abgerechnet wird nach der Mindestdauer in 15-Minuten-Schritten. Umzüge mit einem Ab-Preis benötigen vor der Preisbestätigung Fotos oder eine Besichtigung; bis dahin ist keine Zahlung möglich. Eine Anfrage allein bestätigt noch keinen Termin. Ein Vertrag kommt durch die Bestätigung einer Offerte oder Online-Buchung zustande. Der Leistungsumfang ergibt sich aus der Buchungsbestätigung. Abweichende Angaben oder zusätzliche Arbeiten stimmen wir mit Ihnen ab, bevor der Preis geändert wird. Die bestehende Anzahlung von 15 % bleibt unverändert; bei Umzügen nach Aufwand bezieht sie sich auf den Mindestauftrag einschliesslich Anfahrt und gegebenenfalls kombinierter Reinigung und Rabatt."
       },
       {
         "title": "3. Preise, MwSt. & Zuschläge",
-        "content": "Alle Preise sind in Schweizer Franken (CHF) angegeben. Der Rechnerpreis bezieht sich auf den gewählten Leistungsumfang; gewählte Extras werden im Gesamtpreis ausgewiesen. Massgeblich sind die bestätigte Offerte und der vereinbarte Umfang. Kraken ist derzeit nicht mehrwertsteuerpflichtig und stellt keine Mehrwertsteuer in Rechnung."
+        "content": "Alle Preise sind in Schweizer Franken (CHF) angegeben. Der Rechnerpreis bezieht sich auf den gewählten Leistungsumfang; gewählte Extras werden im Gesamtpreis ausgewiesen. Massgeblich sind die bestätigte Offerte und der vereinbarte Umfang. Kraken ist nicht mehrwertsteuerpflichtig (Jahresumsatz unter CHF 100'000). Auf Rechnungen wird keine MWST ausgewiesen."
       },
       {
         "title": "4. Anfahrt im Preis enthalten",
-        "content": "Die übliche Anfahrt für die gewählte Leistung ist im Preis des Rechners enthalten. Ausserordentliche Anfahrtskosten bedürfen einer vorherigen Vereinbarung und müssen in der schriftlichen Offerte ausgewiesen sein."
+        "content": "Die übliche Anfahrt für Reinigungen und Festpreisumzüge ist im angezeigten Gesamtpreis enthalten. Bei Umzügen nach Aufwand ist die Anfahrtspauschale im Richtpreis als eigene Position enthalten. Ausserordentliche Anfahrtskosten bedürfen einer vorherigen Vereinbarung und müssen in der schriftlichen Offerte ausgewiesen sein."
       },
       {
         "title": "5. Zahlungsbedingungen & Verzug",
@@ -77,7 +77,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Version der Bedingungen",
-    "lastUpdated": "Bedingungsversion: kraken-2026-11-25-fixed-scope · Redaktionelle Prüfung: 25.11.2026",
+    "lastUpdated": "Bedingungsversion: kraken-2026-11-26-pricing-moving · Redaktionelle Prüfung: 26.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Schweiz",
     "backHome": "Zurück zur Startseite"
   },
@@ -91,15 +91,15 @@ const documents = {
       },
       {
         "title": "2. Quotes, fixed prices & contract formation",
-        "content": "The calculator shows a fixed price for the details and services you selected. With the same scope, that price remains unchanged. An enquiry alone does not confirm an appointment. A contract is formed by confirmation of a quote or online booking. The booking confirmation defines the scope. Different details or additional work are agreed with you before changing the price. Express bookings require a 15% deposit."
+        "content": "The calculator shows the price for your declared details and selected scope for fixed-price services. With the same scope, that price stays unchanged. Hourly moves show an estimate; actual work is billed in 15-minute increments after the minimum duration. Moves with a starting price require photos or a visit before the final price is confirmed; payment is unavailable until then. An enquiry alone does not confirm an appointment. A contract is formed by confirmation of a quote or online booking. The booking confirmation defines the scope. Different details or additional work are agreed with you before the price changes. The existing 15% deposit stays unchanged; for hourly moves it is based on the minimum order including travel and any combined cleaning and discount."
       },
       {
         "title": "3. Prices, VAT & Surcharges",
-        "content": "All prices are in Swiss francs (CHF). The calculator price relates to the selected scope; selected extras are shown in the total. The confirmed quote and agreed scope apply. Kraken is currently not liable for VAT and does not charge it."
+        "content": "All prices are in Swiss francs (CHF). The calculator price relates to the selected scope; chosen extras appear in the total. The confirmed quote and agreed scope apply. Kraken is not registered for VAT (annual turnover below CHF 100,000). No VAT is shown on invoices."
       },
       {
         "title": "4. Travel included in the price",
-        "content": "Ordinary travel for the selected service is included in the calculator price. Any exceptional travel expense requires prior agreement and must be set out in the written quote."
+        "content": "Ordinary travel for cleaning and fixed-price moves is included in the displayed total. For hourly moves the travel flat fee is included as a separate line in the estimate. Exceptional travel expenses require prior agreement and must appear in the written quote."
       },
       {
         "title": "5. Payment Terms & Default",
@@ -155,7 +155,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Terms version",
-    "lastUpdated": "Terms version: kraken-2026-11-25-fixed-scope · Editorial review: 25.11.2026",
+    "lastUpdated": "Terms version: kraken-2026-11-26-pricing-moving · Editorial review: 26.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Switzerland",
     "backHome": "Back to Home"
   },
@@ -169,15 +169,15 @@ const documents = {
       },
       {
         "title": "2. Presupuestos, precio cerrado y contratación",
-        "content": "El calculador muestra un precio cerrado para los datos y servicios seleccionados. Si el alcance no cambia, el precio se mantiene. Una solicitud no confirma por sí sola una fecha. El contrato se formaliza al confirmar un presupuesto o una reserva en línea. La confirmación define el alcance. Los cambios de datos o trabajos adicionales se acuerdan con usted antes de modificar el precio. Las reservas exprés requieren un anticipo del 15%."
+        "content": "El calculador muestra el precio correspondiente a los datos declarados y al alcance elegido para los servicios de precio fijo. Con el mismo alcance, ese precio no cambia. Las mudanzas por horas muestran una estimación; el trabajo real se factura en tramos de 15 minutos después de la duración mínima. Las mudanzas con precio desde requieren fotos o una visita antes de confirmar el precio definitivo; hasta entonces no se puede pagar. Una solicitud por sí sola no confirma la cita. El contrato se formaliza al confirmar un presupuesto o una reserva online. La confirmación de la reserva define el alcance. Cualquier dato distinto o trabajo adicional se acuerda con usted antes de cambiar el precio. El anticipo existente del 15 % se mantiene; en las mudanzas por horas se calcula sobre el encargo mínimo, incluido el desplazamiento y, si corresponde, la limpieza y el descuento combinado."
       },
       {
         "title": "3. Precios, IVA y Recargos",
-        "content": "Todos los precios se indican en francos suizos (CHF). El precio del calculador corresponde al alcance elegido; los extras seleccionados figuran en el total. Se aplican el presupuesto confirmado y los trabajos acordados. Actualmente Kraken no está sujeto a IVA y no lo factura."
+        "content": "Todos los precios se indican en francos suizos (CHF). El precio del calculador corresponde al alcance elegido; los extras seleccionados aparecen en el total. Rigen el presupuesto confirmado y el alcance acordado. Kraken no está inscrita en el IVA (facturación anual inferior a CHF 100.000). No se desglosa IVA en las facturas."
       },
       {
         "title": "4. Desplazamiento incluido en el precio",
-        "content": "El desplazamiento ordinario para el servicio seleccionado está incluido en el precio del calculador. Cualquier gasto extraordinario de desplazamiento requiere acuerdo previo y debe constar en el presupuesto escrito."
+        "content": "El desplazamiento habitual de las limpiezas y mudanzas de precio fijo está incluido en el total mostrado. En las mudanzas por horas, la tarifa de desplazamiento ya está incluida como línea separada en la estimación. Los gastos excepcionales de desplazamiento requieren acuerdo previo y deben figurar en el presupuesto escrito."
       },
       {
         "title": "5. Condiciones de Pago y Mora",
@@ -233,7 +233,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Versión de las condiciones",
-    "lastUpdated": "Versión de condiciones: kraken-2026-11-25-fixed-scope · Revisión editorial: 25.11.2026",
+    "lastUpdated": "Versión de condiciones: kraken-2026-11-26-pricing-moving · Revisión editorial: 26.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Suiza",
     "backHome": "Volver al Inicio"
   },
@@ -247,15 +247,15 @@ const documents = {
       },
       {
         "title": "2. Orçamentos, preço fixo e contratação",
-        "content": "A calculadora mostra um preço fixo para os dados e serviços selecionados. Se o âmbito não mudar, o preço mantém-se. Um pedido, por si só, não confirma uma data. O contrato é celebrado com a confirmação de um orçamento ou reserva online. A confirmação define o âmbito. Alterações aos dados ou trabalhos adicionais são acordados consigo antes de alterar o preço. As reservas expresso exigem um adiantamento de 15%."
+        "content": "A calculadora mostra o preço dos dados declarados e dos serviços escolhidos nas modalidades de preço fixo. Com o mesmo âmbito, esse preço não muda. As mudanças à hora mostram uma estimativa; o trabalho real é faturado em períodos de 15 minutos após a duração mínima. As mudanças com preço desde exigem fotografias ou visita antes da confirmação do preço final; até lá não é possível pagar. Um pedido por si só não confirma a marcação. O contrato é celebrado pela confirmação de um orçamento ou reserva online. A confirmação define o âmbito. Dados diferentes ou trabalhos adicionais são acordados consigo antes de alterar o preço. O sinal existente de 15 % mantém-se; nas mudanças à hora é calculado sobre o serviço mínimo, incluindo deslocação e, quando aplicável, limpeza e desconto combinado."
       },
       {
         "title": "3. Preços, IVA & Sobretaxas",
-        "content": "Todos os preços são indicados em francos suíços (CHF). O preço da calculadora corresponde ao âmbito escolhido; os extras selecionados constam do total. Aplicam-se o orçamento confirmado e o âmbito acordado. Atualmente a Kraken não está sujeita a IVA e não o fatura."
+        "content": "Todos os preços são em francos suíços (CHF). O preço da calculadora corresponde ao âmbito escolhido; os extras selecionados aparecem no total. Aplicam-se o orçamento confirmado e o âmbito acordado. A Kraken não está registada para IVA (faturação anual inferior a CHF 100.000). Não é discriminado IVA nas faturas."
       },
       {
         "title": "4. Deslocação incluída no preço",
-        "content": "A deslocação habitual para o serviço escolhido está incluída no preço da calculadora. Qualquer despesa de deslocação excecional exige acordo prévio e deve constar do orçamento escrito."
+        "content": "A deslocação habitual de limpezas e mudanças de preço fixo está incluída no total apresentado. Nas mudanças à hora, a taxa de deslocação já está incluída numa linha separada da estimativa. Despesas excecionais exigem acordo prévio e devem constar do orçamento escrito."
       },
       {
         "title": "5. Condições de Pagamento & Mora",
@@ -311,7 +311,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Versão das condições",
-    "lastUpdated": "Versão das condições: kraken-2026-11-25-fixed-scope · Revisão editorial: 25.11.2026",
+    "lastUpdated": "Versão das condições: kraken-2026-11-26-pricing-moving · Revisão editorial: 26.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Suíça",
     "backHome": "Regressar à Página de Início"
   },
@@ -325,15 +325,15 @@ const documents = {
       },
       {
         "title": "2. Preventivi, prezzo fisso e contratto",
-        "content": "Il calcolatore mostra un prezzo fisso per i dati e i servizi selezionati. A parità di portata, il prezzo rimane invariato. Una richiesta da sola non conferma un appuntamento. Il contratto si conclude con la conferma di un preventivo o di una prenotazione online. La conferma definisce la portata. Dati diversi o lavori aggiuntivi vengono concordati con lei prima di modificare il prezzo. Le prenotazioni express richiedono un acconto del 15%."
+        "content": "Il calcolatore mostra il prezzo dei dati dichiarati e delle prestazioni scelte per i servizi a prezzo fisso. A parità di prestazioni, il prezzo resta invariato. I traslochi a ore mostrano una stima; il lavoro effettivo viene fatturato a intervalli di 15 minuti dopo la durata minima. I traslochi con prezzo a partire da richiedono foto o un sopralluogo prima della conferma del prezzo definitivo; fino ad allora non è possibile pagare. Una richiesta da sola non conferma la data. Il contratto si conclude con la conferma di un preventivo o di una prenotazione online. La conferma definisce le prestazioni. Dati diversi o lavori aggiuntivi vengono concordati prima di cambiare il prezzo. L’acconto esistente del 15% resta invariato; per i traslochi a ore è calcolato sull’incarico minimo, inclusi trasferta ed eventuali pulizia e sconto combinato."
       },
       {
         "title": "3. Prezzi, IVA & Maggiorazioni",
-        "content": "Tutti i prezzi sono indicati in franchi svizzeri (CHF). Il prezzo del calcolatore si riferisce alla portata scelta; gli extra selezionati sono indicati nel totale. Si applicano il preventivo confermato e le prestazioni concordate. Kraken attualmente non è soggetta a IVA e non la fattura."
+        "content": "Tutti i prezzi sono in franchi svizzeri (CHF). Il prezzo del calcolatore corrisponde alle prestazioni scelte; gli extra selezionati sono inclusi nel totale. Fanno fede il preventivo confermato e le prestazioni concordate. Kraken non è assoggettata all’IVA (fatturato annuo inferiore a CHF 100.000). Nelle fatture non viene indicata IVA."
       },
       {
         "title": "4. Trasferta inclusa nel prezzo",
-        "content": "La trasferta ordinaria per il servizio scelto è inclusa nel prezzo del calcolatore. Eventuali spese di trasferta eccezionali richiedono un accordo preventivo e devono essere indicate nel preventivo scritto."
+        "content": "La trasferta ordinaria per pulizie e traslochi a prezzo fisso è inclusa nel totale mostrato. Nei traslochi a ore, il forfait di trasferta è già incluso come voce separata nella stima. Spese eccezionali richiedono un accordo preventivo e devono figurare nel preventivo scritto."
       },
       {
         "title": "5. Termini di Pagamento & Mora",
@@ -389,7 +389,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Versione delle condizioni",
-    "lastUpdated": "Versione delle condizioni: kraken-2026-11-25-fixed-scope · Revisione editoriale: 25.11.2026",
+    "lastUpdated": "Versione delle condizioni: kraken-2026-11-26-pricing-moving · Revisione editoriale: 26.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Svizzera",
     "backHome": "Ritorna alla Home page"
   },
@@ -403,15 +403,15 @@ const documents = {
       },
       {
         "title": "2. Devis, prix fixe et conclusion du contrat",
-        "content": "Le calculateur affiche un prix fixe pour les données et prestations sélectionnées. Si l’étendue reste identique, ce prix ne change pas. Une demande seule ne confirme pas un rendez-vous. Le contrat est conclu par la confirmation d’un devis ou d’une réservation en ligne. La confirmation définit l’étendue. Des données différentes ou des travaux supplémentaires sont convenus avec vous avant toute modification du prix. Les réservations express exigent un acompte de 15%."
+        "content": "Le calculateur indique le prix correspondant aux données déclarées et aux prestations choisies pour les services au forfait. À prestations identiques, ce prix reste inchangé. Les déménagements selon le temps passé affichent une estimation ; le travail réel est facturé par tranches de 15 minutes après la durée minimale. Les déménagements avec un prix dès nécessitent des photos ou une visite avant confirmation du prix définitif ; aucun paiement n’est possible avant cela. Une demande seule ne confirme pas de rendez-vous. Le contrat est conclu par la confirmation d’un devis ou d’une réservation en ligne. La confirmation définit les prestations. Toute donnée différente ou prestation supplémentaire est convenue avec vous avant de modifier le prix. L’acompte existant de 15 % reste inchangé ; pour les déménagements selon le temps passé, il est calculé sur le minimum, déplacement et éventuels nettoyage et réduction combinée compris."
       },
       {
         "title": "3. Tarifs, TVA & Majorations",
-        "content": "Tous les prix sont indiqués en francs suisses (CHF). Le prix du calculateur correspond à l’étendue choisie ; les options sélectionnées figurent dans le total. Le devis confirmé et l’étendue convenue s’appliquent. Kraken n’est actuellement pas assujettie à la TVA et ne la facture pas."
+        "content": "Tous les prix sont en francs suisses (CHF). Le prix du calculateur correspond aux prestations choisies ; les options sélectionnées sont comprises dans le total. Le devis confirmé et les prestations convenues font foi. Kraken n’est pas assujettie à la TVA (chiffre d’affaires annuel inférieur à CHF 100'000). Aucune TVA ne figure sur les factures."
       },
       {
         "title": "4. Déplacement inclus dans le prix",
-        "content": "Le déplacement habituel pour la prestation choisie est inclus dans le prix du calculateur. Tout frais de déplacement exceptionnel nécessite un accord préalable et doit figurer dans le devis écrit."
+        "content": "Le déplacement habituel pour les nettoyages et les déménagements au forfait est compris dans le total affiché. Pour les déménagements selon le temps passé, le forfait de déplacement est déjà inclus sur une ligne distincte de l’estimation. Les frais exceptionnels nécessitent un accord préalable et doivent figurer dans le devis écrit."
       },
       {
         "title": "5. Modalités de Règlement & Retards",
@@ -467,7 +467,7 @@ const documents = {
       }
     ],
     "verificationTitle": "Version des conditions",
-    "lastUpdated": "Version des conditions : kraken-2026-11-25-fixed-scope · Révision éditoriale : 25.11.2026",
+    "lastUpdated": "Version des conditions : kraken-2026-11-26-pricing-moving · Révision éditoriale : 26.11.2026",
     "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Suisse",
     "backHome": "Retour à l'Accueil"
   }

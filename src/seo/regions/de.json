@@ -105,7 +105,7 @@
         },
         {
           "title": "Keine Mehrwertsteuer auf der Rechnung",
-          "body": "Kraken ist derzeit nicht mehrwertsteuerpflichtig und berechnet keine MwSt. Für Ihren Vergleich zählt der Gesamtpreis für denselben Leistungsumfang; Ihren Auftrag stellen Sie im Rechner zusammen."
+          "body": "Im Rechner sehen Sie Tarife, ausgewählte Extras und die geltenden Preisregeln. Endpreis – keine MwSt."
         },
         {
           "title": "Persönlich erreichbar",
@@ -260,7 +260,7 @@
         },
         {
           "title": "Keine MwSt. in Rechnung gestellt",
-          "body": "Als derzeit nicht mehrwertsteuerpflichtiges Kleinunternehmen berechnen wir keine Mehrwertsteuer. Der Preis im Rechner bezieht sich auf Ihren gewählten Umfang. Vergleichen Sie Angebote anhand des Gesamtpreises und der enthaltenen Leistungen."
+          "body": "Im Rechner sehen Sie Tarife, ausgewählte Extras und die geltenden Preisregeln. Endpreis – keine MwSt."
         },
         {
           "title": "Erreichbar, wenn Sie planen",
@@ -416,7 +416,7 @@
         },
         {
           "title": "Ihr Gesamtpreis im Rechner",
-          "body": "Sie wählen Leistung und Details an einem Ort. Kraken ist derzeit nicht mehrwertsteuerpflichtig und stellt keine MwSt. in Rechnung. Beim Vergleich mit anderen Angeboten zählen derselbe Umfang und der gesamte Endpreis."
+          "body": "Im Rechner sehen Sie Tarife, ausgewählte Extras und die geltenden Preisregeln. Endpreis – keine MwSt."
         },
         {
           "title": "Menschen, die Sie erreichen können",

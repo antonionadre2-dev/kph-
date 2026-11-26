@@ -5,8 +5,11 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { calculatePrice, defaultSelection, END_OF_TENANCY_TIERS, REGULAR_MINIMUM_HOURS } from '../src/booking/pricing.ts';
-import { getPublicPriceOffers } from '../src/booking/publicPricing.ts';
-import { publicPriceText } from '../src/booking/publicPricingCopy.ts';
+import { getMovingTariffs, getPublicPriceOffers } from '../src/booking/publicPricing.ts';
+import { publicEndPriceRules, publicPriceText } from '../src/booking/publicPricingCopy.ts';
+import { pricingConfig } from '../src/booking/pricingConfig.ts';
+import { getPageSeo } from '../src/seo/metadata.ts';
+import { getEndOfTenancyOfferRows } from '../src/seo/end-of-tenancy-metadata.ts';
 import { homeText } from '../components/home/homeTranslations.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -17,16 +20,20 @@ const bundle = await build({
     import PublicPriceGuide from './components/PublicPriceGuide.tsx';
     import ApprovedHome from './components/home/ApprovedHome.tsx';
     import {ServicesContent} from './components/services/ApprovedServices.tsx';
+    import {SelectedServicePrice} from './components/SelectedServicePrice.tsx';
+    import {EndOfTenancyLanding} from './components/EndOfTenancyLanding.tsx';
     export const renderPrice=language=>renderToStaticMarkup(<PublicPriceGuide language={language}/>);
     export const renderHome=language=>renderToStaticMarkup(<I18nProvider initialLanguage={language}><ApprovedHome onNavigate={()=>{}}/></I18nProvider>);
     export const renderServices=language=>renderToStaticMarkup(<ServicesContent language={language}/>);
+    export const renderMoving=language=>renderToStaticMarkup(<SelectedServicePrice service="moving" language={language}/>);
+    export const renderEnd=language=>renderToStaticMarkup(<EndOfTenancyLanding cityId="zuerich" language={language}/>);
   `, resolveDir: root, loader: 'tsx' },
   bundle: true, platform: 'node', format: 'cjs', packages: 'external', write: false,
   loader: { '.css': 'empty' }, logLevel: 'warning',
 });
 const module = { exports: {} };
 new Function('require', 'module', 'exports', bundle.outputFiles[0].text)(createRequire(import.meta.url), module, module.exports);
-const { renderPrice, renderHome, renderServices } = module.exports;
+const { renderPrice, renderHome, renderServices, renderMoving, renderEnd } = module.exports;
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
 const decode = value => value.replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'");
 
@@ -46,7 +53,7 @@ test('published starting prices come from valid calculator selections, including
   const deep = offers.find(offer => offer.service === 'deep');
   assert.equal(deep.selection.service, 'regular');
   assert.equal(deep.selection.frequency, 'once');
-  assert.equal(deep.minimumHours, REGULAR_MINIMUM_HOURS.once);
+  assert.equal(deep.minimumHours, pricingConfig.regular.deep.minimumHours);
   assert.equal(deep.hourlyRateCents, 4400);
   assert.equal(deep.minimumCents, 13200);
   assert.throws(() => calculatePrice({ ...deep.selection, hours: deep.minimumHours - .25 }));
@@ -61,8 +68,11 @@ test('published starting prices come from valid calculator selections, including
   assert.equal(end.minimumCents, 45000);
   assert.equal(end.selection.bathrooms, 1);
   const moving = offers.find(offer => offer.service === 'moving');
-  assert.equal(moving.minimumCents, null);
-  assert.ok(moving.quote.manualReviewReasons.length > 0);
+  assert.equal(moving.minimumCents, 25000);
+  assert.equal(moving.hourlyRateCents, 9500);
+  assert.equal(moving.minimumHours, 2);
+  assert.equal(moving.quote.priceType, 'estimate');
+  assert.equal(moving.quote.manualReviewReasons.length, 0);
 });
 
 test('optional materials and extras are excluded from the advertised base, then included by the same engine when chosen', () => {
@@ -100,9 +110,12 @@ test('price guide renders real prices, conditions and language-preserving native
       assert.equal(link.searchParams.get('lang'), null);
       assert.equal(link.searchParams.get('service'), service);
       assert.ok(body.includes(homeText(language, service === 'end' ? 'Umzugsreinigung berechnen' : 'Offerte berechnen')));
+      assert.ok(body.includes(publicPriceText(language, 'vat')));
       if (service === 'moving') {
-        assert.ok(body.includes(publicPriceText(language, 'movingPrice')));
-        assert.doesNotMatch(body.replace(/<[^>]+>/g, ''), /CHF|[0-9]/);
+        assert.ok(body.includes(publicPriceText(language, 'movingHour')));
+        assert.ok(body.includes('95'));
+        assert.ok(body.includes('250'));
+        assert.ok(body.includes('60'));
       } else {
         const amount = offer.hourlyRateCents ?? offer.minimumCents;
         const formatted = new Intl.NumberFormat(language === 'de' ? 'de-CH' : language, { style: 'currency', currency: 'CHF', currencyDisplay: 'code', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount / 100);
@@ -111,6 +124,55 @@ test('price guide renders real prices, conditions and language-preserving native
     }
   }
   assert.equal(titles.size, 6);
+});
+
+test('public moving rows derive from executable engine selections and provisional prices never become payable totals', () => {
+  const tariffs = getMovingTariffs();
+  assert.deepEqual(tariffs.hourly.map(row => [row.hourlyRateCents, row.minimumHours, row.quote.totalCents]), [[9500, 2, 25000], [14500, 3, 49500]]);
+  assert.deepEqual(tariffs.fixed.map(row => [row.rooms, row.priceCents, row.priceType, row.quote.totalCents]), [[1.5, 54000, 'fixed', 54000], [2.5, 79000, 'fixed', 79000], [3.5, 115000, 'from', null]]);
+  for (const row of [...tariffs.hourly, ...tariffs.fixed]) assert.deepEqual(row.quote, calculatePrice(row.selection));
+  assert.equal(tariffs.travelCents, pricingConfig.moving.travelCents);
+});
+
+test('all six visible moving tables include minimums, travel, fixed-price restrictions, extras, combo and VAT wording', () => {
+  for (const language of languages) {
+    const html = renderMoving(language), clean = decode(html.replace(/<[^>]+>/g, ' '));
+    assert.equal((html.match(/<table/g) || []).length, 3);
+    for (const key of ['vat', 'oneMover', 'twoMovers', 'reviewFixed', 'extraHelper', 'travel', 'stairs', 'wardrobe', 'disposal', 'boxes', 'comboTitle']) assert.ok(clean.includes(publicPriceText(language, key, { floor: '1' })), `${language}:${key}`);
+    assert.match(clean, /95/); assert.match(clean, /145/); assert.match(clean, /540/); assert.match(clean, /790/);
+    assert.doesNotMatch(html, /\{(?:price|hours|rooms|area|travel|distance|small|large|minutes|deposit)\}/);
+    const fromRow = html.match(/<tr[^>]*data-price-type="from"[^>]*>([\s\S]*?)<\/tr>/)[1];
+    assert.ok(decode(fromRow).includes(publicPriceText(language, 'reviewFixed')));
+  }
+});
+
+test('end-of-tenancy pages and structured data use new area caps and the same room-only excess rule', () => {
+  for (const language of languages) {
+    const html = decode(renderEnd(language));
+    const rows = getEndOfTenancyOfferRows(language);
+    assert.deepEqual(rows.map(row => row.maxAreaM2), [50, 75, 100, 125, 150]);
+    assert.ok(html.includes(publicEndPriceRules(language)));
+    assert.ok(html.includes(publicPriceText(language, 'vat')));
+    assert.doesNotMatch(html, /\{(?:rate|excess|rooms)\}/);
+    const seo = getPageSeo('/umzugsreinigung/zuerich', language), service = seo.structuredData.find(node => node['@type'] === 'Service');
+    assert.deepEqual(service.offers.map(offer => offer.price), rows.map(row => (row.priceCents / 100).toFixed(2)));
+    assert.ok(JSON.stringify(seo.structuredData).includes(publicEndPriceRules(language)));
+    assert.ok(seo.description.includes('450'));
+  }
+});
+
+test('moving SEO publishes only actual minima/fixed offers, with dynamic priceRange and translated conditions', () => {
+  for (const language of languages) {
+    const seo = getPageSeo('/kleinumzug/zuerich', language), service = seo.structuredData.find(node => node['@type'] === 'Service');
+    assert.ok(seo.description.includes('95')); assert.ok(seo.description.includes('60'));
+    assert.deepEqual(service.offers.map(offer => offer.price), ['250.00', '495.00', '540.00', '790.00']);
+    assert.equal(service.offers.some(offer => offer.price === '1150.00'), false);
+    assert.equal(service.offers[0].priceSpecification.price, '95.00');
+    assert.equal(service.offers[0].eligibleDuration.minValue, 2);
+    assert.ok(service.offers.every(offer => offer.description.includes(publicPriceText(language, 'vat'))));
+    const business = seo.structuredData.find(node => node['@type'] === 'LocalBusiness');
+    assert.ok(business.priceRange.includes('95.00')); assert.ok(business.priceRange.includes('250.00'));
+  }
 });
 
 test('homepage and services expose the shared price guide, with a direct hero CTA before the weather control', () => {

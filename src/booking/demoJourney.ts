@@ -14,7 +14,7 @@ export interface DemoBooking {
 export function createDemoBooking(selection:BookingSelection,customer:DemoCustomer,date:string,time:string,language:string):DemoBooking {
   const quote=calculatePrice(selection);
   const total=quote.totalCents;
-  const due=typeof total==='number' ? Math.round(total*0.15) : undefined;
+  const due=typeof total==='number' ? Math.round(quote.depositBasisCents!*0.15) : undefined;
   return {demo:true,bookingId:'demo-local-booking',reference:'DEMO · KRAKEN',status:'requested',language:bookingLanguage(language),quote,quoteRevision:1,canCheckout:false,customer:{...customer},
     scheduling:{status:'requested',date,time,timeZone:'Europe/Zurich'},
     payment:{status:'not_started',amountPaidCents:0,depositPercent:15,...(typeof due==='number' ? {amountDueNowCents:due,remainingBalanceCents:total!} : {})}};

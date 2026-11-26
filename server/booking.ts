@@ -24,7 +24,7 @@ export const DEPOSIT_PERCENT=15;
 const languages=['de','en','es','fr','it','pt'];
 const safeId=/^[A-Za-z0-9_-]{1,128}$/;
 const timingEqual=(a:string,b:string)=>a.length===b.length && crypto.timingSafeEqual(Buffer.from(a),Buffer.from(b));
-const canonical=(input:any):string=>JSON.stringify(input && typeof input==='object' ? Array.isArray(input)?input.map(value=>JSON.parse(canonical(value))):Object.fromEntries(Object.keys(input).sort().map(key=>[key,JSON.parse(canonical(input[key]))])):input);
+const canonical=(input:any):string=>JSON.stringify(input && typeof input==='object' ? Array.isArray(input)?input.map(value=>JSON.parse(canonical(value))):Object.fromEntries(Object.keys(input).filter(key=>input[key]!==undefined).sort().map(key=>[key,JSON.parse(canonical(input[key]))])):input);
 const bearer=(req:Request)=>/^Bearer ([A-Za-z0-9_.-]{20,4096})$/.exec(req.get('Authorization')||'')?.[1]||'';
 const privateResponse=(res:Response)=>{res.set({'Cache-Control':'private, no-store','Referrer-Policy':'no-referrer','X-Content-Type-Options':'nosniff'});};
 const validEmail=(value:unknown)=>typeof value==='string' && value.length<=254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -119,7 +119,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       }
       const id=crypto.randomBytes(18).toString('base64url'), total=value.quote.totalCents;
       const now=clock();
-      const record={bookingId:id,reference:`K-${new Date(now).getUTCFullYear()}-${id.slice(0,8).toUpperCase()}`,status:'awaiting_confirmation',mode,createdAt:now,revision:1,selection:value.selection,quote:value.quote,quoteRevision:1,customer:value.customer,notes:value.notes,language:value.language,languageSnapshot:selectedEmailSnapshot(value.language),termsVersion:BOOKING_TERMS_VERSION,termsAcceptedAt:now,scheduling:{status:'requested',date:value.requestedDate,time:value.requestedTime,timeZone:'Europe/Zurich'},payment:{status:'not_started',depositPercent:DEPOSIT_PERCENT,amountDueNowCents:total===null?0:Math.round(total*DEPOSIT_PERCENT/100),amountPaidCents:0,remainingBalanceCents:total??0},email:{request:'queued'},...(value.recovery?{recoveryId:value.recovery.id}:{})};
+      const record={bookingId:id,reference:`K-${new Date(now).getUTCFullYear()}-${id.slice(0,8).toUpperCase()}`,status:'awaiting_confirmation',mode,createdAt:now,revision:1,selection:value.selection,quote:value.quote,quoteRevision:1,customer:value.customer,notes:value.notes,language:value.language,languageSnapshot:selectedEmailSnapshot(value.language),termsVersion:BOOKING_TERMS_VERSION,termsAcceptedAt:now,scheduling:{status:'requested',date:value.requestedDate,time:value.requestedTime,timeZone:'Europe/Zurich'},payment:{status:'not_started',depositPercent:DEPOSIT_PERCENT,amountDueNowCents:total===null?0:Math.round(value.quote.depositBasisCents*DEPOSIT_PERCENT/100),amountPaidCents:0,remainingBalanceCents:total??0},email:{request:'queued'},...(value.recovery?{recoveryId:value.recovery.id}:{})};
       const fingerprint=digest(canonical({...value,recovery:value.recovery||null}));
       const saved=await store.create(value.idempotencyKey,fingerprint,record,mailJob(record,'request','request_received',`${id}:requested:1`,`${id}:request:1`));
       if(value.recovery)await recoveryService.linkBooking({...value.recovery,email:value.customer.email,bookingId:saved.bookingId});
@@ -236,7 +236,8 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       return store.mutateWithMail(id,record=>{
         if(record.checkout || !record.quote.manualReviewReasons.length || ['cancelled','expired','completed'].includes(record.status))throw new BookingError('MANUAL_QUOTE_NOT_AVAILABLE',409);
         if(emailCollectionEnabled&&reviewedLanguage!==record.language)throw new BookingError('SCOPE_LANGUAGE_MISMATCH');
-        return {...record,originalQuote:record.quote,scopeNotes:scope,...(reviewedLanguage?{scopeContentLanguage:reviewedLanguage}:{}),quote:{...record.quote,lines:[{id:'approved-manual-quote',label:scope,labelKey:'approvedManualQuote',quantity:1,unit:'package',unitPriceCents:totalCents,totalCents}],subtotalCents:totalCents,totalCents,vatComparisonCents:Math.round(totalCents*.081),manualReviewReasons:[]},quoteRevision:record.quoteRevision+1,revision:record.revision+1,priceApprovedBy:operatorId,priceApprovedAt:clock(),payment:{...record.payment,amountDueNowCents:Math.round(totalCents*DEPOSIT_PERCENT/100),remainingBalanceCents:totalCents}};
+        const {fromPriceCents,...previousQuote}=record.quote;
+        return {...record,originalQuote:record.quote,scopeNotes:scope,...(reviewedLanguage?{scopeContentLanguage:reviewedLanguage}:{}),quote:{...previousQuote,lines:[{id:'approved-manual-quote',label:scope,labelKey:'approvedManualQuote',quantity:1,unit:'package',unitPriceCents:totalCents,totalCents}],subtotalCents:totalCents,totalCents,priceType:'fixed',depositBasisCents:totalCents,vatComparisonCents:null,manualReviewReasons:[]},quoteRevision:record.quoteRevision+1,revision:record.revision+1,priceApprovedBy:operatorId,priceApprovedAt:clock(),payment:{...record.payment,amountDueNowCents:Math.round(totalCents*DEPOSIT_PERCENT/100),remainingBalanceCents:totalCents}};
       },record=>emailCollectionEnabled?mailJob(record,'notification','quote_ready',`${id}:quote:${record.quoteRevision}`):null);
     },
     async changeEmailLanguage(id:string,access:string,input:any) {

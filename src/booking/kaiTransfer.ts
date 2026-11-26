@@ -1,6 +1,7 @@
 import { kaiDraftFieldLabel, normalizeKaiDraft, type KaiTransferPolicy } from '../kai/draft';
 import { KAI_FIELDS, KAI_SERVICE_FIELDS, type KaiDraft, type KaiField } from '../kai/types';
 import { defaultSelection, type BookingSelection } from './pricing';
+import { pricingConfig } from './pricingConfig';
 
 export type CalculatorChoice = BookingSelection['service'] | 'deep';
 export interface KaiCalculatorState {
@@ -48,7 +49,7 @@ export function applyKaiBookingTransfer(existing: KaiCalculatorState, value: unk
   const sameService = desired === existing.choice;
   if (desired && (!sameService || !result.selection)) {
     result.choice = desired;
-    result.selection = desired === 'deep' ? { ...defaultSelection('regular'), frequency: 'once', hours: 3 } : defaultSelection(desired);
+    result.selection = desired === 'deep' ? { ...defaultSelection('regular'), cleaningKind:'deep', frequency: 'once', hours: pricingConfig.regular.deep.minimumHours } : desired === 'moving' ? {service:'moving', details:''} : defaultSelection(desired);
     result.touchedSelection = [];
   }
   const touched = new Set(sameService ? existing.touchedSelection || [] : []);

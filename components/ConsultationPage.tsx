@@ -5873,15 +5873,11 @@ const ConsultationPage: React.FC<ConsultationPageProps> = ({ onNavigate, cart, s
                                         <div className="text-3xl font-black text-[#002D5B] mt-1 flex items-baseline gap-1.5 leading-none">
                                             <span>CHF {getEstimatedPrice().toFixed(2)}</span>
                                             <span className="text-[10px] text-gray-400 font-black uppercase tracking-wider">
-                                                {language === 'de' || language === 'de-CH' ? 'exkl. MwSt.' :
-                                                 language === 'fr' ? 'hors TVA' :
-                                                 language === 'it' ? 'escl. IVA' :
-                                                 language === 'es' ? 'sin IVA' :
-                                                 language === 'pt' ? 'sem IVA' : 'excl. VAT'}
+                                                {mt('Final price – no VAT', 'Precio final – sin IVA', 'Endpreis – keine MwSt.', 'Prix final – sans TVA', 'Prezzo finale – senza IVA', 'Preço final – sem IVA')}
                                             </span>
                                         </div>
                                         <p className="text-[9px] text-gray-400 font-semibold mt-1 max-w-xs leading-relaxed">
-                                            {mt('Dynamic pricing calculations are exclusive of VAT.', 'El precio total se calcula dinámicamente, excluyendo el IVA.', 'Preiskalkulationen verstehen sich exklusive MwSt.', 'Les calculs de prix dynamiques sont hors TVA.', 'I calcoli dinamici dei prezzi sono esclusi IVA.', 'Os cálculos de preços dinâmicos não incluem IVA.')}
+                                            {mt('Kraken does not charge VAT.', 'Kraken no cobra IVA.', 'Kraken berechnet keine Mehrwertsteuer.', 'Kraken ne facture pas de TVA.', 'Kraken non addebita IVA.', 'A Kraken não cobra IVA.')}
                                         </p>
                                     </div>
                                     <div className="flex flex-col sm:flex-row gap-3 justify-end min-w-0 [&_button]:min-h-11 [&_button]:justify-center">

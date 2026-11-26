@@ -6,6 +6,7 @@ import ApprovedHeader from './ApprovedHeader';
 import TransitSection from './TransitSection';
 import WhyKrakenSection from './WhyKrakenSection';
 import PublicPriceGuide from '../PublicPriceGuide';
+import { publicEndRoomScope } from '../../src/booking/publicPricingCopy';
 import FeaturedMoveoutOffer from './FeaturedMoveoutOffer';
 import CustomerReviews from './CustomerReviews';
 import { publicHref } from '../../src/routing/site-paths';
@@ -205,7 +206,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
           <button className="button button-kai" type="button" data-open-kai=""><svg className="icon" aria-hidden="true"><use href="#i-message"></use></svg>{t("Mit Kai starten")}</button>
         </div>
       </div>
-      <div className="trust-strip container" aria-label={t("Für Ihren Privathaushalt")}><span><svg className="icon" aria-hidden="true"><use href="#i-home"></use></svg>{t("Für Privathaushalte")}</span><span><svg className="icon" aria-hidden="true"><use href="#i-sofa"></use></svg>{t("Wohnungen mit 1–4 Zimmern")}</span><span><svg className="icon" aria-hidden="true"><use href="#i-coins"></use></svg>{t("Keine Mehrwertsteuer")}</span></div>
+      <div className="trust-strip container" aria-label={t("Für Ihren Privathaushalt")}><span><svg className="icon" aria-hidden="true"><use href="#i-home"></use></svg>{t("Für Privathaushalte")}</span><span><svg className="icon" aria-hidden="true"><use href="#i-sofa"></use></svg>{publicEndRoomScope(homeLanguage)}</span><span><svg className="icon" aria-hidden="true"><use href="#i-coins"></use></svg>{t("Keine Mehrwertsteuer")}</span></div>
     </section>
 
     <section className="services-section section container" id="leistungen" aria-labelledby="services-title">

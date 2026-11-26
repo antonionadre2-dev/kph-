@@ -98,7 +98,7 @@ const TRANSLATIONS_MAP: Record<string, Record<string, string>> = {
     it: "Magazzino Feldstrasse 132 (Lun 10:30–11:30 e 1° Sab/mese 10:30–11:30)",
     pt: "Depósito Municipal Feldstrasse 132 (Seg 10:30–11:30 e 1º Sáb/mês 10:30–11:30)"
   },
-  "Nur gemeindeeigene Abfall- & Sperrgutmarken. Gebündelt/gepresst am Abfuhrtag bis 07:00 Uhr (nicht am Vortag!). Grundgebühr: CHF 140 EFH / 70 MFH / 210 Betrieb (exkl. MwSt). Abfuhr durch REMONDIS Schweiz AG (052 643 11 88).": {
+  "Nur gemeindeeigene Abfall- & Sperrgutmarken. Gebündelt/gepresst am Abfuhrtag bis 07:00 Uhr (nicht am Vortag!). Grundgebühr: CHF 140 EFH / 70 MFH / 210 Betrieb. Abfuhr durch REMONDIS Schweiz AG (052 643 11 88).": {
     en: "Municipal garbage and bulky waste stickers only. Bundled/compressed on collection day by 07:00 AM (not the day before!). Base fee: CHF 140 SFH / 70 MFH / 210 business (excl. VAT). Collection by REMONDIS Schweiz AG (052 643 11 88).",
     es: "Exclusivamente viñetas/marcas de basura y enseres de Feuerthalen. Atados/comprimidos el día de recogida antes de las 07:00 h (¡no la víspera!). Tasa base: 140 CHF casa unifamiliar / 70 CHF edificio / 210 CHF comercio (IVA no incl.). Recogida por REMONDIS Schweiz AG (052 643 11 88).",
     fr: "Seules les vignettes poubelle et encombrants municipales sont valables. Ficelés/compressés le jour du ramassage avant 07h00 (pas la veille !). Taxe de base : 140 CHF maison / 70 CHF immeuble / 210 CHF entreprise. Ramassage par REMONDIS Schweiz AG (052 643 11 88).",

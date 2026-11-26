@@ -5,6 +5,7 @@ import { createRequire } from 'node:module';
 import { readFileSync, existsSync, mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 import { publicHref, pathLanguage } from '../src/routing/site-paths.ts';
 import { calculatorCta } from '../src/home/cta.ts';
 import { getRegionalPageMetadata } from '../src/seo/regional-metadata.ts';
@@ -34,10 +35,39 @@ function publicCopy(page) {
     ...page.faqs.flatMap(item => [item.question, item.answer]), page.closing.title, page.closing.body];
 }
 
-test('the three distinct approved German articles retain every source field', () => {
+test('approved regional articles retain all content except the explicitly authorized price-comparison paragraphs', () => {
   const source = JSON.parse(readFileSync(path.join(root, 'reference/local-seo-footer/content/locations.de.json'), 'utf8'));
   source.pages[0].why.body = source.pages[0].why.body.replace('Sie brauchen keine umfangreiche Hausbetreuung zu buchen, wenn Sie eine konkrete Aufgabe abgeben möchten.', 'Auch einzelne Reinigungsaufgaben und kleine Aufträge sind willkommen.');
+  const approvedPriceCopy = {
+    de: 'Im Rechner sehen Sie Tarife, ausgewählte Extras und die geltenden Preisregeln. Endpreis – keine MwSt.',
+    en: 'The calculator shows tariffs, selected extras and the applicable pricing rules. Final price – no VAT.',
+    es: 'El calculador muestra las tarifas, los extras elegidos y las reglas de precio aplicables. Precio final – sin IVA.',
+    pt: 'A calculadora apresenta as tarifas, os extras escolhidos e as regras de preço aplicáveis. Preço final – sem IVA.',
+    it: 'Il calcolatore mostra tariffe, extra scelti e regole di prezzo applicabili. Prezzo finale – senza IVA.',
+    fr: 'Le calculateur présente les tarifs, les options choisies et les règles de prix applicables. Prix final – sans TVA.',
+  };
+  // Only these three paths change in the source package; its on-disk reference stays intact.
+  for (const page of source.pages) page.why.points[1].body = approvedPriceCopy.de;
   assert.deepEqual(locales.de, source.pages);
+  // Structural snapshots of the approved a0591e6 translations, excluding ONLY those three paragraphs.
+  const retainedContentSha256 = {
+    de: '522800d1bf715f0ed6f69b0d0e691389c908e18cd33fbcb916f773f2d7c0cf49',
+    en: '6f2df25335350a9231d098d4fe9be87e9c668ec1d81ccbd504cfebf2931b7c6e',
+    es: 'e43d50db991dd51376b7736537f6329e446f6a89e4e29e39be3d9606e77d1957',
+    pt: '31bf1bb4b25bc9825089aa8e2bfe5b330b3b7bc464d41c8c5f061b58f7b47edb',
+    it: '5ace331326aa7079dfcc65fa57242891c1d88c1f73459ddbf82698c528be7289',
+    fr: '399397b487d888d16fd382c96255e2e24bbc914383b8582e14d228fdfdd8a77f',
+  };
+  const stable = value => Array.isArray(value) ? value.map(stable) : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])])) : value;
+  for (const language of languages) {
+    const retained = structuredClone(locales[language]);
+    assert.equal(retained.length, 3);
+    for (const page of retained) {
+      assert.equal(page.why.points[1].body, approvedPriceCopy[language]);
+      delete page.why.points[1].body;
+    }
+    assert.equal(createHash('sha256').update(JSON.stringify(stable(retained))).digest('hex'), retainedContentSha256[language], `${language}: unrelated approved content changed`);
+  }
   assert.equal(new Set(locales.de.map(page => page.intro[0])).size, 3);
   assert.equal(new Set(locales.de.map(page => page.planning.title)).size, 3);
 });

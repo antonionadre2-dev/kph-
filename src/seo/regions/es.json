@@ -95,7 +95,7 @@
         },
         {
           "title": "Sin IVA en la factura",
-          "body": "Actualmente Kraken no está sujeto a IVA y no lo factura. Para comparar ofertas, fíjese en el precio total para el mismo alcance de trabajo. Puede configurar su encargo en el calculador."
+          "body": "El calculador muestra las tarifas, los extras elegidos y las reglas de precio aplicables. Precio final – sin IVA."
         },
         {
           "title": "Contacto personal",
@@ -239,7 +239,7 @@
         },
         {
           "title": "Sin IVA facturado",
-          "body": "Como pequeña empresa que actualmente no está sujeta a IVA, no facturamos este impuesto. El precio del calculador corresponde al alcance que haya elegido. Compare las ofertas por su precio total y los servicios que incluyen."
+          "body": "El calculador muestra las tarifas, los extras elegidos y las reglas de precio aplicables. Precio final – sin IVA."
         },
         {
           "title": "Disponibles cuando organiza su encargo",
@@ -383,7 +383,7 @@
         },
         {
           "title": "Su precio total en el calculador",
-          "body": "Elija el servicio y sus detalles en un solo lugar. Actualmente Kraken no está sujeto a IVA y no lo factura. Para comparar con otras ofertas, tenga en cuenta el mismo alcance de trabajo y el precio final completo."
+          "body": "El calculador muestra las tarifas, los extras elegidos y las reglas de precio aplicables. Precio final – sin IVA."
         },
         {
           "title": "Personas con las que puede contactar",

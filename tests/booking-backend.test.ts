@@ -58,13 +58,13 @@ test('identical request retries return the same booking and one request email; a
 });
 test('manual review cannot become a confirmed payable booking',async()=>{
   const {service}=serviceFixture({create(){throw new Error('must not call');}});
-  const selection=defaultSelection('moving');const booking=await service.create(request({selection,acceptedTotalCents:null}));
+  const selection={service:'moving' as const,details:'Legacy personal scope'};const booking=await service.create(request({selection,acceptedTotalCents:null}));
   assert.equal(booking.quote.totalCents,null);assert.equal(booking.canCheckout,false);
   await assert.rejects(service.confirmAppointment(booking.bookingId,{operatorId:'operator',holdExpiresAt:'2026-11-24T14:00:00Z'}),{code:'MANUAL_REVIEW_REQUIRED'});
 });
 test('only a server-authorized written offer resolves manual review as a newly accepted revision',async()=>{
   const {service}=serviceFixture({async create(){return {id:1,link:'https://test.payrexx.com/valid'};}});
-  const booking=await service.create(request({selection:defaultSelection('moving'),acceptedTotalCents:null}));
+  const booking=await service.create(request({selection:{service:'moving' as const,details:'Legacy personal scope'},acceptedTotalCents:null}));
   await assert.rejects(service.approveManualQuote(booking.bookingId,{operatorId:'',totalCents:25000,scopeNotes:'Written approved moving scope'}),{code:'INVALID_APPROVED_PRICE'});
   await service.approveManualQuote(booking.bookingId,{operatorId:'authorized-operator',totalCents:25000,scopeNotes:'Written approved moving scope'});
   await service.confirmAppointment(booking.bookingId,{operatorId:'authorized-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
@@ -339,4 +339,44 @@ test('malformed credentials and SDK failures never log input, messages, stacks o
     assert.doesNotMatch(JSON.stringify(diagnostics),/CANARY|private_key|client_email|project_id|message|stack|BEGIN PRIVATE KEY/i);
     assert.equal(getApps().some(app=>app.name==='kraken-booking'),false);
   }
+});
+
+test('new end-of-tenancy and moving requests recalculate the approved tariff and reject manipulated totals or combo data',async()=>{
+  const selections=[{...defaultSelection('endOfTenancy'),rooms:1.5,areaM2:70},{...defaultSelection('moving'),team:2 as const,additionalHelpers:1,estimatedHours:4},{...defaultSelection('moving'),mode:'fixed' as const,rooms:2.5,distanceKm:10,cleaning:{...defaultSelection('endOfTenancy'),rooms:2.5,areaM2:70},sameAddress:true}];
+  for(const selection of selections){const quote=calculatePrice(selection),body=request({selection,acceptedTotalCents:quote.totalCents});assert.equal(validateBookingRequest(body,now).quote.totalCents,quote.totalCents);assert.throws(()=>validateBookingRequest({...body,acceptedTotalCents:quote.totalCents!-1},now),{code:'PRICE_CHANGED'});}
+  const valid:any=selections[2];assert.throws(()=>validateBookingRequest(request({selection:{...valid,sameAddress:false},acceptedTotalCents:129000}),now),{code:'INVALID_SELECTION'});
+  assert.throws(()=>validateBookingRequest(request({selection:{...valid,discountCents:999999},acceptedTotalCents:129000}),now),{code:'INVALID_SELECTION'});
+  assert.throws(()=>validateBookingRequest(request({selection:{...valid,cleaning:{...valid.cleaning,rooms:1.5}},acceptedTotalCents:129000}),now),{code:'INVALID_SELECTION'});
+});
+test('hourly moving stores and charges 15 percent of selected minimum including helpers and travel, never of estimated total',async()=>{
+  let providerDue=0;
+  const {service,store}=serviceFixture({async create(record:any){providerDue=record.payment.amountDueNowCents;return{id:42,link:'https://test.payrexx.com/valid'};}});
+  const selection={...defaultSelection('moving'),team:2 as const,estimatedHours:4,additionalHelpers:1},quote=calculatePrice(selection);
+  const booking=await service.create(request({selection,acceptedTotalCents:quote.totalCents}));
+  assert.equal(booking.quote.priceType,'estimate');assert.equal(booking.quote.totalCents,84000);assert.equal(booking.quote.depositBasisCents,64500);assert.equal(booking.payment.amountDueNowCents,9675);assert.equal(booking.payment.amountPaidCents,0);assert.equal(booking.canCheckout,false);
+  await service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:new Date(now+3600000).toISOString()});
+  await service.checkout(booking.bookingId,booking.publicToken,{termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,acceptedQuoteRevision:1,language:'es'});
+  assert.equal(providerDue,9675);assert.equal(store.records.get(booking.bookingId).payment.remainingBalanceCents,84000);
+});
+test('moving combo deposit uses only the minimum moving work plus approved cleaning minus one discount',async()=>{
+  const {service}=serviceFixture();
+  const selection={...defaultSelection('moving'),rooms:2.5,estimatedHours:3,cleaning:{...defaultSelection('endOfTenancy'),rooms:2.5,areaM2:70},sameAddress:true},quote=calculatePrice(selection);
+  const booking=await service.create(request({selection,acceptedTotalCents:quote.totalCents}));assert.equal(booking.quote.totalCents,84500);assert.equal(booking.quote.depositBasisCents,75000);assert.equal(booking.payment.amountDueNowCents,11250);
+});
+test('a from-price stays unpaid until a written manual quote replaces provisional metadata and uses its full approved deposit basis',async()=>{
+  const {service}=serviceFixture({create(){throw Error('Must not open checkout before final approval');}}),selection={...defaultSelection('moving'),mode:'fixed' as const,rooms:3.5,distanceKm:10};
+  const booking=await service.create(request({selection,acceptedTotalCents:null}));assert.equal(booking.quote.fromPriceCents,115000);assert.equal(booking.quote.depositBasisCents,null);assert.equal(booking.payment.amountDueNowCents,0);
+  await assert.rejects(service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:new Date(now+3600000).toISOString()}),{code:'MANUAL_REVIEW_REQUIRED'});
+  await service.approveManualQuote(booking.bookingId,{operatorId:'synthetic-operator',totalCents:150000,scopeNotes:'Synthetic confirmed final moving scope'});
+  const approved=await service.authenticated(booking.bookingId,booking.publicToken);assert.equal(approved.quote.priceType,'fixed');assert.equal(approved.quote.depositBasisCents,150000);assert.equal(Object.hasOwn(approved.quote,'fromPriceCents'),false);assert.equal(approved.payment.amountDueNowCents,22500);assert.equal(approved.quote.vatComparisonCents,null);assert.equal(approved.originalQuote.fromPriceCents,115000);
+});
+test('new tariff never recalculates an existing booking price or deposit during read, confirmation or checkout',async()=>{
+  let providerDue=0;const {service,store}=serviceFixture({async create(record:any){providerDue=record.payment.amountDueNowCents;return{id:42,link:'https://test.payrexx.com/valid'};}});
+  const booking=await service.create(request()),historical=store.records.get(booking.bookingId);
+  historical.quote={...historical.quote,pricingVersion:'kraken-private-historical',totalCents:40000,subtotalCents:40000};delete historical.quote.depositBasisCents;delete historical.quote.priceType;
+  historical.payment.amountDueNowCents=6000;historical.payment.remainingBalanceCents=40000;
+  const read=await service.read(booking.bookingId,booking.publicToken);assert.equal(read.quote.totalCents,40000);assert.equal(read.payment.amountDueNowCents,6000);
+  await service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:new Date(now+3600000).toISOString()});
+  await service.checkout(booking.bookingId,booking.publicToken,{termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,acceptedQuoteRevision:1,language:'de'});
+  assert.equal(providerDue,6000);assert.equal(store.records.get(booking.bookingId).quote.pricingVersion,'kraken-private-historical');assert.equal(store.records.get(booking.bookingId).quote.totalCents,40000);
 });

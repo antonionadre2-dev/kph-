@@ -4,7 +4,7 @@ import { catalogs, TEMPLATE_REVISION, languageForBackgroundEmail, normalizeEmail
 
 const clone=<T>(value:T):T=>JSON.parse(JSON.stringify(value));
 const hash=(value:string)=>crypto.createHash('sha256').update(value).digest('hex');
-const emailService=(selection:any)=>selection?.service==='endOfTenancy'?'end':selection?.service==='regular'&&selection.frequency==='once'?'deep':selection?.service;
+const emailService=(selection:any)=>selection?.service==='endOfTenancy'?'end':selection?.service==='regular'&&(selection.cleaningKind==='deep'||!selection.cleaningKind&&selection.frequency==='once')?'deep':selection?.service;
 const languageMap=(render:(language:string)=>any)=>Object.fromEntries(['de','en','es','fr','it','pt'].map(language=>[language,render(language)]));
 const accountTemplates=new Set(['magic_link','support_received','support_reply','issue_received','issue_resolved']);
 export const EMAIL_COLLECTION_VERSION=TEMPLATE_REVISION;
@@ -29,7 +29,7 @@ function selectionData(selection:any,quote:any) {
 }
 function financialData(quote:any,payment:any={}):any {
   if(!Number.isSafeInteger(quote?.totalCents)||quote.totalCents<0)return {};
-  return {pricing:{currency:'CHF',totalRappen:quote.totalCents,paidRappen:payment.amountPaidCents||0,vatRappen:0,
+  return {pricing:{currency:'CHF',priceType:quote.priceType==='estimate'?'estimate':'fixed',totalRappen:quote.totalCents,paidRappen:payment.amountPaidCents||0,vatRappen:0,
     ...(Number.isSafeInteger(payment.transactionRappen)?{transactionRappen:payment.transactionRappen}:{}),
     ...(Number.isSafeInteger(payment.refundRappen)?{refundRappen:payment.refundRappen}:{})}};
 }

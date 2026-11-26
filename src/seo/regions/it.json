@@ -105,7 +105,7 @@
         },
         {
           "title": "Senza IVA in fattura",
-          "body": "Kraken attualmente non è soggetta all’IVA e non la addebita. Per confrontare le offerte conta il prezzo totale a parità di prestazioni; prepari il suo servizio nel calcolatore."
+          "body": "Il calcolatore mostra tariffe, extra scelti e regole di prezzo applicabili. Prezzo finale – senza IVA."
         },
         {
           "title": "Contatto personale",
@@ -260,7 +260,7 @@
         },
         {
           "title": "Nessuna IVA addebitata",
-          "body": "Come piccola impresa attualmente non soggetta all’IVA, non addebitiamo l’imposta. Il prezzo nel calcolatore si riferisce alla portata scelta. Confronti le offerte in base al prezzo totale e alle prestazioni incluse."
+          "body": "Il calcolatore mostra tariffe, extra scelti e regole di prezzo applicabili. Prezzo finale – senza IVA."
         },
         {
           "title": "Raggiungibili mentre pianifica",
@@ -416,7 +416,7 @@
         },
         {
           "title": "Il prezzo totale nel calcolatore",
-          "body": "Sceglie servizio e dettagli in un unico posto. Kraken attualmente non è soggetta all’IVA e non la addebita. Per confrontare altre offerte contano la stessa portata e il prezzo finale complessivo."
+          "body": "Il calcolatore mostra tariffe, extra scelti e regole di prezzo applicabili. Prezzo finale – senza IVA."
         },
         {
           "title": "Persone che può contattare",

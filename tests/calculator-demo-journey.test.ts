@@ -20,7 +20,11 @@ test('declined and pending demos never report money collected',()=>{
   }
 });
 test('moving inspection does not invent an amount to complete a payment demo',()=>{
-  const draft=createDemoBooking({...defaultSelection('moving'),details:'Example move'},customer,'2026-12-01','09:00','it');
+  const draft=createDemoBooking({service:'moving',details:'Example move'},customer,'2026-12-01','09:00','it');
   assert.equal(draft.quote.totalCents,null);assert.equal(confirmDemoAppointment(draft).canCheckout,false);
   assert.equal(settleDemoPayment(draft,'paid','it').payment.status,'not_started');
+});
+test('moving hourly demo mirrors the real minimum deposit rather than charging a percentage of the estimate',()=>{
+  const draft=createDemoBooking({...defaultSelection('moving'),team:2,estimatedHours:4,additionalHelpers:1},customer,'2026-12-01','09:00','es');assert.equal(draft.quote.totalCents,84000);assert.equal(draft.payment.amountDueNowCents,9675);
+  const paid=settleDemoPayment(confirmDemoAppointment(draft),'paid','es');assert.equal(paid.payment.amountPaidCents,9675);assert.equal(paid.payment.remainingBalanceCents,74325);
 });

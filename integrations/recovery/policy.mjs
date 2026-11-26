@@ -12,11 +12,11 @@ export const REGIONS = Object.freeze(['Zürich', 'Schaffhausen', 'Winterthur']);
 export const STOP_REASONS = Object.freeze(['completed', 'paid', 'cancelled', 'unsubscribed', 'bounced', 'complaint', 'expired']);
 const localClock = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Zurich', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 const SELECTION_KEYS = {
-  regular:['service','frequency','hours','materials','oven','fridge','ironingHours'],
+  regular:['service','cleaningKind','frequency','hours','materials','oven','fridge','ironingHours'],
   endOfTenancy:['service','mode','propertyType','rooms','areaM2','hours','bathrooms','guestWcs','slatBlinds','rollerShutters','smallBalconies','largeBalconies','storageRooms','garages','carpetRooms','heavySoiling'],
   construction:['service','mode','level','areaM2','hours','cementM2','filmWindows','slatBlinds','extraArea'],
   windows:['service','standard','double','balconyDoors','roof','slatBlinds','rollerShutters','difficultAccess','winterGarden'],
-  moving:['service','details']
+  moving:['service','mode','team','estimatedHours','additionalHelpers','rooms','distanceKm','originFloor','originLift','destinationFloor','destinationLift','largeWardrobes','disposalM3','boxes','piano','safe','furnitureLift','sameAddress','cleaning','details']
 };
 
 export class RecoveryError extends Error {
@@ -38,6 +38,10 @@ export function normaliseEmail(value) {
 export function cleanSelection(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || !SELECTION_KEYS[value.service]) throw new RecoveryError('INVALID_SELECTION');
   const selection=Object.fromEntries(SELECTION_KEYS[value.service].filter(key=>Object.hasOwn(value,key)).map(key=>[key,value[key]]));
+  if(selection.service==='moving' && selection.cleaning!==undefined){
+    if(!selection.cleaning || selection.cleaning.service!=='endOfTenancy')throw new RecoveryError('INVALID_SELECTION');
+    selection.cleaning=cleanSelection(selection.cleaning);
+  }
   if(JSON.stringify(selection).length>12_000) throw new RecoveryError('INVALID_SELECTION');
   return JSON.parse(JSON.stringify(selection));
 }

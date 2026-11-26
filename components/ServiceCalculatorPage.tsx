@@ -2,7 +2,9 @@ import "../src/styles/route-utilities.css";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CalendarDays, Check, CheckCircle2, ChevronDown, ClipboardList, CreditCard, Info, LoaderCircle, Mail, MapPin, Minus, Pencil, Phone, Plus, ShieldCheck } from 'lucide-react';
 import { useTranslation } from '../i18n';
-import { calculatePrice, defaultSelection, PricingValidationError, REGULAR_RATES, REGULAR_MINIMUM_HOURS, type BookingSelection, type BookingService, type PriceQuote } from '../src/booking/pricing';
+import { calculatePrice, defaultSelection, getRegularMinimumHours, PricingValidationError, REGULAR_RATES, type BookingSelection, type BookingService, type EndOfTenancySelection, type MovingSelection, type PriceQuote } from '../src/booking/pricing';
+import { pricingConfig } from '../src/booking/pricingConfig';
+import { pricingUiText } from '../src/booking/pricingUiCopy';
 import { bookingLanguage, bookingLineLabel, bookingText } from '../src/booking/uiCopy';
 import { BOOKING_TERMS_VERSION } from '../src/booking/terms';
 import CalculatorNudges from './CalculatorNudges';
@@ -112,7 +114,7 @@ function initialIntent(cart?: ServiceCalculatorPageProps['cart']): EntryIntent {
   return { service: 'endOfTenancy', raw: '', source: 'none' };
 }
 function selectionFor(choice: ServiceChoice): BookingSelection {
-  return choice === 'deep' ? { ...defaultSelection('regular'), frequency: 'once', hours: REGULAR_MINIMUM_HOURS.once } : defaultSelection(choice);
+  return choice === 'deep' ? { ...defaultSelection('regular'), cleaningKind: 'deep', frequency: 'once', hours: pricingConfig.regular.deep.minimumHours } : defaultSelection(choice);
 }
 function legacySelection(choice: ServiceChoice, item?: NonNullable<ServiceCalculatorPageProps['cart']>[number]): BookingSelection {
   const base = selectionFor(choice);
@@ -165,9 +167,9 @@ async function api<T>(url: string, options: RequestInit = {}): Promise<T> {
   }
 }
 
-function NumberField({ name, label, value, onChange, min = 0, max = 1000, step = 1, hint, invalid, errorMessage, text }: {
+function NumberField({ name, label, value, onChange, min = 0, max = 1000, step = 1, hint, invalid, errorMessage, text, required = true }: {
   key?: string; name: string; label: string; value: number; onChange: (value: number) => void;
-  min?: number; max?: number; step?: number; hint?: string; invalid?: boolean; errorMessage?: string; text: Text;
+  min?: number; max?: number; step?: number; hint?: string; invalid?: boolean; errorMessage?: string; text: Text; required?: boolean;
 }) {
   const id = `kr-calc-${name}`;
   const change = (direction: -1 | 1) => onChange(Number.isFinite(value) ? Math.round(Math.min(max, Math.max(min, value + direction * step)) * 100) / 100 : min);
@@ -175,7 +177,7 @@ function NumberField({ name, label, value, onChange, min = 0, max = 1000, step =
     <label htmlFor={id}>{label}</label>
     <div className="kr-calc-number-wrap">
       <button type="button" className="kr-calc-number-button" aria-label={text('decreaseQuantity', { label })} disabled={Number.isFinite(value) && value <= min} onClick={() => change(-1)}><Minus aria-hidden="true" /></button>
-      <input id={id} name={name} type="number" inputMode={step < 1 ? 'decimal' : 'numeric'} required min={min} max={max} step={step}
+      <input id={id} name={name} type="number" inputMode={step < 1 ? 'decimal' : 'numeric'} required={required} min={min} max={max} step={step}
         value={Number.isFinite(value) ? value : ''} aria-invalid={invalid || undefined} aria-describedby={[hint ? `${id}-hint` : null, errorMessage ? `${id}-error` : null].filter(Boolean).join(' ') || undefined}
         onChange={event => onChange(event.target.value === '' ? Number.NaN : Number(event.target.value))} />
       <button type="button" className="kr-calc-number-button" aria-label={text('increaseQuantity', { label })} disabled={Number.isFinite(value) && value >= max} onClick={() => change(1)}><Plus aria-hidden="true" /></button>
@@ -194,27 +196,84 @@ function ToggleField({ name, label, checked, onChange, hint, price }: {
   </label>;
 }
 
+function EotAreaRule({ rooms, language, money }: { rooms: number; language: string; money: (cents: number) => string }) {
+  const index = pricingConfig.endOfTenancy.tiers.findIndex(tier => rooms <= tier.rooms);
+  if (index < 0) return null;
+  const tier = pricingConfig.endOfTenancy.tiers[index], next = pricingConfig.endOfTenancy.tiers[index + 1];
+  return <p className="kr-calc-area-rule">{pricingUiText(language, 'eotAreaRule', { area: tier.maxAreaM2, rate: money(pricingConfig.endOfTenancy.excessAreaRateCents), max: pricingConfig.endOfTenancy.maxExcessAreaM2 })}{next && <> {pricingUiText(language, 'eotAreaCap', { cap: money(next.priceCents) })}</>}</p>;
+}
+
+export function MovingCalculatorFields({ selection, onChange, text, language, money }: { selection: MovingSelection; onChange: (changes: Record<string, unknown>) => void; text: Text; language: string; money: (cents: number) => string }) {
+  const p = (key: string, params?: Record<string, string | number>) => pricingUiText(language, key, params);
+  const config = pricingConfig.moving;
+  const mode = selection.mode || '', team = selection.team === 2 ? 2 : 1;
+  const minimum = config.hourly.teams[team];
+  const cleaning = selection.cleaning;
+  const number = (name: string, label: string, value: unknown, min = 0, step = 1, hint?: string, max: number = pricingConfig.limits.count, required = true, onChangeValue?: (value: number) => void) => <NumberField key={name} name={name} label={label} value={typeof value === 'number' ? value : NaN} min={min} max={max} step={step} hint={hint} required={required} text={text} onChange={onChangeValue || (value => onChange({ [name]: value }))} />;
+  const updateCleaning = (changes: Partial<EndOfTenancySelection>) => { if (cleaning) onChange({ cleaning: { ...cleaning, ...changes } }); };
+  const cleaningNumber = (name: keyof EndOfTenancySelection, label: string = name, min = 0, step = 1, hint?: string, max: number = pricingConfig.limits.count) => number(`cleaning-${name}`, label === 'comboArea' ? p(label) : text(label), cleaning?.[name], min, step, hint, max, true, value => updateCleaning({ [name]: value }));
+  const changeRooms = (rooms: number) => onChange({ rooms, sameAddress: false, ...(cleaning ? { cleaning: { ...cleaning, rooms } } : {}) });
+  return <div className="kr-calc-moving-fields">
+    <div className="kr-calc-fields">
+      <div className="kr-calc-field"><label htmlFor="kr-calc-moving-mode">{p('movingMode')}</label><select id="kr-calc-moving-mode" value={mode} onChange={event => onChange({ mode: event.target.value, ...(event.target.value === 'hourly' ? { largeWardrobes: 0, disposalM3: 0, boxes: 0 } : {}) })}>{!mode && <option value="" disabled>{p('chooseMovingMode')}</option>}<option value="hourly">{p('movingHourly')}</option><option value="fixed">{p('movingFixed')}</option></select></div>
+      {number('rooms', text('rooms'), selection.rooms, 1, .5, cleaning ? p('comboRoomsMatch') : undefined, pricingConfig.limits.rooms, Boolean(mode), changeRooms)}
+      {mode === 'hourly' ? <>
+        <div className="kr-calc-field"><label htmlFor="kr-calc-team">{p('team')}</label><select id="kr-calc-team" value={team} onChange={event => onChange({ team: Number(event.target.value) })}>{([1, 2] as const).map(value => <option key={value} value={value}>{p(value === 1 ? 'teamOne' : 'teamTwo')} · {money(config.hourly.teams[value].hourlyRateCents)}/h</option>)}</select></div>
+        {number('estimatedHours', p('estimatedHours'), selection.estimatedHours, .25, .25, p('hourlyMinimum', { hours: minimum.minimumHours, rate: money(minimum.hourlyRateCents) }), pricingConfig.limits.personHours)}
+        {number('additionalHelpers', p('additionalHelpers'), selection.additionalHelpers, 0, 1, `${money(config.hourly.additionalHelperRateCents)}/h`)}
+      </> : mode === 'fixed' ? number('distanceKm', p('distanceKm'), selection.distanceKm, 0, .1, p('distanceHint', { max: config.fixed.maxDistanceKm }), pricingConfig.limits.distanceKm, false, value => onChange({ distanceKm: Number.isFinite(value) ? value : undefined })) : null}
+    </div>
+    {mode === 'hourly' ? <p className="kr-calc-moving-rule">{p('hourlyBilling')} {p('travelFlat', { price: money(config.travelCents) })}</p> : mode === 'fixed' ? <>
+      {!Number.isFinite(selection.distanceKm) && <p className="kr-calc-inline-note">{p('distanceMissing')}</p>}
+      <div className="kr-calc-moving-addresses">
+        <div className="kr-calc-moving-address-group">{number('originFloor', p('originFloor'), selection.originFloor, 0, 1, undefined, pricingConfig.limits.floor)}<ToggleField name="originLift" label={p('originLift')} checked={selection.originLift === true} onChange={value => onChange({ originLift: value })} /></div>
+        <div className="kr-calc-moving-address-group">{number('destinationFloor', p('destinationFloor'), selection.destinationFloor, 0, 1, undefined, pricingConfig.limits.floor)}<ToggleField name="destinationLift" label={p('destinationLift')} checked={selection.destinationLift === true} onChange={value => onChange({ destinationLift: value })} /></div>
+      </div>
+      <p className="kr-calc-hint">{p('floorHint', { price: money(config.extras.floorPerAddressCents) })}</p>
+      <p className="kr-calc-included"><CheckCircle2 aria-hidden="true" />{p('fixedAssemblyIncluded')}</p>
+      <div className="kr-calc-fields">{number('largeWardrobes', p('largeWardrobes'), selection.largeWardrobes, 0, 1, p('wardrobesHint', { price: money(config.extras.largeWardrobeCents) }))}{number('disposalM3', p('disposalM3'), selection.disposalM3, 0, .1, p('disposalHint', { price: money(config.extras.disposalPerM3Cents) }), pricingConfig.limits.areaM2)}{number('boxes', p('boxes'), selection.boxes, 0, 1, `${money(config.extras.boxCents)}/×`)}</div>
+    </> : null}
+    <fieldset className="kr-calc-moving-special"><legend>{p('specialItems')}</legend><p className="kr-calc-hint">{p('specialItemsHint')}</p><div className="kr-calc-toggles">{(['piano', 'safe', 'furnitureLift'] as const).map(name => <ToggleField key={name} name={name} label={p(name)} checked={selection[name] === true} onChange={value => onChange({ [name]: value })} />)}</div></fieldset>
+    {mode && <section className="kr-calc-moving-combo" aria-labelledby="kr-calc-combo-title">
+      <h3 id="kr-calc-combo-title">{p('comboTitle')}</h3><p>{p('comboHint', { price: money(config.combo[0].discountCents), amount: money(config.combo[1].discountCents) })}</p>
+      <ToggleField name="combo-enable" label={p('comboEnable')} checked={Boolean(cleaning)} onChange={value => onChange({ cleaning: value ? { ...defaultSelection('endOfTenancy'), rooms: selection.rooms || 1.5, areaM2: NaN } : undefined, sameAddress: false })} />
+      {cleaning && <>
+        <div className="kr-calc-fields kr-calc-combo-fields">{cleaningNumber('areaM2', 'comboArea', .01, .01, undefined, pricingConfig.limits.areaM2)}</div>
+        <EotAreaRule rooms={cleaning.rooms} language={language} money={money} />
+        <p className="kr-calc-hint">{p('comboRoomsMatch')}</p>
+        <ToggleField name="sameAddress" label={p('sameAddress')} hint={p('sameAddressHint')} checked={selection.sameAddress === true} onChange={value => onChange({ sameAddress: value })} />
+        <details className="kr-calc-combo-extras"><summary>{p('comboExtras')}</summary><div className="kr-calc-fields">{cleaningNumber('bathrooms', 'bathrooms', 0, 1, text('bathroomsHint'))}{cleaningNumber('guestWcs')}{cleaningNumber('slatBlinds')}{cleaningNumber('rollerShutters')}{cleaningNumber('smallBalconies')}{cleaningNumber('largeBalconies')}{cleaningNumber('storageRooms')}{cleaningNumber('garages')}{cleaningNumber('carpetRooms')}</div><ToggleField name="cleaning-heavySoiling" label={text('heavySoiling')} hint={text('heavyHint')} price={`+${pricingConfig.endOfTenancy.extras.heavySoilingPercent} %`} checked={cleaning.heavySoiling} onChange={value => updateCleaning({ heavySoiling: value })} /></details>
+      </>}
+    </section>}
+    <div className="kr-calc-field kr-calc-moving-description"><label htmlFor="kr-calc-moving-details">{p('movingDetailsOptional')}</label><textarea id="kr-calc-moving-details" rows={4} maxLength={3000} value={selection.details || ''} onChange={event => onChange({ details: event.target.value })} /></div>
+  </div>;
+}
+
 function PriceSummary({ quote, text, language, money, hasSelection = false }: { quote: PriceQuote | null; text: Text; language: string; money: (cents: number) => string; hasSelection?: boolean }) {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const manual = Boolean(quote?.manualReviewReasons.length || quote?.totalCents === null);
+  const estimated = quote?.priceType === 'estimate';
+  const from = quote?.priceType === 'from' && typeof quote.fromPriceCents === 'number';
+  const priceLabel = from ? pricingUiText(language, 'fromLabel') : estimated ? pricingUiText(language, 'estimate') : text(manual ? 'individual' : 'priceLive');
+  const shownTotal = from ? pricingUiText(language, 'fromPrice', { price: money(quote.fromPriceCents!) }) : manual ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—';
   return <>
-    <p className="kr-calc-summary-label">{text(manual ? 'individual' : 'priceLive')}</p>
+    <p className="kr-calc-summary-label">{priceLabel}</p>
     <div className="kr-calc-total" aria-live="polite" aria-atomic="true">
-      <span>{text(manual ? 'manualPrice' : 'currentTotal')}</span>
-      <strong>{manual ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—'}</strong>
+      <span>{estimated ? pricingUiText(language, 'estimate') : text(manual ? 'manualPrice' : 'currentTotal')}</span>
+      <strong>{shownTotal}</strong>
     </div>
+    {quote && <p className="kr-calc-final-price">{pricingUiText(language, 'finalPrice')}</p>}
     {!quote && <p className="kr-calc-empty"><ClipboardList aria-hidden="true" />{text(hasSelection ? 'checkRequired' : 'selectToStart')}</p>}
-    {quote && <p className="kr-calc-price-note"><Info aria-hidden="true" />{text(manual ? 'manualPrice' : 'fixedForScope')}</p>}
+    {quote && <p className="kr-calc-price-note"><Info aria-hidden="true" />{from ? pricingUiText(language, 'fromHint') : estimated ? pricingUiText(language, 'estimateHint') : text(manual ? 'manualPrice' : 'fixedForScope')}</p>}
     {!!quote?.lines.length && <details className="kr-calc-summary-details" open={breakdownOpen} onToggle={event => setBreakdownOpen(event.currentTarget.open)}><summary>{text(breakdownOpen ? 'hideBreakdown' : 'showBreakdown')}<ChevronDown aria-hidden="true" /></summary><ul className="kr-calc-lines" aria-label={text('selectedExtras')}>
       {quote.lines.map(line => <li key={line.id}>
         <span>{bookingLineLabel(language, line)}
-          {line.quantity !== 1 && <small>{line.quantity.toLocaleString(bookingLanguage(language))} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : '×'} · {money(line.unitPriceCents)}</small>}
+          {line.quantity !== 1 && <small>{line.params?.capped ? pricingUiText(language, 'eotAreaCap', { cap: money(Number(line.params.capCents)) }) : <>{line.quantity.toLocaleString(bookingLanguage(language))} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : line.unit === 'm3' ? 'm³' : '×'} · {money(line.unitPriceCents)}</>}</small>}
         </span><b>{money(line.totalCents)}</b>
       </li>)}
     </ul></details>}
     {quote && !manual && <div className="kr-calc-breakdown">
       <div><span>{text('subtotal')}</span><b>{money(quote.subtotalCents)}</b></div>
-      <div><span>{text('vat')}</span><b>{money(quote.vatCents)}</b></div>
     </div>}
   </>;
 }
@@ -224,6 +283,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const locale = bookingLanguage(language);
   const journey = journeyCopy(locale);
   const text: Text = useCallback((key, params) => bookingText(locale, key, params), [locale]);
+  const pricingText = useCallback((key: Parameters<typeof pricingUiText>[1], params?: Record<string, string | number>) => pricingUiText(locale, key, params), [locale]);
   const money = useCallback((cents: number) => new Intl.NumberFormat(locale === 'de' ? 'de-CH' : locale, { style: 'currency', currency: 'CHF', minimumFractionDigits: 2 }).format(cents / 100), [locale]);
   const [bootstrap] = useState(() => {
     const entry = initialIntent(cart);
@@ -372,7 +432,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
           return;
         }
         calculatePrice(draft.selection);
-        const service = draft.selection.service === 'regular' && draft.selection.frequency === 'once' ? 'deep' : serviceAlias(draft.selection.service);
+        const service = draft.selection.service === 'regular' && (draft.selection.cleaningKind === 'deep' || (!draft.selection.cleaningKind && draft.selection.frequency === 'once')) ? 'deep' : serviceAlias(draft.selection.service);
         if (!service) throw new Error('Unknown saved service');
         intentHandled.current = true; setChoice(service); setSelection(draft.selection); setWizardStep(0);
         touchedSelection.current = new Set(Object.keys(draft.selection));
@@ -618,8 +678,9 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     if (step === 0) {
       if (!/^[1-9]\d{3}$/.test(customer.postalCode.trim())) return { step: 0, message: text('invalidContact'), fieldId: 'kr-calc-postal' };
       if (!selection || !choice) return { step: 0, message: text('selectToStart') };
-      if (!quote || priceError) return { step: 0, message: text('priceError'), fieldId: priceError?.field ? `kr-calc-${priceError.field}` : undefined };
-      if (selection.service === 'moving' && !selection.details?.trim()) return { step: 0, message: text('checkRequired'), fieldId: 'kr-calc-moving-details' };
+      if (selection.service === 'moving' && selection.cleaning && !selection.sameAddress) return { step: 0, message: pricingText('sameAddressHint'), fieldId: 'kr-calc-sameAddress' };
+      if (selection.service === 'moving' && selection.cleaning && (selection.rooms || 0) > 3.5) return { step: 0, message: pricingText('comboRoomsMatch'), fieldId: 'kr-calc-rooms' };
+      if (!quote || priceError) return { step: 0, message: text('priceError'), fieldId: priceError?.field ? `kr-calc-${priceError.field.replace(/\./g, '-')}` : undefined };
       return null;
     }
     if (step === 1) {
@@ -820,37 +881,37 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     switch (selection.service) {
       case 'regular': return <>
         <div className="kr-calc-fields">
-          <div className="kr-calc-field"><label htmlFor="kr-calc-frequency">{text('frequency')}</label>
+          {choice !== 'deep' && <div className="kr-calc-field"><label htmlFor="kr-calc-frequency">{text('frequency')}</label>
             <select id="kr-calc-frequency" value={selection.frequency} onChange={event => {
-              const frequency = event.target.value;
-              updateSelection({ frequency, hours: Math.max(selection.hours || 0, REGULAR_MINIMUM_HOURS[frequency]) });
-              setChoice(frequency === 'once' ? 'deep' : 'regular');
+              const frequency = event.target.value as typeof selection.frequency;
+              updateSelection({ frequency, cleaningKind: 'regular', hours: Math.max(selection.hours || 0, getRegularMinimumHours({ ...selection, frequency, cleaningKind: 'regular' })) });
             }}>
               {(['weekly', 'fortnightly', 'monthly', 'once'] as const).map(value => <option key={value} value={value}>{text(value)} · {money(REGULAR_RATES[value])}/h</option>)}
             </select>
-          </div>
-          {number('hours', 'hours', REGULAR_MINIMUM_HOURS[selection.frequency], .25, text('minimumRegular', { hours: REGULAR_MINIMUM_HOURS[selection.frequency] }), 168)}
+          </div>}
+          {number('hours', 'hours', getRegularMinimumHours(selection), .25, text('minimumRegular', { hours: getRegularMinimumHours(selection) }), pricingConfig.limits.personHours)}
         </div>
         <p className="kr-calc-hint">{text('hoursHint')}</p>
         {extras(<>
         <div className="kr-calc-toggles">
-          {toggle('materials', 'materials', text('materialsHint'), money(1000))}
-          {toggle('oven', 'oven', undefined, money(3500))}
-          {toggle('fridge', 'fridge', undefined, money(3000))}
+          {toggle('materials', 'materials', text('materialsHint'), money(pricingConfig.regular.extras.materialsPerVisitCents))}
+          {toggle('oven', 'oven', undefined, money(pricingConfig.regular.extras.ovenCents))}
+          {toggle('fridge', 'fridge', undefined, money(pricingConfig.regular.extras.fridgeCents))}
         </div>
-        <div className="kr-calc-fields kr-calc-extra-fields">{number('ironingHours', 'ironing', 0, .25, `${money(4000)}/h`, 168)}</div>
+        <div className="kr-calc-fields kr-calc-extra-fields">{number('ironingHours', 'ironing', 0, .25, `${money(pricingConfig.regular.extras.ironingHourlyRateCents)}/h`, pricingConfig.limits.personHours)}</div>
         </>, [selection.materials, selection.oven, selection.fridge, selection.ironingHours > 0].filter(Boolean).length)}
       </>;
       case 'endOfTenancy': return <>
         <div className="kr-calc-fields">
           <div className="kr-calc-field"><label htmlFor="kr-calc-mode">{text('billingMode')}</label>
-            <select id="kr-calc-mode" value={selection.mode} onChange={event => updateSelection({ mode: event.target.value })}><option value="fixed">{text('fixed')}</option><option value="hourly">{text('hourly')} · {money(4500)}/h</option></select>
+            <select id="kr-calc-mode" value={selection.mode} onChange={event => updateSelection({ mode: event.target.value })}><option value="fixed">{text('fixed')}</option><option value="hourly">{text('hourly')} · {money(pricingConfig.endOfTenancy.hourly.rateCents)}/h</option></select>
           </div>
           <div className="kr-calc-field"><label htmlFor="kr-calc-property-type">{text('propertyType')}</label><select id="kr-calc-property-type" value={selection.propertyType} onChange={event => updateSelection({ propertyType: event.target.value })}><option value="apartment">{text('apartment')}</option><option value="house">{text('house')}</option></select></div>
           {number('rooms', 'rooms', 1, .5, undefined, 100)}
           {number('areaM2', 'area', .01, .01, undefined, 10_000)}
-          {selection.mode === 'hourly' && number('hours', 'hours', 3, .25, text('minimumRegular', { hours: 3 }), 168)}
+          {selection.mode === 'hourly' && number('hours', 'hours', pricingConfig.endOfTenancy.hourly.minimumHours, .25, text('minimumRegular', { hours: pricingConfig.endOfTenancy.hourly.minimumHours }), pricingConfig.limits.personHours)}
         </div>
+        {selection.mode === 'fixed' && selection.propertyType === 'apartment' && <EotAreaRule rooms={selection.rooms} language={locale} money={money} />}
         {selection.mode === 'fixed' && selection.propertyType === 'apartment' ? <ul className="kr-calc-included-benefits">
           {['eotBenefitKitchenBath', 'eotBenefitWindowsFloors', 'eotBenefitHandover'].map(key => <li key={key}><CheckCircle2 aria-hidden="true" /><span>{text(key)}</span></li>)}
         </ul> : <p className="kr-calc-included"><Info aria-hidden="true" />{text(selection.mode === 'hourly' ? 'notice.hourly_no_handover_guarantee' : 'houseHint')}</p>}
@@ -860,33 +921,30 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
           {number('slatBlinds')}{number('rollerShutters')}{number('smallBalconies')}{number('largeBalconies')}
           {number('storageRooms')}{number('garages')}{number('carpetRooms')}
         </div>
-        <div className="kr-calc-toggles">{toggle('heavySoiling', 'heavySoiling', text('heavyHint'), '+15 %')}</div>
+        <div className="kr-calc-toggles">{toggle('heavySoiling', 'heavySoiling', text('heavyHint'), `+${pricingConfig.endOfTenancy.extras.heavySoilingPercent} %`)}</div>
         </>, [selection.bathrooms > 1, selection.guestWcs > 0, selection.slatBlinds > 0, selection.rollerShutters > 0, selection.smallBalconies > 0, selection.largeBalconies > 0, selection.storageRooms > 0, selection.garages > 0, selection.carpetRooms > 0, selection.heavySoiling].filter(Boolean).length)}
       </>;
       case 'construction': return <>
         <div className="kr-calc-fields">
-          <div className="kr-calc-field"><label htmlFor="kr-calc-mode">{text('billingMode')}</label><select id="kr-calc-mode" value={selection.mode} onChange={event => updateSelection({ mode: event.target.value })}><option value="area">{text('areaMode')}</option><option value="hourly">{text('hourMode')} · {money(4800)}/h</option></select></div>
+          <div className="kr-calc-field"><label htmlFor="kr-calc-mode">{text('billingMode')}</label><select id="kr-calc-mode" value={selection.mode} onChange={event => updateSelection({ mode: event.target.value })}><option value="area">{text('areaMode')}</option><option value="hourly">{text('hourMode')} · {money(pricingConfig.construction.hourly.rateCents)}/h</option></select></div>
           <div className="kr-calc-field"><label htmlFor="kr-calc-level">{text('constructionLevel')}</label><select id="kr-calc-level" value={selection.level} onChange={event => updateSelection({ level: event.target.value })}><option value="light">{text('light')}</option><option value="full">{text('full')}</option></select></div>
           {number('areaM2', 'area', selection.mode === 'hourly' ? 0 : .01, .01, undefined, 10_000)}
-          {selection.mode === 'hourly' && number('hours', 'hours', 4, .25, text('minimumRegular', { hours: 4 }), 168)}
+          {selection.mode === 'hourly' && number('hours', 'hours', pricingConfig.construction.hourly.minimumHours, .25, text('minimumRegular', { hours: pricingConfig.construction.hourly.minimumHours }), pricingConfig.limits.personHours)}
         </div>
         {extras(<>
-        <div className="kr-calc-fields">{number('cementM2', 'cementM2', 0, .01, `${money(350)}/m²`, 10_000)}{number('filmWindows', 'filmWindows', 0, 1, money(800))}{number('slatBlinds', 'slatBlinds', 0, 1, money(1200))}</div>
+        <div className="kr-calc-fields">{number('cementM2', 'cementM2', 0, .01, `${money(pricingConfig.construction.extras.cementPerM2Cents)}/m²`, pricingConfig.limits.areaM2)}{number('filmWindows', 'filmWindows', 0, 1, money(pricingConfig.construction.extras.filmWindowCents))}{number('slatBlinds', 'slatBlinds', 0, 1, money(pricingConfig.windows.rates.slatBlindsCents))}</div>
         <div className="kr-calc-toggles">{toggle('extraArea', 'extraArea', text('extraAreaHint'))}</div>
         </>, [selection.cementM2 > 0, selection.filmWindows > 0, selection.slatBlinds > 0, selection.extraArea].filter(Boolean).length)}
       </>;
       case 'windows': return <>
         <p className="kr-calc-included"><CheckCircle2 aria-hidden="true" />{text('windowIncluded')}</p>
-        <div className="kr-calc-fields">{number('standard', 'standard', 0, 1, money(1600))}{number('double', 'double', 0, 1, money(2400))}{number('balconyDoors', 'balconyDoors', 0, 1, money(2800))}{number('roof', 'roof', 0, 1, money(2500))}</div>
+        <div className="kr-calc-fields">{number('standard', 'standard', 0, 1, money(pricingConfig.windows.rates.standardCents))}{number('double', 'double', 0, 1, money(pricingConfig.windows.rates.doubleCents))}{number('balconyDoors', 'balconyDoors', 0, 1, money(pricingConfig.windows.rates.balconyDoorCents))}{number('roof', 'roof', 0, 1, money(pricingConfig.windows.rates.roofCents))}</div>
         {extras(<>
-        <div className="kr-calc-fields">{number('slatBlinds', 'slatBlinds', 0, 1, money(1200))}{number('rollerShutters', 'rollerShutters', 0, 1, money(800))}</div>
-        <div className="kr-calc-toggles">{toggle('difficultAccess', 'difficultAccess', undefined, money(3500))}{toggle('winterGarden', 'winterGarden', text('winterGardenHint'))}</div>
+        <div className="kr-calc-fields">{number('slatBlinds', 'slatBlinds', 0, 1, money(pricingConfig.windows.rates.slatBlindsCents))}{number('rollerShutters', 'rollerShutters', 0, 1, money(pricingConfig.windows.rates.rollerShutterCents))}</div>
+        <div className="kr-calc-toggles">{toggle('difficultAccess', 'difficultAccess', undefined, money(pricingConfig.windows.rates.difficultAccessPerVisitCents))}{toggle('winterGarden', 'winterGarden', text('winterGardenHint'))}</div>
         </>, [selection.slatBlinds > 0, selection.rollerShutters > 0, selection.difficultAccess, selection.winterGarden].filter(Boolean).length)}
       </>;
-      case 'moving': return <>
-        <p className="kr-calc-included"><KrakenServiceIcon name="moving" size={28} />{text('movingHint')}</p>
-        <div className="kr-calc-field"><label htmlFor="kr-calc-moving-details">{text('movingDetails')}</label><textarea id="kr-calc-moving-details" {...fieldAttributes('kr-calc-moving-details')} rows={6} maxLength={3000} required value={selection.details || ''} onChange={event => updateSelection({ details: event.target.value })} /></div>
-      </>;
+      case 'moving': return <MovingCalculatorFields selection={selection} onChange={updateSelection} text={text} language={locale} money={money} />;
     }
   }
 
@@ -908,7 +966,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const stepHintKeys = ['configureHint', 'stepScheduleHint', 'stepReviewHint'] as const;
   const stepTitleKeys = ['configureTitle', 'planTitle', 'reviewReady'] as const;
   const nextLabel = ['continueSchedule', 'continueReview'][wizardStep] || 'stepReview';
-  const liveTotal = manualReview ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—';
+  const liveTotal = quote?.priceType === 'from' && typeof quote.fromPriceCents === 'number' ? pricingText('fromPrice', { price: money(quote.fromPriceCents) }) : manualReview ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—';
   const reviewDate = requestedDate && Number.isFinite(Date.parse(`${requestedDate}T12:00:00Z`)) ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: 'Europe/Zurich' }).format(new Date(`${requestedDate}T12:00:00Z`)) : '—';
   const focusConsent = () => {
     finalConsentRef.current?.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
@@ -994,10 +1052,11 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
             {canOpenCheckout && <section className="kr-calc-card kr-calc-payment-card">
               <div className="kr-calc-section-title"><CreditCard aria-hidden="true" /><h3>{text('paymentSummary')}</h3></div>
               <dl className="kr-calc-payment-details">
-                <div><dt>{text('total')}</dt><dd>{typeof finalTotal === 'number' ? money(finalTotal) : text('individual')}</dd></div>
+                <div><dt>{booking.quote.priceType === 'estimate' ? pricingText('estimate') : text('total')}</dt><dd>{typeof finalTotal === 'number' ? money(finalTotal) : text('individual')}</dd></div>
                 <div className="kr-calc-due"><dt>{depositPercent < 100 ? text('depositDue', { percent: depositPercent }) : text('fullDue')}</dt><dd>{typeof dueNow === 'number' ? money(dueNow) : '—'}</dd></div>
                 {typeof balanceAfterDeposit === 'number' && <div><dt>{text('remaining')}</dt><dd>{money(balanceAfterDeposit)}</dd></div>}
               </dl>
+              <p className="kr-calc-final-price">{pricingText('finalPrice')}</p>
               {preview && booking.demo && <label className="kr-journey-demo-result">{journey.demoResult}<select value={demoOutcome} onChange={event=>setDemoOutcome(event.target.value as DemoPaymentOutcome)} disabled={openingPayment}><option value="paid">{journey.resultPaid}</option><option value="pending">{journey.resultPending}</option><option value="failed">{journey.resultFailed}</option></select></label>}
               {!preview && <p>{text('paymentReadyStep')}</p>}
               <label className="kr-calc-consent"><input type="checkbox" checked={payConsent} onChange={event => setPayConsent(event.target.checked)} /><span>{preview&&booking.demo?journey.demoConsent:booking.termsVersion&&booking.termsVersion!==BOOKING_TERMS_VERSION?text('payConsentExisting'):<>{text('payConsent')} <a href={publicHref('/terms', locale)} target="_blank" rel="noopener noreferrer">{text('terms')}</a></>}</span></label>
@@ -1056,11 +1115,11 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
               {wizardStep === 2 && <div className="kr-calc-review-blocks">
                 <article className="kr-calc-review-block"><header><h3><KrakenServiceIcon name={choice || 'regular'} size={36} />{text('summaryService')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('summaryService')}`} onClick={() => navigateStep(0)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header>
                   <p className="kr-calc-review-service">{choice ? text(choice) : ''}{selection?.service === 'regular' && <span> · {text(selection.frequency)}</span>}</p>
-                  <ul className="kr-calc-review-lines">{quote?.lines.map(line => <li key={line.id}><span>{bookingLineLabel(locale, line)}<small>{line.quantity.toLocaleString(locale)} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : '×'}</small></span><strong>{money(line.totalCents)}</strong></li>)}</ul>
+                  <ul className="kr-calc-review-lines">{quote?.lines.map(line => <li key={line.id}><span>{bookingLineLabel(locale, line)}<small>{line.quantity.toLocaleString(locale)} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : line.unit === 'm3' ? 'm³' : '×'}</small></span><strong>{money(line.totalCents)}</strong></li>)}</ul>
                   {selection?.service === 'moving' && selection.details && <p className="kr-calc-review-notes">{selection.details}</p>}
                   {quote?.notices.map(notice => <p key={notice.code} className="kr-calc-hint">{text(`notice.${notice.code}`)}</p>)}
                   {quote?.manualReviewReasons.map(notice => <p key={notice.code} className="kr-calc-hint">{text(`notice.${notice.code}`)}</p>)}
-                  <p className="kr-calc-hint">{text(manualReview ? 'manualPrice' : 'scopeFixed')}</p>
+                  <p className="kr-calc-hint">{quote?.priceType === 'estimate' ? pricingText('estimateHint') : quote?.priceType === 'from' ? pricingText('fromHint') : text(manualReview ? 'manualPrice' : 'scopeFixed')}</p>
                 </article>
                 <article className="kr-calc-review-block"><header><h3><MapPin aria-hidden="true" />{text('reviewAppointment')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('reviewAppointment')}`} onClick={() => navigateStep(1)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header><p>{customer.address}<br />{customer.postalCode} {customer.city}</p><p><strong>{reviewDate}</strong><br />{requestedTime} · {text('swissTime')}</p><span className="kr-calc-review-status">{text('appointmentRequested')}</span></article>
                 <article className="kr-calc-review-block"><header><h3><Mail aria-hidden="true" />{text('reviewContact')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('reviewContact')}`} onClick={() => navigateStep(1)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header><p><strong>{customer.name}</strong><br />{customer.email}<br />{customer.phone}</p>{notes.trim() && <p className="kr-calc-review-notes">{notes}</p>}</article>
@@ -1075,8 +1134,9 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
             <aside className="kr-calc-summary kr-calc-card" aria-labelledby="kr-calc-summary-title"><h2 id="kr-calc-summary-title">{text('summary')}</h2>
               {choice && <div className="kr-calc-summary-selection"><KrakenServiceIcon name={choice || 'regular'} size={36} /><span>{text(choice)}</span></div>}
               <PriceSummary quote={quote} text={text} language={locale} money={money} hasSelection={Boolean(selection)} />
+              {quote?.service === 'moving' && quote.priceType === 'estimate' && typeof quote.depositBasisCents === 'number' && <p className="kr-calc-deposit-preview">{pricingText('depositMinimum', { percent: depositPercent })}<strong>{pricingText('depositPreview', { amount: money(Math.round(quote.depositBasisCents * depositPercent / 100)) })}</strong></p>}
               <CustomerReviews language={locale} />
-              {!preview && config?.paymentReady && <p className="kr-calc-payment-method-note">{frictionText(locale, 'paymentReady')}{typeof config.depositPercent === 'number' && config.depositPercent > 0 && config.depositPercent <= 100 && <span>{frictionText(locale, 'deposit', { percent: String(config.depositPercent) })}</span>}</p>}
+              {!preview && config?.paymentReady && <p className="kr-calc-payment-method-note">{frictionText(locale, 'paymentReady')}{quote?.priceType !== 'estimate' && typeof config.depositPercent === 'number' && config.depositPercent > 0 && config.depositPercent <= 100 && <span>{frictionText(locale, 'deposit', { percent: String(config.depositPercent) })}</span>}</p>}
               {CONFIRMATION_WINDOW_COPY[locale] && <p className="kr-calc-request-note">{CONFIRMATION_WINDOW_COPY[locale]}</p>}
               {wizardStep < 2 ? <><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} onClick={nextStep}>{text(nextLabel)}</button><p className="kr-calc-request-note">{text('bookingJourney')}</p></> : <>
                 <label className="kr-calc-consent"><input id="kr-calc-final-consent" ref={finalConsentRef} type="checkbox" required checked={termsAccepted} disabled={submitting} onChange={event => setTermsAccepted(event.target.checked)} /><span>{preview&&demoEnabled?journey.demoConsent:<>{text('termsPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/terms', locale)}`} target="_blank" rel="noopener noreferrer">{text('terms')}</a> {text('privacyPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/gdpr', locale)}`} target="_blank" rel="noopener noreferrer">{text('privacy')}</a> {text('readSuffix')}</>}</span></label>
@@ -1092,7 +1152,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
             <div className="kr-calc-help"><img src="/calculator-approved/assets/kai-help.webp" alt="" width="72" height="88" loading="lazy" aria-hidden="true" /><div><h3>{text('kaiGuide')}</h3><p>{text('kaiGuideHint')}</p><p>{text('helpHours')}</p><a className="kr-calc-contact-link" href={publicHref('/kontakt', locale)} target="_blank" rel="noopener noreferrer">{text('contactPage')}<ChevronDown aria-hidden="true" /></a><a href="tel:+41774505705"><Phone aria-hidden="true" />+41 77 450 57 05</a><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></div></div>
             </details>
           </div>
-          <div className="kr-calc-mobile-bar"><div className="kr-calc-mobile-price"><span>{text('currentTotal')}</span><strong aria-live="polite">{liveTotal}</strong></div><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} aria-controls={wizardStep === 2 ? 'kr-calc-final-consent' : 'kr-calc-step-title'} onClick={wizardStep === 2 ? focusConsent : nextStep}>{text(wizardStep === 2 ? 'stepReview' : 'nextStep')}</button></div>
+          <div className="kr-calc-mobile-bar"><div className="kr-calc-mobile-price"><span>{quote?.priceType === 'estimate' ? pricingText('estimate') : quote?.priceType === 'from' ? pricingText('fromLabel') : text('currentTotal')}</span><strong aria-live="polite">{liveTotal}</strong><small>{pricingText('finalPrice')}</small></div><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} aria-controls={wizardStep === 2 ? 'kr-calc-final-consent' : 'kr-calc-step-title'} onClick={wizardStep === 2 ? focusConsent : nextStep}>{text(wizardStep === 2 ? 'stepReview' : 'nextStep')}</button></div>
         </form>
       </>}
     </div>

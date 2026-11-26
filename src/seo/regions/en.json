@@ -68,7 +68,9 @@
         {
           "title": "Check stopping arrangements early",
           "body": "Where can the vehicle stop legally, and how far will items need to be carried? If you need public parking spaces for your move, the City of Zurich offers parking reservations subject to conditions. Check the current requirements and advance notice directly with the city.",
-          "sourceIds": ["zh-parking"]
+          "sourceIds": [
+            "zh-parking"
+          ]
         },
         {
           "title": "Coordinate transport, cleaning and handover",
@@ -77,7 +79,9 @@
         {
           "title": "Register your new address separately",
           "body": "Booking a move does not register your new address with the authorities. Zurich provides its own online service for a change of address within the city. If you are moving into or out of the city, check the appropriate procedure with the municipality responsible.",
-          "sourceIds": ["zh-address"]
+          "sourceIds": [
+            "zh-address"
+          ]
         }
       ]
     },
@@ -91,7 +95,7 @@
         },
         {
           "title": "No VAT on your invoice",
-          "body": "Kraken is currently not liable for VAT and does not charge it. When comparing quotes, look at the total price for the same scope of work. You put together your job in the calculator."
+          "body": "The calculator shows tariffs, selected extras and the applicable pricing rules. Final price – no VAT."
         },
         {
           "title": "People you can reach",
@@ -212,12 +216,16 @@
         {
           "title": "Remember to register your move",
           "body": "The City of Schaffhausen brings together information on moving into, within and out of the city on an official page. You can find the relevant procedure and documents for your situation there. This registration is separate from your booking with Kraken.",
-          "sourceIds": ["sh-moving"]
+          "sourceIds": [
+            "sh-moving"
+          ]
         },
         {
           "title": "Check vehicle access and parking",
           "body": "Check where the vehicle can stop legally and whether any specific restrictions apply at your address. The city's traffic and parking service can help with questions about municipal parking and traffic rules. Arrange a suitable stopping place before the day of the job.",
-          "sourceIds": ["sh-parking"]
+          "sourceIds": [
+            "sh-parking"
+          ]
         }
       ]
     },
@@ -231,7 +239,7 @@
         },
         {
           "title": "No VAT charged",
-          "body": "As a small business currently not liable for VAT, we do not charge it. The calculator price relates to your chosen scope. Compare quotes by their total price and the services included."
+          "body": "The calculator shows tariffs, selected extras and the applicable pricing rules. Final price – no VAT."
         },
         {
           "title": "Available when you are planning",
@@ -352,12 +360,16 @@
         {
           "title": "Check the carrying route when moving home",
           "body": "Check the lift, stairs, doors and distance to the vehicle. If you need public parking spaces for a moving van, Winterthur provides information on temporarily reserving them and the permit procedure. You can find the current requirements on the city's website.",
-          "sourceIds": ["wt-parking"]
+          "sourceIds": [
+            "wt-parking"
+          ]
         },
         {
           "title": "Register your new address separately",
           "body": "The City of Winterthur links to eUmzug, an online service for registering arrivals, departures and changes of address where the conditions are met. Check which procedure suits your situation there. Arrange transport and cleaning with us separately from these official procedures.",
-          "sourceIds": ["wt-moving"]
+          "sourceIds": [
+            "wt-moving"
+          ]
         }
       ]
     },
@@ -371,7 +383,7 @@
         },
         {
           "title": "Your total price in the calculator",
-          "body": "Choose the service and its details in one place. Kraken is currently not liable for VAT and does not charge it. When comparing other quotes, consider the same scope of work and the full final price."
+          "body": "The calculator shows tariffs, selected extras and the applicable pricing rules. Final price – no VAT."
         },
         {
           "title": "People you can reach",

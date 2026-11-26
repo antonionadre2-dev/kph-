@@ -4,10 +4,11 @@ import { build } from 'esbuild';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { bookingText } from '../src/booking/uiCopy.ts';
+import { bookingLineLabel, bookingText } from '../src/booking/uiCopy.ts';
 import { frictionText } from '../src/booking/calculatorFriction.ts';
 import { writeCalculatorDraft } from '../src/booking/calculatorDraft.ts';
-import { defaultSelection } from '../src/booking/pricing.ts';
+import { calculatePrice, defaultSelection } from '../src/booking/pricing.ts';
+import { pricingUiText } from '../src/booking/pricingUiCopy.ts';
 import { publicHref } from '../src/routing/site-paths.ts';
 import { accessRecoveryText } from '../src/booking/accessRecoveryCopy.ts';
 
@@ -88,4 +89,73 @@ test('an explicit different service is preserved and an unknown intent is not si
   const unsupported = render('de', 'invented-service');
   assert.ok(unsupported.includes(bookingText('de', 'unsupportedIntent')));
   assert.doesNotMatch(unsupported, /class="kr-calc-service is-selected"/);
+});
+
+test('moving renders an honest hourly estimate and minimum-based deposit in all six languages',()=>{
+  const selected={...defaultSelection('moving'),estimatedHours:3};
+  const quote=calculatePrice(selected);
+  assert.equal(quote.totalCents,34500);assert.equal(quote.depositBasisCents,25000);
+  for(const language of ['de','en','es','fr','it','pt']){
+    const html=render(language,'moving',{choice:'moving',selection:selected,wizardStep:0});
+    assert.match(html,/id="kr-calc-team"/);assert.match(html,/id="kr-calc-estimatedHours"/);
+    assert.ok(html.includes(escaped(pricingUiText(language,'estimate'))));
+    assert.ok(html.includes(escaped(pricingUiText(language,'finalPrice'))));
+    assert.ok(html.includes(escaped(pricingUiText(language,'depositMinimum',{percent:15}))));
+    assert.doesNotMatch(html,/id="kr-calc-distanceKm"|kr-calc-vat-card|vatComparison/);
+    const description=html.match(/<textarea[^>]*id="kr-calc-moving-details"[^>]*>/)?.[0];
+    assert.ok(description);assert.doesNotMatch(description,/required/);
+  }
+});
+
+test('fixed move exposes distance, stairs, extras and a request-only from price without assuming a route',()=>{
+  for(const language of ['de','en','es','fr','it','pt']){
+    const absent=render(language,'moving',{choice:'moving',selection:{...defaultSelection('moving'),mode:'fixed'},wizardStep:0});
+    const distance=absent.match(/<input[^>]*id="kr-calc-distanceKm"[^>]*>/)?.[0];
+    assert.ok(distance);assert.match(distance,/value=""/);assert.doesNotMatch(distance,/required/);
+    assert.ok(absent.includes(escaped(pricingUiText(language,'distanceMissing'))));
+    for(const name of ['originFloor','destinationFloor','largeWardrobes','disposalM3','boxes','originLift','destinationLift'])assert.ok(absent.includes(`id="kr-calc-${name}"`));
+    const from=render(language,'moving',{choice:'moving',selection:{...defaultSelection('moving'),mode:'fixed',rooms:3.5,distanceKm:10},wizardStep:0});
+    assert.ok(from.includes(escaped(pricingUiText(language,'fromHint'))));
+    assert.ok(from.includes(escaped(pricingUiText(language,'fromLabel'))));
+    assert.equal(calculatePrice({...defaultSelection('moving'),mode:'fixed',rooms:3.5,distanceKm:10}).totalCents,null);
+    assert.doesNotMatch(from,/class="kr-calc-payment-card"/);
+  }
+});
+
+test('combined move restores matching structured cleaning with the discount and unchecked booking consent',()=>{
+  const selected={...defaultSelection('moving'),mode:'fixed',rooms:2.5,distanceKm:10,sameAddress:true,cleaning:{...defaultSelection('endOfTenancy'),rooms:2.5,areaM2:70}};
+  assert.equal(calculatePrice(selected).totalCents,129000);
+  const draft={choice:'moving',selection:selected,wizardStep:2,customer:{name:'Synthetic QA',email:'qa@example.test',phone:'+41000000000',address:'Synthetic test 1',postalCode:'8203',city:'Schaffhausen'},requestedDate:'2026-12-12',requestedTime:'10:15'};
+  for(const language of ['de','en','es','fr','it','pt']){
+    const html=render(language,'moving',draft);
+    assert.match(html,/data-step="2"/);
+    assert.ok(html.includes(escaped(bookingText(language,'line.moving-combo'))));
+    assert.doesNotMatch(html,/<input[^>]*id="kr-calc-final-consent"[^>]*checked/);
+    const fields=render(language,'moving',{...draft,wizardStep:0});
+    assert.match(fields,/id="kr-calc-cleaning-areaM2"/);assert.match(fields,/id="kr-calc-sameAddress"[^>]*checked/);
+    assert.ok(fields.includes(escaped(pricingUiText(language,'comboRoomsMatch'))));
+  }
+});
+
+test('end-of-tenancy extra area is a separate capped line and deep cleaning keeps its own minimum',()=>{
+  const selected={...defaultSelection('endOfTenancy'),rooms:1.5,areaM2:70};
+  const quote=calculatePrice(selected),surcharge=quote.lines.find(line=>line.id==='eot-extra-area');
+  assert.equal(quote.totalCents,56000);assert.equal(surcharge?.totalCents,11000);assert.equal(surcharge?.params?.capped,true);
+  for(const language of ['de','en','es','fr','it','pt']){
+    const html=render(language,'end',{choice:'endOfTenancy',selection:selected,wizardStep:0});
+    assert.ok(html.includes(escaped(bookingLineLabel(language,surcharge))));
+    assert.ok(html.includes(escaped(pricingUiText(language,'eotAreaRule',{area:50,rate:new Intl.NumberFormat(language==='de'?'de-CH':language,{style:'currency',currency:'CHF',minimumFractionDigits:2}).format(6),max:20}))));
+    const deep=render(language,'deep');
+    const hours=deep.match(/<input[^>]*id="kr-calc-hours"[^>]*>/)?.[0];
+    assert.match(hours,/min="3"/);assert.match(hours,/value="3"/);
+    const once=render(language,'regular',{choice:'regular',selection:{...defaultSelection('regular'),frequency:'once',hours:2.5},wizardStep:0});
+    assert.match(once.match(/<input[^>]*id="kr-calc-hours"[^>]*>/)?.[0],/min="2.5"/);
+  }
+});
+
+test('historical inventory-only moving drafts remain personal and never select an hourly tariff on reload',()=>{
+  const html=render('de','moving',{choice:'moving',selection:{service:'moving',details:'Synthetic inventory'},wizardStep:0});
+  assert.ok(html.includes(`<option value="" disabled="" selected="">${escaped(pricingUiText('de','chooseMovingMode'))}</option>`));
+  assert.doesNotMatch(html,/id="kr-calc-estimatedHours"|kr-calc-deposit-preview/);
+  assert.match(html,/Synthetic inventory/);
 });
