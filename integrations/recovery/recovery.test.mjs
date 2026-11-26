@@ -37,7 +37,7 @@ test('explicit requested email is separate from optional consent; only server pr
   const f=fixture();const captured=await f.capture({acceptedTotalCents:1,selection:{service:'regular',hours:3,frequency:'weekly',totalCents:1,address:'must not persist'}});
   assert.equal(captured.mailStatus,'queued');assert.equal(captured.remindersEnabled,false);
   const draft=await f.service.read(captured.id,captured.accessToken);
-  assert.equal(draft.quote.totalCents,12_000);assert.equal(draft.quote.vatComparisonCents,972);
+  assert.equal(draft.quote.totalCents,12_000);assert.equal(draft.quote.vatComparisonCents,null);
   assert.equal(draft.selection.address,undefined);assert.equal(draft.selection.totalCents,undefined);assert.equal(draft.quote.maxAffordablePersonHours,undefined);
   await f.service.runDue();assert.equal(f.sent.length,1);
   f.advance(5*DAY_MS);await f.service.runDue();assert.equal(f.sent.length,1);

@@ -105,7 +105,7 @@
         },
         {
           "title": "Aucune TVA sur la facture",
-          "body": "Kraken n’est actuellement pas assujetti à la TVA et n’en facture pas. Pour comparer les offres, retenez le prix total à périmètre égal ; composez votre prestation dans le calculateur."
+          "body": "Le calculateur présente les tarifs, les options choisies et les règles de prix applicables. Prix final – sans TVA."
         },
         {
           "title": "Un contact personnel",
@@ -260,7 +260,7 @@
         },
         {
           "title": "Aucune TVA facturée",
-          "body": "Comme petite entreprise actuellement non assujettie à la TVA, nous ne facturons pas de taxe sur la valeur ajoutée. Le prix du calculateur correspond au périmètre choisi. Comparez les offres selon leur prix total et les prestations incluses."
+          "body": "Le calculateur présente les tarifs, les options choisies et les règles de prix applicables. Prix final – sans TVA."
         },
         {
           "title": "Joignables quand vous préparez votre projet",
@@ -416,7 +416,7 @@
         },
         {
           "title": "Votre prix total dans le calculateur",
-          "body": "Choisissez la prestation et ses détails au même endroit. Kraken n’est actuellement pas assujetti à la TVA et n’en facture pas. Pour comparer les offres, retenez le même périmètre et le prix total final."
+          "body": "Le calculateur présente les tarifs, les options choisies et les règles de prix applicables. Prix final – sans TVA."
         },
         {
           "title": "Des personnes joignables",

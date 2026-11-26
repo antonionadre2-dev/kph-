@@ -13,7 +13,7 @@ export interface CalculatorDraftState {
   customer?: CalculatorDraftCustomer; requestedDate?: string; requestedTime?: string; notes?: string;
 }
 export interface CalculatorSubmission { hash: string; key: string }
-const enums: Record<string, string[]> = { frequency: ['weekly','fortnightly','monthly','once'], mode: ['fixed','hourly','area'], propertyType: ['apartment','house'], level: ['light','full'] };
+const enums: Record<string, string[]> = { frequency: ['weekly','fortnightly','monthly','once'], mode: ['fixed','hourly','area'], propertyType: ['apartment','house'], level: ['light','full'], cleaningKind: ['regular','deep'] };
 const record = (value: unknown): value is Record<string, any> => !!value && typeof value === 'object' && !Array.isArray(value);
 const storage = (kind: 'localStorage' | 'sessionStorage'): StorageLike | null => { try { return typeof window === 'undefined' ? null : window[kind]; } catch { return null; } };
 const remove = (store: StorageLike | null, key: string) => { try { store?.removeItem(key); } catch { /* Storage is optional. */ } };
@@ -47,6 +47,26 @@ function selection(value: unknown): BookingSelection | null {
   for (const [key, fallback] of Object.entries(base)) {
     if (key === 'service' || key === 'details') continue;
     const supplied = value[key];
+    // A combined cleaning contains quantities only. Never retain arbitrary nested
+    // objects, addresses or a caller-supplied price in the anonymous draft.
+    if (value.service === 'moving' && key === 'cleaning') {
+      if (supplied === undefined) continue;
+      if (!record(supplied) || supplied.service !== 'endOfTenancy') return null;
+      const cleaning = selection(supplied);
+      if (!cleaning || cleaning.service !== 'endOfTenancy') return null;
+      result.cleaning = cleaning;
+      continue;
+    }
+    // Historical moving drafts contained only a description; missing optional
+    // fields must not silently turn that personal request into a priced move.
+    if (supplied === undefined && (value.service === 'moving' || key === 'cleaningKind')) continue;
+    if (value.service === 'moving' && key === 'team' && supplied !== 1 && supplied !== 2) return null;
+    if (value.service === 'moving' && key === 'mode' && supplied !== 'fixed' && supplied !== 'hourly') return null;
+    if (value.service === 'moving' && key === 'distanceKm') {
+      if (supplied === null || typeof supplied === 'number' && Number.isNaN(supplied)) continue;
+      if (typeof supplied !== 'number' || !Number.isFinite(supplied) || supplied < 0 || supplied > 10000) return null;
+      result.distanceKm = supplied; continue;
+    }
     if (typeof fallback === 'number') {
       if (supplied === null || (typeof supplied === 'number' && Number.isNaN(supplied))) result[key] = NaN;
       else if (typeof supplied === 'number' && Number.isFinite(supplied) && Math.abs(supplied) <= 10000) result[key] = supplied;
@@ -62,7 +82,9 @@ function selection(value: unknown): BookingSelection | null {
 function anonymous(value: unknown) {
   if (!record(value)) return null;
   const selected = selection(value.selection);
-  if (!selected || !(value.choice === selected.service || value.choice === 'deep' && selected.service === 'regular' && selected.frequency === 'once') || ![0,1,2].includes(value.wizardStep)) return null;
+  if (!selected || ![0,1,2].includes(value.wizardStep)) return null;
+  const deep = selected.service === 'regular' && (selected.cleaningKind === 'deep' || selected.cleaningKind === undefined && selected.frequency === 'once');
+  if (value.choice !== (deep ? 'deep' : selected.service) || deep && selected.service === 'regular' && selected.frequency !== 'once') return null;
   return { choice: value.choice as CalculatorChoice, selection: selected, wizardStep: value.wizardStep as 0 | 1 | 2 };
 }
 const selectionKey = (value: { choice: CalculatorChoice; selection: BookingSelection }) => JSON.stringify({ choice: value.choice, selection: value.selection });

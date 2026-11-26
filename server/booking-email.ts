@@ -1,5 +1,6 @@
 import { journeyCopy } from '../src/booking/journeyCopy.ts';
 import { bookingLineLabel, bookingText } from '../src/booking/uiCopy.ts';
+import { pricingUiText } from '../src/booking/pricingUiCopy.ts';
 import { BookingError } from './booking-store.ts';
 import { safeProviderName } from './booking-mail-safety.ts';
 
@@ -17,10 +18,10 @@ export function renderBookingEmail(booking:any, kind:'request'|'receipt', origin
     [copy.reference,booking.reference], [service,booking.quote.lines.map((line:any)=>`${bookingLineLabel(booking.language,line)} · ${money(line.totalCents)}`).join('\n')],
     [appointment,`${booking.scheduling.date} ${booking.scheduling.time} · Europe/Zurich`],
     [booking.customer.name,`${booking.customer.address}\n${booking.customer.postalCode} ${booking.customer.city}`],
-    [copy.total,booking.quote.totalCents===null ? bookingText(booking.language,'individual') : money(booking.quote.totalCents)],
+    [booking.quote.priceType==='estimate' ? pricingUiText(booking.language,'estimate') : copy.total,booking.quote.priceType==='from' && booking.quote.fromPriceCents ? pricingUiText(booking.language,'fromPrice',{price:money(booking.quote.fromPriceCents)}) : booking.quote.totalCents===null ? bookingText(booking.language,'individual') : money(booking.quote.totalCents)],
   ];
   if(receipt)rows.push([copy.amountPaid,money(booking.payment.amountPaidCents)],[copy.remaining,money(booking.payment.remainingBalanceCents)]);
-  rows.push(['VAT / IVA / MwSt.','CHF 0.00']);
+  rows.push([pricingUiText(booking.language,'finalPrice'),'']);
   const url=`${origin}/quote?booking=${encodeURIComponent(booking.bookingId)}&lang=${booking.language}#access=${token}`;
   return {subject:title,text:[`Kraken · ${title}`,body,...rows.map(([label,value])=>`${label}: ${value}`),url,'Kraken PFM · Seewadelstrasse 3, 8203 Schaffhausen','+41 77 450 57 05 · kai@krakenpfm.ch'].join('\n\n'),html:`<!doctype html><html lang="${escape(booking.language)}"><body style="margin:0;background:#f1f6f8;color:#062d52;font:16px Arial,sans-serif"><table role="presentation" width="100%"><tr><td style="padding:24px"><table role="presentation" style="max-width:620px;margin:auto;background:white;border-radius:20px" width="100%"><tr><td style="padding:30px"><strong>Kraken · Properties &amp; Facilities Management</strong><h1>${escape(title)}</h1><p>${escape(body)}</p><table role="presentation" width="100%">${rows.map(([label,value])=>`<tr><th align="left" style="padding:12px 0;vertical-align:top">${escape(label)}</th><td style="padding:12px;white-space:pre-line">${escape(value)}</td></tr>`).join('')}</table><p><a href="${escape(url)}" style="display:inline-block;background:#a1f1d0;color:#062d52;padding:16px;border-radius:12px">${escape(copy.continuePlan)}</a></p><p>Kraken PFM<br>Seewadelstrasse 3, 8203 Schaffhausen<br><a href="tel:+41774505705">+41 77 450 57 05</a><br><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></p></td></tr></table></td></tr></table></body></html>`};
 }

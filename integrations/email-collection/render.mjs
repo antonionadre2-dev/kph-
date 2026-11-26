@@ -107,6 +107,7 @@ export function renderEmail(id, data, options={}) {
   if(['recurring_visit','recurring_updated'].includes(id) && service!=='regular') throw new Error('Recurring templates require regular cleaning.');
   const price=data.pricing;
   if(price) {
+    if(price.priceType!==undefined&&!['fixed','estimate'].includes(price.priceType))throw new Error('Unsupported price type.');
     for(const key of ['totalRappen','paidRappen','transactionRappen','vatRappen','refundRappen']) if(price[key]!==undefined) chf(price[key],language);
     if(price.currency!=='CHF') throw new Error('This collection currently supports CHF only.');
     if(price.paidRappen>price.totalRappen) throw new Error('Overpayment requires a specific reviewed message.');
@@ -204,18 +205,17 @@ export function renderEmail(id, data, options={}) {
     else {
       const received=['deposit_received','payment_received'].includes(id);
       if(received) summaryRows.push([l.payment,chf(price.transactionRappen,language),'big']);
-      summaryRows.push([id.startsWith('quote_') && id!=='quote_ready'?l.savedTotal:l.total,chf(price.totalRappen,language),received?null:'big']);
-      summaryRows.push([l.vat,chf(0,language)]);
+      summaryRows.push([price.priceType==='estimate'?l.estimatedTotal:id.startsWith('quote_') && id!=='quote_ready'?l.savedTotal:l.total,chf(price.totalRappen,language),received?null:'big']);
       if(['payment_requested','payment_pending','payment_failed'].includes(id)) summaryRows.push([l.requestedPayment,chf(price.transactionRappen,language),'strong']);
       if(['deposit_received','payment_received','payment_requested','payment_pending','payment_failed','balance_due'].includes(id)) {
         summaryRows.push([l.paid,chf(price.paidRappen,language)]);
-        summaryRows.push([l.remaining,chf(price.totalRappen-price.paidRappen,language),'strong']);
+        summaryRows.push([price.priceType==='estimate'?l.estimatedRemaining:l.remaining,chf(price.totalRappen-price.paidRappen,language),'strong']);
       }
     }
   }
   const financeBlock=summaryRows.length?`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#f3f7fa" style="background-color:#f3f7fa;border-radius:16px;">
     ${summaryRows.map(([label,value,emph],index)=>`<tr><td style="padding:${index===0?'22px':'10px'} 18px ${index===summaryRows.length-1?'22px':'10px'} 22px;font-size:14px;line-height:1.4;color:#476176;${emph?'font-weight:700;':''}">${escapeHtml(label)}</td><td align="right" style="padding:${index===0?'22px':'10px'} 22px ${index===summaryRows.length-1?'22px':'10px'} 0;color:#002d5b;font-size:${emph==='big'?'26':'16'}px;line-height:1.4;font-weight:700;white-space:nowrap;">${escapeHtml(value)}</td></tr>`).join('')}
-    ${['quote_saved','quote_ready'].includes(id)?`<tr><td colspan="2" style="padding:0 22px 20px;"><p style="margin:0;padding:13px 15px;background-color:#dff3e8;border-radius:10px;color:#1c5644;font-size:14px;line-height:1.5;">${escapeHtml(l.compare)} <strong>${escapeHtml(chf(Math.round(price.totalRappen*81/1000),language))}</strong></p><p style="margin:8px 0 0;font-size:12px;color:#5c716f;line-height:1.5;">${escapeHtml(l.compareNote)}</p></td></tr>`:''}
+    <tr><td colspan="2" style="padding:0 22px 20px;font-size:13px;color:#476176;">${escapeHtml(l.vatNote)}</td></tr>
   </table>`:'';
   const miniList=(title,items,numbered=false)=>`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td colspan="2" style="padding:0 0 12px;font-size:16px;font-weight:700;color:#002d5b;line-height:1.5;">${escapeHtml(title)}</td></tr>${items.map((item,i)=>`<tr><td width="28" valign="top" style="padding:4px 8px 10px 0;font-size:14px;font-weight:700;color:#23805e;line-height:1.6;">${numbered?String(i+1).padStart(2,'0'):'✓'}</td><td style="padding:4px 0 10px;font-size:16px;line-height:1.6;color:#38566f;">${escapeHtml(item)}</td></tr>`).join('')}</table>`;
   const button=`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td align="center" bgcolor="#002d5b" style="background-color:#002d5b;border-radius:12px;text-align:center;padding:0 18px;"><a href="${link(cta)}" style="display:block;padding:17px 8px;font-size:16px;line-height:1.5;font-weight:700;color:#ffffff;text-decoration:none;text-align:center;">${escapeHtml(t.cta)}</a></td></tr></table>`;
@@ -260,7 +260,6 @@ export function renderEmail(id, data, options={}) {
   <!--[if mso]><table role="presentation" width="640"><tr><td><![endif]--><table class="email" role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="width:100%;max-width:640px;background-color:#ffffff;border-radius:24px;font-family:${baseFont};text-align:left;">${rows}</table><!--[if mso]></td></tr></table><![endif]-->
   <p style="margin:16px 0 0;font-family:${baseFont};font-size:12px;line-height:1.6;color:#61778a;">${escapeHtml(data.reference?`${l.reference} ${data.reference} · `:'')}${escapeHtml(l.personal)}</p></td></tr></table></body></html>`;
   const text=[greeting,'',t.headline,'',t.intro,'',...fields.map(([k,v])=>`${k}: ${v}`),'',...summaryRows.map(([k,v])=>`${k}: ${v}`),price&&priceIds.has(id)&&id!=='refund_issued'?l.vatNote:'',
-    ...(price&&['quote_saved','quote_ready'].includes(id)?[`${l.compare} ${chf(Math.round(price.totalRappen*81/1000),language)}`,l.compareNote]:[]),
     '',staffReply||'',resolution||'',...openQuestions,...t.body,'',`${t.cta}: ${cta}`,t.secondary?`${t.secondary}: ${secondary}`:'','',
     ...(id==='moving_guide'?[l.guideTitle,...l.guideItems]:[]),...((preparationIds.has(id)?preparation[language][service]:t.next)||[]).map(item=>`• ${item}`),'',t.note,'',t.signature,l.reply,brand.phone,brand.email,`Kraken ${brand.descriptor}`,brand.address,`${l.hours} · ${l.timezone}`,brand.website,reasonText,`${l.privacy}: ${brand.privacyUrl||'#preview-privacy'}`,hasConsent?`${l.unsubscribe}: ${data.links?.unsubscribe||'#preview-unsubscribe'}`:''].filter(v=>v!==undefined).join('\n');
   const headers={};

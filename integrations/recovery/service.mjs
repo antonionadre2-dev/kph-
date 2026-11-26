@@ -17,7 +17,10 @@ function checkedQuote(quote) {
   return {
     pricingVersion:quote.pricingVersion,currency:'CHF',service:quote.service,lines:quote.lines,
     subtotalCents:quote.subtotalCents,totalCents:quote.totalCents,taxStatus:'not_registered',vatCents:0,
-    vatComparisonCents:quote.totalCents === null ? null : Math.round(quote.totalCents * 810 / 10_000),
+    vatComparisonCents:null,
+    ...(quote.priceType ? {priceType:quote.priceType} : {}),
+    ...(Number.isSafeInteger(quote.depositBasisCents) ? {depositBasisCents:quote.depositBasisCents} : {}),
+    ...(Number.isSafeInteger(quote.fromPriceCents) ? {fromPriceCents:quote.fromPriceCents} : {}),
     manualReviewReasons:Array.isArray(quote.manualReviewReasons) ? quote.manualReviewReasons : [],
     notices:Array.isArray(quote.notices) ? quote.notices : []
   };

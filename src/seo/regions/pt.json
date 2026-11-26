@@ -105,7 +105,7 @@
         },
         {
           "title": "Sem IVA na fatura",
-          "body": "A Kraken não está atualmente sujeita a IVA e não o cobra. Para comparar ofertas, conta o preço total para o mesmo âmbito de serviço; prepare o seu pedido na calculadora."
+          "body": "A calculadora apresenta as tarifas, os extras escolhidos e as regras de preço aplicáveis. Preço final – sem IVA."
         },
         {
           "title": "Contacto pessoal",
@@ -260,7 +260,7 @@
         },
         {
           "title": "Sem IVA cobrado",
-          "body": "Enquanto pequena empresa atualmente não sujeita a IVA, não cobramos esse imposto. O preço na calculadora refere-se ao âmbito escolhido. Compare propostas com base no preço total e nos serviços incluídos."
+          "body": "A calculadora apresenta as tarifas, os extras escolhidos e as regras de preço aplicáveis. Preço final – sem IVA."
         },
         {
           "title": "Contactáveis enquanto planeia",
@@ -416,7 +416,7 @@
         },
         {
           "title": "O seu preço total na calculadora",
-          "body": "Escolhe o serviço e os detalhes num único lugar. A Kraken não está atualmente sujeita a IVA e não o cobra. Na comparação com outras ofertas, contam o mesmo âmbito e o preço final total."
+          "body": "A calculadora apresenta as tarifas, os extras escolhidos e as regras de preço aplicáveis. Preço final – sem IVA."
         },
         {
           "title": "Pessoas que pode contactar",

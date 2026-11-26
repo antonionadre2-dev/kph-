@@ -1,0 +1,308 @@
+{
+  "date": "2026-11-26",
+  "productionDeployment": false,
+  "tests": {
+    "total": 543,
+    "passed": 537,
+    "skipped": 6,
+    "failed": 0
+  },
+  "typecheck": true,
+  "build": true,
+  "source": "actual local compiled build",
+  "bookingsCreated": 0,
+  "emailsSent": 0,
+  "paymentsCreated": 0,
+  "screenshots": [
+    {
+      "service": "end",
+      "language": "de",
+      "width": 375,
+      "file": "end-de-375.png",
+      "canonicalPath": "/offerte",
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375,
+        "height": 5482
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "end",
+      "language": "de",
+      "width": 768,
+      "file": "end-de-768.png",
+      "canonicalPath": "/offerte",
+      "metrics": {
+        "viewport": 768,
+        "scrollWidth": 768,
+        "height": 3921
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "end",
+      "language": "de",
+      "width": 1280,
+      "file": "end-de-1280.png",
+      "canonicalPath": "/offerte",
+      "metrics": {
+        "viewport": 1280,
+        "scrollWidth": 1280,
+        "height": 2812
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "moving",
+      "language": "de",
+      "width": 375,
+      "file": "moving-de-375.png",
+      "canonicalPath": "/offerte",
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375,
+        "height": 6347
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "moving",
+      "language": "de",
+      "width": 768,
+      "file": "moving-de-768.png",
+      "canonicalPath": "/offerte",
+      "metrics": {
+        "viewport": 768,
+        "scrollWidth": 768,
+        "height": 4687
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "moving",
+      "language": "de",
+      "width": 1280,
+      "file": "moving-de-1280.png",
+      "canonicalPath": "/offerte",
+      "metrics": {
+        "viewport": 1280,
+        "scrollWidth": 1280,
+        "height": 3468
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "end",
+      "language": "es",
+      "width": 375,
+      "file": "end-es-375.png",
+      "canonicalPath": "/es/offerte",
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375,
+        "height": 5531
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "end",
+      "language": "es",
+      "width": 768,
+      "file": "end-es-768.png",
+      "canonicalPath": "/es/offerte",
+      "metrics": {
+        "viewport": 768,
+        "scrollWidth": 768,
+        "height": 3919
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "end",
+      "language": "es",
+      "width": 1280,
+      "file": "end-es-1280.png",
+      "canonicalPath": "/es/offerte",
+      "metrics": {
+        "viewport": 1280,
+        "scrollWidth": 1280,
+        "height": 2812
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "moving",
+      "language": "es",
+      "width": 375,
+      "file": "moving-es-375.png",
+      "canonicalPath": "/es/offerte",
+      "metrics": {
+        "viewport": 375,
+        "scrollWidth": 375,
+        "height": 6355
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "moving",
+      "language": "es",
+      "width": 768,
+      "file": "moving-es-768.png",
+      "canonicalPath": "/es/offerte",
+      "metrics": {
+        "viewport": 768,
+        "scrollWidth": 768,
+        "height": 4727
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    },
+    {
+      "service": "moving",
+      "language": "es",
+      "width": 1280,
+      "file": "moving-es-1280.png",
+      "canonicalPath": "/es/offerte",
+      "metrics": {
+        "viewport": 1280,
+        "scrollWidth": 1280,
+        "height": 3468
+      },
+      "missingAssets": [],
+      "browserErrors": []
+    }
+  ],
+  "checks": [
+    {
+      "name": "de: room tier +5m² =480",
+      "passed": true
+    },
+    {
+      "name": "de: extra area capped at next base560",
+      "passed": true
+    },
+    {
+      "name": "de: >20m² becomes personalquote",
+      "passed": true
+    },
+    {
+      "name": "es: room tier +5m² =480",
+      "passed": true
+    },
+    {
+      "name": "es: extra area capped at next base560",
+      "passed": true
+    },
+    {
+      "name": "es: >20m² becomes personalquote",
+      "passed": true
+    },
+    {
+      "name": "de: hourly3h345, deposit37.50basedonminimum250",
+      "passed": true
+    },
+    {
+      "name": "de: twopeople4h640; helper840",
+      "passed": true
+    },
+    {
+      "name": "de: missingdistance doesnotinventfixedprice",
+      "passed": true
+    },
+    {
+      "name": "de: fixed2.5rooms with3rdfloor=870",
+      "passed": true
+    },
+    {
+      "name": "de: combined2.5rooms790+560-60=1290",
+      "passed": true
+    },
+    {
+      "name": "de: combined selection survives reload",
+      "passed": true
+    },
+    {
+      "name": "de:3.5roomsfrom1150requiresphotos",
+      "passed": true
+    },
+    {
+      "name": "de:25km personalquote, noeligiblefromprice",
+      "passed": true
+    },
+    {
+      "name": "es: hourly3h345, deposit37.50basedonminimum250",
+      "passed": true
+    },
+    {
+      "name": "es: twopeople4h640; helper840",
+      "passed": true
+    },
+    {
+      "name": "es: missingdistance doesnotinventfixedprice",
+      "passed": true
+    },
+    {
+      "name": "es: fixed2.5rooms with3rdfloor=870",
+      "passed": true
+    },
+    {
+      "name": "es: combined2.5rooms790+560-60=1290",
+      "passed": true
+    },
+    {
+      "name": "es: combined selection survives reload",
+      "passed": true
+    },
+    {
+      "name": "es:3.5roomsfrom1150requiresphotos",
+      "passed": true
+    },
+    {
+      "name": "es:25km personalquote, noeligiblefromprice",
+      "passed": true
+    },
+    {
+      "name": "de:320px movingnooverflow,nountranslatedkeys",
+      "passed": true
+    },
+    {
+      "name": "en:320px movingnooverflow,nountranslatedkeys",
+      "passed": true
+    },
+    {
+      "name": "es:320px movingnooverflow,nountranslatedkeys",
+      "passed": true
+    },
+    {
+      "name": "pt:320px movingnooverflow,nountranslatedkeys",
+      "passed": true
+    },
+    {
+      "name": "it:320px movingnooverflow,nountranslatedkeys",
+      "passed": true
+    },
+    {
+      "name": "fr:320px movingnooverflow,nountranslatedkeys",
+      "passed": true
+    },
+    {
+      "name": "/es/kleinumzug/zuerich: visible pricingtable,nohorizontaloverflow",
+      "passed": true
+    },
+    {
+      "name": "/es/umzugsreinigung/zuerich: visible pricingtable,nohorizontaloverflow",
+      "passed": true
+    }
+  ]
+}

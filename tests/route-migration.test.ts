@@ -6,6 +6,8 @@ import { getRouteDisposition, PUBLIC_BASE_PATHS } from '../src/routing/route-pol
 import { getSitemapUrls } from '../scripts/generate-sitemap.mjs';
 import { getPageSeo } from '../src/seo/metadata.ts';
 import { getPublicPriceOffers } from '../src/booking/publicPricing.ts';
+import { calculatePrice, defaultSelection } from '../src/booking/pricing.ts';
+import { pricingConfig } from '../src/booking/pricingConfig.ts';
 
 test('old language and service URLs redirect in one hop while opaque context and fragments survive', () => {
   const cases = [
@@ -63,7 +65,7 @@ test('144 current URLs are 200 canonical, language-prefixed, reciprocal and free
   }
 });
 
-test('service offers use calculator amounts and genuine visible FAQs, with no invented moving price or ratings', () => {
+test('service offers use calculator amounts and genuine visible FAQs, excluding provisional moving prices and invented ratings', () => {
   for (const language of ['de', 'en', 'es', 'pt', 'it', 'fr']) for (const city of ['zuerich', 'schaffhausen', 'winterthur']) {
     const meta = getPageSeo(publicHref('/umzugsreinigung/' + city, language));
     const service = meta.structuredData.find(item => item['@type'] === 'Service')!;
@@ -74,6 +76,20 @@ test('service offers use calculator amounts and genuine visible FAQs, with no in
     const windows = getPageSeo(publicHref('/fensterreinigung/' + city, language)).structuredData.find(item => item['@type'] === 'Service')!;
     assert.equal((windows.offers as {price: string}).price, (getPublicPriceOffers().find(offer => offer.service === 'windows')!.minimumCents! / 100).toFixed(2));
     const moving = getPageSeo(publicHref('/kleinumzug/' + city, language)).structuredData.find(item => item['@type'] === 'Service')!;
-    assert.equal(moving.offers, undefined);
+    const expectedMoving = [
+      ...([1, 2] as const).map(team => calculatePrice({ ...defaultSelection('moving'), mode: 'hourly', team, estimatedHours: pricingConfig.moving.hourly.teams[team].minimumHours })),
+      ...pricingConfig.moving.fixed.tiers.filter(tier => tier.priceType === 'fixed').map(tier => calculatePrice({ ...defaultSelection('moving'), mode: 'fixed', rooms: tier.rooms, distanceKm: pricingConfig.moving.fixed.maxDistanceKm })),
+    ];
+    const offers = moving.offers as { price: string; priceCurrency: string }[];
+    assert.equal(offers.length, 4);
+    assert.deepEqual(offers.map(offer => offer.price), ['250.00', '495.00', '540.00', '790.00']);
+    assert.deepEqual(offers.map(offer => offer.price), expectedMoving.map(quote => (quote.totalCents! / 100).toFixed(2)));
+    assert.ok(offers.every(offer => offer.priceCurrency === pricingConfig.currency));
+    const provisional = pricingConfig.moving.fixed.tiers.find(tier => tier.priceType === 'from')!;
+    const requestOnly = calculatePrice({ ...defaultSelection('moving'), mode: 'fixed', rooms: provisional.rooms, distanceKm: pricingConfig.moving.fixed.maxDistanceKm });
+    assert.equal(requestOnly.totalCents, null);
+    assert.equal(requestOnly.depositBasisCents, null);
+    assert.equal(offers.some(offer => offer.price === (provisional.priceCents / 100).toFixed(2)), false);
+    assert.doesNotMatch(JSON.stringify(moving), /AggregateRating|Review|ratingValue/);
   }
 });

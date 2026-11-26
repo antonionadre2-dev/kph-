@@ -1,3 +1,6 @@
+import { getPublicPriceOffers } from '../booking/publicPricing.ts';
+import { pricingConfig } from '../booking/pricingConfig.ts';
+import { publicPriceText } from '../booking/publicPricingCopy.ts';
 import { ROUTE_MUNICIPALITIES as MUNICIPALITIES } from '../routing/municipalities.ts';
 import { toLegacyPath, publicHref } from '../routing/site-paths.ts';
 import { normalizeHomeLanguage } from '../../components/home/homeTranslations.ts';
@@ -20,9 +23,9 @@ export const LOCAL_SERVICES = [
   },
   {
     id: 'end-of-tenancy', calculatorService: 'end', anchor: 'umzugsreinigung', title: 'Umzugsreinigung',
-    description: 'Der Auszug steht an? Wir übernehmen die Endreinigung Ihrer Wohnung mit 1–4 Zimmern und besprechen, was für die Wohnungsabgabe gereinigt werden soll. Küche, Bad, Böden und weitere Bereiche planen wir nach dem vereinbarten Umfang. Anforderungen Ihrer Verwaltung und besondere Verschmutzungen können Sie bei der Anfrage angeben.',
+    description: 'Der Auszug steht an? Wir übernehmen die Endreinigung Ihrer Wohnung mit 1–5.5 Zimmern und besprechen, was für die Wohnungsabgabe gereinigt werden soll. Küche, Bad, Böden und weitere Bereiche planen wir nach dem vereinbarten Umfang. Anforderungen Ihrer Verwaltung und besondere Verschmutzungen können Sie bei der Anfrage angeben.',
     preparation: 'Zimmerzahl, Zustand und gewünschter Reinigungstermin.',
-    metadata: 'Umzugsreinigung in {city} für private Wohnungen mit 1–4 Zimmern. Küche, Bad und Wohnräume nach Absprache. Umfang und Termin im Rechner planen.',
+    metadata: 'Umzugsreinigung in {city} für private Wohnungen mit 1–5.5 Zimmern. Küche, Bad und Wohnräume nach Absprache. Umfang und Termin im Rechner planen.',
   },
   {
     id: 'daily-cleaning', calculatorService: 'regular', anchor: 'regelmaessige-reinigung', title: 'Regelmässige Reinigung',
@@ -106,6 +109,7 @@ export function getLocalSeoDescriptor(pathname: string, language: string = 'de')
     : route.kind === 'coverage' ? 'Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur. Fünf Leistungen für Ihr Zuhause, auch Wohnungen mit 1–4 Zimmern. Persönlich planen.'
       : route.kind === 'region' ? 'Reinigung und kleine Umzüge in {city} für Privathaushalte. Fenster, Umzugsreinigung, regelmässige Reinigung und Grundreinigung. Auftrag im Rechner planen.'
         : 'Reinigung oder kleinen Umzug für Ihre Adresse in {city} anfragen. Senden Sie Aufgabe und Wunschdatum; Verfügbarkeit und Umfang werden persönlich geprüft.';
-  const description = t(descriptionSource).replace('{city}', name);
+  const moving = getPublicPriceOffers().find(offer => offer.service === 'moving')!;
+  const description = service?.calculatorService === 'moving' ? publicPriceText(language, 'movingMeta', { city: name, price: 'CHF ' + (moving.hourlyRateCents! / 100), hours: String(moving.minimumHours), travel: 'CHF ' + (pricingConfig.moving.travelCents / 100), vat: publicPriceText(language, 'vat') }) : t(descriptionSource).replace('{city}', name);
   return { title: `${h1} | Kraken PFM`, h1, description, indexable, route };
 }

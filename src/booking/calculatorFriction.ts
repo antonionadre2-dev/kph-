@@ -1,5 +1,6 @@
 import { bookingLanguage, bookingLineLabel, bookingText } from './uiCopy.ts';
 import { calculatePrice, type BookingSelection } from './pricing.ts';
+import { pricingUiText } from './pricingUiCopy.ts';
 
 type Row = readonly [string, string, string, string, string, string];
 const languages = { de: 0, en: 1, es: 2, fr: 3, it: 4, pt: 5 };
@@ -30,9 +31,12 @@ export function buildQuoteWhatsAppHref(selection: BookingSelection, selectedServ
   const quote = calculatePrice(selection);
   const locale = bookingLanguage(language);
   const money = (cents: number) => new Intl.NumberFormat(locale === 'de' ? 'de-CH' : locale, { style: 'currency', currency: 'CHF', currencyDisplay: 'code' }).format(cents / 100);
+  const amount = quote.priceType === 'from' && typeof quote.fromPriceCents === 'number' ? pricingUiText(locale, 'fromPrice', { price: money(quote.fromPriceCents) }) : quote.totalCents === null ? bookingText(locale, 'individual') : money(quote.totalCents);
   const lines = [frictionText(locale, 'whatsappHello'), bookingText(locale, selectedService === 'deep' ? 'deep' : quote.service),
     ...quote.lines.map(line => `${bookingLineLabel(locale, line)}: ${money(line.totalCents)}`),
-    `${bookingText(locale, 'total')}: ${quote.totalCents === null ? bookingText(locale, 'individual') : money(quote.totalCents)}`,
+    `${quote.priceType === 'estimate' ? pricingUiText(locale, 'estimate') : bookingText(locale, 'total')}: ${amount}`,
+    pricingUiText(locale, 'finalPrice'),
+    ...(quote.priceType === 'estimate' ? [pricingUiText(locale, 'estimateHint')] : quote.priceType === 'from' ? [pricingUiText(locale, 'fromHint')] : []),
     frictionText(locale, 'whatsappRequest')];
   return `https://wa.me/41774505705?text=${encodeURIComponent(lines.join('\n'))}`;
 }

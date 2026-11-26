@@ -329,6 +329,31 @@ p.kr-calc-hint{margin-top:10px}
 
 .kr-calc-field-error{display:block;margin-top:6px;color:#914c30;font-size:.8125rem;line-height:1.5}.kr-service-calculator [aria-invalid="true"]{border-color:#b46d4e;background:#fff8f3}
 
+/* Moving quantities stay separate from addresses and the appointment request. */
+.kr-calc-moving-fields{display:grid;gap:20px;min-width:0}
+.kr-calc-moving-fields>.kr-calc-fields{margin:0}
+.kr-calc-moving-rule,.kr-calc-area-rule{margin:0;padding:13px 16px;border-radius:12px;background:#eff7fc;color:#44677f;font-size:.8125rem;line-height:1.65}
+.kr-calc-moving-addresses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;min-width:0}
+.kr-calc-moving-address-group{display:grid;gap:12px;align-content:start;min-width:0}
+.kr-calc-moving-address-group>.kr-calc-toggle{min-height:76px;margin:0}
+.kr-calc-moving-special{min-width:0;margin:0;padding:0;border:0}
+.kr-calc-moving-special>legend{padding:0;font-weight:750;font-size:.9375rem;color:var(--kr-navy)}
+.kr-calc-moving-special>.kr-calc-hint{margin:5px 0 12px}
+.kr-calc-moving-combo{min-width:0;padding:20px;border:1px solid #cae6da;border-radius:16px;background:#f3fbf7}
+.kr-calc-moving-combo>h3{margin:0 0 8px;font-size:1.0625rem;line-height:1.5;color:var(--kr-navy)}
+.kr-calc-moving-combo>p{font-size:.8125rem;line-height:1.65;margin:0 0 14px}
+.kr-calc-moving-combo>.kr-calc-toggle{background:#fff}
+.kr-calc-combo-fields{margin-top:18px!important}
+.kr-calc-combo-extras{margin-top:18px;border-top:1px solid #cde1d7}
+.kr-calc-combo-extras>summary{min-height:48px;padding:12px 0;cursor:pointer;font-size:.875rem;font-weight:750;color:var(--kr-navy)}
+.kr-calc-combo-extras>.kr-calc-fields{margin:8px 0 18px}
+.kr-calc-moving-description{margin:0}
+.kr-calc-final-price{margin:8px 0 14px;font-size:.75rem;line-height:1.6;font-weight:650;color:#526e7d}
+.kr-calc-deposit-preview{padding:13px 14px;margin:14px 0;border:1px solid #d9e5ed;border-radius:12px;font-size:.75rem;line-height:1.65;color:#47687d;background:#f8fbfd}
+.kr-calc-deposit-preview>strong{display:block;margin-top:7px;color:var(--kr-navy);font-size:.8125rem}
+.kr-calc-mobile-price>small{display:block;max-width:100%;font-size:.5625rem;line-height:1.4;overflow-wrap:anywhere;color:#5d7385}
+@media(max-width:600px){.kr-calc-moving-addresses{grid-template-columns:minmax(0,1fr);gap:18px}.kr-calc-moving-combo{padding:16px}.kr-calc-moving-fields{gap:17px}.kr-calc-mobile-price{min-width:0}.kr-calc-mobile-bar .kr-calc-primary{flex-shrink:0}}
+
 .kr-calc-kai-transfer{margin-bottom:22px}.kr-calc-kai-transfer h2{margin:0 0 10px;color:var(--kr-navy);font-size:1.2rem}.kr-calc-kai-transfer dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px;margin:16px 0 0}.kr-calc-kai-transfer dt{font-size:.8rem;font-weight:700;color:var(--kr-muted)}.kr-calc-kai-transfer dd{margin:3px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
 
 /* Postcode first; supplemental tools stay behind one native disclosure. */

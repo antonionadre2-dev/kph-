@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { defaultSelection } from '../src/booking/pricing.ts';
+import { calculatePrice, defaultSelection } from '../src/booking/pricing.ts';
 import { CALCULATOR_DRAFT_KEY, CALCULATOR_CONTACT_KEY, CALCULATOR_SUBMISSION_KEY, CALCULATOR_DRAFT_TTL_MS, CALCULATOR_SESSION_TTL_MS, writeCalculatorDraft, readCalculatorDraft, clearCalculatorDraft, purgeExpiredCalculatorSession, calculatorSubmission, type CalculatorDraftState } from '../src/booking/calculatorDraft.ts';
 
 const NOW = Date.parse('2026-11-26T08:00:00Z');
@@ -49,6 +49,55 @@ test('moving descriptions remain session-only and incomplete numeric inputs do n
   const incomplete={...state(),selection:{...defaultSelection('endOfTenancy'),areaM2:NaN}};
   writeCalculatorDraft(incomplete,local,session,NOW+2);
   assert.ok(Number.isNaN((readCalculatorDraft(local,session,NOW+3)!.selection as any).areaM2));
+});
+
+test('structured moving and combined cleaning survive reload without storing nested private data or supplied prices',()=>{
+  const local=fixture(),session=fixture();
+  const moving={...defaultSelection('moving'),mode:'fixed' as const,rooms:2.5,distanceKm:10,originFloor:3,originLift:false,details:'Private address and furniture description',sameAddress:true,
+    cleaning:{...defaultSelection('endOfTenancy'),rooms:2.5,areaM2:70,customer:{email:'private@example.test'},address:'Private address',totalCents:1,accessToken:'forbidden'},
+    customer:{name:'Private Name'},quote:{totalCents:1},totalCents:1,address:'Private address',token:'forbidden'};
+  writeCalculatorDraft({...state(),choice:'moving',selection:moving} as any,local,session,NOW);
+  const saved=readCalculatorDraft(local,session,NOW+1)!;
+  assert.equal(saved.selection.service,'moving');
+  if(saved.selection.service!=='moving')throw Error('wrong service');
+  assert.equal(saved.selection.distanceKm,10);assert.equal(saved.selection.originFloor,3);assert.equal(saved.selection.originLift,false);
+  assert.equal(saved.selection.sameAddress,true);assert.equal(saved.selection.cleaning?.areaM2,70);
+  assert.equal(saved.selection.details,moving.details);
+  assert.equal(calculatePrice(saved.selection).totalCents,137000);
+  assert.doesNotMatch(local.getItem(CALCULATOR_DRAFT_KEY)!,/Private|private@|"customer"|"address"|"details"|totalCents|quote|token|forbidden/i);
+  assert.doesNotMatch(session.getItem(CALCULATOR_CONTACT_KEY)!,/forbidden|totalCents|quote/);
+  const expired=readCalculatorDraft(local,session,NOW+CALCULATOR_SESSION_TTL_MS)!;
+  assert.equal(expired.selection.service,'moving');
+  assert.equal((expired.selection as any).details,undefined);
+  assert.deepEqual((expired.selection as any).cleaning,saved.selection.cleaning);
+});
+
+test('unknown moving distance remains absent and nested cleaning cannot inject another draft or recurse',()=>{
+  const local=fixture(),session=fixture();
+  writeCalculatorDraft({...state(),choice:'moving',selection:{...defaultSelection('moving'),mode:'fixed',distanceKm:undefined}},local,session,NOW);
+  const saved=readCalculatorDraft(local,session,NOW+1)!;
+  assert.equal((saved.selection as any).distanceKm,undefined);
+  assert.equal(calculatePrice(saved.selection).priceType,'personal');
+  assert.equal(calculatePrice(saved.selection).totalCents,null);
+  const envelope=JSON.parse(local.getItem(CALCULATOR_DRAFT_KEY)!);
+  envelope.data.selection.cleaning={service:'moving',cleaning:{service:'moving',details:'private'}};
+  local.setItem(CALCULATOR_DRAFT_KEY,JSON.stringify(envelope));
+  assert.equal(readCalculatorDraft(local,session,NOW+2),null);
+});
+
+test('a restored one-off regular cleaning cannot be relabelled as deep cleaning',()=>{
+  const regular={...defaultSelection('regular'),frequency:'once' as const,hours:2.5};
+  const local=fixture(),session=fixture();
+  writeCalculatorDraft({...state(),choice:'regular',selection:regular},local,session,NOW);
+  assert.equal(readCalculatorDraft(local,session,NOW+1)?.choice,'regular');
+  const forged=JSON.parse(local.getItem(CALCULATOR_DRAFT_KEY)!);forged.data.choice='deep';
+  local.setItem(CALCULATOR_DRAFT_KEY,JSON.stringify(forged));
+  assert.equal(readCalculatorDraft(local,session,NOW+2),null);
+  const {cleaningKind:omitted,...legacy}=regular;
+  writeCalculatorDraft({...state(),choice:'deep',selection:{...legacy,hours:3}},local,session,NOW+3);
+  const saved=readCalculatorDraft(local,session,NOW+4)!;
+  assert.equal(saved.choice,'deep');assert.equal((saved.selection as any).cleaningKind,undefined);
+  assert.equal(calculatePrice(saved.selection).totalCents,13200);
 });
 
 test('malformed, excessive-retention or unsupported records fail closed and injected fields are scrubbed without renewing',()=>{

@@ -352,7 +352,7 @@ export const MUNICIPALITIES: Municipality[] = [
         officialSackName: "Gemeindeeigene Abfallmarken Feuerthalen (Schaffhauser Böcklisack ungültig)",
         sackSizes: ["17 L", "35 L", "60 L", "110 L"],
         recyclingCenter: "Werkhof Feldstrasse 132 (Mo 10:30–11:30 & 1. Sa/Monat 10:30–11:30)",
-        sperrgutRules: "Nur gemeindeeigene Abfall- & Sperrgutmarken. Gebündelt/gepresst am Abfuhrtag bis 07:00 Uhr (nicht am Vortag!). Grundgebühr: CHF 140 EFH / 70 MFH / 210 Betrieb (exkl. MwSt). Abfuhr durch REMONDIS Schweiz AG (052 643 11 88)."
+        sperrgutRules: "Nur gemeindeeigene Abfall- & Sperrgutmarken. Gebündelt/gepresst am Abfuhrtag bis 07:00 Uhr (nicht am Vortag!). Grundgebühr: CHF 140 EFH / 70 MFH / 210 Betrieb. Abfuhr durch REMONDIS Schweiz AG (052 643 11 88)."
       },
       quartiere: ["Feuerthalen Dorf", "Langwiesen"],
       einsatzhinweis: "Direkt an Rheinbrücke — fahrkostenfreie Anfahrt ab Schaffhausen."

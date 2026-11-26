@@ -5,7 +5,8 @@ import { isIndexablePath, isPrivateUrl } from './crawl-policy.ts';
 import { CORE_SERVICE_CATALOG, SITE_IDENTITY } from './site-identity.ts';
 import { publicHref, pathLanguage, toLegacyPath } from '../routing/site-paths.ts';
 import { getEndOfTenancyMetadata, getEndOfTenancyOfferRows } from './end-of-tenancy-metadata.ts';
-import { getPublicPriceOffers } from '../booking/publicPricing.ts';
+import { getMovingTariffs, getPublicPriceOffers } from '../booking/publicPricing.ts';
+import { publicPriceText } from '../booking/publicPricingCopy.ts';
 import { getHomeFaqs, getServicePageFaqs } from './page-faqs.ts';
 import { getRegionalPageMetadata } from './regional-metadata.ts';
 import { getContactCopy } from '../contact/contact-copy.ts';
@@ -74,6 +75,10 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
   if (!indexable) return result;
 
   const origin = SITE_IDENTITY.origin;
+  const publicOffers = getPublicPriceOffers();
+  const endMinimum = publicOffers.find(offer => offer.service === 'end')!;
+  const movingMinimum = publicOffers.find(offer => offer.service === 'moving')!;
+  const publicMoney = (cents: number) => 'CHF ' + (cents / 100).toFixed(2);
   const businessId = `${origin}/#business`;
   const websiteId = `${origin}/#website`;
   const serviceCatalog = CORE_SERVICE_CATALOG.map(service => ({
@@ -104,7 +109,7 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
     telephone: SITE_IDENTITY.telephone,
     address: { '@type': 'PostalAddress', ...SITE_IDENTITY.address },
     geo: { '@type': 'GeoCoordinates', ...SITE_IDENTITY.geo },
-    priceRange: `${homeText(locale, 'Umzugsreinigung')}: ${{ de: 'ab', en: 'from', es: 'desde', pt: 'desde', it: 'da', fr: 'dès' }[locale]} CHF ${(getPublicPriceOffers().find(offer => offer.service === 'end')!.minimumCents! / 100).toFixed(2)}`,
+    priceRange: `${homeText(locale, 'Umzugsreinigung')}: ${publicPriceText(locale, 'from', { price: publicMoney(endMinimum.minimumCents!) })}; ${homeText(locale, 'Kleine Umzüge')}: ${publicPriceText(locale, 'from', { price: publicMoney(movingMinimum.hourlyRateCents!) })}/h, ${publicPriceText(locale, 'minimumOrder', { price: publicMoney(movingMinimum.minimumCents!) })}. ${publicPriceText(locale, 'vat')}`,
     areaServed: SITE_IDENTITY.areas.map(name => ({ '@type': 'City', name })),
     openingHoursSpecification: [{
       '@type': 'OpeningHoursSpecification',
@@ -153,13 +158,29 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
         if (endOfTenancy) {
           const rows = getEndOfTenancyOfferRows(locale).filter(row => row.priceCents !== null);
           const node = schema[schema.length - 1];
-          node.offers = rows.map(row => ({ '@type': 'Offer', name: row.name, priceCurrency: 'CHF', price: (row.priceCents! / 100).toFixed(2), url: localizedCanonicalUrl('/offerte', locale) + '?service=end', seller: { '@id': businessId } }));
+          node.offers = rows.map(row => ({ '@type': 'Offer', name: row.name, description: publicPriceText(locale, 'vat'), priceCurrency: 'CHF', price: (row.priceCents! / 100).toFixed(2), url: localizedCanonicalUrl('/offerte', locale) + '?service=end', seller: { '@id': businessId } }));
           visibleFaqs = endOfTenancy.faqs;
         } else {
           const key = ({ 'window-cleaning': 'windows', 'daily-cleaning': 'regular', 'deep-cleaning': 'deep', 'moving-furniture': 'moving' } as Record<string, string>)[serviceMatch[2]];
           const offer = getPublicPriceOffers().find(item => item.service === key);
           visibleFaqs = getServicePageFaqs(key,locale);
-          if (offer?.minimumCents !== null && offer?.minimumCents !== undefined) schema[schema.length - 1].offers = {
+          if (key === 'moving') {
+            const tariffs = getMovingTariffs();
+            const target = new URL(publicHref('/offerte?service=moving', locale), origin).href;
+            const common = { '@type': 'Offer', priceCurrency: 'CHF', url: target, seller: { '@id': businessId } };
+            schema[schema.length - 1].offers = [
+              ...tariffs.hourly.map(row => ({ ...common, name: `${publicPriceText(locale, row.team === 1 ? 'oneMover' : 'twoMovers')} · ${publicPriceText(locale, 'hours', { hours: String(row.minimumHours) })}`,
+                price: (row.quote.totalCents! / 100).toFixed(2),
+                description: `${publicPriceText(locale, 'hours', { hours: String(row.minimumHours) })}; ${publicPriceText(locale, 'hourlyRules', { travel: publicMoney(tariffs.travelCents), minutes: String(tariffs.billingMinutes), deposit: '15' })} ${publicPriceText(locale, 'vat')}`,
+                priceSpecification: { '@type': 'UnitPriceSpecification', price: (row.hourlyRateCents / 100).toFixed(2), priceCurrency: 'CHF', unitCode: 'HUR' },
+                eligibleDuration: { '@type': 'QuantitativeValue', minValue: row.minimumHours, unitCode: 'HUR' } })),
+              // A provisional "from" price is not a binding offer or an immediate payment amount.
+              ...tariffs.fixed.filter(row => row.priceType === 'fixed').map((row, index) => ({ ...common,
+                name: publicPriceText(locale, 'roomBand', { min: String(Math.floor(row.rooms)), max: String(row.rooms) }),
+                price: (row.quote.totalCents! / 100).toFixed(2),
+                description: `${publicPriceText(locale, 'fixedRules', { distance: String(tariffs.maxDistanceKm) })} ${publicPriceText(locale, 'vat')}` })),
+            ];
+          } else if (offer?.minimumCents !== null && offer?.minimumCents !== undefined) schema[schema.length - 1].offers = {
             '@type': 'Offer', name: meta.h1, priceCurrency: offer.quote.currency,
             price: (offer.minimumCents / 100).toFixed(2),
             url: new URL(publicHref(`/offerte?service=${key}`, locale), origin).href,

@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { calculatePrice, type BookingSelection, type PriceQuote } from '../src/booking/pricing';
 import { bookingLineLabel, bookingText } from '../src/booking/uiCopy';
+import { pricingUiText } from '../src/booking/pricingUiCopy';
 import { fetchRecoveryEmailSettings, recoveryReminderFeedbackKey } from '../src/booking/emailAvailability';
 import { recoveryCopy, recoveryLanguage, type RecoveryEmailKind } from '../src/booking/recoveryCopy';
 import { type GuidePreferences } from '../src/booking/movingGuide';
@@ -305,9 +306,8 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
           <div className="kr-recovery-email-content"><h3>{message.title}</h3><p>{message.body}</p>
             <div className="kr-recovery-email-quote"><div className="kr-recovery-email-service"><span>{copy.service}</span><strong>{serviceLabel}</strong></div>
               {quote && <ul className="kr-recovery-email-lines">{quote.lines.map(line => <li key={line.id}><span>{bookingLineLabel(language, line)}</span><b>{money(line.totalCents)}</b></li>)}</ul>}
-              <div className="kr-recovery-email-total"><span>{copy.selectedPrice}</span><strong>{quote ? quote.totalCents === null ? copy.individualPrice : money(quote.totalCents) : '—'}</strong></div>
-              {quote && quote.totalCents !== null && <><div className="kr-recovery-email-tax"><span>{copy.vat}</span><b>{money(0)}</b></div>
-                <div className="kr-recovery-email-saving"><span>{copy.comparison}</span><strong>{money(quote.vatComparisonCents ?? 0)}</strong><small>{copy.comparisonDetail}</small><small>{copy.hypotheticalGross}: {money(quote.totalCents + (quote.vatComparisonCents ?? 0))}</small></div></>}
+              <div className="kr-recovery-email-total"><span>{copy.selectedPrice}</span><strong>{quote ? quote.priceType === 'from' && quote.fromPriceCents ? pricingUiText(language, 'fromPrice', {price:money(quote.fromPriceCents)}) : quote.totalCents === null ? copy.individualPrice : (quote.priceType === 'estimate' ? pricingUiText(language,'estimate') + ': ' : '') + money(quote.totalCents) : '—'}</strong></div>
+              {quote && <p className="kr-recovery-email-tax">{pricingUiText(language,'finalPrice')}</p>}
             </div>
             {modalOpen && guide && <div className="kr-recovery-email-guide">{guide}</div>}
             <p className="kr-recovery-email-appointment">{copy.noReservation}</p>

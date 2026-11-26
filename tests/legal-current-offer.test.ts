@@ -26,19 +26,20 @@ test('consumer terms remove retired services and unsupported fees while preservi
     });
     [4,5,7].forEach((index,hashIndex)=>assert.equal(createHash('sha256').update(terms.sections[index].content).digest('hex'),originalHashes[language][hashIndex],language+': unchanged section '+(index+1)));
     assert.doesNotMatch(text,/Facility|Properties and|B2B|\bSLAs?\b|Precision Media|Car Detailing|Gardening|Gartenpflege|jardinería|giardinaggio|Pest Control|Schädlings|nuisibles|disinfestazione|gestão de propriedades|gestión de propiedades|90[.,]00|5[,.']000/i);
-    assert.match(terms.sections[1].content,/15%/);
+    assert.match(terms.sections[1].content,/15\s*%/);
     assert.match(terms.sections[7].content,/24h/);
     assert.match(terms.sections[7].content,/72h/);
     assert.equal(compatibleTerms(language),terms);
   }
-  // The owner's latest instruction confirms a fixed price for the declared scope.
-  for (const [language, phrase] of Object.entries({de:'Festpreis',en:'fixed price',es:'precio cerrado',pt:'preço fixo',it:'prezzo fisso',fr:'prix fixe'})) {
+  // Fixed services retain fixed scope prices; the new hourly moving tariff is an estimate.
+  for (const [language, phrase] of Object.entries({de:'Festpreis',en:'fixed-price',es:'precio fijo',pt:'preço fixo',it:'prezzo fisso',fr:'forfait'})) {
     const terms=getTermsTranslation(language);
     assert.ok(terms.sections[1].content.includes(phrase));
     assert.ok(terms.lastUpdated.includes(BOOKING_TERMS_VERSION));
-    assert.doesNotMatch(terms.sections[1].content,/unverbindlich|preliminary|orientativ/i);
+    assert.match(terms.sections[1].content,/15/);
   }
-  assert.match(getTermsTranslation('de').sections[3].content,/im Preis des Rechners enthalten/);
+  assert.match(getTermsTranslation('de').sections[1].content,/Richtpreis.*15-Minuten-Schritten/);
+  assert.match(getTermsTranslation('de').sections[3].content,/im angezeigten Gesamtpreis enthalten/);
   assert.doesNotMatch(JSON.stringify(getTermsTranslation('de')),/ß/);
 });
 

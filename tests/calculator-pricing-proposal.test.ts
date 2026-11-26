@@ -3,18 +3,18 @@ import { test } from 'node:test';
 import { calculatePrice, defaultSelection, END_OF_TENANCY_TIERS, PRICING_VERSION, REGULAR_RATES, type RegularFrequency } from '../src/booking/pricing';
 import { bookingText } from '../src/booking/uiCopy';
 
-test('proposed frequency rates preserve minimum booked hours and CHF 40/hour floor', () => {
-  const expected: Record<RegularFrequency, number> = { weekly: 10_000, fortnightly: 10_250, monthly: 10_500, once: 13_200 };
+test('approved regular frequency rates preserve 2.5 minimum booked hours and CHF 40/hour floor', () => {
+  const expected: Record<RegularFrequency, number> = { weekly: 10_000, fortnightly: 10_250, monthly: 10_500, once: 11_000 };
   for (const [frequency, total] of Object.entries(expected)) {
     const freq = frequency as RegularFrequency;
-    const minimum = freq === 'once' ? 3 : 2.5;
+    const minimum = 2.5;
     const selection = { ...defaultSelection('regular'), frequency: freq, hours: minimum };
     const quote = calculatePrice(selection);
     assert.equal(quote.totalCents, total);
     assert.ok(REGULAR_RATES[freq] >= 4_000);
     assert.throws(() => calculatePrice({ ...selection, hours: minimum - .25 }));
   }
-  assert.match(PRICING_VERSION, /proposal/);
+  assert.match(PRICING_VERSION, /2026-11-26/);
 });
 
 test('materials remain CHF 10 once per visit, without changing the labour or ironing rates', () => {
@@ -28,17 +28,18 @@ test('materials remain CHF 10 once per visit, without changing the labour or iro
   assert.equal(extras.bookedPersonHours, 4.75);
 });
 
-test('all five end-of-tenancy tiers use the proposed price and the larger room/area category', () => {
+test('all five end-of-tenancy tiers follow rooms, with separate rounded excess area', () => {
   assert.deepEqual(END_OF_TENANCY_TIERS.map(tier => [tier.rooms, tier.maxAreaM2, tier.priceCents]), [
-    [1.5, 45, 45_000], [2.5, 65, 56_000], [3.5, 90, 69_000], [4.5, 115, 83_000], [5.5, 140, 99_000],
+    [1.5, 50, 45_000], [2.5, 75, 56_000], [3.5, 100, 69_000], [4.5, 125, 83_000], [5.5, 150, 99_000],
   ]);
   for (const tier of END_OF_TENANCY_TIERS) {
     const quote = calculatePrice({ ...defaultSelection('endOfTenancy'), rooms: tier.rooms, areaM2: tier.maxAreaM2 });
     assert.equal(quote.totalCents, tier.priceCents);
   }
-  const aboveArea = calculatePrice({ ...defaultSelection('endOfTenancy'), rooms: 1.5, areaM2: 45.01 });
-  assert.equal(aboveArea.totalCents, 56_000);
-  assert.equal(aboveArea.appliedTier?.raisedForArea, true);
+  const aboveArea = calculatePrice({ ...defaultSelection('endOfTenancy'), rooms: 1.5, areaM2: 51.01 });
+  assert.equal(aboveArea.totalCents, 46_200);
+  assert.equal(aboveArea.appliedTier?.raisedForArea, false);
+  assert.equal(aboveArea.lines.find(line=>line.id==='eot-extra-area')?.quantity,2);
   const largerRooms = calculatePrice({ ...defaultSelection('endOfTenancy'), rooms: 3.5, areaM2: 45 });
   assert.equal(largerRooms.totalCents, 69_000);
 });
@@ -63,11 +64,11 @@ test('window minimum is CHF 120 after selected extras, not CHF 120 plus the same
   assert.throws(() => calculatePrice({ ...base, standard: 0, double: 0 }));
 });
 
-test('VAT comparison is rounded in rappen and never deducted from the customer total', () => {
+test('non-registered VAT is neither added nor offered as a hypothetical comparison', () => {
   const quote = calculatePrice({ ...defaultSelection('regular'), frequency: 'fortnightly', hours: 2.75 });
   assert.equal(quote.totalCents, 11_275);
   assert.equal(quote.subtotalCents, 11_275);
-  assert.equal(quote.vatComparisonCents, 913); // CHF 112.75 × 8.1% = CHF 9.13275
+  assert.equal(quote.vatComparisonCents, null);
   assert.equal(quote.vatCents, 0);
   assert.equal(quote.taxStatus, 'not_registered');
   assert.equal(quote.lines.reduce((sum, line) => sum + line.totalCents, 0), quote.totalCents);
@@ -78,7 +79,7 @@ test('construction prices remain unchanged; quote-only cases never get a checkou
   assert.equal(calculatePrice({ ...defaultSelection('construction'), areaM2: 10 }).totalCents, 32_000);
   assert.equal(calculatePrice({ ...defaultSelection('construction'), level: 'full', areaM2: 10 }).totalCents, 42_000);
   const selections = [
-    defaultSelection('moving'),
+    {service:'moving' as const,details:'Legacy personal enquiry'},
     { ...defaultSelection('endOfTenancy'), areaM2: 140.01 },
     { ...defaultSelection('endOfTenancy'), propertyType: 'house' as const },
     { ...defaultSelection('windows'), winterGarden: true },
