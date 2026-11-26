@@ -1,0 +1,74 @@
+[
+  {
+    "width": 320,
+    "code": "de",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 320,
+    "code": "en",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 320,
+    "code": "es",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 320,
+    "code": "pt",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 320,
+    "code": "it",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 320,
+    "code": "fr",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 375,
+    "code": "de",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 375,
+    "code": "en",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 375,
+    "code": "es",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 375,
+    "code": "pt",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 375,
+    "code": "it",
+    "lines": 2,
+    "header": 186
+  },
+  {
+    "width": 375,
+    "code": "fr",
+    "lines": 2,
+    "header": 186
+  }
+]
