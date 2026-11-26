@@ -27,7 +27,7 @@
 .kraken-home .scene-canvas{aspect-ratio:3/2;height:auto;isolation:isolate;--room-brightness:1;--room-saturation:1;--window-shade:0;--window-tint:#163c66}
 .kraken-home .scene-canvas>svg,.kraken-home .scene-room{position:absolute;inset:0;width:100%;height:100%}
 .kraken-home .scene-window{z-index:0;overflow:visible}
-.kraken-home .scene-room{z-index:1;object-fit:contain;filter:brightness(var(--room-brightness)) saturate(var(--room-saturation));transition:filter 1.2s ease}
+.kraken-home .scene-room{z-index:1;object-fit:contain;opacity:1;filter:brightness(var(--room-brightness)) saturate(var(--room-saturation));transition:none}
 .kraken-home .scene-window-shade{fill:var(--window-tint);opacity:var(--window-shade);transition:opacity 1.2s ease,fill 1.2s ease}
 .kraken-home .scene-canvas[data-phase="dawn"]{--room-brightness:.95;--window-shade:.13;--window-tint:#d0a5b0}
 .kraken-home .scene-canvas[data-phase="evening"]{--room-brightness:.92;--window-shade:.24;--window-tint:#d58c65}

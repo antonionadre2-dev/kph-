@@ -9,6 +9,7 @@ import { publicPriceText } from '../src/booking/publicPricingCopy.ts';
 import { homeText } from '../components/home/homeTranslations.ts';
 import { publicHref } from '../src/routing/site-paths.ts';
 import { getKaiFact } from '../src/kai/facts.ts';
+import { getBrandTranslation, KRAKEN_COMPANY_DESCRIPTOR } from '../src/i18n/public-translations.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const bundle = await build({
@@ -68,7 +69,9 @@ test('header, home and footer advertise the current business and link to the Zur
   for (const language of languages) {
     const header=renderHeader(language),home=render(language),footer=renderFooter(language);
     assert.ok(header.includes(homeText(language,'Reinigung & kleine Umzüge').replace(/&/g,'&amp;')));
-    assert.doesNotMatch(header, /Properties|Facilities|commercial|sustainability/);
+    assert.ok(header.includes('<span class="kr-brand-company" translate="no">'+escapeMarkup(KRAKEN_COMPANY_DESCRIPTOR)+'</span>'));
+    assert.ok(header.includes('<span class="kr-brand-tagline">'+escapeMarkup(getBrandTranslation(language,'header.tagline'))+'</span>'));
+    assert.doesNotMatch(header, /commercial|sustainability/);
     const strip=header.match(/<nav class="header-contact-bar"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
     assert.ok(strip?.includes('href="tel:+41774505705"'));
     assert.ok(strip?.includes('href="https://wa.me/41774505705"'));

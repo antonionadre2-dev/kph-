@@ -1,19 +1,18 @@
-/* A quiet, finite preview: both service cards and all their links remain available. */
+/* Stable cards: changing the preview never changes column widths or text layout. */
 .kraken-home .service-preview-controls{display:flex;justify-content:flex-end;align-items:center;gap:.65rem;margin:-12px 0 16px;color:var(--muted);font-size:.875rem;line-height:1.4;min-height:44px}
 .kraken-home .service-preview-controls[hidden]{display:none}
-.kraken-home .service-preview-controls button{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid #b8cedb;border-radius:50%;color:var(--navy);background:#f5fbff;transition:background .18s,border-color .18s}
-.kraken-home .service-preview-controls button:hover{background:#e8f5fa;border-color:#83aca8}
+.kraken-home .service-preview-controls>span{min-width:0}
+.kraken-home .service-preview-actions{display:flex;gap:8px;flex:none}
+.kraken-home .service-preview-controls button{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid #b8cedb;border-radius:50%;color:var(--navy);background:#f5fbff;transition:background-color 150ms ease-out,transform 100ms ease-out}
+.kraken-home .service-preview-controls button:hover{background:#e8f5fa}
+.kraken-home .service-preview-controls button:active:not(:disabled){transform:scale(.98)}
+.kraken-home .service-preview-controls button:disabled{opacity:.5;cursor:default}
 .kraken-home .service-preview-controls button:focus-visible{outline:3px solid #147b67;outline-offset:3px}
 .kraken-home .service-preview-controls svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .kraken-home .service-preview-play{display:none;fill:currentColor;stroke:none}
 .kraken-home .service-preview-controls.is-paused .service-preview-play{display:block}
 .kraken-home .service-preview-controls.is-paused .service-preview-pause{display:none}
-.kraken-home .services-section .service-cards{transition:grid-template-columns .65s cubic-bezier(.22,.61,.36,1)}
-.kraken-home .services-section .service-card{min-width:0;transition:box-shadow .55s ease}
-.kraken-home .services-section .service-card.is-idle-featured{box-shadow:0 0 0 3px #b6edda,0 14px 32px #002d5b18}
-.kraken-home .services-section .service-card.is-idle-featured .card-art{transform:scale(1.04)}
-.kraken-home .services-section .card-content{transition:transform .55s ease}
-.kraken-home .services-section .service-card.is-idle-featured .card-content{transform:translateY(-6px)}
-@media(min-width:761px){.kraken-home .services-section .service-cards[data-preview-active="0"]{grid-template-columns:1.8fr 1fr}.kraken-home .services-section .service-cards[data-preview-active="1"]{grid-template-columns:1fr 1.8fr}}
-@media(max-width:760px){.kraken-home .service-preview-controls{justify-content:space-between;margin:0 0 16px}.kraken-home .services-section .service-card.is-idle-featured .card-content{transform:none}}
-@media(prefers-reduced-motion:reduce){.kraken-home .service-preview-controls{display:none}.kraken-home .services-section .service-cards,.kraken-home .services-section .service-card,.kraken-home .services-section .card-content{transition:none}.kraken-home .services-section .service-card.is-idle-featured .card-art{transform:none}}
+.kraken-home .services-section .service-cards{transition:none}
+.kraken-home .services-section .service-card.is-idle-featured{outline:3px solid #9cf5c7;outline-offset:3px}
+@media(max-width:760px){.kraken-home .service-preview-controls{justify-content:space-between;margin:0 0 16px}}
+@media(prefers-reduced-motion:reduce){.kraken-home .service-preview-controls button{transition:none;transform:none!important}}

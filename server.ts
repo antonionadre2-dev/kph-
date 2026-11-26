@@ -9,6 +9,7 @@ import { getPageSeo, normalizeCanonicalPath } from "./src/seo/metadata.ts";
 import { injectPageSeo, escapeSeoHtml } from "./src/seo/html.ts";
 import { seoFragmentName, HOME_APP_SSR_MARKER } from "./src/seo/render-contract.ts";
 import { startHomeAfterPaint } from "./src/home/paint-start.ts";
+import { prepareInitialHomeScene } from "./src/home/hero-response.ts";
 import { pathLanguage, toLegacyPath } from "./src/routing/site-paths.ts";
 import { getRouteDisposition } from "./src/routing/route-policy.ts";
 import { publicHref } from "./src/routing/site-paths.ts";
@@ -148,6 +149,7 @@ async function configureApplication() {
         }
         const hydratableHome=isProd&&normalizeCanonicalPath(req.path)==='/'&&content.includes(HOME_APP_SSR_MARKER);
         content=content.replace(HOME_APP_SSR_MARKER,'');
+        if (hydratableHome) content=prepareInitialHomeScene(content);
         const resourcePattern=hydratableHome?/<link\b(?=[^>]*\brel=["'](?:stylesheet|preload)["'])[^>]*\/?>/gi:/<link rel="stylesheet" href="[^"]+">/g;
         const styles = content.match(resourcePattern) || [];
         // Vite already places shared styles in the head. Attribute differences

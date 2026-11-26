@@ -201,7 +201,7 @@ p.kr-calc-hint{margin-top:10px}
 .kr-calc-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .kr-calc-spin { animation: kr-calc-spin 1.2s linear infinite; }
 @keyframes kr-calc-spin { to { transform: rotate(360deg); } }
-@keyframes kr-calc-enter { from { opacity: .45; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes kr-calc-enter { from { opacity: .65; } to { opacity: 1; } }
 
 .kr-calc-fields-group { min-width: 0; padding: 0; margin: 0; border: 0; }
 .kr-calc-contact-group { margin-top: 30px; padding-top: 28px; border-top: 1px solid #e0e9ed; }
@@ -359,3 +359,19 @@ p.kr-calc-hint{margin-top:10px}
 /* Postcode first; supplemental tools stay behind one native disclosure. */
 .kr-calc-postcode-first{padding:22px;background:#eff7fc;border:1px solid #d7e6ef;border-radius:18px;margin-bottom:26px}.kr-calc-postcode-first h3{font-size:1.15rem;line-height:1.4;margin:0 0 10px;color:#062c50}.kr-calc-postcode-first p{font-size:.85rem;line-height:1.7;margin:0 0 15px}.kr-calc-postcode-first p:last-child{margin:15px 0 0;color:#42627a}.kr-calc-postcode-controls{display:flex;gap:16px;align-items:flex-end}.kr-calc-postcode-controls .kr-calc-field{flex:1;max-width:220px}.kr-calc-postcode-controls button{min-height:48px}.kr-calc-secondary-tools{border:1px solid #d7e4ee;border-radius:18px;padding:20px;background:#fff}.kr-calc-secondary-tools>summary{font-size:.9rem;line-height:1.55;font-weight:750;cursor:pointer;color:#062c50}.kr-calc-secondary-tools>summary:focus-visible{outline:3px solid #168a66;outline-offset:5px}.kr-calc-secondary-tools[open]>summary{margin-bottom:22px}.kr-calc-secondary-tools .kr-calc-help{margin-top:24px;padding:18px;box-shadow:none}.kr-calc-whatsapp{padding:20px 0;border-bottom:1px solid #d7e4ee}.kr-calc-whatsapp a{font-weight:750;font-size:.9rem;text-decoration:underline;text-underline-offset:4px;color:#125947}.kr-calc-whatsapp p{font-size:.8rem;line-height:1.7;margin:10px 0 0}.kr-calc-payment-method-note{font-size:.75rem;line-height:1.65;color:#526a7e;margin:12px 0 18px}.kr-calc-payment-method-note span{display:block;margin-top:5px}
 @media(max-width:480px){.kr-calc-postcode-first{padding:18px}.kr-calc-postcode-controls{align-items:stretch;flex-direction:column;gap:12px}.kr-calc-postcode-controls .kr-calc-field{max-width:none}.kr-calc-secondary-tools{padding:18px}}
+
+/* Re-enter each step without remounting controls or moving the scroll target.
+   Opacity alone keeps focusStep's existing heading/scroll geometry stable. */
+.kr-calc-step-panel[data-step="1"]{animation-name:kr-calc-enter-schedule}
+.kr-calc-step-panel[data-step="2"]{animation-name:kr-calc-enter-review}
+@keyframes kr-calc-enter-schedule{from{opacity:.65}to{opacity:1}}
+@keyframes kr-calc-enter-review{from{opacity:.65}to{opacity:1}}
+.kr-calc-mobile-price{border-radius:8px}
+.kr-calc-result-icon .kr-calc-completion-check{width:33px;height:33px}
+
+/* The explicit pressed-button exception is 100 ms; hover colour is 150 ms. */
+:root .kr-service-calculator :is(button,.kr-calc-primary,.kr-calc-secondary,.kr-calc-text-button){transition:transform .1s ease-out,background-color .15s ease-out}
+:root .kr-service-calculator :is(button,.kr-calc-primary,.kr-calc-secondary,.kr-calc-text-button):active:not(:disabled):not([aria-disabled="true"]){transform:scale(.98)}
+@media(prefers-reduced-motion:reduce){
+  :root .kr-service-calculator :is(button,.kr-calc-primary,.kr-calc-secondary,.kr-calc-text-button){transition:none!important;transform:none!important}
+}

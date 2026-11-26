@@ -33,6 +33,10 @@ test('the actual server/browser Application trees have identical first Home mark
       const browser=module.exports.render(language);
       assert.equal(browser,server,language);
       assert.equal((server.match(/id="sceneRoom"/g)||[]).length,1);
+      assert.equal((server.match(/id="sceneRoomMobile"/g)||[]).length,1);
+      assert.match(server,/<img[^>]*id="sceneRoom"[^>]*loading="eager"[^>]*fetchPriority="high"/i);
+      assert.match(server,/<img[^>]*id="sceneRoomMobile"[^>]*loading="lazy"[^>]*fetchPriority="low"/i);
+      assert.equal((server.match(/data:image\/svg\+xml/g)||[]).length,2);
       assert.equal((server.match(/<h1\b/g)||[]).length,1);
       assert.match(server,/<!--\$-->/);assert.doesNotMatch(server,/<!--\$!-->/);
     }

@@ -21,6 +21,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
       'components/home/homeTranslations.ts', 'components/contact/contactTranslations.ts', 'components/services/servicesTranslations.ts',
       'src/contact/routing-server.ts', 'src/booking/pricing.ts', 'src/booking/publicPricing.ts', 'src/booking/publicPricingCopy.ts',
       'src/booking/kaiTransfer.ts', 'src/booking/privateStorage.ts', 'src/home/calculator.ts',
+      'src/home/hero-media.ts', 'src/home/hero-response.ts', 'src/home/scene-calendar.ts', 'src/media/images.ts',
       'src/booking/uiCopy.ts', 'src/booking/pricingConfig.ts', 'src/booking/pricingUiCopy.ts', 'src/booking/terms.ts', 'src/home/paint-start.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',
       ...['server', 'src/kai', 'src/seo', 'src/routing', 'src/i18n', 'src/contact'].flatMap(folder => readdirSync(path.join(root, folder)).filter(name => name.endsWith('.ts')).map(name => `${folder}/${name}`)),
     ];
@@ -30,7 +31,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
       const destination = path.join(directory, name.replace(/\.ts$/, '.js'));
       mkdirSync(path.dirname(destination), { recursive: true }); writeFileSync(destination, output);
     }
-    for (const name of ['firebase-applet-config.json', ...['service', 'http', 'policy', 'emails', 'firestore-store'].map(name => `integrations/recovery/${name}.mjs`)]) {
+    for (const name of ['firebase-applet-config.json', 'src/media/manifest.json', 'src/media/hero-formats.json', ...['service', 'http', 'policy', 'emails', 'firestore-store'].map(name => `integrations/recovery/${name}.mjs`)]) {
       const destination = path.join(directory, name); mkdirSync(path.dirname(destination), { recursive: true });
       writeFileSync(destination, readFileSync(path.join(root, name)));
     }

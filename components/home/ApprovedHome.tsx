@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '../../i18n';
 import { openHomeCalculator, type HomeService } from '../../src/home/calculator';
 import { homeLanguages, homeText, normalizeHomeLanguage } from './homeTranslations';
@@ -9,16 +9,19 @@ import PublicPriceGuide from '../PublicPriceGuide';
 import { publicEndRoomScope } from '../../src/booking/publicPricingCopy';
 import FeaturedMoveoutOffer from './FeaturedMoveoutOffer';
 import CustomerReviews from './CustomerReviews';
+import BeforeAfterComparison from './BeforeAfterComparison';
+import { beforeAfterCases } from '../../src/home/before-after';
 import { publicHref } from '../../src/routing/site-paths';
 import { mediaAsset } from '../../src/media/images';
-import { HERO_DAY, heroImage } from '../../src/home/hero-media';
+import { HERO_DAY, HERO_NIGHT, HERO_DESKTOP_MEDIA, HERO_MOBILE_MEDIA, HERO_EMPTY_SOURCE, heroImage } from '../../src/home/hero-media';
+import { initialSceneCalendar } from '../../src/home/scene-calendar';
 import { getHomeFaqs } from '../../src/kai/facts';
 import { initDeferredHomeMedia } from './deferred-media';
 import { whyTranslations } from './whyTranslations';
 import { initApprovedHome } from './app';
 import { initApartmentScene } from './scene';
 import { initTransit } from './van';
-import { initServicePreview } from './service-idle';
+import { initServicePreview, servicePreviewLabels } from './service-idle';
 import './service-idle.css';
 import './approved-home.css';
 import './responsive-fixes.css';
@@ -31,6 +34,7 @@ import './conversion-home.css';
 export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
   const { language } = useTranslation();
   const homeLanguage = normalizeHomeLanguage(language);
+  const previewCopy = servicePreviewLabels(homeLanguage);
   const t = (source: string, params?: Record<string, string | number>) => whyTranslations[homeLanguage]?.[source] ?? homeText(homeLanguage, source, params);
   const translationRef = useRef(t);
   translationRef.current = t;
@@ -39,7 +43,8 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
   const quoteHref = publicHref('/quote', language);
   const serviceHref = (service: HomeService) => publicHref('/quote?service=' + service, language);
   const rootRef = useRef<HTMLDivElement>(null);
-  const roomImage = heroImage(HERO_DAY);
+  const [initialScene] = useState(initialSceneCalendar);
+  const roomImage = heroImage(initialScene.phase === 'night' ? HERO_NIGHT : HERO_DAY);
   const navigateRef = useRef(onNavigate);
   navigateRef.current = onNavigate;
   useEffect(() => {
@@ -125,7 +130,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
           </div>
         </div>
         <div className="hero-visual">
-        <div className="hero-art scene-canvas" id="sceneCanvas" data-season="autumn" data-phase="day" data-weather="unknown" data-celebration="none" role="img" aria-label={t("Eine gemütliche Wohnung mit Kai und Kraken-Umzugskartons. Die Szene passt sich der Jahreszeit und der Uhrzeit in Zürich an.")}>
+        <div className="hero-art scene-canvas" id="sceneCanvas" data-season={initialScene.season} data-phase={initialScene.phase} data-weather="unknown" data-celebration={initialScene.celebration} data-lights={initialScene.phase === 'night' ? 'off' : 'on'} role="img" aria-label={t("Eine gemütliche Wohnung mit Kai und Kraken-Umzugskartons. Die Szene passt sich der Jahreszeit und der Uhrzeit in Zürich an.")}>
           <svg className="scene-window" viewBox="0 0 1536 1024" aria-hidden="true">
             <defs>
               <clipPath id="sceneWindowClip"><path d="M550 225 913 171 913 398 550 471Z"></path></clipPath>
@@ -147,8 +152,14 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
             </g>
           </svg>
           <picture style={{display:'contents'}}>
-            {roomImage.source && <source id="sceneRoomAvif" {...roomImage.source} />}
-            <img className="scene-room" id="sceneRoom" {...roomImage.fallback} alt="" fetchPriority="high" aria-hidden="true" />
+            <source media={HERO_MOBILE_MEDIA} srcSet={HERO_EMPTY_SOURCE} />
+            {roomImage.source && <source id="sceneRoomAvif" media={HERO_DESKTOP_MEDIA} {...roomImage.source} />}
+            <img className="scene-room scene-room-desktop" id="sceneRoom" {...roomImage.fallback} alt="" loading="eager" fetchPriority="high" aria-hidden="true" />
+          </picture>
+          <picture style={{display:'contents'}}>
+            <source media={HERO_DESKTOP_MEDIA} srcSet={HERO_EMPTY_SOURCE} />
+            {roomImage.source && <source id="sceneRoomMobileAvif" media={HERO_MOBILE_MEDIA} {...roomImage.source} />}
+            <img className="scene-room scene-room-mobile" id="sceneRoomMobile" {...roomImage.fallback} alt="" loading="lazy" fetchPriority="low" aria-hidden="true" />
           </picture>
           <svg className="scene-box-branding" viewBox="0 0 1536 1024" aria-hidden="true">
             <g transform="translate(1354 667) skewY(-17)"><svg width="55" height="23.6" viewBox="4 283 1016 436"><image href={mediaAsset('/home-approved/assets/logo.webp',320)} width="1024" height="1024"></image></svg></g>
@@ -212,7 +223,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
 
     <section className="services-section section container" id="leistungen" aria-labelledby="services-title">
       <div className="section-heading"><div><p className="eyebrow">{t("So viel Hilfe, wie Sie brauchen")}</p><h2 id="services-title">{t("Reinigung und kleine Umzüge für Ihr Zuhause")}</h2></div><p>{t("Ein einzelnes Fenster, die ganze Wohnung oder Ihr nächster Umzug. Wir schauen gemeinsam, was für Sie passt.")}</p></div>
-      <div className="service-preview-controls" id="servicePreviewControls" data-service-preview-control="" hidden={true}><span id="servicePreviewStatus"></span><button type="button" id="servicePreviewToggle" aria-label="" title=""><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path className="service-preview-pause" d="M8 5v14M16 5v14" /><path className="service-preview-play" d="m9 5 10 7-10 7Z" /></svg></button></div>
+      <div className="service-preview-controls is-paused" id="servicePreviewControls" data-service-preview-control=""><span id="servicePreviewStatus" aria-live="polite">{previewCopy.paused}</span><div className="service-preview-actions"><button type="button" id="servicePreviewPrevious" aria-label={previewCopy.previous} title={previewCopy.previous} disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7" /></svg></button><button type="button" id="servicePreviewToggle" aria-label={previewCopy.play} title={previewCopy.play} aria-pressed="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path className="service-preview-pause" d="M8 5v14M16 5v14" /><path className="service-preview-play" d="m9 5 10 7-10 7Z" /></svg></button><button type="button" id="servicePreviewNext" aria-label={previewCopy.next} title={previewCopy.next} disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5 7 7-7 7" /></svg></button></div></div>
       <div className="service-cards">
         <article className="service-card end-card"><div className="card-art atlas-panel panel-apartment" role="img" aria-label={t("Illustration einer leeren Wohnung mit Schlüsseln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Ein Kapitel endet. Ein neues beginnt.")}</span><h3>{t("Bereit für die")}<br />{t("Wohnungsabgabe.")}</h3><p>{t("Wir kümmern uns um die Reinigung.")}<br />{t("Sie um das Ankommen.")}</p><a className="end-card-details" href={publicHref('/umzugsreinigung/zuerich', language)}>{t("Endreinigung, Preise und Wohnungsabgabe")}</a><a className="button button-mint" data-service="end" href={serviceHref('end')} data-calculator="">{t("Umzugsreinigung berechnen")}</a></div></article>
         <article className="service-card home-card"><div className="card-art atlas-panel panel-window" role="img" aria-label={t("Illustration eines sonnigen Fensters mit Reinigungsmitteln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Mehr Zeit für Ihr Zuhause")}</span><h3>{t("Ein Zuhause zum")}<br />{t("Durchatmen.")}</h3><p>{t("Klare Fenster. Frische Räume.")}<br />{t("Ein gutes Gefühl beim Heimkommen.")}</p><div className="card-service-links"><a data-service="windows" href={serviceHref('windows')} data-calculator="">{t("Fenster")}</a><a data-service="regular" href={serviceHref('regular')} data-calculator="">{t("Regelmässig")}</a><a data-service="deep" href={serviceHref('deep')} data-calculator="">{t("Grundreinigung")}</a></div></div></article>
@@ -222,6 +233,8 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
     </section>
 
     <TransitSection t={t} quoteHref={serviceHref('moving')} />
+
+    <BeforeAfterComparison cases={beforeAfterCases} language={homeLanguage} />
 
     <WhyKrakenSection t={t} quoteHref={quoteHref} />
 

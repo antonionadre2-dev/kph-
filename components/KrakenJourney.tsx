@@ -2,6 +2,7 @@ import React, { useEffect, useId, useRef, useState, type ReactNode } from 'react
 import type { PriceQuote } from '../src/booking/pricing';
 import { bookingLanguage, bookingLineLabel, bookingText } from '../src/booking/uiCopy';
 import { journeyCopy, LANGUAGE_NAMES } from '../src/booking/journeyCopy';
+import {CalculatorCompletionCheck} from './CalculatorFeedback';
 import './kraken-journey.css';
 
 export interface JourneyBooking {
@@ -174,7 +175,7 @@ export default function KrakenJourney({ phase, language, demo, booking, onClose,
     <div className="kr-journey-body">
       {demo && <div className="kr-journey-demo"><strong>{copy.demoActive}</strong><span>{copy.demoNote}</span></div>}
       <div className="kr-journey-hero">
-        {success && <span className="kr-journey-success-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg></span>}
+        {success && <span className="kr-journey-success-mark" aria-hidden="true"><CalculatorCompletionCheck /></span>}
         <TransitScene moving={phase !== null && !success && pageVisible} />
         <div role="status" aria-live="polite" aria-atomic="true"><h2 id={`${id}-title`}>{title}</h2><p id={`${id}-description`}>{description}</p></div>
       </div>
