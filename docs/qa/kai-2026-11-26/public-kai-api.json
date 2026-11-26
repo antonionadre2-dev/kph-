@@ -1,0 +1,92 @@
+{
+  "origin": "https://krakenpfm.ch",
+  "requestsCreated": 0,
+  "paymentsCreated": 0,
+  "emailsSent": 0,
+  "modelCalls": 0,
+  "results": [
+    {
+      "case": "eot-price",
+      "status": 200,
+      "mode": "guided",
+      "language": "de",
+      "quote": {
+        "amountCents": 69000,
+        "currency": "CHF",
+        "priceType": "fixed"
+      },
+      "contactCard": false,
+      "passed": true
+    },
+    {
+      "case": "spanish-singular",
+      "status": 200,
+      "mode": "guided",
+      "language": "es",
+      "quote": {
+        "amountCents": 69000,
+        "currency": "CHF",
+        "priceType": "fixed"
+      },
+      "contactCard": false,
+      "passed": true
+    },
+    {
+      "case": "english-hours",
+      "status": 200,
+      "mode": "guided",
+      "language": "en",
+      "quote": {
+        "amountCents": 16000,
+        "currency": "CHF",
+        "priceType": "fixed"
+      },
+      "contactCard": false,
+      "passed": true
+    },
+    {
+      "case": "window-minimum",
+      "status": 200,
+      "mode": "guided",
+      "language": "de",
+      "quote": {
+        "amountCents": 12000,
+        "currency": "CHF",
+        "priceType": "from"
+      },
+      "contactCard": false,
+      "passed": true
+    },
+    {
+      "case": "room-then-date",
+      "status": 200,
+      "mode": "guided",
+      "language": "de",
+      "quote": {
+        "amountCents": 69000,
+        "currency": "CHF",
+        "priceType": "fixed"
+      },
+      "contactCard": false,
+      "passed": true
+    },
+    {
+      "case": "human",
+      "status": 200,
+      "mode": "guided",
+      "language": "de",
+      "quote": null,
+      "contactCard": true,
+      "passed": true
+    },
+    {
+      "case": "complaint",
+      "status": 200,
+      "mode": "guided",
+      "language": "de",
+      "quote": null,
+      "contactCard": true,
+      "passed": true
+    }
+  ]
+}

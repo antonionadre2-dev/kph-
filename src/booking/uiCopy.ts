@@ -1,3 +1,4 @@
+import { END_OF_TENANCY_INCLUDED_ROW } from '../kai/policyContent.ts';
 import { pricingUiText } from './pricingUiCopy.ts';
 import { pricingConfig } from './pricingConfig.ts';
 
@@ -172,7 +173,7 @@ const copy: Record<string, CopyRow> = {
   house: ['Einfamilienhaus', 'House', 'Casa unifamiliar', 'Maison individuelle', 'Casa unifamiliare', 'Moradia'],
   rooms: ['Zimmer', 'Rooms', 'Habitaciones', 'Pièces', 'Locali', 'Divisões'],
   area: ['Wohnfläche in m²', 'Floor area in m²', 'Superficie en m²', 'Surface en m²', 'Superficie in m²', 'Área em m²'],
-  eotIncluded: ['Im Pauschalpreis: komplette Küche, 1 Bad, Standardfenster und Böden. Abnahmegarantie für den vereinbarten Reinigungsumfang.', 'The fixed price includes a full kitchen, 1 bathroom, standard windows and floors. Handover guarantee for the agreed cleaning scope.', 'El precio cerrado incluye cocina completa, 1 baño, ventanas estándar y suelos. Garantía de entrega para la limpieza acordada.', 'Le forfait comprend la cuisine complète, 1 salle de bains, les vitres standard et les sols. Garantie de remise pour le nettoyage convenu.', 'Il prezzo fisso comprende cucina completa, 1 bagno, finestre standard e pavimenti. Garanzia di consegna per la pulizia concordata.', 'O preço fixo inclui cozinha completa, 1 casa de banho, janelas normais e pavimentos. Garantia de entrega para a limpeza acordada.'],
+  eotIncluded: [...END_OF_TENANCY_INCLUDED_ROW],
   houseHint: ['Hausreinigung ab CHF 1’250 nach kostenloser Besichtigung. Vor einer Zahlung erhalten Sie einen konkreten Preis.', 'House cleaning from CHF 1,250 after a free visit. You receive an exact price before payment.', "Limpieza de casa desde CHF 1.250 tras una visita gratuita. Recibirá un precio exacto antes de pagar.", 'Nettoyage de maison dès CHF 1’250 après une visite gratuite. Vous recevez un prix précis avant de payer.', "Pulizia della casa da CHF 1’250 dopo un sopralluogo gratuito. Riceve un prezzo preciso prima di pagare.", 'Limpeza de moradia desde CHF 1.250 após visita gratuita. Recebe um preço exato antes de pagar.'],
   bathrooms: ['Bäder insgesamt', 'Bathrooms in total', 'Baños en total', 'Salles de bains au total', 'Bagni totali', 'Casas de banho no total'],
   bathroomsHint: ['Ein Bad ist im Pauschalpreis enthalten.', 'One bathroom is included in the fixed price.', 'Un baño está incluido en el precio cerrado.', 'Une salle de bains est comprise dans le forfait.', 'Un bagno è incluso nel prezzo fisso.', 'Uma casa de banho está incluída no preço fixo.'],

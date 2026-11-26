@@ -12,6 +12,7 @@ import CustomerReviews from './CustomerReviews';
 import { publicHref } from '../../src/routing/site-paths';
 import { mediaAsset } from '../../src/media/images';
 import { HERO_DAY, heroImage } from '../../src/home/hero-media';
+import { getHomeFaqs } from '../../src/kai/facts';
 import { initDeferredHomeMedia } from './deferred-media';
 import { whyTranslations } from './whyTranslations';
 import { initApprovedHome } from './app';
@@ -225,11 +226,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
     <WhyKrakenSection t={t} quoteHref={quoteHref} />
 
     <section className="faq-section section container" aria-labelledby="faq-title"><div className="faq-intro"><p className="eyebrow">{t("Gut zu wissen")}</p><h2 id="faq-title">{t("Fragen zu Reinigung und kleinen Umzügen")}</h2><p>{t("Wir sind auch persönlich für Sie da.")}</p><a href="mailto:kai@krakenpfm.ch" className="text-link">kai@krakenpfm.ch</a></div><div className="faq-list">
-      <details><summary>{t("Übernehmen Sie auch kleine Aufträge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen mit 1–4 Zimmern und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.")}</p></details>
-      <details><summary>{t("Wie plane ich meinen Auftrag?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.")}{' '}<a href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a></p></details>
-      <details><summary>{t("Wird Mehrwertsteuer verrechnet?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Es wird keine Mehrwertsteuer verrechnet. Die Angaben zu Ihrem Auftrag erhalten Sie im Rechner und in Ihrer persönlichen Bestätigung.")}</p></details>
-      <details><summary>{t("In welchen Regionen ist Kraken tätig?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir unterstützen Privathaushalte in Zürich, Schaffhausen und Winterthur. Geben Sie Ihre Postleitzahl an, damit wir Ihren Auftrag und die Anfahrt gemeinsam prüfen können.")}</p></details>
-      <details><summary>{t("Welches Fahrzeug nutzen Sie für kleine Umzüge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir nutzen einen Ford Transit. Teilen Sie uns mit, welche Möbel und Kartons transportiert werden sollen und wie die Zugänge aussehen. So können wir Fahrzeug, Helfer und benötigte Fahrten passend abstimmen.")}</p></details>
+      {getHomeFaqs(homeLanguage).map((faq, index) => <details key={faq.question}><summary>{faq.question}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{faq.answer}{index === 1 && <>{' '}<a href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a></>}</p></details>)}
     </div></section>
   </main>
 

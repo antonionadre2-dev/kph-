@@ -1,0 +1,44 @@
+[
+  {
+    "language": "de",
+    "sections": 17,
+    "equal": true,
+    "beforeSha256": "fb8c0cce1f315936423953a9b8af9b34d31e70ee1ef1fbdf8af9a44da1d018a6",
+    "afterSha256": "fb8c0cce1f315936423953a9b8af9b34d31e70ee1ef1fbdf8af9a44da1d018a6"
+  },
+  {
+    "language": "en",
+    "sections": 17,
+    "equal": true,
+    "beforeSha256": "182db970a2b14c952af1fbf6561a167b8eff43d034071bda47c1ea2823a155a6",
+    "afterSha256": "182db970a2b14c952af1fbf6561a167b8eff43d034071bda47c1ea2823a155a6"
+  },
+  {
+    "language": "es",
+    "sections": 17,
+    "equal": true,
+    "beforeSha256": "4a33ad3b3092d543f0836e9da398ffe97e1f67947439046c4f15b29d2b9e4742",
+    "afterSha256": "4a33ad3b3092d543f0836e9da398ffe97e1f67947439046c4f15b29d2b9e4742"
+  },
+  {
+    "language": "pt",
+    "sections": 17,
+    "equal": true,
+    "beforeSha256": "256493f841fa6e67960be3fa984b6feca611b7d7f64a1006f2ea99c38ea771cc",
+    "afterSha256": "256493f841fa6e67960be3fa984b6feca611b7d7f64a1006f2ea99c38ea771cc"
+  },
+  {
+    "language": "it",
+    "sections": 17,
+    "equal": true,
+    "beforeSha256": "24c9664c174b509e19c461e2dc66c1f1c12990b9cd1aaef8695248da6e636a40",
+    "afterSha256": "24c9664c174b509e19c461e2dc66c1f1c12990b9cd1aaef8695248da6e636a40"
+  },
+  {
+    "language": "fr",
+    "sections": 17,
+    "equal": true,
+    "beforeSha256": "5b636549ec19abc76302bbf389fb1b0db0122c5ab9c8ea57ef64b9c2816ea9f0",
+    "afterSha256": "5b636549ec19abc76302bbf389fb1b0db0122c5ab9c8ea57ef64b9c2816ea9f0"
+  }
+]

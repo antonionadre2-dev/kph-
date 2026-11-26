@@ -185,7 +185,8 @@ test('provider prices, unsupported services and send actions are never shown or 
     const result = await respondKai(request('Necesito una mudanza'), { ...offline, provider: async input => unsafe(input) });
     assert.equal(result.mode, 'guided');
     assert.equal(result.error, 'invalid_response');
-    assert.equal(hasMonetaryContent(result.message), false);
+    // Server prices are now allowed; the model's invented amount is not.
+    assert.doesNotMatch(result.message, /CHF 500/);
     assert.ok(result.actions.every(action => ['continue', 'choose_service', 'contact'].includes(action)));
   }
 });
