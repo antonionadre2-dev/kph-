@@ -74,14 +74,14 @@
   .kraken-home .site-header .kr-brand-tagline { white-space: normal; }
 }
 @media (max-width: 479.98px) {
+  :root .kraken-home .site-header .brand-lockup.kr-brand-link { gap: 4px; }
+  .kraken-home .site-header .kr-brand-identity { padding-left: 4px; }
   .kraken-home .site-header .kr-brand-tagline {
     font-size: 12px;
     white-space: normal;
   }
 }
 @media (max-width: 359.98px) {
-  :root .kraken-home .site-header .brand-lockup.kr-brand-link { gap: 4px; }
-  :root .kraken-home .site-header .kr-brand-link .brand-logo { width: 56px; height: 25px; }
-  :root .kraken-home .site-header .kr-brand-link .brand-logo img { width: 56px; height: 56px; top: -15px; }
-  .kraken-home .site-header .kr-brand-identity { padding-left: 4px; }
+  :root .kraken-home .site-header .kr-brand-link .brand-logo { width: 44px; height: 20px; }
+  :root .kraken-home .site-header .kr-brand-link .brand-logo img { width: 44px; height: 44px; top: -12px; }
 }
