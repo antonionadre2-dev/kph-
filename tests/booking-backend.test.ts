@@ -81,6 +81,34 @@ test('checkout requires authorized confirmation, stays idempotent, charges 15% a
   assert.deepEqual(first,second);assert.equal(calls,1);
   const state=await service.read(booking.bookingId,booking.publicToken);assert.equal(state.payment.status,'pending');assert.equal(state.scheduling.status,'held');assert.equal(state.payment.amountPaidCents,0);assert.equal(store.mail.size,1);
 });
+test('new Payrexx checkout and all returns use the current validated presentation language without changing communications',async()=>{
+  for(const locale of ['de','en','es','fr-CH','it','pt']) {
+    const expected=locale.split('-')[0];let gatewayRequest:any,calls=0;
+    const adapter=createPayrexxAdapter({instance:'kraken-test',secret:'synthetic-not-real',mode:'live',origin:'https://krakenpfm.ch'},async(_url:any,options:any)=>{
+      calls++;assert.equal(options.method,'POST');gatewayRequest=JSON.parse(options.body);
+      return Response.json({status:'success',data:[{id:42,link:'https://kraken-test.payrexx.com/isolated-checkout'}]});
+    });
+    const {service,store}=serviceFixture(adapter),booking=await service.create(request({language:'es'}));
+    const snapshot=structuredClone(store.records.get(booking.bookingId).languageSnapshot);
+    await service.confirmAppointment(booking.bookingId,{operatorId:'isolated-test-operator',holdExpiresAt:new Date(now+30*60000).toISOString()});
+    const input={termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,acceptedQuoteRevision:booking.quoteRevision,language:locale};
+    await assert.rejects(service.checkout(booking.bookingId,booking.publicToken,{...input,language:'invalid'}),{code:'INVALID_LANGUAGE'});
+    assert.equal(calls,0,'Invalid presentation language must not create a provider request');
+    const checkout=await service.checkout(booking.bookingId,booking.publicToken,input);
+    assert.equal(gatewayRequest.language,expected);
+    for(const field of ['successRedirectUrl','failedRedirectUrl','cancelRedirectUrl']) {
+      const target=new URL(gatewayRequest[field]);
+      assert.equal(target.origin,'https://krakenpfm.ch');assert.equal(target.searchParams.get('lang'),expected);
+      assert.equal(target.searchParams.get('booking'),booking.bookingId);
+      assert.equal(new URLSearchParams(target.hash.slice(1)).get('access'),booking.publicToken);
+    }
+    const persisted=store.records.get(booking.bookingId);
+    assert.equal(persisted.language,'es');assert.deepEqual(persisted.languageSnapshot,snapshot);
+    assert.equal(persisted.payment.amountDueNowCents,Math.round(persisted.quote.totalCents*.15));
+    assert.deepEqual(await service.checkout(booking.bookingId,booking.publicToken,input),checkout);
+    assert.equal(calls,1,'A presentation-language fix must not weaken checkout idempotency');
+  }
+});
 test('uncertain checkout creation is blocked from automatic retries',async()=>{
   let calls=0;const {service}=serviceFixture({async create(){calls++;throw new Error('timeout');}});
   const booking=await service.create(request());await service.confirmAppointment(booking.bookingId,{operatorId:'operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
@@ -142,6 +170,33 @@ test('Payrexx authenticated verification rejects amount, mode and currency misma
   for(const mismatch of [{amount:1},{mode:'TEST'},{referenceId:'different'}]) {const {adapter,record}=providerFixture(mismatch);if(mismatch.referenceId)assert.equal((await adapter.verify(record)).status,'pending');else await assert.rejects(adapter.verify(record),{code:'PAYMENT_MISMATCH'});}
   const currency=providerFixture();currency.fixture.invoices[0].currency='EUR';await assert.rejects(currency.adapter.verify(currency.record),{code:'PAYMENT_MISMATCH'});
 });
+test('Payrexx cannot settle a transaction without a positive safe-integer provider ID',async()=>{
+  const valid=providerFixture();
+  assert.deepEqual(await valid.adapter.verify(valid.record),{status:'paid',transactionId:'9'});
+  for(const id of [undefined,null,'9','',0,-1,1.5,Number.MAX_SAFE_INTEGER+1,{},[]]) {
+    const {adapter,record}=providerFixture({id});
+    await assert.rejects(adapter.verify(record),{code:'PAYMENT_MISMATCH'},`invalid provider ID: ${JSON.stringify(id)}`);
+  }
+});
+test('a malformed confirmed Payrexx result never records paid money or queues a receipt',async()=>{
+  let gatewayRequest:any;
+  const adapter=createPayrexxAdapter({instance:'kraken-test',secret:'synthetic-not-real',mode:'live',origin:'https://krakenpfm.ch'},async(_url:any,options:any)=>{
+    if(options.method==='POST') {
+      gatewayRequest=JSON.parse(options.body);
+      return Response.json({status:'success',data:[{id:42,link:'https://kraken-test.payrexx.com/isolated-checkout'}]});
+    }
+    return Response.json({status:'success',data:[{id:42,invoices:[{currency:'CHF',referenceId:gatewayRequest.referenceId,transactions:[{amount:gatewayRequest.amount,status:'confirmed',mode:'LIVE',instance:{name:'kraken-test'}}]}]}]});
+  });
+  const {service,store}=serviceFixture(adapter);
+  const booking=await service.create(request());
+  await service.confirmAppointment(booking.bookingId,{operatorId:'isolated-test-operator',holdExpiresAt:new Date(now+30*60000).toISOString()});
+  await service.checkout(booking.bookingId,booking.publicToken,{termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,acceptedQuoteRevision:booking.quoteRevision,language:'es'});
+  await assert.rejects(service.reconcile(booking.bookingId),{code:'PAYMENT_MISMATCH'});
+  const saved=store.records.get(booking.bookingId);
+  assert.equal(saved.payment.status,'reconciliation_required');
+  assert.equal(saved.payment.amountPaidCents,0);
+  assert.equal([...store.mail.values()].some(job=>job.kind==='receipt'),false);
+});
 test('refund/chargeback replaces previous paid state instead of reviving an active receipt',async()=>{
   const {adapter,record,fixture}=providerFixture();fixture.invoices[0].transactions.push({...fixture.invoices[0].transactions[0],id:10,status:'chargeback'});assert.equal((await adapter.verify(record)).status,'chargeback');
 });
@@ -196,6 +251,32 @@ test('booking HTTP config reports email readiness independently of booking and s
       await new Promise<void>(resolve => server.close(() => resolve()));
       const adminApp = getApps().find(value => value.name === 'kraken-booking');
       if (adminApp) { await getFirestore(adminApp, 'email-test-db').terminate(); await deleteApp(adminApp); }
+    }
+  }
+});
+
+test('checkout readiness requires its separate webhook secret without disabling durable booking requests',async(t)=>{
+  t.mock.method(console,'info',()=>{});
+  const {privateKey}=generateKeyPairSync('rsa',{modulusLength:2048,privateKeyEncoding:{type:'pkcs8',format:'pem'},publicKeyEncoding:{type:'spki',format:'pem'}});
+  const credential=JSON.stringify({type:'service_account',project_id:'kraken-payment-test',client_email:'booking-test@kraken-payment-test.iam.gserviceaccount.com',private_key:privateKey});
+  let providerCalls=0;
+  for(const webhookSecret of [undefined,'','   ','synthetic-separate-webhook-secret']) {
+    const configured=Boolean(webhookSecret?.trim());
+    const handlers=createBookingHandlers({env:{BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'synthetic-booking-secret-over-thirty-two-characters',FIREBASE_SERVICE_ACCOUNT_JSON:credential,BOOKING_FIREBASE_PROJECT_ID:'kraken-payment-test',BOOKING_FIREBASE_DATABASE_ID:'payment-test-db',APP_URL:'https://krakenpfm.ch',PAYREXX_INSTANCE:'synthetic-test',PAYREXX_API_SECRET:'synthetic-api-key',PAYREXX_MODE:'live',PAYREXX_WEBHOOK_SECRET:webhookSecret},fetcher:async()=>{providerCalls++;throw new Error('No provider request is allowed');},clock:()=>now});
+    const app=express();app.use(handlers.middleware);
+    const server=app.listen(0,'127.0.0.1');await new Promise<void>(resolve=>server.on('listening',resolve));
+    try {
+      const config=await (await fetch(`http://127.0.0.1:${(server.address() as any).port}/api/booking/config`)).json();
+      assert.equal(config.available,true,'Missing webhook setup must not disable durable booking requests');
+      assert.equal(config.paymentReady,configured);
+      assert.equal(config.mode,'live');assert.equal(config.depositPercent,15);
+      const runtime=await handlers.initialize();
+      assert.equal(runtime.service!.canCheckout({status:'confirmed',scheduling:{status:'held',holdExpiresAt:new Date(now+60000).toISOString()},quote:{totalCents:1000,manualReviewReasons:[]},payment:{status:'not_started'}}),configured);
+      assert.equal(providerCalls,0,'Configuration/readiness checks do not create provider transactions');
+    }finally{
+      await new Promise<void>(resolve=>server.close(()=>resolve()));
+      const adminApp=getApps().find(value=>value.name==='kraken-booking');
+      if(adminApp){await getFirestore(adminApp,'payment-test-db').terminate();await deleteApp(adminApp);}
     }
   }
 });

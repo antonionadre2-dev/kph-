@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import express from 'express';
+import { createHmac } from 'node:crypto';
 import { build } from 'esbuild';
 import { createRequire } from 'node:module';
 import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
@@ -9,6 +11,7 @@ import { createBookingService, BOOKING_TERMS_VERSION } from '../server/booking.t
 import { BookingError, createFirestoreBookingStore } from '../server/booking-store.ts';
 import { createResendEmailAdapter } from '../server/booking-email.ts';
 import { calculatePrice, defaultSelection, PRICING_VERSION } from '../src/booking/pricing.ts';
+import { createVercelPaymentEmailScheduler } from '../server/booking-lifecycle.ts';
 
 const now = Date.parse('2026-11-24T10:00:00Z');
 const origin = 'https://kraken.example';
@@ -220,6 +223,150 @@ async function invoke(handlers, pathname, { method = 'GET', headers = {}, body =
   await handlers.middleware({ path: pathname, originalUrl: pathname, method, body, socket: { remoteAddress: 'synthetic-test-client' }, get: name => normalized[name.toLowerCase()], is: type => normalized['content-type']?.startsWith(type) }, response, () => { throw new Error('Unexpected middleware fall-through'); });
   return response;
 }
+
+test('a signed Payrexx webhook acknowledges durable payment before lifecycle-pinned email completes', {timeout:10000}, async t => {
+  t.mock.method(console,'info',()=>{});
+  const {createBookingHandlers,setStore}=await handlersBundle();
+  const store=memoryStore();setStore(store);
+  const contextKey=Symbol.for('@vercel/request-context'),previousContext=globalThis[contextKey],pinned=[];
+  let releaseProvider,providerEntered,attempts=0;
+  const entered=new Promise(resolve=>{providerEntered=resolve;});
+  const released=new Promise(resolve=>{releaseProvider=resolve;});
+  globalThis[contextKey]={get:()=>({waitUntil(work){
+    const current=[...store.records.values()][0];
+    assert.equal(current.payment.status,'paid');
+    assert.ok(store.mail.has(`${current.bookingId}:receipt:${current.checkout.reference}`),'Outbox is durable before background work is registered');
+    pinned.push(work);
+  }})};
+  let gatewayRequest;
+  const webhookSecret='synthetic-separate-webhook-secret';
+  const handlers=createBookingHandlers({env:environment({PAYREXX_INSTANCE:'synthetic',PAYREXX_API_SECRET:'synthetic-api-key',PAYREXX_MODE:'live',PAYREXX_WEBHOOK_SECRET:webhookSecret}),clock:()=>now,schedulePaymentEmails:createVercelPaymentEmailScheduler(true),fetcher:async(url,init)=>{
+    if(url==='https://api.resend.com/emails'){
+      attempts++;providerEntered();await released;
+      return Response.json({id:'synthetic-receipt-provider-id'});
+    }
+    if(init.method==='POST'){
+      gatewayRequest=JSON.parse(init.body);
+      return Response.json({status:'success',data:[{id:42,link:'https://synthetic.payrexx.com/isolated-checkout'}]});
+    }
+    return Response.json({status:'success',data:[{id:42,invoices:[{referenceId:gatewayRequest.referenceId,currency:'CHF',transactions:[{id:51,referenceId:gatewayRequest.referenceId,amount:gatewayRequest.amount,status:'confirmed',mode:'LIVE',instance:{name:'synthetic'}}]}]}]});
+  }});
+  const runtime=await handlers.initialize(),booking=await runtime.service.create(request());
+  await runtime.service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
+  await runtime.service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,language:'es'});
+  const app=express();app.post('/webhook',express.raw({type:'application/json'}),handlers.webhook);
+  const server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.on('listening',resolve));
+  const raw=JSON.stringify({transaction:{referenceId:gatewayRequest.referenceId}});
+  const signature=createHmac('sha256',webhookSecret).update(raw).digest('hex');
+  const call=()=>fetch(`http://127.0.0.1:${server.address().port}/webhook`,{method:'POST',headers:{'Content-Type':'application/json','X-Webhook-Signature':signature},body:raw,signal:AbortSignal.timeout(4000)});
+  try{
+    const response=await call();assert.equal(response.status,200);assert.deepEqual(await response.json(),{received:true});
+    await entered;
+    assert.equal(attempts,1);assert.equal(pinned.length,1);
+    const current=await store.get(booking.bookingId),receiptId=`${booking.bookingId}:receipt:${current.checkout.reference}`;
+    assert.equal(current.payment.status,'paid');assert.equal(current.email.receipt,'queued');assert.equal(store.mail.get(receiptId).status,'sending');
+    assert.equal((await call()).status,200);assert.equal(attempts,1,'Duplicated webhooks do not resend an in-flight receipt');
+    releaseProvider();await Promise.all(pinned);
+    assert.equal((await store.get(booking.bookingId)).email.receipt,'sent');assert.equal(attempts,1);
+    assert.equal(store.calls.scans,0,'Background dispatch cannot drain unrelated customer jobs');
+  }finally{
+    releaseProvider();await Promise.all(pinned);
+    await new Promise(resolve=>server.close(resolve));
+    if(previousContext===undefined)delete globalThis[contextKey];else globalThis[contextKey]=previousContext;
+  }
+});
+
+test('missing Vercel context or failed lifecycle registration falls back to awaited email',async t=>{
+  t.mock.method(console,'warn',()=>{});
+  const contextKey=Symbol.for('@vercel/request-context'),previousContext=globalThis[contextKey];
+  delete globalThis[contextKey];
+  try{
+    assert.equal(createVercelPaymentEmailScheduler(false),undefined);
+    for(const scheduler of [createVercelPaymentEmailScheduler(true),()=>{throw new Error('Synthetic lifecycle registration failure');}]){
+      let releaseProvider,providerEntered,completed=false;
+      const entered=new Promise(resolve=>{providerEntered=resolve;});
+      const released=new Promise(resolve=>{releaseProvider=resolve;});
+      const payment={async create(){return{id:1,link:'https://synthetic.payrexx.com/checkout'};},async verify(){return{status:'paid',transactionId:'synthetic-transaction'};}};
+      const {service,store}=fixture(async()=>{providerEntered();await released;return{id:'accepted'};},payment);
+      const booking=await service.create(request());
+      await service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
+      await service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,language:'es'});
+      const pending=service.reconcile(booking.bookingId,{scheduleEmails:scheduler}).then(value=>{completed=true;return value;});
+      await entered;assert.equal(completed,false,'An unpinned email task must remain awaited');
+      releaseProvider();assert.equal((await pending).email.receipt,'sent');
+      assert.equal((await store.get(booking.bookingId)).payment.status,'paid');
+    }
+  }finally{if(previousContext!==undefined)globalThis[contextKey]=previousContext;}
+});
+
+test('webhook deferral cannot run when payment verification is malformed',async t=>{
+  t.mock.method(console,'info',()=>{});
+  const {createBookingHandlers,setStore}=await handlersBundle();
+  const store=memoryStore();setStore(store);let gatewayRequest,scheduled=0,sent=0;
+  const webhookSecret='synthetic-separate-webhook-secret';
+  const handlers=createBookingHandlers({env:environment({PAYREXX_INSTANCE:'synthetic',PAYREXX_API_SECRET:'synthetic-api-key',PAYREXX_MODE:'live',PAYREXX_WEBHOOK_SECRET:webhookSecret}),clock:()=>now,schedulePaymentEmails:()=>{scheduled++;return true;},fetcher:async(url,init)=>{
+    if(url==='https://api.resend.com/emails'){sent++;return Response.json({id:'must-not-send'});}
+    if(init.method==='POST'){gatewayRequest=JSON.parse(init.body);return Response.json({status:'success',data:[{id:42,link:'https://synthetic.payrexx.com/isolated-checkout'}]});}
+    return Response.json({status:'success',data:[{id:42,invoices:[{referenceId:gatewayRequest.referenceId,currency:'CHF',transactions:[{amount:gatewayRequest.amount,status:'confirmed',mode:'LIVE'}]}]}]});
+  }});
+  const runtime=await handlers.initialize(),booking=await runtime.service.create(request());
+  await runtime.service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
+  await runtime.service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,language:'es'});
+  const raw=Buffer.from(JSON.stringify({transaction:{referenceId:gatewayRequest.referenceId}}));
+  let responseBody,responseStatus=200;
+  const res={set(){return this;},status(value){responseStatus=value;return this;},json(value){responseBody=value;return this;}};
+  await handlers.webhook({body:raw,get:name=>name==='X-Webhook-Signature'?createHmac('sha256',webhookSecret).update(raw).digest('hex'):undefined},res,()=>{});
+  assert.equal(responseStatus,409);assert.equal(responseBody.code,'PAYMENT_MISMATCH');
+  assert.equal(scheduled,0);assert.equal(sent,0);assert.equal([...store.mail.values()].some(job=>job.kind==='receipt'),false);
+  assert.equal((await store.get(booking.bookingId)).payment.amountPaidCents,0);
+});
+
+test('a lifecycle-pinned provider failure retains paid state and quarantines its uncertain outbox job',async()=>{
+  const pinned=[];
+  const payment={async create(){return{id:1,link:'https://synthetic.payrexx.com/checkout'};},async verify(){return{status:'paid',transactionId:'synthetic-transaction'};}};
+  const {service,store}=fixture(async()=>{throw new Error('Synthetic private provider error');},payment);
+  const booking=await service.create(request());
+  await service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
+  await service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,language:'es'});
+  const result=await service.reconcile(booking.bookingId,{scheduleEmails:work=>{pinned.push(work);return true;}});
+  assert.equal(result.payment.status,'paid');assert.equal(pinned.length,1);
+  await Promise.all(pinned);
+  const current=await store.get(booking.bookingId);
+  assert.equal(current.payment.status,'paid');assert.equal(current.email.receipt,'delivery_unknown');
+  assert.equal(store.mail.get(`${booking.bookingId}:receipt:${current.checkout.reference}`).status,'delivery_unknown');
+});
+
+test('temporary private connection checks run only from Vercel config GET and never change its public response',async t=>{
+  const logs=[];t.mock.method(console,'info',(...args)=>logs.push(args));
+  const {createBookingHandlers,setStore}=await handlersBundle();
+  for(const [index,scenario]of [
+    {vercel:'1',flag:new Date(now+600000).toISOString(),status:200,expectedCalls:2},
+    {vercel:'0',flag:new Date(now+600000).toISOString(),status:200,expectedCalls:0},
+    {vercel:'1',flag:new Date(now-1000).toISOString(),status:200,expectedCalls:0},
+    {vercel:'1',flag:new Date(now+600000).toISOString(),status:403,expectedCalls:1},
+  ].entries()){
+    const store=memoryStore();setStore(store);let calls=0;logs.length=0;
+    const handlers=createBookingHandlers({env:environment({VERCEL:scenario.vercel,PAYREXX_INSTANCE:`probe-test-${index}`,PAYREXX_API_SECRET:'PRIVATE_API_KEY_CANARY',PAYREXX_MODE:'live',PAYREXX_WEBHOOK_SECRET:'synthetic-webhook-secret',PAYREXX_CONNECTION_CHECK_UNTIL:scenario.flag}),clock:()=>now,fetcher:async(url,init)=>{
+      calls++;assert.equal(init.method,'GET');assert.equal(new URL(url).origin,'https://api.payrexx.com');
+      if(scenario.status!==200)return Response.json({private:'PRIVATE_PROVIDER_BODY_CANARY'},{status:scenario.status});
+      return Response.json({status:'success',data:url.includes('/PaymentProvider/')?[{id:11,activePaymentMethods:['visa']}]:[{id:'visa',options_by_psp:{11:{currencies:['CHF'],payment_types:['one-time'],mode:'live'}}}]});
+    }});
+    const runtime=await handlers.initialize();assert.equal(calls,0,'Initialization and webhooks do not wait for a deployment diagnostic');
+    const response=await invoke(handlers,'/api/booking/config');
+    assert.equal(response.statusCode,200);assert.equal(calls,scenario.expectedCalls);
+    assert.deepEqual(response.body,{available:true,paymentReady:true,emailReady:true,mode:'live',termsVersion:BOOKING_TERMS_VERSION,depositPercent:15});
+    await invoke(handlers,'/api/booking/config');assert.equal(calls,scenario.expectedCalls,'One private probe per runtime/window');
+    assert.equal(runtime.paymentReady,true,'A diagnostic failure must not disable booking requests');
+    const checks=logs.filter(([prefix])=>prefix==='[booking:payrexx-connection-check]');
+    assert.equal(checks.length,scenario.expectedCalls?1:0);
+    if(checks.length){
+      assert.deepEqual(Object.keys(checks[0][1]).sort(),['authStatus','methodsChecked','liveCHFOneTimeAvailable','testCHFOneTimeAvailable','unknownModePresent'].sort());
+      assert.equal(checks[0][1].authStatus,scenario.status===403?'http_403':'accepted');
+      if(scenario.status===200){assert.equal(checks[0][1].methodsChecked,true);assert.equal(checks[0][1].liveCHFOneTimeAvailable,true);assert.equal(checks[0][1].testCHFOneTimeAvailable,false);}
+    }
+    assert.doesNotMatch(JSON.stringify(logs),/PRIVATE_|probe-test-|options_by_psp|currencies|\b11\b/);
+  }
+});
 
 test('the request HTTP route awaits its one email, returns sent state and does not drain unrelated jobs', async t => {
   t.mock.method(console, 'info', () => {});
