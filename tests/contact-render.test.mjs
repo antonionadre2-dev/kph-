@@ -17,17 +17,32 @@ const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
 const cache = path.join(root, 'node_modules/.cache');
 mkdirSync(cache, { recursive: true });
 const temporary = mkdtempSync(path.join(cache, 'contact-render-test-'));
-let render;
+let render, renderPage, renderSharedHeader;
 try {
   const outfile = path.join(temporary, 'render.cjs');
   await build({
-    stdin: { contents: `import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {ContactContent} from './components/KontaktPage.tsx';export const render=language=>renderToStaticMarkup(React.createElement(ContactContent,{language,onNavigate:()=>{}}));`, resolveDir: root, loader: 'tsx' },
+    stdin: { contents: `import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import KontaktPage,{ContactContent} from './components/KontaktPage.tsx';import ApprovedHeader from './components/home/ApprovedHeader.tsx';import {I18nProvider} from './i18n.ts';export const render=language=>renderToStaticMarkup(React.createElement(ContactContent,{language,onNavigate:()=>{}}));export const renderPage=language=>renderToStaticMarkup(<I18nProvider initialLanguage={language}><KontaktPage onNavigate={()=>{}}/></I18nProvider>);export const renderSharedHeader=language=>renderToStaticMarkup(<I18nProvider initialLanguage={language}><ApprovedHeader onNavigate={()=>{}} page="services"/></I18nProvider>);`, resolveDir: root, loader: 'tsx' },
     outfile, bundle: true, platform: 'node', format: 'cjs', packages: 'external', loader: { '.css': 'empty' }, logLevel: 'warning',
   });
-  render = createRequire(import.meta.url)(outfile).render;
+  ({render,renderPage,renderSharedHeader} = createRequire(import.meta.url)(outfile));
 } finally { rmSync(temporary, { recursive: true, force: true }); }
 
 const escape = value => value.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+test('contact uses the shared public header, branding and direct-contact actions in every language',()=>{
+  const header = html => html.match(/<header class="site-header"[\s\S]*?<\/header>/)?.[0];
+  const withoutCurrentPage = html => html.replace(/ aria-current="page"/g,'');
+  for(const language of languages){
+    const html=renderPage(language),contactHeader=header(html),sharedHeader=header(renderSharedHeader(language));
+    assert.ok(contactHeader&&sharedHeader);
+    assert.equal(withoutCurrentPage(contactHeader),withoutCurrentPage(sharedHeader));
+    assert.match(contactHeader,/class="header-contact-bar"/);
+    assert.ok(contactHeader.includes(escape(homeText(language,'Reinigung & kleine Umzüge'))));
+    assert.ok(contactHeader.includes(`href="${publicHref('/kontakt',language)}" aria-current="page"`));
+    assert.doesNotMatch(contactHeader,/data-contact-header|contact-header-quote|brand-lockup--contact/);
+    assert.match(html,/class="contact-shell container"/);
+    assert.match(html,/class="contact-action kr-button kr-button--primary"/);
+  }
+});
 test('redesigned contact renders native enquiry, coverage and direct destinations in six languages', () => {
   for (const language of languages) {
     const html = render(language), copy=getContactCopy(language);
