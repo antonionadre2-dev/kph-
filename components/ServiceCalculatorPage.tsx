@@ -18,6 +18,7 @@ import { consumeKaiTransfer, registerKaiCalculationPreview, subscribeKaiTransfer
 import { KAI_FIELDS, type KaiDraft } from '../src/kai/types';
 import { applyKaiBookingTransfer, kaiBookingPreview, type KaiCalculatorState } from '../src/booking/kaiTransfer';
 import { bookingMailStatusKey } from '../src/booking/emailAvailability';
+import { checkoutErrorKey, paymentUiState } from '../src/booking/paymentUi';
 import './service-calculator.css';
 
 interface ServiceCalculatorPageProps {
@@ -357,16 +358,15 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
     return () => { window.clearTimeout(timer); controller.abort(); };
   }, [preview, recoveryAccess, selection, wizardStep, booking, bookingAccess, guidePreferences]);
   const manualReview = Boolean(quote && (quote.totalCents === null || quote.manualReviewReasons.length));
-  const checkoutExpiry = booking?.payment.checkoutExpiresAt ? Date.parse(booking.payment.checkoutExpiresAt) : Number.NaN;
-  const checkoutHasExpired = booking?.payment.status === 'pending' && Number.isFinite(checkoutExpiry) && checkoutExpiry <= paymentClock;
+  const { checkoutHasExpired, holdHasExpired, canOpenCheckout, nextUpdateAt } = paymentUiState(booking, paymentClock);
 
   useEffect(() => {
     const now = Date.now();
     setPaymentClock(now);
-    if (booking?.payment.status !== 'pending' || !Number.isFinite(checkoutExpiry) || checkoutExpiry <= now) return;
-    const timeout = window.setTimeout(() => setPaymentClock(Date.now()), Math.min(checkoutExpiry - now + 50, 2_147_483_647));
+    if (nextUpdateAt === null || nextUpdateAt <= now) return;
+    const timeout = window.setTimeout(() => setPaymentClock(Date.now()), Math.min(nextUpdateAt - now + 50, 2_147_483_647));
     return () => window.clearTimeout(timeout);
-  }, [booking?.payment.status, checkoutExpiry]);
+  }, [nextUpdateAt]);
 
   useEffect(() => {
     if (preview) {
@@ -687,7 +687,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
       },2600);
       return;
     }
-    if (preview || !bookingAccess || !booking || !payConsent || !booking.canCheckout || checkoutHasExpired || openingPayment) return;
+    if (preview || !bookingAccess || !booking || !payConsent || !canOpenCheckout || openingPayment) return;
     setError(''); setOpeningPayment(true); setJourneyPhase('checkout');
     try {
       const result = await api<{ link: string }>(`/api/booking/requests/${encodeURIComponent(bookingAccess.id)}/checkout`, {
@@ -700,7 +700,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
     } catch (cause) {
       await refreshStatus();
       setPayConsent(false);
-      setError(text(cause instanceof BookingApiError && cause.code === 'CHECKOUT_EXPIRED' ? 'checkoutExpired' : cause instanceof BookingApiError && cause.status === 409 ? 'priceChanged' : 'networkError'));
+      setError(text(checkoutErrorKey(cause instanceof BookingApiError ? cause : null)));
       setOpeningPayment(false);
       setJourneyPhase(null);
     }
@@ -912,22 +912,24 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
       {booking ? <section ref={submittedResult} tabIndex={-1} className="kr-calc-result" aria-labelledby="kr-calc-result-title">
         <div className="kr-calc-result-heading">
           <span className="kr-calc-result-icon">{paid ? <CheckCircle2 aria-hidden="true" /> : held ? <CalendarDays aria-hidden="true" /> : <ClipboardList aria-hidden="true" />}</span>
-          <div><p className="kr-calc-eyebrow">{text('reference')} · {booking.reference || booking.bookingId}</p><h2 id="kr-calc-result-title">{text(testPaid ? 'testTitle' : changedPayment ? 'paymentChangedTitle' : needsReschedule ? 'rescheduleTitle' : paid ? (depositPercent < 100 ? 'depositPaidTitle' : 'paidTitle') : pending ? 'pendingTitle' : held ? 'heldTitle' : 'receivedTitle')}</h2>
-            <p>{text(testPaid ? 'testBody' : changedPayment ? 'inactiveReceipt' : needsReschedule ? 'rescheduleBody' : paid ? 'paidBody' : pending ? 'pendingBody' : held ? 'heldBody' : 'receivedBody')}</p></div>
+          <div><p className="kr-calc-eyebrow">{text('reference')} · {booking.reference || booking.bookingId}</p><h2 id="kr-calc-result-title">{text(testPaid ? 'testTitle' : changedPayment ? 'paymentChangedTitle' : needsReschedule ? 'rescheduleTitle' : paid ? (depositPercent < 100 ? 'depositPaidTitle' : 'paidTitle') : pending ? 'pendingTitle' : holdHasExpired ? 'holdExpiredTitle' : held ? 'heldTitle' : 'receivedTitle')}</h2>
+            <p>{text(testPaid ? 'testBody' : changedPayment ? 'inactiveReceipt' : needsReschedule ? 'rescheduleBody' : paid ? 'paidBody' : pending ? 'pendingBody' : holdHasExpired ? 'holdExpiredBody' : held ? 'heldBody' : 'receivedBody')}</p>
+            {!preview && booking.scheduling.status === 'requested' && !paid && !testPaid && !changedPayment && <p>{text('paymentNextStep')}</p>}</div>
         </div>
         {preview && booking.demo && <section className="kr-journey-demo-booking"><span>{journey.demoNote}</span><div><button type="button" className="kr-calc-secondary" onClick={()=>setJourneyEmail(paid?'receipt':'request')}>{paid?journey.receiptEmail:journey.requestEmail}</button>{booking.scheduling.status==='requested' && <button type="button" className="kr-calc-primary" disabled={booking.quote.totalCents===null || Boolean(booking.quote.manualReviewReasons.length)} onClick={confirmDemo}>{journey.demoConfirm}</button>}{pending && <button type="button" className="kr-calc-primary" onClick={completePendingDemo}>{journey.verifyDemo}</button>}</div>{booking.scheduling.status==='requested' && <p>{booking.quote.totalCents===null?journey.demoManual:journey.demoConfirmHint}</p>}</section>}
         {checkoutHasExpired && <div className="kr-calc-alert" role="alert"><p style={{ margin: '0 0 12px' }}>{text('checkoutExpired')}</p><a href="tel:+41774505705">+41 77 450 57 05</a><span aria-hidden="true"> · </span><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></div>}
+        {holdHasExpired && <div className="kr-calc-alert" role="status"><a href="tel:+41774505705">+41 77 450 57 05</a><span aria-hidden="true"> · </span><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></div>}
         <div className="kr-calc-layout kr-calc-booking-layout">
           <div className="kr-calc-stack">
             <section className="kr-calc-card">
-              <div className="kr-calc-section-title"><CalendarDays aria-hidden="true" /><h3>{text(needsReschedule ? 'appointmentReschedule' : booking.scheduling.status === 'confirmed' ? 'appointmentConfirmed' : held ? 'appointmentHeld' : 'appointmentRequested')}</h3></div>
+              <div className="kr-calc-section-title"><CalendarDays aria-hidden="true" /><h3>{text(needsReschedule ? 'appointmentReschedule' : holdHasExpired ? 'holdExpiredTitle' : booking.scheduling.status === 'confirmed' ? 'appointmentConfirmed' : held ? 'appointmentHeld' : 'appointmentRequested')}</h3></div>
               {!needsReschedule && <div className="kr-calc-appointment"><strong>{booking.scheduling.date ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: 'Europe/Zurich' }).format(new Date(`${booking.scheduling.date}T12:00:00Z`)) : '—'}</strong><span>{booking.scheduling.time || '—'}{booking.scheduling.endTime ? `–${booking.scheduling.endTime}` : ''} · {text('swissTime')}</span></div>}
               {booking.scopeNotes && <div className="kr-calc-scope-notes"><h4>{text('selectedExtras')}</h4><p>{booking.scopeNotes}</p></div>}
               {(booking.customer || customer.address) && <div className="kr-calc-address"><MapPin aria-hidden="true" /><div><h4>{text('serviceAddress')}</h4><p>{booking.customer?.address || customer.address}<br />{booking.customer?.postalCode || customer.postalCode} {booking.customer?.city || customer.city}</p></div></div>}
               {emailStatusKey && <p className="kr-calc-email-state" role="status"><Mail aria-hidden="true" />{text(emailStatusKey)}</p>}
               {!preview && <button type="button" className="kr-calc-secondary" onClick={() => { void refreshStatus(); }} disabled={loadingStatus}>{loadingStatus && <LoaderCircle className="kr-calc-spin" aria-hidden="true" />}{text('refresh')}</button>}
             </section>
-            {booking.canCheckout && !checkoutHasExpired && <section className="kr-calc-card kr-calc-payment-card">
+            {canOpenCheckout && <section className="kr-calc-card kr-calc-payment-card">
               <div className="kr-calc-section-title"><CreditCard aria-hidden="true" /><h3>{text('paymentSummary')}</h3></div>
               <dl className="kr-calc-payment-details">
                 <div><dt>{text('total')}</dt><dd>{typeof finalTotal === 'number' ? money(finalTotal) : text('individual')}</dd></div>
@@ -935,6 +937,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, preview = fals
                 {typeof balanceAfterDeposit === 'number' && <div><dt>{text('remaining')}</dt><dd>{money(balanceAfterDeposit)}</dd></div>}
               </dl>
               {preview && booking.demo && <label className="kr-journey-demo-result">{journey.demoResult}<select value={demoOutcome} onChange={event=>setDemoOutcome(event.target.value as DemoPaymentOutcome)} disabled={openingPayment}><option value="paid">{journey.resultPaid}</option><option value="pending">{journey.resultPending}</option><option value="failed">{journey.resultFailed}</option></select></label>}
+              {!preview && <p>{text('paymentReadyStep')}</p>}
               <label className="kr-calc-consent"><input type="checkbox" checked={payConsent} onChange={event => setPayConsent(event.target.checked)} /><span>{preview&&booking.demo?journey.demoConsent:<>{text('payConsent')} <a href={`/terms?lang=${encodeURIComponent(language)}`}>{text('terms')}</a></>}</span></label>
               <button type="button" className="kr-calc-primary" disabled={!payConsent || openingPayment || typeof dueNow !== 'number' || dueNow <= 0} onClick={() => { void startPayment(); }}>{openingPayment ? <LoaderCircle className="kr-calc-spin" aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}{preview&&booking.demo?journey.demoPay:text(openingPayment ? 'openingPayment' : depositPercent < 100 ? 'payDeposit' : 'pay')}</button>
             </section>}

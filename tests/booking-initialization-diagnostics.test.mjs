@@ -65,7 +65,7 @@ test('booking avoids Auth loading unless customer access has every prerequisite,
       }}],
     });
     const {createBookingHandlers}=require(outfile);
-    const base={BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'synthetic-booking-secret-more-than-thirty-two-characters',FIREBASE_SERVICE_ACCOUNT_JSON:'{}',RESEND_API_KEY:'synthetic-key',BOOKING_EMAIL_FROM:'test@example.test',RECOVERY_TOKEN_SECRET:'synthetic-recovery-secret-more-than-thirty-two-characters',CRON_SECRET:'synthetic-cron-secret-more-than-thirty-two-characters',PAYREXX_INSTANCE:'synthetic-test',PAYREXX_API_SECRET:'synthetic-provider-secret',PAYREXX_MODE:'live'};
+    const base={BOOKING_ENABLED:'true',BOOKING_TOKEN_SECRET:'synthetic-booking-secret-more-than-thirty-two-characters',FIREBASE_SERVICE_ACCOUNT_JSON:'{}',RESEND_API_KEY:'synthetic-key',BOOKING_EMAIL_FROM:'test@example.test',RECOVERY_TOKEN_SECRET:'synthetic-recovery-secret-more-than-thirty-two-characters',CRON_SECRET:'synthetic-cron-secret-more-than-thirty-two-characters',PAYREXX_INSTANCE:'synthetic-test',PAYREXX_API_SECRET:'synthetic-provider-secret',PAYREXX_WEBHOOK_SECRET:'synthetic-separate-webhook-secret',PAYREXX_MODE:'live'};
     for(const override of [
       {BOOKING_CUSTOMER_ACCESS_ENABLED:'false'},
       {},

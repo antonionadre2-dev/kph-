@@ -143,6 +143,7 @@ export const PaymentCelebrationPage: React.FC<PaymentCelebrationPageProps> = ({ 
   const isDirect = booking.bookingMode === 'direct';
 
   const hasSentLead = useRef(false);
+  const [confetti, setConfetti] = useState<{id:number;x:number;y:number;size:number;color:string;duration:number;delay:number;rotate:number}[]>([]);
 
   useEffect(() => {
     if (!hasSentLead.current) {
