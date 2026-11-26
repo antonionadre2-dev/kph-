@@ -77,12 +77,12 @@ export function createServicePreviewController({ count = 2, initiallyPaused = tr
 }
 
 const copy = {
-  de: { automatic: 'Automatische Bildvorschau', paused: 'Bildvorschau pausiert', complete: 'Beide Ansichten entdeckt', pause: 'Automatische Bildvorschau pausieren', play: 'Bildvorschau starten', views: ['Ihr Zuhause entdecken', 'Ihre Wohnungsabgabe entdecken'] },
-  en: { automatic: 'Automatic image preview', paused: 'Image preview paused', complete: 'Both views explored', pause: 'Pause automatic image preview', play: 'Start image preview', views: ['Explore home cleaning', 'Explore move-out cleaning'] },
-  es: { automatic: 'Vista automática de imágenes', paused: 'Vista de imágenes en pausa', complete: 'Has visto ambas opciones', pause: 'Pausar la vista automática de imágenes', play: 'Iniciar la vista de imágenes', views: ['Descubre la limpieza de tu hogar', 'Descubre la limpieza de fin de contrato'] },
-  fr: { automatic: 'Aperçu automatique des images', paused: 'Aperçu des images en pause', complete: 'Les deux vues sont présentées', pause: 'Mettre l’aperçu automatique en pause', play: 'Lancer l’aperçu des images', views: ['Découvrez le nettoyage à domicile', 'Découvrez le nettoyage de fin de bail'] },
-  it: { automatic: 'Anteprima automatica delle immagini', paused: 'Anteprima delle immagini in pausa', complete: 'Entrambe le viste sono state mostrate', pause: 'Metti in pausa l’anteprima automatica', play: 'Avvia l’anteprima delle immagini', views: ['Scopri le pulizie di casa', 'Scopri le pulizie di fine locazione'] },
-  pt: { automatic: 'Pré-visualização automática', paused: 'Pré-visualização em pausa', complete: 'As duas vistas foram apresentadas', pause: 'Pausar a pré-visualização automática', play: 'Iniciar a pré-visualização', views: ['Descubra a limpeza da sua casa', 'Descubra a limpeza de fim de contrato'] },
+  de: { automatic: 'Automatische Bildvorschau', paused: 'Bildvorschau pausiert', complete: 'Beide Ansichten entdeckt', pause: 'Automatische Bildvorschau pausieren', play: 'Bildvorschau starten', views: ['Ihre Wohnungsabgabe entdecken', 'Ihr Zuhause entdecken'] },
+  en: { automatic: 'Automatic image preview', paused: 'Image preview paused', complete: 'Both views explored', pause: 'Pause automatic image preview', play: 'Start image preview', views: ['Explore move-out cleaning', 'Explore home cleaning'] },
+  es: { automatic: 'Vista automática de imágenes', paused: 'Vista de imágenes en pausa', complete: 'Ha visto ambas opciones', pause: 'Pausar la vista automática de imágenes', play: 'Iniciar la vista de imágenes', views: ['Descubra la limpieza de fin de alquiler', 'Descubra la limpieza de su hogar'] },
+  fr: { automatic: 'Aperçu automatique des images', paused: 'Aperçu des images en pause', complete: 'Les deux vues sont présentées', pause: 'Mettre l’aperçu automatique en pause', play: 'Lancer l’aperçu des images', views: ['Découvrez le nettoyage de fin de bail', 'Découvrez le nettoyage à domicile'] },
+  it: { automatic: 'Anteprima automatica delle immagini', paused: 'Anteprima delle immagini in pausa', complete: 'Entrambe le viste sono state mostrate', pause: 'Metti in pausa l’anteprima automatica', play: 'Avvia l’anteprima delle immagini', views: ['Pulizie di fine locazione', 'Pulizie di casa'] },
+  pt: { automatic: 'Pré-visualização automática', paused: 'Pré-visualização em pausa', complete: 'As duas vistas foram apresentadas', pause: 'Pausar a pré-visualização automática', play: 'Iniciar a pré-visualização', views: ['Descubra a limpeza de fim de contrato', 'Descubra a limpeza da sua casa'] },
 };
 const manualCopy = {
   de: { previous: 'Vorherige Bildansicht', next: 'Nächste Bildansicht', reduced: 'Manuelle Bildvorschau · Bewegung reduziert' },

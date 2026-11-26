@@ -138,7 +138,7 @@ test('mount uses live language, cancels on a modal and cleans up before a React 
   assert.equal(grid.dataset.previewActive, undefined);
   context.mock.timers.tick(1); assert.equal(grid.dataset.previewActive, '0');
   language = 'fr'; root.dispatchEvent(new Event('kraken:languagechange'));
-  assert.equal(status.textContent, 'Découvrez le nettoyage à domicile');
+  assert.equal(status.textContent, 'Découvrez le nettoyage de fin de bail');
   first(); assert.equal(grid.dataset.previewActive, undefined); assert.equal(disconnects, 2);
   const second = initServicePreview(root, { getLanguage: () => 'pt' });
   context.mock.timers.tick(90_000); assert.equal(grid.dataset.previewActive, undefined);
