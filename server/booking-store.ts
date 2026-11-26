@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import type { Firestore } from 'firebase-admin/firestore';
+import { mailRetryBlock } from './booking-mail-safety.ts';
 
 export const digest = (value:string) => crypto.createHash('sha256').update(value).digest('hex');
 const clean = <T>(value:T):T => JSON.parse(JSON.stringify(value));
@@ -15,6 +16,27 @@ export function createFirestoreBookingStore(db:Firestore) {
   const emailEvents=db.collection('kraken_booking_email_events');
   return {
     async get(id:string):Promise<any> { return (await bookings.doc(id).get()).data() || null; },
+    async listForOperator(reference?:string){
+      const query=reference?bookings.where('reference','==',reference).limit(25):bookings.orderBy('createdAt','desc').limit(25);
+      return (await query.get()).docs.map(row=>row.data());
+    },
+    async findByReferenceEmail(reference:string,email:string){
+      const result=await bookings.where('reference','==',reference).where('customer.email','==',email).limit(1).get();
+      return result.empty?null:result.docs[0].data();
+    },
+    async listMailForBooking(id:string){return (await outbox.where('bookingId','==',id).limit(50).get()).docs.map(row=>row.data());},
+    async requeueFailedMail(bookingId:string,jobId:string,expectedAttempts:number,operatorId:string,now:number){
+      return db.runTransaction(async tx=>{
+        const ref=outbox.doc(digest(jobId)),job=(await tx.get(ref)).data(),bookingRef=bookings.doc(bookingId),record=(await tx.get(bookingRef)).data();
+        if(!record||!job||job.bookingId!==bookingId)throw new BookingError('BOOKING_NOT_FOUND',404);
+        const suppressed=(await tx.get(emailSuppressions.doc(digest(record.customer.email)))).exists;
+        if(job.attempts!==expectedAttempts)throw new BookingError('EMAIL_STATE_CHANGED',409);
+        const reason=mailRetryBlock(job,record,suppressed);if(reason)throw new BookingError(reason,409);
+        tx.update(ref,{status:'queued',dueAt:now,leaseUntil:null,lastRetryAt:now,lastRetryBy:operatorId,manualRetries:(job.manualRetries||0)+1});
+        tx.update(bookingRef,{email:{...record.email,[job.kind]:'queued'}});
+        return job.id;
+      });
+    },
     async create(key:string, fingerprint:string, record:any, mail:any) {
       return db.runTransaction(async tx=>{
         const ref=keys.doc(digest(key)), previous=(await tx.get(ref)).data();
@@ -89,8 +111,8 @@ export function createFirestoreBookingStore(db:Firestore) {
     async claimMail(id:string, now:number):Promise<any> {
       return db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(!current || current.status!=='queued' || current.dueAt>now)return null;const attempts=Number.isSafeInteger(current.attempts)&&current.attempts>=0?current.attempts:0;const next={...current,status:'sending',attempts:attempts+1,leaseUntil:now+60000};tx.set(ref,next);return next;});
     },
-    async finishMail(id:string, status:string, providerId:string|null, retryAt?:number) {
-      await db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(current?.status==='sending')tx.update(ref,{status,providerId,leaseUntil:null,...(status==='queued'&&Number.isSafeInteger(retryAt)?{dueAt:retryAt}:{}),...(current.kind==='customer_access'&&status!=='queued'?{message:null,prepared:null}:{})});});
+    async finishMail(id:string, status:string, providerId:string|null, retryAt?:number,failure?:any) {
+      await db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)), current=(await tx.get(ref)).data();if(current?.status==='sending')tx.update(ref,{status,providerId,leaseUntil:null,...(failure?{failure:clean(failure)}:status==='sent'?{failure:null}:{}),...(status==='queued'&&Number.isSafeInteger(retryAt)?{dueAt:retryAt}:{}),...(current.kind==='customer_access'&&status!=='queued'?{message:null,prepared:null,authorisedLinks:null}:{})});});
     },
     async markStaleMail(now:number,{limit=20,deadlineAt=Infinity}={}) {
       for(const doc of (await outbox.where('status','==','sending').where('leaseUntil','<=',now).limit(Math.max(1,Math.min(20,Math.floor(limit)))).get()).docs) {
@@ -100,7 +122,7 @@ export function createFirestoreBookingStore(db:Firestore) {
         const bookingRef=current?.bookingId?bookings.doc(current.bookingId):null;
         const booking=bookingRef?(await tx.get(bookingRef)).data():null;
         if(current?.status==='sending' && current.leaseUntil<=now) {
-          tx.update(doc.ref,{status:'delivery_unknown',...(current.kind==='customer_access'?{message:null}:{})});
+          tx.update(doc.ref,{status:'delivery_unknown',...(current.kind==='customer_access'?{message:null,prepared:null,authorisedLinks:null}:{})});
           if(bookingRef&&booking&&current.kind!=='customer_access')tx.update(bookingRef,{email:{...booking.email,[current.kind]:'delivery_unknown'}});
         }
         });
@@ -115,7 +137,7 @@ export function createFirestoreBookingStore(db:Firestore) {
       await db.runTransaction(async tx=>{const ref=emailSuppressions.doc(digest(email)),current=(await tx.get(ref)).data();tx.set(ref,{reason:current?.reason==='complaint'?'complaint':reason,createdAt:current?.createdAt||now});});
       const matching=await bookings.where('customer.email','==',email).get();
       const queries=[outbox.where('email','==',email),...matching.docs.map(doc=>outbox.where('bookingId','==',doc.id))];
-      for(const query of queries)for(const doc of (await query.get()).docs)await db.runTransaction(async tx=>{const job=(await tx.get(doc.ref)).data();if(job?.status==='queued')tx.update(doc.ref,{status:'cancelled',...(job.kind==='customer_access'?{message:null}:{})});});
+      for(const query of queries)for(const doc of (await query.get()).docs)await db.runTransaction(async tx=>{const job=(await tx.get(doc.ref)).data();if(job?.status==='queued')tx.update(doc.ref,{status:'cancelled',...(job.kind==='customer_access'?{message:null,prepared:null,authorisedLinks:null}:{})});});
       for(const doc of matching.docs)await db.runTransaction(async tx=>{const record=(await tx.get(doc.ref)).data();if(record){const email=Object.fromEntries(Object.entries(record.email||{}).map(([kind,status])=>[kind,status==='queued'||status==='sending'?'failed':status]));tx.update(doc.ref,{email,emailDelivery:{status:reason,updatedAt:now}});}});
     },
     async emailEventProcessed(id:string, fingerprint:string) {const result=(await emailEvents.doc(digest(id)).get()).data();if(result&&result.fingerprint!==fingerprint)throw new BookingError('EVENT_CONFLICT',409);return Boolean(result);},

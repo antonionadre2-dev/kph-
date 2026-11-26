@@ -17,7 +17,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
     const { options } = ts.parseJsonConfigFileContent(config.config, ts.sys, root);
     assert.equal(options.rewriteRelativeImportExtensions, true);
     const names = [
-      'server.ts', 'seoConfig.ts', 'i18n.ts', 'src/locale.ts', 'src/data/locations.ts',
+      'src/auth/access.ts', 'server.ts', 'seoConfig.ts', 'i18n.ts', 'src/locale.ts', 'src/data/locations.ts',
       'components/home/homeTranslations.ts', 'components/contact/contactTranslations.ts', 'components/services/servicesTranslations.ts',
       'src/kai/types.ts', 'src/contact/routing-server.ts', 'src/booking/pricing.ts', 'src/booking/publicPricing.ts',
       'src/booking/uiCopy.ts', 'src/booking/terms.ts', 'src/home/paint-start.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',

@@ -11,7 +11,7 @@ import QuoteRecoveryCard from './QuoteRecoveryCard';
 import KrakenJourney, { JourneyEmailPreview, type JourneyPhase } from './KrakenJourney';
 import MovingGuide from './MovingGuide';
 import { journeyCopy, LANGUAGE_NAMES } from '../src/booking/journeyCopy';
-import { communicationLanguageToRestore, communicationPreferenceDiffers } from '../src/booking/communicationLanguage';
+import { bookingRequestLanguage, communicationPreferenceDiffers } from '../src/booking/communicationLanguage';
 import { guidePreferencesFromQuery, type GuidePreferences } from '../src/booking/movingGuide';
 import { createDemoBooking, confirmDemoAppointment, settleDemoPayment, type DemoBooking, type DemoPaymentOutcome } from '../src/booking/demoJourney';
 import { consumeHomeCalculatorRequest, subscribeHomeCalculatorRequests, HOME_CALCULATOR_INTENT_KEY } from '../src/home/calculator';
@@ -26,6 +26,10 @@ import { publicHref } from '../src/routing/site-paths';
 import CalculatorPostcodeCheck from './CalculatorPostcodeCheck';
 import CustomerReviews from './home/CustomerReviews';
 import { checkoutErrorKey, paymentUiState } from '../src/booking/paymentUi';
+import { calculatorSubmission, clearCalculatorDraft, purgeExpiredCalculatorSession, readCalculatorDraft, writeCalculatorDraft, type CalculatorSubmission } from '../src/booking/calculatorDraft';
+import BookingAccessRecovery from './BookingAccessRecovery';
+import { accessRecoveryText } from '../src/booking/accessRecoveryCopy';
+import { createBrowserAccessUiGate } from '../src/booking/browserAccessUi';
 import './service-calculator.css';
 
 interface ServiceCalculatorPageProps {
@@ -216,27 +220,34 @@ function PriceSummary({ quote, text, language, money, hasSelection = false }: { 
 }
 
 export default function ServiceCalculatorPage({ onNavigate, cart, setCart, preview = false }: ServiceCalculatorPageProps) {
-  const { language, setLanguage } = useTranslation();
+  const { language } = useTranslation();
   const locale = bookingLanguage(language);
   const journey = journeyCopy(locale);
   const text: Text = useCallback((key, params) => bookingText(locale, key, params), [locale]);
   const money = useCallback((cents: number) => new Intl.NumberFormat(locale === 'de' ? 'de-CH' : locale, { style: 'currency', currency: 'CHF', minimumFractionDigits: 2 }).format(cents / 100), [locale]);
-  const [entry] = useState(() => initialIntent(cart));
-  const [choice, setChoice] = useState<ServiceChoice | null>(entry.service);
-  const [selection, setSelection] = useState<BookingSelection | null>(() => entry.service ? legacySelection(entry.service, entry.source === 'cart' ? cart?.[entry.cartIndex ?? 0] : undefined) : null);
+  const [bootstrap] = useState(() => {
+    const entry = initialIntent(cart);
+    const params = new URLSearchParams(window.location.search);
+    const saved = preview || params.has('booking') || params.has('draft') ? null : readCalculatorDraft();
+    const draft = saved && (entry.source === 'none' || entry.service === saved.choice) ? saved : null;
+    return { entry, draft };
+  });
+  const { entry, draft: restoredDraft } = bootstrap;
+  const [choice, setChoice] = useState<ServiceChoice | null>(restoredDraft?.choice || entry.service);
+  const [selection, setSelection] = useState<BookingSelection | null>(() => restoredDraft?.selection || (entry.service ? legacySelection(entry.service, entry.source === 'cart' ? cart?.[entry.cartIndex ?? 0] : undefined) : null));
   const [legacyImported, setLegacyImported] = useState(entry.source === 'cart' && Boolean(entry.service));
   const [unsupportedIntent, setUnsupportedIntent] = useState(Boolean(entry.raw && !entry.service));
-  const intentHandled = useRef(entry.source !== 'none');
+  const intentHandled = useRef(Boolean(restoredDraft) || entry.source !== 'none');
   const legacyCart = Array.isArray(cart) ? cart : [];
-  const [customer, setCustomer] = useState<Customer>({ ...emptyCustomer });
-  const [requestedDate, setRequestedDate] = useState('');
-  const [requestedTime, setRequestedTime] = useState('09:00');
-  const [notes, setNotes] = useState('');
+  const [customer, setCustomer] = useState<Customer>(() => ({ ...emptyCustomer, ...restoredDraft?.customer }));
+  const [requestedDate, setRequestedDate] = useState(restoredDraft?.requestedDate || '');
+  const [requestedTime, setRequestedTime] = useState(restoredDraft?.requestedTime || '09:00');
+  const [notes, setNotes] = useState(restoredDraft?.notes || '');
   const [kaiSummary, setKaiSummary] = useState<KaiDraft | null>(null);
   const [kaiConflicts, setKaiConflicts] = useState<string[]>([]);
   const touchedSelection = useRef<Set<string>>(new Set(entry.source === 'cart' && entry.service ? Object.keys(legacySelection(entry.service, cart?.[entry.cartIndex ?? 0])) : []));
   const interruptedSelections = useRef(new Map<ServiceChoice, { selection: BookingSelection; touched: string[] }>());
-  const [wizardStep, setWizardStep] = useState<WizardStep>(0);
+  const [wizardStep, setWizardStep] = useState<WizardStep>(restoredDraft?.wizardStep || 0);
   const [extrasOpen, setExtrasOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [config, setConfig] = useState<BookingConfig | null>(null);
@@ -246,15 +257,25 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, FieldErrorKey>>({});
   const [booking, setBooking] = useState<BookingView | null>(null);
+  const [bookingEntry] = useState(() => {
+    const url = new URL(window.location.href), fragment = new URLSearchParams(url.hash.slice(1));
+    const candidate = url.searchParams.get('booking') || '';
+    const id = !preview && safeId.test(candidate) ? candidate : null;
+    const supplied = fragment.get('access') || '';
+    const recover = fragment.has('recover');
+    const token = id && !recover ? safeToken.test(supplied) ? supplied : recalledToken(id) : '';
+    return { id, recover, supplied: safeToken.test(supplied), token: safeToken.test(token) ? token : '' };
+  });
+  const [bookingEntryPending, setBookingEntryPending] = useState(Boolean(bookingEntry.id && bookingEntry.token && !bookingEntry.recover));
+  const browserAccessUi = useRef(createBrowserAccessUiGate());
   const [bookingAccess, setBookingAccess] = useState<{ id: string; token: string } | null>(null);
   const [recoveryAccess, setRecoveryAccess] = useState<RecoveryAccess | null>(null);
   const [recoveryEmailLanguage, setRecoveryEmailLanguage] = useState<string | null>(null);
   const [changingEmailLanguage, setChangingEmailLanguage] = useState(false);
   const [emailLanguageNotice, setEmailLanguageNotice] = useState<'saved'|'error'|null>(null);
-  const restoreLanguageRef=useRef(setLanguage);restoreLanguageRef.current=setLanguage;
   const [recoveryRestored, setRecoveryRestored] = useState(false);
   const [recoveryLoading, setRecoveryLoading] = useState(() => !preview && new URLSearchParams(window.location.search).has('draft'));
-  const [returnMissing, setReturnMissing] = useState(false);
+  const [returnMissing, setReturnMissing] = useState(Boolean(bookingEntry.id && (!bookingEntry.token || bookingEntry.recover)));
   const [loadingStatus, setLoadingStatus] = useState(false);
   const [payConsent, setPayConsent] = useState(false);
   const [openingPayment, setOpeningPayment] = useState(false);
@@ -267,7 +288,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const demoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const verifiedSuccess = useRef('');
   const verifyingPayment = useRef('');
-  const idempotency = useRef({ fingerprint: '', key: '' });
+  const idempotency = useRef<CalculatorSubmission | null>(null);
   const submittedResult = useRef<HTMLElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const stepPanelRef = useRef<HTMLElement>(null);
@@ -276,6 +297,19 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const [today] = useState(localToday);
 
   useEffect(() => () => { if (demoTimer.current) clearTimeout(demoTimer.current); }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (preview || !choice || !selection || booking || bookingAccess || recoveryLoading || returnMissing || params.has('booking') || params.has('draft')) return;
+    writeCalculatorDraft({ choice, selection, wizardStep, customer, requestedDate, requestedTime, notes });
+  }, [preview, choice, selection, wizardStep, customer, requestedDate, requestedTime, notes, booking, bookingAccess, recoveryLoading, returnMissing]);
+
+  useEffect(() => {
+    if (preview) return;
+    purgeExpiredCalculatorSession();
+    const timer = window.setInterval(() => purgeExpiredCalculatorSession(), 30_000);
+    return () => window.clearInterval(timer);
+  }, [preview]);
 
   useEffect(() => {
     if (entry.source === 'storage') {
@@ -322,8 +356,6 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     void api<{ selection: BookingSelection; language: string; email?: string; guidePreferences?:GuidePreferences; bookingId?: string | null; resumeBooking?: { bookingId: string; publicToken: string; canCheckout: boolean; status: string } | null }>(`/api/recovery/drafts/${encodeURIComponent(id)}`, { signal: controller.signal, headers: { Authorization: `Bearer ${accessToken}` } })
       .then(draft => {
         if (controller.signal.aborted) return;
-        const restore=communicationLanguageToRestore(draft.language,window.location.search);
-        if(restore)restoreLanguageRef.current(restore);
         setRecoveryEmailLanguage(draft.language);
         if(draft.guidePreferences) setGuidePreferences(draft.guidePreferences);
         // A payment reminder must resume its existing booking, never create a duplicate request.
@@ -375,6 +407,25 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   }, [nextUpdateAt]);
 
   useEffect(() => {
+    if (preview) return;
+    const url = new URL(window.location.href);
+    const fragment = new URLSearchParams(url.hash.slice(1));
+    // Remove capability secrets from the visible URL before any API calls.
+    if (fragment.has('access')) {
+      fragment.delete('access');
+      url.hash = fragment.toString();
+      window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
+    }
+    const { id, token, supplied, recover } = bookingEntry;
+    if (!id) return;
+    if (!token || recover) { setBookingEntryPending(false); setReturnMissing(true); return; }
+    if (supplied) browserAccessUi.current.establish(id, token);
+    rememberToken(id, token);
+    setBookingAccess({ id, token });
+    setBookingEntryPending(false);
+  }, [preview, bookingEntry]);
+
+  useEffect(() => {
     if (preview) {
       setConfig({ available: false, paymentReady: false, emailReady: false, mode: 'unconfigured', termsVersion: TERMS_VERSION });
       setConfigLoading(false);
@@ -389,35 +440,32 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     return () => controller.abort();
   }, [configAttempt, preview]);
 
-  useEffect(() => {
-    if (preview) return;
-    const url = new URL(window.location.href);
-    const id = url.searchParams.get('booking');
-    const fragment = new URLSearchParams(url.hash.slice(1));
-    const suppliedToken = fragment.get('access') || '';
-    // Remove capability secrets from the visible URL before any API calls.
-    if (fragment.has('access')) {
-      fragment.delete('access');
-      url.hash = fragment.toString();
-      window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
-    }
-    if (!id || !safeId.test(id)) return;
-    const token = suppliedToken && safeToken.test(suppliedToken) ? suppliedToken : recalledToken(id);
-    if (!token || !safeToken.test(token)) { setReturnMissing(true); return; }
-    rememberToken(id, token);
-    setBookingAccess({ id, token });
-  }, [preview]);
-
   const readStatus = useCallback(async (access: { id: string; token: string }, signal?: AbortSignal) => {
     if (preview) throw new BookingApiError('PREVIEW_ONLY', 403);
-    const value = await api<BookingView>(`/api/booking/requests/${encodeURIComponent(access.id)}`, { signal, headers: { Authorization: `Bearer ${access.token}` } });
-    if (!signal?.aborted) {
-      setBooking(value);
-      const restore=communicationLanguageToRestore(value.language,window.location.search);
-      if(restore)restoreLanguageRef.current(restore);
+    try {
+      const value = await api<BookingView>(`/api/booking/requests/${encodeURIComponent(access.id)}`, { signal, headers: browserAccessUi.current.headers(access.id, access.token) });
+      if (!signal?.aborted) setBooking(value);
+      return value;
+    } catch (cause) {
+      if (!signal?.aborted && cause instanceof BookingApiError && [401,403,404].includes(cause.status)) {
+        try { sessionStorage.removeItem(tokenKey(access.id)); } catch { /* Recovery remains available. */ }
+        setBookingAccess(null); setBooking(null); setReturnMissing(true);
+      }
+      throw cause;
     }
-    return value;
   }, [preview]);
+
+  const recoverBookingAccess = useCallback((access: { id: string; token: string }) => {
+    if (!safeId.test(access.id) || !safeToken.test(access.token)) return;
+    rememberToken(access.id, access.token);
+    setError(''); setReturnMissing(false); setBookingEntryPending(false);
+    setBookingAccess(access);
+    const url = new URL(window.location.href);
+    url.searchParams.set('booking', access.id);
+    for (const key of ['draft','payment','service']) url.searchParams.delete(key);
+    url.hash = '';
+    window.history.replaceState(window.history.state, '', publicHref(url.pathname + url.search, locale));
+  }, [locale]);
 
   useEffect(() => {
     if (preview || !bookingAccess) return;
@@ -648,22 +696,24 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
       setError(text('invalidDate')); return;
     }
     const payload = {
-      selection, customer, requestedDate, requestedTime, notes, language: locale,
+      selection, customer, requestedDate, requestedTime, notes, language: bookingRequestLanguage(language, window.location.href),
       termsAccepted: true, termsVersion: config.termsVersion || TERMS_VERSION,
       pricingVersion: quote.pricingVersion, acceptedTotalCents: quote.totalCents,
       ...(recoveryAccess ? { recovery: recoveryAccess } : {}),
     };
-    const fingerprint = JSON.stringify(payload);
-    if (fingerprint !== idempotency.current.fingerprint) idempotency.current = { fingerprint, key: randomId() };
     setSubmitting(true); setJourneyPhase('request');
     try {
+      idempotency.current = await calculatorSubmission(payload, idempotency.current, randomId);
       const result = await api<BookingView>('/api/booking/requests', {
         method: 'POST', body: JSON.stringify({ ...payload, idempotencyKey: idempotency.current.key }),
       });
       if (!safeId.test(result.bookingId) || !result.publicToken || !safeToken.test(result.publicToken)) throw new BookingApiError('INVALID_RESPONSE', 502);
       clearPrivateDrafts();
+      clearCalculatorDraft();
+      idempotency.current = null;
       setCart?.([]);
       rememberToken(result.bookingId, result.publicToken);
+      browserAccessUi.current.establish(result.bookingId, result.publicToken);
       setBooking(result); setBookingAccess({ id: result.bookingId, token: result.publicToken });
       if (recoveryAccess) { try { sessionStorage.removeItem(recoveryTokenKey(recoveryAccess.id)); } catch { /* Optional session state. */ } }
       setRecoveryAccess(null);
@@ -705,7 +755,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     try {
       const result = await api<{ link: string }>(`/api/booking/requests/${encodeURIComponent(bookingAccess.id)}/checkout`, {
         method: 'POST', headers: { Authorization: `Bearer ${bookingAccess.token}` },
-        body: JSON.stringify({ acceptedQuoteRevision: booking.quoteRevision, termsAccepted: true, termsVersion: booking.termsVersion || config?.termsVersion || TERMS_VERSION, language: locale }),
+        body: JSON.stringify({ acceptedQuoteRevision: booking.quoteRevision, termsAccepted: true, termsVersion: booking.termsVersion || config?.termsVersion || TERMS_VERSION, language: bookingRequestLanguage(language, window.location.href) }),
       });
       const paymentUrl = new URL(result.link);
       if (paymentUrl.protocol !== 'https:') throw new BookingApiError('INVALID_PAYMENT_LINK', 502);
@@ -719,6 +769,8 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     }
   };
   const reset = () => {
+    browserAccessUi.current.clear(); setBookingEntryPending(false);
+    clearCalculatorDraft(); idempotency.current = null;
     if (demoTimer.current) clearTimeout(demoTimer.current);
     setSubmitting(false);setOpeningPayment(false);setJourneyPhase(null);setJourneyEmail(null);
     verifiedSuccess.current='';verifyingPayment.current='';
@@ -901,15 +953,16 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
       {recoveryLoading && <div className="kr-calc-loading" role="status"><LoaderCircle className="kr-calc-spin" aria-hidden="true" />{text('working')}</div>}
       {config?.mode === 'test' && <p className="kr-calc-alert kr-calc-test" role="status">{text('testBanner')}</p>}
       {!preview && config?.available && config.emailReady === false && <p className="kr-calc-inline-note" role="status"><Mail aria-hidden="true" />{text(booking ? 'mailUnavailable' : 'emailUnavailableBeforeRequest')}</p>}
-      {returnMissing && <section className="kr-calc-card kr-calc-return-error" role="status"><ShieldCheck aria-hidden="true" /><p>{text('returnMissing')}</p><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a><button type="button" className="kr-calc-secondary" onClick={reset}>{text('newRequest')}</button></section>}
-      {bookingAccess && !booking && <div className="kr-calc-loading" role="status">{loadingStatus ? <><LoaderCircle className="kr-calc-spin" aria-hidden="true" />{text('working')}</> : <button type="button" className="kr-calc-secondary" onClick={() => { void refreshStatus(); }}>{text('refresh')}</button>}</div>}
+      {returnMissing && <><BookingAccessRecovery language={locale} bookingId={new URLSearchParams(window.location.search).get('booking') || bookingEntry.id || undefined} onRecovered={recoverBookingAccess} /><button type="button" className="kr-calc-secondary" onClick={reset}>{text('newRequest')}</button></>}
+      {(bookingAccess || bookingEntryPending) && !booking && <div className="kr-calc-loading" role="status">{loadingStatus || bookingEntryPending ? <><LoaderCircle className="kr-calc-spin" aria-hidden="true" />{text('working')}</> : <button type="button" className="kr-calc-secondary" onClick={() => { void refreshStatus(); }}>{text('refresh')}</button>}</div>}
       {error && <p className="kr-calc-alert" role="alert">{error}</p>}
       {!preview && (booking?.language || (recoveryAccess && recoveryEmailLanguage)) && <section className="kr-calc-card" style={{marginBottom:24}} aria-label={journey.emailLanguage}>
         <p>{journey.emailLanguage}: <strong>{LANGUAGE_NAMES[bookingLanguage(booking?.language || recoveryEmailLanguage || locale)]}</strong></p>
         {communicationPreferenceDiffers(locale,booking?.language || recoveryEmailLanguage) && <><p>{communicationCopy[locale].note}</p><button type="button" className="kr-calc-secondary" disabled={changingEmailLanguage} onClick={()=>void changeCommunicationLanguage()}>{changingEmailLanguage?<LoaderCircle className="kr-calc-spin" aria-hidden="true"/>:null}{communicationCopy[locale].use}</button></>}
         {emailLanguageNotice && <p role={emailLanguageNotice==='error'?'alert':'status'}>{communicationCopy[locale][emailLanguageNotice]}</p>}
       </section>}
-      {!bookingAccess && !booking && !returnMissing && !recoveryLoading && <>
+      {!preview && !bookingAccess && !booking && !bookingEntryPending && !returnMissing && !recoveryLoading && <details className="kr-calc-access-tools" style={{ marginBottom:24 }}><summary className="kr-calc-text-button" style={{ minHeight:44 }}>{accessRecoveryText(locale,'title')}</summary><BookingAccessRecovery language={locale} onRecovered={recoverBookingAccess} /></details>}
+      {!bookingAccess && !booking && !bookingEntryPending && !returnMissing && !recoveryLoading && <>
         {unsupportedIntent && <p className="kr-calc-alert" role="status">{text('unsupportedIntent')}</p>}
         {wizardStep === 0 && legacyCart.length > 0 && <section className="kr-calc-card" style={{ marginBottom: 24 }} aria-labelledby="kr-calc-legacy-title"><h2 id="kr-calc-legacy-title" className="kr-calc-subtitle" style={{ marginTop: 0 }}>{text('previousBasket', { count: legacyCart.length })}</h2><p className="kr-calc-section-hint" style={{ marginTop: 0 }}>{text('previousBasketHint')}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>{legacyCart.map((item, index) => { const service = serviceAlias(item?.type || ''); return service ? <button className="kr-calc-secondary" type="button" key={item?.id || index} onClick={() => chooseLegacyItem(index)}>{index + 1}. {text(service)}</button> : item?.type === 'comic-book' ? <button className="kr-calc-secondary" type="button" key={item.id || index} onClick={() => onNavigate('comic-shop')}>{index + 1}. {text('comicShop')}</button> : <span className="kr-calc-inline-note" key={item?.id || index} style={{ margin: 0 }}>{index + 1}. {text('unsupportedBasketItem')}</span>; })}</div>
@@ -947,7 +1000,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
               </dl>
               {preview && booking.demo && <label className="kr-journey-demo-result">{journey.demoResult}<select value={demoOutcome} onChange={event=>setDemoOutcome(event.target.value as DemoPaymentOutcome)} disabled={openingPayment}><option value="paid">{journey.resultPaid}</option><option value="pending">{journey.resultPending}</option><option value="failed">{journey.resultFailed}</option></select></label>}
               {!preview && <p>{text('paymentReadyStep')}</p>}
-              <label className="kr-calc-consent"><input type="checkbox" checked={payConsent} onChange={event => setPayConsent(event.target.checked)} /><span>{preview&&booking.demo?journey.demoConsent:booking.termsVersion&&booking.termsVersion!==BOOKING_TERMS_VERSION?text('payConsentExisting'):<>{text('payConsent')} <a href={publicHref('/terms', locale)}>{text('terms')}</a></>}</span></label>
+              <label className="kr-calc-consent"><input type="checkbox" checked={payConsent} onChange={event => setPayConsent(event.target.checked)} /><span>{preview&&booking.demo?journey.demoConsent:booking.termsVersion&&booking.termsVersion!==BOOKING_TERMS_VERSION?text('payConsentExisting'):<>{text('payConsent')} <a href={publicHref('/terms', locale)} target="_blank" rel="noopener noreferrer">{text('terms')}</a></>}</span></label>
               <button type="button" className="kr-calc-primary" disabled={!payConsent || openingPayment || typeof dueNow !== 'number' || dueNow <= 0} onClick={() => { void startPayment(); }}>{openingPayment ? <LoaderCircle className="kr-calc-spin" aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}{preview&&booking.demo?journey.demoPay:text(openingPayment ? 'openingPayment' : depositPercent < 100 ? 'payDeposit' : 'pay')}</button>
             </section>}
             {paid && <section className="kr-calc-card kr-calc-payment-card"><div className="kr-calc-section-title"><CheckCircle2 aria-hidden="true" /><h3>{text('paidAmount')}</h3></div><strong className="kr-calc-paid-amount">{money(booking.payment.amountPaidCents)}</strong>{typeof finalBalance === 'number' && <p className="kr-calc-balance">{text('remaining')}: <strong>{money(finalBalance)}</strong></p>}</section>}
@@ -956,7 +1009,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
           </div>
           <aside className="kr-calc-summary kr-calc-card"><h2>{text('summary')}</h2><PriceSummary quote={booking.quote} text={text} language={locale} money={money} /></aside>
         </div>
-      </section> : !bookingAccess && !returnMissing && !recoveryLoading && <>
+      </section> : !bookingAccess && !bookingEntryPending && !returnMissing && !recoveryLoading && <>
         <form onInputCapture={event => { const id = (event.target as HTMLElement).id; if (fieldErrors[id]) setFieldErrors(current => { const next = { ...current }; delete next[id]; return next; }); }} ref={formRef} className="kr-calc-layout" noValidate onSubmit={submitRequest}>
           <div className="kr-calc-stack">
             <section className="kr-calc-step-panel kr-calc-card" ref={stepPanelRef} aria-labelledby="kr-calc-step-title" data-step={wizardStep}>
@@ -1026,7 +1079,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
               {!preview && config?.paymentReady && <p className="kr-calc-payment-method-note">{frictionText(locale, 'paymentReady')}{typeof config.depositPercent === 'number' && config.depositPercent > 0 && config.depositPercent <= 100 && <span>{frictionText(locale, 'deposit', { percent: String(config.depositPercent) })}</span>}</p>}
               {CONFIRMATION_WINDOW_COPY[locale] && <p className="kr-calc-request-note">{CONFIRMATION_WINDOW_COPY[locale]}</p>}
               {wizardStep < 2 ? <><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} onClick={nextStep}>{text(nextLabel)}</button><p className="kr-calc-request-note">{text('bookingJourney')}</p></> : <>
-                <label className="kr-calc-consent"><input id="kr-calc-final-consent" ref={finalConsentRef} type="checkbox" required checked={termsAccepted} disabled={submitting} onChange={event => setTermsAccepted(event.target.checked)} /><span>{preview&&demoEnabled?journey.demoConsent:<>{text('termsPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/terms', locale)}`}>{text('terms')}</a> {text('privacyPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/gdpr', locale)}`}>{text('privacy')}</a> {text('readSuffix')}</>}</span></label>
+                <label className="kr-calc-consent"><input id="kr-calc-final-consent" ref={finalConsentRef} type="checkbox" required checked={termsAccepted} disabled={submitting} onChange={event => setTermsAccepted(event.target.checked)} /><span>{preview&&demoEnabled?journey.demoConsent:<>{text('termsPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/terms', locale)}`} target="_blank" rel="noopener noreferrer">{text('terms')}</a> {text('privacyPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/gdpr', locale)}`} target="_blank" rel="noopener noreferrer">{text('privacy')}</a> {text('readSuffix')}</>}</span></label>
                 <button type="submit" className="kr-calc-primary" disabled={(preview?!demoEnabled:!config?.available) || !quote || submitting || !termsAccepted}>{submitting ? <LoaderCircle className="kr-calc-spin" aria-hidden="true" /> : <ClipboardList aria-hidden="true" />}{preview&&demoEnabled?journey.demoSubmit:text(submitting ? 'submitting' : manualReview ? 'manualSubmit' : 'requestSubmit')}</button>
                 <p className="kr-calc-request-note">{preview?journey.demoNote:text('requestNote')}</p>
                 {!preview && (configLoading ? <p className="kr-calc-status-note" role="status">{text('loadingConfig')}</p> : !config?.available && <div className="kr-calc-unavailable" role="status"><p>{text('unavailable')}</p><button type="button" className="kr-calc-text-button" onClick={() => setConfigAttempt(value => value + 1)}>{text('retry')}</button></div>)}

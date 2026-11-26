@@ -683,3 +683,96 @@ test('Firestore transaction records persist attempt counts and deferred dueAt', 
   assert.equal(second.attempts, 2);
   assert.equal(second.dueAt, now + 1200000);
 });
+
+test('real booking middleware persists a browser cookie only on create or explicit authenticated establishment, never ordinary reads',async t=>{
+  t.mock.method(console,'info',()=>{});
+  const {createBookingHandlers,setStore}=await handlersBundle(),store=memoryStore();setStore(store);
+  const handlers=createBookingHandlers({env:environment({RESEND_API_KEY:undefined}),clock:()=>now,fetcher:async()=>{throw Error('No upstream calls');}});
+  const config=await invoke(handlers,'/api/booking/config');
+  const capture=config.cookies.map(value=>`${value.name}=${value.value}`).join('; ');
+  const options={method:'POST',headers:{Origin:origin,'Content-Type':'application/json',Cookie:capture},body:request()};
+  const created=await invoke(handlers,'/api/booking/requests',options);
+  assert.equal(created.statusCode,201);assert.match(created.headers['set-cookie'],/^__Secure-kraken_booking_access=.*HttpOnly; Secure; SameSite=Strict$/);
+  const browserCookie=created.headers['set-cookie'].split(';')[0],id=created.body.bookingId,bearer=`Bearer ${created.body.publicToken}`;
+  const read=await invoke(handlers,`/api/booking/requests/${id}`,{headers:{Authorization:bearer}});assert.equal(read.statusCode,200);assert.equal(read.headers['set-cookie'],undefined);
+  const bad=await invoke(handlers,`/api/booking/requests/${id}`,{headers:{Authorization:'Bearer synthetic-wrong-capability-123456','X-Kraken-Browser-Access':'establish'}});assert.equal(bad.statusCode,404);assert.equal(bad.headers['set-cookie'],undefined);
+  const established=await invoke(handlers,`/api/booking/requests/${id}`,{headers:{Authorization:bearer,'X-Kraken-Browser-Access':'establish'}});assert.equal(established.statusCode,200);assert.match(established.headers['set-cookie'],/Max-Age=604800/);
+  const restore=await invoke(handlers,'/api/booking/browser-access',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',Cookie:`${capture}; ${browserCookie}`},body:{bookingId:id}});
+  assert.equal(restore.statusCode,200);assert.deepEqual(restore.body,{id,token:created.body.publicToken});assert.equal(restore.headers['set-cookie'],undefined);
+  store.records.get(id).tokenRevoked=true;
+  const revoked=await invoke(handlers,'/api/booking/browser-access',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',Cookie:`${capture}; ${browserCookie}`},body:{bookingId:id}});assert.equal(revoked.statusCode,404);assert.equal(revoked.body.token,undefined);
+});
+
+test('anonymous recovery route pins before lookup, returns generic acknowledgement before provider and redeems only actual short-lived mail proof',async t=>{
+  t.mock.method(console,'info',()=>{});
+  const {createBookingHandlers,setStore}=await handlersBundle(),store=memoryStore();setStore(store);
+  let lookedUp=0,releaseProvider,providerEntered;const entered=new Promise(resolve=>{providerEntered=resolve;}),release=new Promise(resolve=>{releaseProvider=resolve;});const pinned=[];
+  store.findByReferenceEmail=async(reference,email)=>{lookedUp++;assert.ok(pinned.length>0,'The host owns the task before a recipient lookup');return [...store.records.values()].find(row=>row.reference===reference&&row.customer.email===email)||null;};
+  const handlers=createBookingHandlers({env:environment(),clock:()=>now,schedulePaymentEmails:work=>{pinned.push(work);return true;},fetcher:async url=>{assert.equal(url,'https://api.resend.com/emails');providerEntered();await release;return Response.json({id:'synthetic-access-accepted'});}});
+  const runtime=await handlers.initialize(),booking=await runtime.service.create(request());
+  const config=await invoke(handlers,'/api/booking/config'),headers={Origin:origin,'Content-Type':'application/json',Cookie:config.cookies.map(value=>`${value.name}=${value.value}`).join('; ')};
+  const body={reference:booking.reference,email:'client@example.test',language:'es',idempotencyKey:'synthetic_access_key_123456'};
+  try{
+    const missing=await invoke(handlers,'/api/booking/access-requests',{method:'POST',headers,body:{...body,reference:'K-2026-XXXXXXXX'}});
+    const matched=await invoke(handlers,'/api/booking/access-requests',{method:'POST',headers,body});
+    assert.equal(missing.statusCode,202);assert.equal(matched.statusCode,202);assert.deepEqual(missing.body,matched.body);assert.deepEqual(matched.body,{status:'accepted'});
+    await entered;assert.equal(lookedUp,2);
+    const job=[...store.mail.values()].find(row=>row.kind==='customer_access');assert.equal(job.status,'sending');assert.equal(job.expiresAt,now+15*60000);
+    const proof=new URLSearchParams(new URL(job.authorisedLinks.primary).hash.slice(1)).get('recover');
+    const redeemed=await invoke(handlers,'/api/booking/link-access',{method:'POST',headers,body:{bookingId:booking.bookingId,proof}});assert.equal(redeemed.statusCode,200);assert.deepEqual(redeemed.body,{id:booking.bookingId,token:booking.publicToken});assert.match(redeemed.headers['set-cookie'],/HttpOnly; Secure; SameSite=Strict/);
+    const forged=await invoke(handlers,'/api/booking/link-access',{method:'POST',headers,body:{bookingId:booking.bookingId,proof:proof+'x'}});assert.equal(forged.statusCode,404);assert.equal(forged.body.token,undefined);
+  }finally{releaseProvider();await Promise.all(pinned);}
+});
+
+test('anonymous mail recovery without a real lifecycle scheduler fails uniformly before lookup or queueing',async t=>{
+  t.mock.method(console,'info',()=>{});
+  const {createBookingHandlers,setStore}=await handlersBundle(),store=memoryStore();setStore(store);let lookups=0;
+  store.findByReferenceEmail=async()=>{lookups++;throw Error('Must not look up');};
+  const handlers=createBookingHandlers({env:environment(),clock:()=>now,fetcher:async()=>{throw Error('No provider allowed');}});
+  const config=await invoke(handlers,'/api/booking/config'),headers={Origin:origin,'Content-Type':'application/json',Cookie:config.cookies.map(value=>`${value.name}=${value.value}`).join('; ')};
+  for(const reference of ['K-2026-XXXXXXXX','K-2026-YYYYYYYY']){
+    const result=await invoke(handlers,'/api/booking/access-requests',{method:'POST',headers,body:{reference,email:'client@example.test',language:'en',idempotencyKey:'synthetic_access_key_123456'}});assert.equal(result.statusCode,503);assert.equal(result.body.code,'ACCESS_EMAIL_DISPATCH_UNAVAILABLE');
+  }
+  assert.equal(lookups,0);assert.equal(store.mail.size,0);
+});
+
+test('real local HTTP: a new email-proof browser keeps its original cookie through closed tabs, expired mail proof and seven-day expiry without renewal',async t=>{
+  t.mock.method(console,'info',()=>{});
+  const {createBookingHandlers,setStore}=await handlersBundle(),store=memoryStore();setStore(store);
+  let instant=now,providerAvailable=true;const tracked=[],envelopes=[];
+  store.findByReferenceEmail=async(reference,email)=>[...store.records.values()].find(row=>row.reference===reference&&row.customer.email===email)||null;
+  const handlers=createBookingHandlers({env:environment(),clock:()=>instant,schedulePaymentEmails:work=>{tracked.push(work);return true;},fetcher:async(url,options)=>{
+    assert.equal(url,'https://api.resend.com/emails');assert.equal(providerAvailable,true,'Reopening after proof expiry must not need the mail provider');envelopes.push(JSON.parse(options.body));return Response.json({id:`synthetic-http-email-${envelopes.length}`});
+  }});
+  const runtime=await handlers.initialize(),booking=await runtime.service.create(request());
+  const app=express();app.use(express.json());app.use(handlers.middleware);
+  const server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.on('listening',resolve));
+  t.after(()=>new Promise(resolve=>server.close(resolve)));
+  const local=`http://127.0.0.1:${server.address().port}`;
+  const config=async()=>{const response=await fetch(local+'/api/booking/config');assert.equal(response.status,200);return response.headers.get('set-cookie').split(';')[0];};
+  const post=(path,body,cookie)=>fetch(local+path,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',Cookie:cookie},body:JSON.stringify(body)});
+  let capture=await config();
+  const queued=await post('/api/booking/access-requests',{reference:booking.reference,email:booking.customer.email,language:'es',idempotencyKey:'synthetic_http_access_123456'},capture);
+  assert.equal(queued.status,202);await Promise.all(tracked);
+  const mail=envelopes.find(row=>row.text.includes('#recover='));assert.ok(mail);
+  const accessUrl=new URL(mail.text.match(/https:\/\/[^\s<>]+#recover=[A-Za-z0-9_.-]+/)[0]),proof=new URLSearchParams(accessUrl.hash.slice(1)).get('recover');
+  instant+=60000;
+  const linked=await post('/api/booking/link-access',{bookingId:booking.bookingId,proof},capture);
+  assert.equal(linked.status,200);const pair=await linked.json();assert.deepEqual(pair,{id:booking.bookingId,token:booking.publicToken});
+  const setCookie=linked.headers.get('set-cookie');assert.match(setCookie,/HttpOnly; Secure; SameSite=Strict/);assert.match(setCookie,/Max-Age=604800/);
+  const cookie=setCookie.split(';')[0],cookieCreatedAt=instant;
+  assert.equal(new Date(/Expires=([^;]+)/.exec(setCookie)[1]).getTime(),cookieCreatedAt+7*86400000);
+  const replay=await post('/api/booking/link-access',{bookingId:booking.bookingId,proof},`${capture}; ${cookie}`);assert.equal(replay.status,200);assert.equal(replay.headers.get('set-cookie'),null,'A valid existing cookie is preserved even after a valid mail proof');
+  const establish=await fetch(local+`/api/booking/requests/${booking.bookingId}`,{headers:{Authorization:`Bearer ${booking.publicToken}`,'X-Kraken-Browser-Access':'establish',Cookie:`${capture}; ${cookie}`}});assert.equal(establish.status,200);assert.equal(establish.headers.get('set-cookie'),null,'Explicit bearer establishment also preserves an already valid cookie');
+  // The tab capability is gone. The mailbox link has expired and email is unavailable.
+  const tab=new Map([['token',pair.token]]);tab.clear();instant=now+16*60000;providerAvailable=false;
+  assert.equal((await post('/api/booking/link-access',{bookingId:booking.bookingId,proof},capture)).status,404);
+  const reopened=await post('/api/booking/browser-access',{bookingId:booking.bookingId},`${capture}; ${cookie}`);
+  assert.equal(reopened.status,200);assert.deepEqual(await reopened.json(),{id:booking.bookingId,token:booking.publicToken});assert.equal(reopened.headers.get('set-cookie'),null);
+  // Refresh only the ordinary CSRF capture, never the booking cookie, after seven days.
+  instant=cookieCreatedAt+7*86400000-1;capture=await config();
+  const beforeExpiry=await post('/api/booking/browser-access',{bookingId:booking.bookingId},`${capture}; ${cookie}`);assert.equal(beforeExpiry.status,200);assert.equal(beforeExpiry.headers.get('set-cookie'),null);
+  instant=cookieCreatedAt+7*86400000;
+  const expired=await post('/api/booking/browser-access',{bookingId:booking.bookingId},`${capture}; ${cookie}`);assert.equal(expired.status,404);assert.equal(expired.headers.get('set-cookie'),null);assert.equal((await expired.json()).token,undefined);
+  assert.equal(envelopes.length,1,'Only the one explicitly requested mocked access email was sent');
+});

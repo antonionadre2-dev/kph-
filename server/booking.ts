@@ -13,6 +13,10 @@ import { bookingAppointmentStart, bookingEmailLinks, collectionConfiguration, cr
 import { languageForBackgroundEmail, normalizeEmailLanguage } from '../integrations/email-collection/index.mjs';
 import type { PaymentEmailScheduler } from './booking-lifecycle.ts';
 import { runPayrexxConnectionCheckOnce } from './payrexx-connection-check.ts';
+import { safeMailFailure } from './booking-mail-safety.ts';
+import { createBookingOperatorHandler } from './booking-operator.ts';
+import { createBookingAccessRecovery, issueBookingBrowserCookie, redeemBookingBrowserCookie } from './booking-access-recovery.ts';
+import { pinnedAccessRequest } from './booking-access-dispatch.ts';
 import firebaseConfig from '../firebase-applet-config.json' with {type:'json'};
 
 export { BOOKING_TERMS_VERSION };
@@ -82,6 +86,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
   function eligibleNotification(record:any,job:any) {
     if(job.kind==='customer_access')return job.expiresAt>clock();
     if(!record)return false;
+    if(job.kind==='payment_ready')return canCheckout(record);
     if(job.kind==='receipt')return ['paid','test_paid'].includes(record.payment.status);
     if(job.kind!=='notification')return true;
     const template=job.notification?.templateId;
@@ -97,6 +102,11 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
   }
   const service={
     token,view,authenticated,canCheckout,
+    async browserAccess(id:string){
+      if(!safeId.test(id))return null;
+      const record=await store.get(id);
+      return record&&!record.tokenRevoked?{id,token:token(id)}:null;
+    },
     setRecovery(value:any){recoveryService=value;},
     async create(input:any) {
       const value=validateBookingRequest(input,clock());
@@ -207,14 +217,15 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       return next;
     },
     /** Server-only operation. Invoke after an authorized person actually checks availability. */
-    async confirmAppointment(id:string,{holdExpiresAt,operatorId}:{holdExpiresAt:string;operatorId:string}) {
+    async confirmAppointment(id:string,{holdExpiresAt,operatorId,expectedRevision,notifyPaymentReady=false}:{holdExpiresAt:string;operatorId:string;expectedRevision?:number;notifyPaymentReady?:boolean}) {
       if(!operatorId || !Number.isFinite(Date.parse(holdExpiresAt)) || Date.parse(holdExpiresAt)<=clock() || Date.parse(holdExpiresAt)>clock()+7*86400000)throw new BookingError('INVALID_HOLD');
-      return store.mutate(id,record=>{
+      return store.mutateWithMail(id,record=>{
+        if(expectedRevision!==undefined&&record.revision!==expectedRevision)throw new BookingError('BOOKING_CHANGED',409);
         validateAppointment(record.scheduling.date,record.scheduling.time,clock());
         if(['cancelled','expired','completed'].includes(record.status)||record.quote.totalCents===null||record.quote.manualReviewReasons.length)throw new BookingError('MANUAL_REVIEW_REQUIRED',409);
         if(record.checkout)throw new BookingError('CHECKOUT_ALREADY_STARTED',409);
-        return {...record,status:'confirmed',mode,confirmedAt:clock(),confirmedBy:operatorId,revision:record.revision+1,scheduling:{...record.scheduling,status:'held',holdExpiresAt}};
-      });
+        return {...record,status:'confirmed',mode,confirmedAt:clock(),confirmedBy:operatorId,revision:record.revision+1,...(notifyPaymentReady?{email:{...record.email,payment_ready:'queued'}}:{}),scheduling:{...record.scheduling,status:'held',holdExpiresAt}};
+      },record=>notifyPaymentReady?mailJob(record,'payment_ready','payment_requested',`${id}:availability:${record.revision}`,`${id}:payment-ready:${record.revision}`):null);
     },
     /** Private commercial approval; the customer must accept the resulting revision in checkout. */
     async approveManualQuote(id:string,{totalCents,scopeNotes,scopeLanguage,operatorId}:{totalCents:number;scopeNotes:string;scopeLanguage?:string;operatorId:string}) {
@@ -248,7 +259,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       for(const pending of pendingJobs.slice(0,batch)) {
         if(performance.now()+15000>=deadlineAt)break;
         const job=await store.claimMail(pending.id,clock());if(!job)continue;
-        if(!emailCollectionEnabled&&(job.kind==='notification'||job.prepared?.notificationId)){await store.finishMail(job.id,'cancelled',null);continue;}
+        if(!emailCollectionEnabled&&job.kind!=='payment_ready'&&(job.kind==='notification'||job.prepared?.notificationId)){await store.finishMail(job.id,'cancelled',null);continue;}
         if(emailCollectionEnabled&&!paymentNotificationsEnabled&&job.kind==='receipt'){await store.finishMail(job.id,'cancelled',null);continue;}
         if(job.kind==='customer_access' && (!job.message || job.expiresAt<=clock())) {await store.finishMail(job.id,'cancelled',null);continue;}
         const record=job.bookingId?await store.get(job.bookingId):null;
@@ -258,7 +269,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         try {
           let message=job.prepared;
           if(!message) {
-            if(emailCollectionEnabled) {
+            if(emailCollectionEnabled||job.kind==='payment_ready') {
               if(!job.notification)throw Object.assign(new Error('EMAIL_SNAPSHOT_REVIEW_REQUIRED'),{definitelyNotSent:true});
               const links=job.kind==='customer_access'?job.authorisedLinks:bookingEmailLinks(record,job.notification,origin,token(record.bookingId));
               message=prepareCustomerEnvelope(job.notification,links,origin);
@@ -285,7 +296,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
           const retry=definitive&&cause?.retryable===true&&attempts<3;
           const status=retry?'queued':definitive?'failed':'delivery_unknown';
           const retryAfterMs=Number.isSafeInteger(cause?.retryAfterMs)&&cause.retryAfterMs>=0?cause.retryAfterMs:0;
-          await store.finishMail(job.id,status,null,retry?clock()+Math.max(15*60000,retryAfterMs):undefined);
+          await store.finishMail(job.id,status,null,retry?clock()+Math.max(15*60000,retryAfterMs):undefined,safeMailFailure(cause,clock()));
           if(job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:status}}));
           if(status==='delivery_unknown')unknown++;
         }
@@ -299,6 +310,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
 interface Runtime { service:ReturnType<typeof createBookingService>|null; recovery:any; handleRecovery:any; store:BookingStore|null; auth:any; origin:string; mode:string; paymentReady:boolean; emailReady:boolean; customerAccess:boolean; secret:string; }
 export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.now,schedulePaymentEmails}:{env?:NodeJS.ProcessEnv;fetcher?:typeof fetch;clock?:()=>number;schedulePaymentEmails?:PaymentEmailScheduler}={}) {
   let initialization:Promise<Runtime>|null=null;
+  let operatorAuth:Promise<import('firebase-admin/auth').Auth>|null=null;
   const initialize=()=>initialization ||= (async()=>{
     let origin='https://krakenpfm.ch';try{origin=new URL(env.APP_URL||origin).origin;}catch{}
     const secret=env.BOOKING_TOKEN_SECRET||'';
@@ -364,10 +376,21 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       return {service,recovery,store,auth,origin,mode,paymentReady,emailReady,customerAccess,handleRecovery,secret};
     }catch(cause){diagnostic(phase,cause);return disabled;}
   })();
+  const getOperatorAuth=()=>operatorAuth||=(async()=>{
+    const runtime=await initialize();if(!runtime.service)throw new BookingError('BOOKING_NOT_CONFIGURED',503);
+    const {getApps}=await import('firebase-admin/app'),{getAuth}=await import('firebase-admin/auth');
+    const app=getApps().find(value=>value.name==='kraken-booking');if(!app)throw new BookingError('BOOKING_NOT_CONFIGURED',503);
+    return getAuth(app);
+  })().catch(error=>{operatorAuth=null;throw error;});
+  const operator=createBookingOperatorHandler({getRuntime:initialize,getAuth:getOperatorAuth,validCapture:(req,runtime)=>Boolean(cookieSession(req.get('cookie')||'',runtime.secret,clock())),clock});
+  let accessRecovery:any=null;
+  const recoveryOptions=(runtime:Runtime)=>({secret:runtime.secret,origin:runtime.origin,store:runtime.store!,resolveBookingAccess:(id:string)=>runtime.service!.browserAccess(id),clock});
+  const recoveryAccess=(runtime:Runtime)=>accessRecovery||=createBookingAccessRecovery(recoveryOptions(runtime));
   async function middleware(req:Request,res:Response,next:any) {
     if(!/^\/api\/(?:booking(?:\/|$)|bookings\/activity|recovery\/|customer\/)/.test(req.path)&&req.path!=='/recovery/unsubscribe')return next();
     privateResponse(res);
     try {
+      if(req.path.startsWith('/api/booking/operator/'))return await operator(req,res,next);
       if(req.path==='/api/booking/maintenance') {
         res.set('X-Robots-Tag','noindex, nofollow');
         if(req.method!=='GET'){res.set('Allow','GET');throw new BookingError('METHOD_NOT_ALLOWED',405);}
@@ -425,11 +448,31 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
         } catch {
           console.warn('[booking:email-dispatch]',{phase:'request'});
         }
+        res.setHeader('Set-Cookie',issueBookingBrowserCookie({bookingId:created.bookingId,secret:runtime.secret,now:clock()}));
         return res.status(201).json(result);
+      }
+      if(req.method==='POST'&&['/api/booking/access-requests','/api/booking/link-access','/api/booking/browser-access'].includes(req.path)){
+        const access=recoveryAccess(runtime);
+        if(req.path==='/api/booking/access-requests'){
+          if(!runtime.emailReady)throw new BookingError('EMAIL_NOT_CONFIGURED',503);
+          const result=await pinnedAccessRequest({schedule:schedulePaymentEmails,
+            request:dispatchMail=>createBookingAccessRecovery({...recoveryOptions(runtime),dispatchMail}).requestAccess(req.body,{rateKey:remote}),
+            dispatch:jobId=>runtime.service!.runDue({jobId,limit:1}),onDispatchError:()=>console.warn('[booking:email-dispatch]',{phase:'access'})});
+          return res.status(202).json(result);
+        }
+        const pair=req.path==='/api/booking/link-access'?await access.redeemLink(req.body):await access.redeemBrowserAccess({...req.body,cookieHeader:req.get('cookie')||''});
+        if(req.path==='/api/booking/link-access'&&!redeemBookingBrowserCookie({bookingId:pair.id,cookieHeader:req.get('cookie')||'',secret:runtime.secret,now:clock()}))res.setHeader('Set-Cookie',issueBookingBrowserCookie({bookingId:pair.id,secret:runtime.secret,now:clock()}));
+        return res.json(pair);
       }
       const match=/^\/api\/booking\/requests\/([A-Za-z0-9_-]{1,128})(\/(?:checkout|language))?$/.exec(req.path);
       if(match) {
-        if(req.method==='GET'&&!match[2])return res.json(await runtime.service.read(match[1],bearer(req)));
+        if(req.method==='GET'&&!match[2]){
+          if(req.get('X-Kraken-Browser-Access')==='establish'){
+            await runtime.service.authenticated(match[1],bearer(req));
+            if(!redeemBookingBrowserCookie({bookingId:match[1],cookieHeader:req.get('cookie')||'',secret:runtime.secret,now:clock()}))res.setHeader('Set-Cookie',issueBookingBrowserCookie({bookingId:match[1],secret:runtime.secret,now:clock()}));
+          }
+          return res.json(await runtime.service.read(match[1],bearer(req)));
+        }
         if(req.method==='POST'&&match[2]==='/checkout')return res.json(await runtime.service.checkout(match[1],bearer(req),req.body));
         if(req.method==='PATCH'&&match[2]==='/language')return res.json(await runtime.service.changeEmailLanguage(match[1],bearer(req),req.body));
         throw new BookingError('METHOD_NOT_ALLOWED',405);

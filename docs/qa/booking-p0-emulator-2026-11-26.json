@@ -1,0 +1,155 @@
+{
+  "localOnly": true,
+  "productionAccess": false,
+  "projectId": "demo-kraken-p0",
+  "database": "(default)",
+  "firestore": "REAL LOCAL EMULATOR",
+  "auth": "REAL LOCAL EMULATOR",
+  "payment": "MOCK TEST ADAPTER — NOT A PAYREXX PAYMENT",
+  "email": "MOCK ADAPTER — NO EMAIL SENT",
+  "checks": [
+    {
+      "check": "Firestore/Auth emulators started with demo project and loopback-only hosts",
+      "passed": true
+    },
+    {
+      "check": "anonymous config issues signed capture cookie and reports configured TEST adapters",
+      "passed": true
+    },
+    {
+      "check": "actual Firebase Admin SDK is connected to demo project/default database",
+      "passed": true
+    },
+    {
+      "check": "operator endpoint rejects anonymous actor",
+      "passed": true
+    },
+    {
+      "check": "operator endpoint rejects unverified owner email",
+      "passed": true
+    },
+    {
+      "check": "operator endpoint rejects verified nonstaff customer",
+      "passed": true
+    },
+    {
+      "check": "verified owner authenticates through actual Auth emulator/Admin token verification",
+      "passed": true
+    },
+    {
+      "check": "real HTTP create persists request despite explicit MOCK email rejection",
+      "passed": true
+    },
+    {
+      "check": "created request preserves selected Spanish snapshot and cannot pay before confirmation",
+      "passed": true
+    },
+    {
+      "check": "Firestore transaction deduplicates identical creation retry and request job",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed checkout rejects before any MOCK Gateway creation",
+      "passed": true
+    },
+    {
+      "check": "operator sees sanitized definite email rejection with explicit retry eligibility",
+      "passed": true
+    },
+    {
+      "check": "authorized retry updates actual booking email state to sent/mock-accepted",
+      "passed": true
+    },
+    {
+      "check": "email retry preserves immutable provider idempotency key",
+      "passed": true
+    },
+    {
+      "check": "operator mutation rejects foreign origin",
+      "passed": true
+    },
+    {
+      "check": "authorized confirmation atomically updates canonical record and enables checkout",
+      "passed": true
+    },
+    {
+      "check": "stored Admin Firestore record agrees with operator/client state and actor",
+      "passed": true
+    },
+    {
+      "check": "client reads same confirmed state and engine-derived fifteen percent deposit",
+      "passed": true
+    },
+    {
+      "check": "stale operator revision is rejected",
+      "passed": true
+    },
+    {
+      "check": "closed-tab HTTP simulation recovers via persistent HttpOnly cookie without session token",
+      "passed": true
+    },
+    {
+      "check": "another browser without booking cookie cannot recover by ID alone",
+      "passed": true
+    },
+    {
+      "check": "anonymous reference/email requests return identical 202 for existing and nonexistent bookings",
+      "passed": true
+    },
+    {
+      "check": "recovery outbox dispatches through MOCK email with a short-lived mailbox-proof link",
+      "passed": true
+    },
+    {
+      "check": "separate browser restores only after mailbox proof and receives protected browser cookie",
+      "passed": true
+    },
+    {
+      "check": "confirmed checkout creates only an explicit MOCK TEST Gateway",
+      "passed": true
+    },
+    {
+      "check": "checkout retry reuses the same persisted Gateway",
+      "passed": true
+    },
+    {
+      "check": "outbound MOCK amount/currency/reference originate from persisted quote",
+      "passed": true
+    },
+    {
+      "check": "signed synthetic webhook is accepted and verifies stored MOCK Gateway via adapter",
+      "passed": true
+    },
+    {
+      "check": "verified MOCK TEST transaction becomes test_paid, never live paid, with canonical amounts",
+      "passed": true
+    },
+    {
+      "check": "mock receipt state is durable and recovery links are scrubbed after delivery",
+      "passed": true
+    },
+    {
+      "check": "local adapters made no real provider HTTP requests",
+      "passed": true
+    }
+  ],
+  "emulatorStopped": true,
+  "passed": 31,
+  "failed": 0,
+  "completed": true,
+  "runtime": {
+    "name": "Eclipse Temurin21 JRE macOS aarch64",
+    "source": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13.1%2B2/OpenJDK21U-jre_aarch64_mac_hotspot_21.0.13.1_2.tar.gz",
+    "archiveBytes": 47946379,
+    "sha256": "848feb1906c7de79de4f8391636042193fbd46eff86e26299506c4656f62c260",
+    "checksumVerified": true,
+    "temporaryRuntimeRemoved": true,
+    "globalInstallation": false
+  },
+  "portsClosed": {
+    "8296": true,
+    "9296": true,
+    "4496": true,
+    "4596": true
+  }
+}

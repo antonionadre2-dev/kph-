@@ -1,4 +1,4 @@
-/** Only anonymous service configuration may survive a reload. Contact data stays in memory. */
+/** Legacy basket stores anonymous options only. Short-lived calculator contact data is isolated in calculatorDraft.ts session storage. */
 export type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 export const PRIVATE_CART_KEY = 'kraken_cart_persistent';
 export const PRIVATE_CONTACT_KEY = 'kraken_consultation_data_v2';

@@ -7,6 +7,13 @@ import { renderAboutHtml } from './render-about.mjs';
 import { renderContactHtml } from './render-contact.mjs';
 import { renderSeoHtml } from './render-seo.mjs';
 
+/** Source-mode Express builds have omitted this app's generated Vite assets in production. */
+export function assertVercelBuildMode(env = process.env) {
+  if (env.VERCEL && env.KRAKEN_PREBUILT_BUILD !== '1') {
+    throw new Error('Unverified Vercel source build blocked. This Express/Vite app requires a locally prepared prebuilt artifact. Use scripts/make-vercel-prebuilt.mjs, then verify scripts/prepare-vercel-output.mjs --verify. No deployment was performed.');
+  }
+}
+
 // Vercel's native Express integration serves public/ from its CDN, while the
 // function reads dist/*.html for the existing route-specific SEO response.
 export function publishVercelAssets(root) {
@@ -27,6 +34,7 @@ export function publishVercelAssets(root) {
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
+  assertVercelBuildMode();
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const sitemap = spawnSync(process.execPath, ['--import', 'tsx', path.join(root, 'scripts/generate-sitemap.mjs')], { cwd: root, stdio: 'inherit' });
   if (sitemap.error) throw sitemap.error;
