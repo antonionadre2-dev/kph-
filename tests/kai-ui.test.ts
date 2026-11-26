@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { shouldSubmitKaiMessage, kaiLauncherClearance, kaiCalculatorNavigationTarget } from '../src/kai/ui.ts';
 import { kaiText, kaiFieldLabel } from '../src/kai/copy.ts';
 import { publicHref } from '../src/routing/site-paths.ts';
-import { localizedNavigationUrl } from '../src/locale.ts';
+import { localizedNavigationUrl, resolveSiteLanguage } from '../src/locale.ts';
 
 const enter = { key: 'Enter', shiftKey: false, isComposing: false, keyCode: 13 };
 
@@ -42,4 +42,8 @@ test('calculator handoff keeps a conversation language different from the surrou
   assert.equal(publicHref('/es/offerte?service=regular', 'fr'), '/fr/offerte?service=regular');
   const germanTarget = kaiCalculatorNavigationTarget('/es/offerte?service=end', 'de');
   assert.equal(localizedNavigationUrl(germanTarget, 'https://krakenpfm.ch/es/leistungen', 'es'), '/offerte?service=end');
+  // The URL alone loses German's explicit intent when canonicalized. The Kai
+  // handoff must also select its conversation language before the router syncs.
+  assert.equal(resolveSiteLanguage({pathname:'/offerte',saved:'es'}),'es');
+  assert.equal(resolveSiteLanguage({pathname:'/offerte',saved:'de'}),'de');
 });

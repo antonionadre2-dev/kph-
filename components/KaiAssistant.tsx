@@ -29,7 +29,7 @@ function cleanDraft(value: unknown, language: KaiDraft['language']): KaiDraft {
 }
 
 export default function KaiAssistant({ currentPage, onNavigate }: { currentPage: string; onNavigate: (path: string) => void }) {
-  const { language } = useTranslation();
+  const { language, setLanguage } = useTranslation();
   const locale = normalizeHomeLanguage(language);
   const [draft, setDraft] = useState<KaiDraft>(() => {
     try {
@@ -204,7 +204,13 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
     if (view === 'chat' && (existing.conflicts.length || existing.malformed)) { setView('summary'); return; }
     prepareKaiTransfer(draft, policy);
     close();
-    openHomeCalculator(draft.service, path => onNavigate(kaiCalculatorNavigationTarget(path, draft.language)));
+    navigateCalculator(draft.service);
+  }
+  function navigateCalculator(service: KaiService | null) {
+    // German's canonical URL has no prefix; store its explicit selection before
+    // navigation removes ?lang=de and the previous page preference could win.
+    if (locale !== chatLocale) setLanguage(chatLocale);
+    openHomeCalculator(service, path => onNavigate(kaiCalculatorNavigationTarget(path, chatLocale)));
   }
   const transfer = view === 'summary' ? getKaiTransferPreview(draft) : { conflicts: [], malformed: false };
   const fields: readonly KaiField[] = draft.service ? KAI_SERVICE_FIELDS[draft.service]
@@ -289,7 +295,7 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
       </div>}
       <footer className="kai-assistant-actions">
         {(!contactCard || view === 'summary') && <button type="button" className="kai-primary" disabled={busy || (view === 'summary' && !draft.service)} onClick={() => view === 'chat' ? setView('summary') : continueToCalculator()}>{kt(view === 'chat' ? 'review' : 'continue')}</button>}
-        <div><button type="button" className="kai-link" onClick={() => { close(); openHomeCalculator(null, path => onNavigate(kaiCalculatorNavigationTarget(path, draft.language))); }}>{kt('direct')}</button><a href="mailto:kai@krakenpfm.ch">{kt('contact')}</a></div>
+        <div><button type="button" className="kai-link" onClick={() => { close(); navigateCalculator(null); }}>{kt('direct')}</button><a href="mailto:kai@krakenpfm.ch">{kt('contact')}</a></div>
       </footer>
     </dialog>
   </>;
