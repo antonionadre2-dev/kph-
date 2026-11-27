@@ -78,6 +78,11 @@ service cloud.firestore {
         && (resource.data.status in ['Draft','Pending'] || isStaffOrAdmin());
     }
 
+    // Internal notes are a separate staff-only document, never part of the client's record.
+    match /maintenance_request_internal/{requestId} {
+      allow read, write: if isStaffOrAdmin();
+    }
+
     match /job_applications/{applicationId} {
       allow read: if request.auth != null 
         && (resource.data.userId == request.auth.uid || isStaffOrAdmin());

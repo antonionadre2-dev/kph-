@@ -172,3 +172,24 @@ test('booking, recovery, payments and outbox namespaces deny every browser princ
     }
   } finally { await Promise.all(principals.map(client => client.close())); }
 });
+
+test('internal request notes are staff-only and never enter the owner-readable request', options, async () => {
+  const owner=principal(ownerClaims),staff=principal(staffClaims),other=principal(otherClaims),anonymous=principal();
+  const id=unique('private-notes');
+  try {
+    await setDoc(doc(owner.db,'maintenance_requests',id),pending(id));
+    const history={requestId:id,revision:1,teamNotes:[{id:'synthetic-note',author:'Synthetic staff',text:'Private synthetic note',createdAt:'2026-11-27'}],updatedAt:serverTimestamp()};
+    await setDoc(doc(staff.db,'maintenance_request_internal',id),history);
+    assert.equal((await getDoc(doc(staff.db,'maintenance_request_internal',id))).data().teamNotes.length,1);
+    const publicRecord=(await getDoc(doc(owner.db,'maintenance_requests',id))).data();
+    assert.equal(publicRecord.teamNotes,undefined);assert.equal(publicRecord.notes,'');
+    for(const client of [owner,other,anonymous]){
+      await denied(getDoc(doc(client.db,'maintenance_request_internal',id)));
+      await denied(getDocs(collection(client.db,'maintenance_request_internal')));
+      await denied(setDoc(doc(client.db,'maintenance_request_internal',id),history));
+      await denied(deleteDoc(doc(client.db,'maintenance_request_internal',id)));
+    }
+    await denied(updateDoc(doc(owner.db,'maintenance_requests',id),{teamNotes:history.teamNotes,updatedAt:serverTimestamp()}));
+    await deleteDoc(doc(staff.db,'maintenance_request_internal',id));
+  }finally{await Promise.all([owner.close(),staff.close(),other.close(),anonymous.close()]);}
+});
