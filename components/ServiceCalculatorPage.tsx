@@ -7,6 +7,8 @@ import { pricingConfig } from '../src/booking/pricingConfig';
 import { pricingUiText } from '../src/booking/pricingUiCopy';
 import { bookingLanguage, bookingLineLabel, bookingText } from '../src/booking/uiCopy';
 import { BOOKING_TERMS_VERSION } from '../src/booking/terms';
+import {termsMetadata,type TermsAcceptance,type TermsMetadata} from '../src/legal/terms-registry.ts';
+import BookingTermsSummary from './BookingTermsSummary';
 import CalculatorNudges from './CalculatorNudges';
 import {CalculatorCompletionCheck,CalculatorPriceSurface,CalculatorSubmitButton} from './CalculatorFeedback';
 import {createCalculatorSubmissionGate} from '../src/booking/calculatorInteractions.ts';
@@ -48,13 +50,13 @@ interface Customer {
 interface RecoveryAccess { id: string; accessToken: string }
 interface BookingConfig {
   available: boolean; paymentReady: boolean; emailReady: boolean; mode: 'test' | 'live' | 'unconfigured';
-  termsVersion: string; depositPercent?: number;
+  termsVersion: string; depositPercent?: number; termsDocuments?: Record<string,TermsMetadata>;
 }
 interface BookingView {
   bookingId: string; reference: string; publicToken?: string; status: string;
   language?: string; languageSnapshot?: {language:string;source:string;version:number}; demo?: boolean;
   quote: PriceQuote; quoteRevision: number; canCheckout?: boolean;
-  customer?: Customer; scopeNotes?: string; notes?: string; termsVersion?: string;
+  customer?: Customer; scopeNotes?: string; notes?: string; termsVersion?: string; termsAcceptance?:TermsAcceptance; confirmedAt?:number; selection?:BookingSelection;
   scheduling: { status: 'requested' | 'held' | 'confirmed' | 'needs_reschedule'; date: string; time: string; endTime?: string; timeZone: string; holdExpiresAt?: string };
   payment: { status: string; amountPaidCents: number; amountDueNowCents?: number; remainingBalanceCents?: number; depositPercent?: number; checkoutExpiresAt?: string };
   email?: { request?: 'queued' | 'sending' | 'sent' | 'failed' | 'delivery_unknown'; receipt?: 'queued' | 'sending' | 'sent' | 'failed' | 'delivery_unknown' };
@@ -313,9 +315,16 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const [wizardStep, setWizardStep] = useState<WizardStep>(restoredDraft?.wizardStep || 0);
   const [extrasOpen, setExtrasOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const acceptedTermsSnapshot=useRef<{version:string;language:string;hash?:string}|null>(null);
   const [config, setConfig] = useState<BookingConfig | null>(null);
   const [configLoading, setConfigLoading] = useState(true);
   const [configAttempt, setConfigAttempt] = useState(0);
+  useEffect(()=>{setTermsAccepted(false);acceptedTermsSnapshot.current=null;},[locale,config?.termsVersion]);
+  const acceptTerms=(checked:boolean)=>{
+    const version=config?.termsVersion||TERMS_VERSION;
+    acceptedTermsSnapshot.current=checked?{version,language:locale,hash:config?.termsDocuments?.[locale]?.sha256||termsMetadata(version,locale)?.sha256}:null;
+    setTermsAccepted(checked);
+  };
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, FieldErrorKey>>({});
@@ -749,6 +758,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
       if (issue) { revealIssue(issue); return; }
     }
     if (!termsAccepted) { setError(text('checkRequired')); finalConsentRef.current?.focus(); return; }
+    if(!preview&&(!acceptedTermsSnapshot.current||acceptedTermsSnapshot.current.version!==config?.termsVersion||acceptedTermsSnapshot.current.language!==locale)){setTermsAccepted(false);setError(text('termsUpdated'));finalConsentRef.current?.focus();return;}
     if (preview && demoEnabled && selection && quote && !submitting) {
       const snapshot=createDemoBooking(selection,customer,requestedDate,requestedTime,locale);
       const release=submissionGate.current.acquire();
@@ -767,7 +777,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     }
     const payload = {
       selection, customer, requestedDate, requestedTime, notes, language: bookingRequestLanguage(language, window.location.href),
-      termsAccepted: true, termsVersion: config.termsVersion || TERMS_VERSION,
+      termsAccepted: true, termsVersion: acceptedTermsSnapshot.current?.version || config.termsVersion || TERMS_VERSION, termsHash:acceptedTermsSnapshot.current?.hash,
       pricingVersion: quote.pricingVersion, acceptedTotalCents: quote.totalCents,
       ...(recoveryAccess ? { recovery: recoveryAccess } : {}),
     };
@@ -1079,7 +1089,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
             {guide()}
             <button type="button" className="kr-calc-secondary kr-calc-new-request" onClick={reset}>{text('newRequest')}</button>
           </div>
-          <aside className="kr-calc-summary kr-calc-card"><h2>{text('summary')}</h2><PriceSummary quote={booking.quote} text={text} language={locale} money={money} /></aside>
+          <aside className="kr-calc-summary kr-calc-card"><h2>{text('summary')}</h2><PriceSummary quote={booking.quote} text={text} language={locale} money={money} /><BookingTermsSummary language={locale} booking={booking} selection={booking.selection} /></aside>
         </div>
       </section> : !bookingAccess && !bookingEntryPending && !returnMissing && !recoveryLoading && <>
         <form onInputCapture={event => { const id = (event.target as HTMLElement).id; if (fieldErrors[id]) setFieldErrors(current => { const next = { ...current }; delete next[id]; return next; }); }} ref={formRef} className="kr-calc-layout" noValidate onSubmit={submitRequest}>
@@ -1126,6 +1136,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
                 </fieldset>
               </>}
               {wizardStep === 2 && <div className="kr-calc-review-blocks">
+                <BookingTermsSummary language={locale} selection={selection} />
                 <article className="kr-calc-review-block"><header><h3><KrakenServiceIcon name={choice || 'regular'} size={36} />{text('summaryService')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('summaryService')}`} onClick={() => navigateStep(0)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header>
                   <p className="kr-calc-review-service">{choice ? text(choice) : ''}{selection?.service === 'regular' && <span> · {text(selection.frequency)}</span>}</p>
                   <ul className="kr-calc-review-lines">{quote?.lines.map(line => <li key={line.id}><span>{bookingLineLabel(locale, line)}<small>{line.quantity.toLocaleString(locale)} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : line.unit === 'm3' ? 'm³' : '×'}</small></span><strong>{money(line.totalCents)}</strong></li>)}</ul>
@@ -1152,7 +1163,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
               {!preview && config?.paymentReady && <p className="kr-calc-payment-method-note">{frictionText(locale, 'paymentReady')}{quote?.priceType !== 'estimate' && typeof config.depositPercent === 'number' && config.depositPercent > 0 && config.depositPercent <= 100 && <span>{frictionText(locale, 'deposit', { percent: String(config.depositPercent) })}</span>}</p>}
               {CONFIRMATION_WINDOW_COPY[locale] && <p className="kr-calc-request-note">{CONFIRMATION_WINDOW_COPY[locale]}</p>}
               {wizardStep < 2 ? <><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} onClick={nextStep}>{text(nextLabel)}</button><p className="kr-calc-request-note">{text('bookingJourney')}</p></> : <>
-                <label className="kr-calc-consent"><input id="kr-calc-final-consent" ref={finalConsentRef} type="checkbox" required checked={termsAccepted} disabled={submitting} onChange={event => setTermsAccepted(event.target.checked)} /><span>{preview&&demoEnabled?journey.demoConsent:<>{text('termsPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/terms', locale)}`} target="_blank" rel="noopener noreferrer">{text('terms')}</a> {text('privacyPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/gdpr', locale)}`} target="_blank" rel="noopener noreferrer">{text('privacy')}</a> {text('readSuffix')}</>}</span></label>
+                <label className="kr-calc-consent"><input id="kr-calc-final-consent" ref={finalConsentRef} type="checkbox" required checked={termsAccepted} disabled={submitting} onChange={event => acceptTerms(event.target.checked)} /><span>{preview&&demoEnabled?journey.demoConsent:<>{text('termsPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/terms', locale)}`} target="_blank" rel="noopener noreferrer">{text('terms')}</a> {text('privacyPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/gdpr', locale)}`} target="_blank" rel="noopener noreferrer">{text('privacy')}</a> {text('readSuffix')}</>}</span></label>
                 <CalculatorSubmitButton busy={submitting} disabled={(preview?!demoEnabled:!config?.available) || !quote || !termsAccepted} label={preview&&demoEnabled?journey.demoSubmit:text(manualReview?'manualSubmit':'requestSubmit')} busyLabel={text('submitting')} />
                 <p className="kr-calc-request-note">{preview?journey.demoNote:text('requestNote')}</p>
                 {!preview && (configLoading ? <p className="kr-calc-status-note" role="status">{text('loadingConfig')}</p> : !config?.available && <div className="kr-calc-unavailable" role="status"><p>{text('unavailable')}</p><button type="button" className="kr-calc-text-button" onClick={() => setConfigAttempt(value => value + 1)}>{text('retry')}</button></div>)}

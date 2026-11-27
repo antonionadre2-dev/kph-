@@ -10,7 +10,7 @@
     "eyebrow": "Para su hogar en Zúrich",
     "h1": "Limpieza y pequeñas mudanzas en Zúrich. Bien planificadas, con atención personal.",
     "intro": [
-      "Unas ventanas, un piso antes de la entrega o unas cajas para su nuevo hogar: no hace falta un gran encargo para recibir ayuda. Kraken atiende a hogares particulares en Zúrich con cinco servicios concretos. Usted elige lo que necesita y nosotros acordamos el alcance con usted.",
+      "Unas ventanas, un piso antes de la entrega o unas cajas para su nuevo hogar: no hace falta un gran encargo para recibir ayuda. Kraken atiende a hogares particulares en Zúrich con servicios adaptados. Usted elige lo que necesita y nosotros acordamos el alcance con usted.",
       "Nuestra sede está en Schaffhausen. Para organizar el servicio en Zúrich, tenemos en cuenta la dirección, el acceso y la fecha que desea. La planta, el ascensor y el trayecto entre el vehículo y la puerta forman parte de la preparación desde el principio."
     ],
     "heroFacts": [
@@ -35,7 +35,7 @@
       {
         "id": "moveout",
         "title": "Limpieza de fin de alquiler antes de entregar la vivienda",
-        "body": "Después de vaciar el piso, nos ocupamos de la limpieza final acordada. El número de habitaciones, la superficie, el estado y la fecha de entrega nos ayudan a organizar la cocina, el baño, las ventanas y los suelos. La garantía de entrega se refiere a los trabajos de limpieza incluidos en el contrato; aclaramos su alcance antes de aceptar el encargo.",
+        "body": "Después de vaciar el piso, nos ocupamos de la limpieza final acordada. El número de habitaciones, la superficie, el estado y la fecha de entrega nos ayudan a organizar la cocina, el baño, las ventanas y los suelos.",
         "ctaLabel": "Planificar mi limpieza de fin de alquiler"
       },
       {
@@ -49,6 +49,12 @@
         "title": "Limpieza a fondo para empezar de nuevo",
         "body": "Una limpieza puntual y profunda ayuda en las zonas donde el mantenimiento diario no basta. Describa las habitaciones, la suciedad acumulada y las tareas que desea. Las fotos pueden facilitar la valoración. Concretamos el alcance para que una necesidad pequeña no se convierta en un encargo poco claro.",
         "ctaLabel": "Preparar mi limpieza a fondo"
+      },
+      {
+        "id": "construction",
+        "title": "Limpieza de fin de obra",
+        "body": "Después de obras o reformas limpiamos las zonas acordadas. Indique la superficie, el estado y los residuos; Antonio confirma el alcance por escrito.",
+        "ctaLabel": "Calcular la limpieza de fin de obra"
       },
       {
         "id": "moving",
@@ -87,7 +93,7 @@
     },
     "why": {
       "title": "Un encargo pequeño merece toda nuestra atención.",
-      "body": "Kraken ofrece ayuda que se nota en el día a día del hogar. Antonio y nuestro pequeño equipo con experiencia acuerdan el trabajo personalmente con usted. También aceptamos tareas de limpieza individuales y pequeños encargos.",
+      "body": "Kraken ofrece ayuda que se nota en el día a día del hogar. Antonio acuerda el trabajo personalmente con usted. También aceptamos tareas de limpieza individuales y pequeños encargos.",
       "points": [
         {
           "title": "Lo principal es el alcance del trabajo",
@@ -155,7 +161,7 @@
     "h1": "Su empresa de limpieza en Schaffhausen. Para las tareas que le quitan tiempo.",
     "intro": [
       "Un hogar necesita atención. A veces de forma periódica, otras antes de entregarlo y otras cuando se acumula demasiado trabajo diario. Kraken le ayuda con la limpieza de ventanas, la limpieza de fin de alquiler, la limpieza periódica, la limpieza a fondo y las pequeñas mudanzas. También aceptamos tareas concretas y de menor tamaño.",
-      "Nuestra sede está en Seewadelstrasse 3, 8203 Schaffhausen. Antonio y nuestro pequeño equipo con experiencia se ocupan de acordar los detalles personalmente. Cuéntenos qué es importante para usted y lo convertiremos en un encargo bien definido."
+      "Nuestra sede está en Seewadelstrasse 3, 8203 Schaffhausen. Antonio se ocupa de acordar los detalles personalmente. Cuéntenos qué es importante para usted y lo convertiremos en un encargo bien definido."
     ],
     "heroFacts": [
       "Sede en Schaffhausen",
@@ -167,7 +173,7 @@
       "href": "/quote?lang=es",
       "city": "Schaffhausen"
     },
-    "servicesTitle": "Cinco servicios para su situación.",
+    "servicesTitle": "Servicios para su situación.",
     "servicesIntro": "No tiene que hacerlo todo a la vez. Empiece por la tarea en la que más necesita ayuda.",
     "services": [
       {
@@ -190,9 +196,15 @@
       },
       {
         "id": "moveout",
-        "title": "Limpieza de fin de alquiler con garantía de entrega acordada",
-        "body": "Al devolver su vivienda, es importante definir bien los trabajos y coordinar la fecha. Planificamos la limpieza final según el tamaño, el estado y los extras acordados. La garantía de entrega cubre los trabajos de limpieza incluidos en el contrato; su alcance y condiciones se fijan antes de aceptar el encargo.",
+        "title": "Limpieza de fin de alquiler",
+        "body": "Al devolver su vivienda, es importante definir bien los trabajos y coordinar la fecha. Planificamos la limpieza final según el tamaño, el estado y los extras acordados.",
         "ctaLabel": "Preparar la entrega de mi vivienda"
+      },
+      {
+        "id": "construction",
+        "title": "Limpieza de fin de obra",
+        "body": "Después de obras o reformas limpiamos las zonas acordadas. Indique la superficie, el estado y los residuos; Antonio confirma el alcance por escrito.",
+        "ctaLabel": "Calcular la limpieza de fin de obra"
       },
       {
         "id": "moving",
@@ -235,7 +247,7 @@
       "points": [
         {
           "title": "Contacto personal en Schaffhausen",
-          "body": "Kraken tiene su sede en Schaffhausen. Puede contactar con Antonio y el equipo por teléfono o correo electrónico. Si desea venir personalmente, acuerde la visita con nosotros de antemano."
+          "body": "Kraken tiene su sede en Schaffhausen. Puede contactar con Antonio por teléfono o correo electrónico. Si desea venir personalmente, acuerde la visita con nosotros de antemano."
         },
         {
           "title": "Sin IVA facturado",
@@ -299,7 +311,7 @@
     "h1": "Limpieza en Winterthur que se adapta a su día a día.",
     "intro": [
       "¿Necesita ayuda cada semana, una limpieza puntual a fondo o apoyo para cambiar de piso? Kraken atiende a hogares particulares en Winterthur con un servicio adaptado a cada situación. Usted indica sus prioridades y juntos planificamos las tareas adecuadas.",
-      "Nuestro pequeño equipo con experiencia se desplaza desde la sede de Schaffhausen para los servicios acordados en Winterthur. Empiece en el calculador por lo que necesita: limpieza periódica, limpieza a fondo, ventanas, limpieza de fin de alquiler o una pequeña mudanza."
+      "Antonio se desplaza desde la sede de Schaffhausen para los servicios acordados en Winterthur. Empiece en el calculador por lo que necesita: limpieza periódica, limpieza a fondo, ventanas, limpieza de fin de alquiler o una pequeña mudanza."
     ],
     "heroFacts": [
       "Puntual o periódica",
@@ -335,8 +347,14 @@
       {
         "id": "moveout",
         "title": "Limpieza de fin de alquiler antes de la devolución",
-        "body": "Al dejar su piso, la limpieza final se adapta a la vivienda y a los trabajos acordados. Indique la superficie, las habitaciones, el estado y la fecha prevista de entrega. La garantía de entrega se aplica a los servicios de limpieza contratados; aclaramos las condiciones antes de formalizar el encargo.",
+        "body": "Al dejar su piso, la limpieza final se adapta a la vivienda y a los trabajos acordados. Indique la superficie, las habitaciones, el estado y la fecha prevista de entrega.",
         "ctaLabel": "Calcular mi limpieza final"
+      },
+      {
+        "id": "construction",
+        "title": "Limpieza de fin de obra",
+        "body": "Después de obras o reformas limpiamos las zonas acordadas. Indique la superficie, el estado y los residuos; Antonio confirma el alcance por escrito.",
+        "ctaLabel": "Calcular la limpieza de fin de obra"
       },
       {
         "id": "moving",
@@ -375,7 +393,7 @@
     },
     "why": {
       "title": "Ayuda que sigue sus prioridades.",
-      "body": "Usted conoce mejor que nadie las tareas pendientes de su hogar. Antonio y nuestro equipo aportan experiencia para planificar y realizar los trabajos acordados. Definir bien el alcance facilita la colaboración, desde el primer contacto hasta la siguiente visita.",
+      "body": "Usted conoce mejor que nadie las tareas pendientes de su hogar. Antonio aporta experiencia para planificar y realizar los trabajos acordados. Definir bien el alcance facilita la colaboración, desde el primer contacto hasta la siguiente visita.",
       "points": [
         {
           "title": "Planificar solo lo que necesita",

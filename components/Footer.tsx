@@ -3,6 +3,7 @@ import { useTranslation } from '../i18n';
 import { normalizeSiteLanguage } from '../src/locale';
 import { footerInformationHref, serviceInformationLinks } from '../src/home/serviceInformation';
 import { homeText, normalizeHomeLanguage } from './home/homeTranslations';
+import { servicesText } from './services/servicesTranslations';
 import { footerText } from './home/footerTranslations';
 import { siteConfig } from './home/site-config';
 import { responsiveImage } from '../src/media/images';
@@ -51,6 +52,7 @@ export function FooterContent({ language, contactPage = false }: { language: str
           <div className="footer-contact"><h3>{t('Hier sind wir zu Hause')}</h3><address>Kraken PFM<br />Seewadelstrasse 3<br />{t('8203 Schaffhausen, Schweiz')}</address><p className="footer-hours">{ft('hours')}<span>{ft('localTime')}</span>{!contactPage && <span>{ft('visits')}</span>}</p><a className="footer-map" href="https://www.google.com/maps/search/?api=1&query=Seewadelstrasse%203%2C%208203%20Schaffhausen%2C%20Schweiz" target="_blank" rel="noopener noreferrer">{t('Adresse auf Google Maps')}</a><a className="footer-contact-link" href="tel:+41774505705"><FooterIcon name="phone" />+41 77 450 57 05</a><a className="footer-contact-link" href="mailto:kai@krakenpfm.ch"><FooterIcon name="mail" />kai@krakenpfm.ch</a></div>
           <div className="footer-services"><h3>{t('So helfen wir Ihnen')}</h3><nav aria-label={t('Leistungen im Footer')}>
             {serviceInformationLinks.map(({service,section,label})=><a key={service} href={href('/leistungen#'+section)}>{t(label)}</a>)}
+            <a href={href('/leistungen#baureinigung')}>{servicesText(language,'Baureinigung')}</a>
           </nav></div>
           <div className="footer-regions"><h3>{t('In Ihrer Nähe')}</h3><nav className="footer-region-links" aria-label={ft('regions')}><a href={href('/reinigung/region-zuerich')}>{t('Zürich')}</a><a href={href('/reinigung/kanton-schaffhausen')}>{t('Schaffhausen')}</a><a href={href('/reinigung/region-winterthur')}>{t('Winterthur')}</a></nav><h3 className="footer-social-heading">{t('Bleiben wir in Kontakt')}</h3><div className="social-links">{instagramUrl && <a className="social-instagram" data-instagram="" href={instagramUrl} target="_blank" rel="noopener noreferrer"><FooterIcon name="instagram" />Instagram</a>}<a href="https://www.linkedin.com/company/krakenpfm/" target="_blank" rel="noopener noreferrer"><FooterIcon name="linkedin" />LinkedIn</a><a href="https://wa.me/41774505705" target="_blank" rel="noopener noreferrer"><FooterIcon name="message" />WhatsApp</a></div></div>
         </div>

@@ -20,7 +20,7 @@
     "eyebrow": "Pour votre logement à Zurich",
     "h1": "Nettoyage et petits déménagements à Zurich. Bien préparés, avec un accompagnement personnel.",
     "intro": [
-      "Quelques fenêtres, un logement avant sa restitution ou des cartons à transporter dans votre nouveau chez-vous : une petite tâche suffit pour demander de l’aide. Kraken propose cinq prestations claires aux particuliers de Zurich. Vous choisissez ce dont vous avez besoin. Nous convenons du périmètre avec vous.",
+      "Quelques fenêtres, un logement avant sa restitution ou des cartons à transporter dans votre nouveau chez-vous : une petite tâche suffit pour demander de l’aide. Kraken propose des prestations adaptées aux particuliers de Zurich. Vous choisissez ce dont vous avez besoin. Nous convenons du périmètre avec vous.",
       "Notre siège est à Schaffhouse. Pour votre intervention à Zurich, nous précisons l’adresse, les accès et la date souhaitée. L’étage, l’ascenseur et le chemin entre le véhicule et la porte d’entrée font ainsi partie des préparatifs dès le début."
     ],
     "heroFacts": [
@@ -45,7 +45,7 @@
       {
         "id": "moveout",
         "title": "Nettoyage de fin de bail avant la remise du logement",
-        "body": "Une fois le logement vidé, nous réalisons le nettoyage final convenu. Le nombre de pièces, la surface, l’état et la date de remise permettent de prévoir la cuisine, la salle de bains, les fenêtres et les sols. La garantie de réception concerne les travaux de nettoyage prévus au contrat ; nous en précisons le périmètre avant la commande.",
+        "body": "Une fois le logement vidé, nous réalisons le nettoyage final convenu. Le nombre de pièces, la surface, l’état et la date de remise permettent de prévoir la cuisine, la salle de bains, les fenêtres et les sols.",
         "ctaLabel": "Préparer mon nettoyage de fin de bail"
       },
       {
@@ -59,6 +59,12 @@
         "title": "Nettoyage en profondeur pour repartir du bon pied",
         "body": "Un nettoyage approfondi ponctuel aide là où l’entretien quotidien ne suffit plus. Décrivez les pièces, les dépôts et les travaux souhaités. Des photos peuvent faciliter l’évaluation. Nous définissons le périmètre pour qu’un petit besoin reste une demande clairement délimitée.",
         "ctaLabel": "Composer mon nettoyage en profondeur"
+      },
+      {
+        "id": "construction",
+        "title": "Nettoyage de fin de chantier",
+        "body": "Après des travaux de construction ou de rénovation, nous nettoyons les zones convenues. Indiquez surface, état et résidus ; Antonio confirme l’étendue par écrit.",
+        "ctaLabel": "Calculer le nettoyage de fin de chantier"
       },
       {
         "id": "moving",
@@ -97,7 +103,7 @@
     },
     "why": {
       "title": "Une petite prestation mérite toute notre attention.",
-      "body": "Kraken apporte une aide utile au quotidien des particuliers. Antonio et notre petite équipe expérimentée organisent personnellement le travail avec vous. Les tâches de nettoyage individuelles et les petites prestations sont également les bienvenues.",
+      "body": "Kraken apporte une aide utile au quotidien des particuliers. Antonio organise personnellement le travail avec vous. Les tâches de nettoyage individuelles et les petites prestations sont également les bienvenues.",
       "points": [
         {
           "title": "Le périmètre au centre de la demande",
@@ -176,7 +182,7 @@
     "h1": "Votre entreprise de nettoyage à Schaffhouse. Pour les tâches qui prennent votre temps.",
     "intro": [
       "Un logement demande de l’attention. Parfois régulièrement, parfois avant sa remise et parfois quand le quotidien devient trop chargé. Kraken vous aide avec les vitres, le nettoyage de fin de bail, l’entretien régulier, le nettoyage en profondeur et les petits déménagements. Les tâches simples et ponctuelles sont aussi les bienvenues.",
-      "Notre siège se trouve Seewadelstrasse 3, 8203 Schaffhouse. Antonio et notre petite équipe expérimentée assurent un échange personnel. Dites-nous ce qui compte pour vous. Nous en faisons une prestation clairement décrite."
+      "Notre siège se trouve Seewadelstrasse 3, 8203 Schaffhouse. Antonio assure un échange personnel. Dites-nous ce qui compte pour vous. Nous en faisons une prestation clairement décrite."
     ],
     "heroFacts": [
       "Un siège à Schaffhouse",
@@ -188,7 +194,7 @@
       "href": "/quote?lang=de",
       "city": "Schaffhausen"
     },
-    "servicesTitle": "Cinq prestations. Adaptées à votre situation.",
+    "servicesTitle": "Des prestations adaptées à votre situation.",
     "servicesIntro": "Vous n’avez pas besoin de tout faire réaliser en même temps. Commencez par le domaine où une aide vous serait la plus utile.",
     "services": [
       {
@@ -211,9 +217,15 @@
       },
       {
         "id": "moveout",
-        "title": "Nettoyage de fin de bail avec garantie de réception convenue",
-        "body": "Pour restituer votre logement, un périmètre clair et une date bien organisée sont essentiels. Nous préparons le nettoyage final selon la taille, l’état et les options convenues. La garantie de réception concerne les travaux de nettoyage prévus au contrat ; son périmètre et ses conditions sont définis avant la commande.",
+        "title": "Nettoyage de fin de bail",
+        "body": "Pour restituer votre logement, un périmètre clair et une date bien organisée sont essentiels. Nous préparons le nettoyage final selon la taille, l’état et les options convenues.",
         "ctaLabel": "Préparer la remise de mon logement"
+      },
+      {
+        "id": "construction",
+        "title": "Nettoyage de fin de chantier",
+        "body": "Après des travaux de construction ou de rénovation, nous nettoyons les zones convenues. Indiquez surface, état et résidus ; Antonio confirme l’étendue par écrit.",
+        "ctaLabel": "Calculer le nettoyage de fin de chantier"
       },
       {
         "id": "moving",
@@ -256,7 +268,7 @@
       "points": [
         {
           "title": "Un contact personnel à Schaffhouse",
-          "body": "Kraken est établi à Schaffhouse. Contactez Antonio et l’équipe par téléphone ou par email ; pour une visite, merci de convenir d’un rendez-vous à l’avance."
+          "body": "Kraken est établi à Schaffhouse. Contactez Antonio par téléphone ou par email ; pour une visite, merci de convenir d’un rendez-vous à l’avance."
         },
         {
           "title": "Aucune TVA facturée",
@@ -332,7 +344,7 @@
     "h1": "Un nettoyage à Winterthour adapté à votre quotidien.",
     "intro": [
       "Besoin d’une aide chaque semaine, de pièces nettoyées en profondeur une seule fois ou d’un soutien pour emménager ? Kraken accompagne les particuliers de Winterthour avec une prestation adaptée à leur situation. Vous fixez les priorités. Nous préparons les tâches ensemble.",
-      "Notre petite équipe expérimentée vient de notre siège à Schaffhouse pour les interventions convenues à Winterthour. Dans le calculateur, partez de votre besoin : entretien régulier, nettoyage en profondeur, vitres, fin de bail ou petit déménagement."
+      "Antonio vient de notre siège à Schaffhouse pour les interventions convenues à Winterthour. Dans le calculateur, partez de votre besoin : entretien régulier, nettoyage en profondeur, vitres, fin de bail ou petit déménagement."
     ],
     "heroFacts": [
       "Ponctuel ou régulier",
@@ -368,8 +380,14 @@
       {
         "id": "moveout",
         "title": "Nettoyage de fin de bail avant la restitution",
-        "body": "Lors d’un départ, le nettoyage final dépend du logement et du périmètre convenu. Précisez la surface, le nombre de pièces, l’état et la date de remise prévue. Une garantie de réception concerne les prestations de nettoyage prévues au contrat ; ses conditions sont clarifiées avant la commande.",
+        "body": "Lors d’un départ, le nettoyage final dépend du logement et du périmètre convenu. Précisez la surface, le nombre de pièces, l’état et la date de remise prévue.",
         "ctaLabel": "Calculer mon nettoyage final"
+      },
+      {
+        "id": "construction",
+        "title": "Nettoyage de fin de chantier",
+        "body": "Après des travaux de construction ou de rénovation, nous nettoyons les zones convenues. Indiquez surface, état et résidus ; Antonio confirme l’étendue par écrit.",
+        "ctaLabel": "Calculer le nettoyage de fin de chantier"
       },
       {
         "id": "moving",
@@ -408,7 +426,7 @@
     },
     "why": {
       "title": "Une aide adaptée à vos priorités.",
-      "body": "Vous savez mieux que quiconque ce qui est nécessaire chez vous. Antonio et notre équipe apportent leur expérience à la préparation et à la réalisation des travaux convenus. Un périmètre clair simplifie la collaboration, du premier contact aux visites suivantes.",
+      "body": "Vous savez mieux que quiconque ce qui est nécessaire chez vous. Antonio apporte leur expérience à la préparation et à la réalisation des travaux convenus. Un périmètre clair simplifie la collaboration, du premier contact aux visites suivantes.",
       "points": [
         {
           "title": "Prévoir uniquement ce dont vous avez besoin",

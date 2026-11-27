@@ -7,6 +7,8 @@ import { serviceInformationSections, serviceInformationTarget } from '../../src/
 import { requestKaiOpen } from '../../src/kai/open';
 import { servicesText } from './servicesTranslations';
 import PublicPriceGuide from '../PublicPriceGuide';
+import KrakenServiceIcon from '../KrakenServiceIcon';
+import {getKaiFaqs} from '../../src/kai/facts';
 import { mediaAsset, responsiveImage } from '../../src/media/images';
 import { publicHref } from '../../src/routing/site-paths';
 import '../home/approved-home.css';
@@ -30,6 +32,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
   const t = (source: string) => servicesText(language, source);
   const rootRef = useRef<HTMLElement>(null);
   const [activeService, setActiveService] = useState<HomeService>('windows');
+  const [constructionOpen,setConstructionOpen] = useState(false);
   const [openService, setOpenService] = useState<HomeService | null>('windows');
   const framesRef = useRef(new Set<number>());
   const quoteHref = publicHref('/quote', language);
@@ -63,6 +66,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
   }
   useEffect(() => {
     const openHashTarget = () => {
+      if(window.location.hash==='#baureinigung'){setConstructionOpen(true);return true;}
       const service = (Object.keys(serviceIds) as HomeService[]).find(key => '#' + serviceIds[key] === window.location.hash);
       if (!service) return false;
       setOpenService(service); setActiveService(service); scrollToService(service);
@@ -123,7 +127,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
           <div className="services-hero-copy">
             <p className="eyebrow">{t("Leistungen für Privathaushalte")}</p>
             <h1 id="page-title">{t("Reinigung und")}<br />{t("kleine Umzüge.")}<br /><span>{t("Passend zu Ihnen.")}</span></h1>
-            <p className="services-hero-description">{t("Von einzelnen Fenstern bis zur Wohnung mit 1–4 Zimmern. Persönliche Unterstützung in")}{" "}<strong>{t("Zürich, Schaffhausen und Winterthur.")}</strong></p>
+            <p className="services-hero-description">{t("Einzelne Fenster und Wohnungen bis 5.5 Zimmer. Persönliche Unterstützung in")}{" "}<strong>{t("Zürich, Schaffhausen und Winterthur.")}</strong></p>
             <div className="services-hero-actions"><a className="button button-navy" href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a><button className="services-kai-link" type="button" data-open-kai="" aria-haspopup="dialog"><svg className="icon" aria-hidden="true"><use href="#i-message"></use></svg>{t("Mit Kai planen")}</button></div>
             <a className="kr-button kr-button--quiet" href={publicHref('/umzugsreinigung/zuerich', language)}>{t("Umzugsreinigung in Zürich entdecken")}</a><p className="services-hero-note"><svg className="icon" aria-hidden="true"><use href="#i-check"></use></svg>{t("Auch kleine Aufträge sind willkommen.")}</p>
           </div>
@@ -139,6 +143,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
           <a href="#regelmaessige-reinigung" data-service-jump="regular" onClick={event => jumpToService(event, "regular")}><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#regular"></use></svg><span>{t("Regelmässige Reinigung")}</span></a>
           <a href="#grundreinigung" data-service-jump="deep" onClick={event => jumpToService(event, "deep")}><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#deep"></use></svg><span>{t("Grundreinigung")}</span></a>
           <a href="#kleine-umzuege" data-service-jump="moving" onClick={event => jumpToService(event, "moving")}><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving"></use></svg><span>{t("Kleine Umzüge")}</span></a>
+          <a href="#baureinigung" onClick={() => setConstructionOpen(true)}><KrakenServiceIcon name="construction" size={34} /><span>{t("Baureinigung")}</span></a>
         </nav>
       </div>
     </section>
@@ -164,7 +169,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
           </div>
           <div className="service-region-line"><svg className="icon" aria-hidden="true"><use href="#i-pin"></use></svg><p>{t("Reinigungsservice für Privathaushalte in Zürich, Schaffhausen und Winterthur.")}</p></div>
         </div>
-        <div className="service-detail-list" aria-label={t("Unsere fünf Leistungen im Detail")}>
+        <div className="service-detail-list" aria-label={t("Unsere Leistungen im Detail")}>
           <p className="service-discovery-hint">{t("Was dürfen wir Ihnen abnehmen? Entdecken Sie die Details.")}</p>
           <details className="service-detail" name="kraken-services" id="fensterreinigung" data-service-detail="windows" open={openService === "windows"} onToggle={event => toggleService("windows", event.currentTarget.open)}>
             <summary><h3><span className="service-glyph"><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#window"></use></svg></span><span className="service-summary-text"><span>{t("Fensterreinigung")}</span><span className="service-benefit">{t("Klare Sicht. Ein helleres Zuhause.")}</span></span><span className="service-detail-toggle"><svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></h3></summary>
@@ -180,7 +185,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
             <summary><h3><span className="service-glyph"><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#end"></use></svg></span><span className="service-summary-text"><span>{t("Umzugsreinigung")}</span><span className="service-benefit">{t("Eine Aufgabe weniger vor der Abgabe.")}</span></span><span className="service-detail-toggle"><svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></h3></summary>
             <div className="service-detail-body">
               <div className="service-inline-scene service-scene-end" aria-hidden="true"><img {...responsiveImage('/home-approved/assets/service-end-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
-              <p>{t("Der Auszug steht an? Wir übernehmen die Endreinigung Ihrer Wohnung mit 1–5.5 Zimmern und besprechen, was für die Wohnungsabgabe gereinigt werden soll. Küche, Bad, Böden und weitere Bereiche planen wir nach dem vereinbarten Umfang. Anforderungen Ihrer Verwaltung und besondere Verschmutzungen können Sie bei der Anfrage angeben.")}</p>
+              <p>{t("Der Auszug steht an? Wir übernehmen die Endreinigung Ihrer Wohnung bis 5.5 Zimmer und besprechen, was für die Wohnungsabgabe gereinigt werden soll. Küche, Bad, Böden und weitere Bereiche planen wir nach dem vereinbarten Umfang. Anforderungen Ihrer Verwaltung und besondere Verschmutzungen können Sie bei der Anfrage angeben.")}</p>
               <ul className="service-scope"><li>{t("Endreinigung für private Mietwohnungen")}</li><li>{t("Küche, Bad und Wohnräume nach Vereinbarung")}</li><li>{t("Anforderungen zur Wohnungsabgabe berücksichtigen")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Zimmerzahl, Zustand und gewünschter Reinigungstermin.")}</p>
               <a className="button button-navy" data-service="end" data-calculator="" href={serviceHref('end')}>{t("Umzugsreinigung berechnen")}</a>
@@ -191,7 +196,7 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
             <div className="service-detail-body">
               <div className="service-inline-scene service-scene-regular" aria-hidden="true"><img {...responsiveImage('/home-approved/assets/service-regular-v5.webp','(max-width:760px) 100vw, 50vw')} alt="" width="1254" height="1254" loading="lazy" decoding="async" /></div>
               <p>{t("Ein gepflegtes Zuhause, auch wenn der Alltag voll ist. Unsere regelmässige Wohnungsreinigung entlastet Sie bei wiederkehrenden Aufgaben. Wir besprechen Ihre Prioritäten, die Räume und den gewünschten Rhythmus. Ob Küche, Bad, Böden oder Oberflächen: Sie bestimmen mit, welche Arbeiten Ihnen im Haushalt am meisten helfen.")}</p>
-              <ul className="service-scope"><li>{t("Haushaltsreinigung für Wohnungen mit 1–4 Zimmern")}</li><li>{t("Aufgaben und Reinigungsrhythmus nach Absprache")}</li><li>{t("Unterstützung passend zu Ihrem Alltag")}</li></ul>
+              <ul className="service-scope"><li>{t("Haushaltsreinigung für Wohnungen bis 5.5 Zimmer")}</li><li>{t("Aufgaben und Reinigungsrhythmus nach Absprache")}</li><li>{t("Unterstützung passend zu Ihrem Alltag")}</li></ul>
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Wohnungsgrösse, gewünschte Häufigkeit und Prioritäten.")}</p>
               <a className="button button-navy" data-service="regular" data-calculator="" href={serviceHref('regular')}>{t("Regelmässige Reinigung berechnen")}</a>
             </div>
@@ -205,6 +210,10 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
               <p className="service-preparation"><strong>{t("Für Ihre Anfrage:")}</strong>{" "}{t("Betroffene Räume, Zustand und gewünschte Schwerpunkte.")}</p>
               <a className="button button-navy" data-service="deep" data-calculator="" href={serviceHref('deep')}>{t("Grundreinigung berechnen")}</a>
             </div>
+          </details>
+          <details className="service-detail" name="kraken-services" id="baureinigung" open={constructionOpen} onToggle={event=>setConstructionOpen(event.currentTarget.open)}>
+            <summary><h3><span className="service-glyph"><KrakenServiceIcon name="construction" size={34} /></span><span className="service-summary-text"><span>{t("Baureinigung")}</span></span><span className="service-detail-toggle"><svg className="icon" aria-hidden="true"><use href="#i-plus" /></svg></span></h3></summary>
+            <div className="service-detail-body"><p>{t("Nach Bau- oder Renovationsarbeiten reinigen wir die vereinbarten Bereiche. Beschreiben Sie Fläche, Bauzustand und Rückstände; den Leistungsumfang bestätigt Antonio schriftlich.")}</p><a className="button button-navy" href={publicHref('/quote?service=construction',language)}>{t("Baureinigung berechnen")}</a></div>
           </details>
           <details className="service-detail" name="kraken-services" id="kleine-umzuege" data-service-detail="moving" open={openService === "moving"} onToggle={event => toggleService("moving", event.currentTarget.open)}>
             <summary><h3><span className="service-glyph"><svg className="icon brand-service-icon" aria-hidden="true" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving"></use></svg></span><span className="service-summary-text"><span>{t("Kleine Umzüge")}</span><span className="service-benefit">{t("Ein paar Möbel. Ein neuer Anfang.")}</span></span><span className="service-detail-toggle"><svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></span></h3></summary>
@@ -234,8 +243,8 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
       <section className="services-why" id="warum-kraken" aria-labelledby="services-why-title">
         <div className="services-why-intro"><p className="eyebrow">{t("Warum Kraken?")}</p><h2 id="services-why-title">{t("Auch kleine Aufträge")}<br />{t("sind uns wichtig.")}</h2><p>{t("Persönliche Unterstützung für Ihren Alltag, Ihren Auszug und den nächsten kleinen Umzug.")}</p><a className="button button-mint" href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a></div>
         <div className="services-reasons">
-          <article><svg className="icon" aria-hidden="true"><use href="#i-home"></use></svg><h3>{t("Passend zu Ihrem Zuhause.")}</h3><p>{t("Einzelne Fenster, eine Wohnung mit 1–4 Zimmern oder ein paar Möbel: Auch dafür ist Kraken da.")}</p></article>
-          <article><svg className="icon" aria-hidden="true"><use href="#i-team"></use></svg><h3>{t("Erfahrung, die mitarbeitet.")}</h3><p>{t("Unser erfahrenes Team stimmt die vereinbarten Arbeiten auf Ihre Räume und Ihren Bedarf ab.")}</p></article>
+          <article><svg className="icon" aria-hidden="true"><use href="#i-home"></use></svg><h3>{t("Passend zu Ihrem Zuhause.")}</h3><p>{t("Einzelne Fenster, eine Wohnung bis 5.5 Zimmer oder ein paar Möbel: Auch dafür ist Kraken da.")}</p></article>
+          <article><svg className="icon" aria-hidden="true"><use href="#i-team"></use></svg><h3>{t("Erfahrung, die mitarbeitet.")}</h3><p>{t("Antonio, bei Bedarf mit Helfern, stimmt die vereinbarten Arbeiten auf Ihre Räume und Ihren Bedarf ab.")}</p></article>
           <article><svg className="icon" aria-hidden="true"><use href="#i-message"></use></svg><h3>{t("Persönlich besprochen.")}</h3><p>{t("Wir hören zu, klären Ihre Prioritäten und besprechen den Umfang, bevor der Einsatz beginnt.")}</p></article>
           <article><svg className="icon" aria-hidden="true"><use href="#i-coins"></use></svg><h3>{t("Preisbewusst geplant.")}</h3><p>{t("Im Rechner sehen Sie Tarife, ausgewählte Extras und die geltenden Preisregeln. Endpreis – keine MwSt.")}</p></article>
         </div>
@@ -243,13 +252,14 @@ export function ServicesContent({ language, onNavigate = () => {} }: { language:
     </div>
 
     <section className="faq-section section container" id="fragen" aria-labelledby="faq-title"><div className="faq-intro"><p className="eyebrow">{t("Vor Ihrem Auftrag")}</p><h2 id="faq-title">{t("Gut zu wissen.")}</h2><p>{t("Wir sind auch persönlich für Sie da.")}</p><a href="mailto:kai@krakenpfm.ch" className="text-link">{t("kai@krakenpfm.ch")}</a></div><div className="faq-list">
-      <details><summary>{t("Übernehmen Sie auch kleine Aufträge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen mit 1–4 Zimmern und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.")}</p></details>
+      <details><summary>{t("Übernehmen Sie auch kleine Aufträge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen bis 5.5 Zimmer und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.")}</p></details>
       <details><summary>{t("Welche Reinigung passt zu meiner Wohnung?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Die regelmässige Wohnungsreinigung unterstützt Sie bei wiederkehrenden Aufgaben. Eine Grundreinigung ist für Bereiche gedacht, die einmalig intensivere Aufmerksamkeit brauchen. Die Umzugsreinigung bereitet Ihre Wohnung auf die Abgabe vor. Fensterreinigung können Sie auch als eigenen Auftrag anfragen. Den gewünschten Umfang stimmen wir anhand Ihrer Angaben ab.")}</p></details>
       <details><summary>{t("Welche Angaben brauche ich für einen kleinen Umzug?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Hilfreich sind Start und Ziel, eine Liste der Möbel und Kartons sowie Angaben zu Stockwerken, Lift und Parkmöglichkeiten. Arbeitsaufwand, Strecke und Zugänge fliessen in die Planung ein. Den verfügbaren Platz im Ford Transit und die benötigten Fahrten klären wir anhand Ihrer Angaben.")}{" "}<a href={serviceHref('moving')} data-service="moving" data-calculator="">{t("Kleinen Umzug berechnen")}</a></p></details>
       <details><summary>{t("Wie plane ich meinen Auftrag?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.")}{" "}<a href={quoteHref} data-calculator="">{t("Zum Service-Rechner")}</a></p></details>
       <details><summary>{t("Wird Mehrwertsteuer verrechnet?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Es wird keine Mehrwertsteuer verrechnet. Die Angaben zu Ihrem Auftrag erhalten Sie im Rechner und in Ihrer persönlichen Bestätigung.")}</p></details>
       <details><summary>{t("In welchen Regionen ist Kraken tätig?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir unterstützen Privathaushalte in Zürich, Schaffhausen und Winterthur. Geben Sie Ihre Postleitzahl an, damit wir Ihren Auftrag und die Anfahrt gemeinsam prüfen können.")}</p></details>
       <details><summary>{t("Welches Fahrzeug nutzen Sie für kleine Umzüge?")}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{t("Wir nutzen einen Ford Transit. Teilen Sie uns mit, welche Möbel und Kartons transportiert werden sollen und wie die Zugänge aussehen. So können wir Fahrzeug, Helfer und benötigte Fahrten passend abstimmen.")}</p></details>
+      {getKaiFaqs(language,['payment','cancellation','guarantee','preparation']).map(faq=><details key={faq.question}><summary>{faq.question}<svg className="icon" aria-hidden="true"><use href="#i-plus" /></svg></summary><p>{faq.answer}{' '}<a href={publicHref(`/terms#agb-${faq.termsSection}`,language)}>{t("AGB ansehen")}</a></p></details>)}
     </div></section>
   </main>
   );

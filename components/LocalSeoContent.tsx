@@ -1,5 +1,6 @@
 import "../src/styles/route-utilities.css";
 import React from 'react';
+import {servicesText} from './services/servicesTranslations';
 import {
   getLocalRoutePlace, getLocalSeoDescriptor, getLocalService, LOCAL_ADDRESS_CONFIRMATION,
   LOCAL_CITIES, LOCAL_SCOPE, LOCAL_SERVICES, localHref, type LocalSeoRoute,
@@ -88,6 +89,7 @@ function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
               <h3><a href={href(item.regionPath)}>{item.name}</a></h3>
               <ul className="local-seo-city-services">{LOCAL_SERVICES.map(itemService => <li key={itemService.id}><a href={href(`/services/${item.id}/${itemService.id}`)}>{t(itemService.title)}</a></li>)}</ul>
             </article>)}
+            {!isConfirmedService && <article id="local-construction" className="local-seo-service"><h3>{servicesText(language,'Baureinigung')}</h3><p>{servicesText(language,'Nach Bau- oder Renovationsarbeiten reinigen wir die vereinbarten Bereiche. Beschreiben Sie Fläche, Bauzustand und Rückstände; den Leistungsumfang bestätigt Antonio schriftlich.')}</p><a className="local-seo-text-link" href={href('/leistungen#baureinigung')}>{t('Leistungsdetails ansehen')}</a></article>}
           </div>
         </section>}
 
@@ -99,7 +101,7 @@ function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
         <section id="local-services" className="local-seo-section" aria-labelledby="local-services-title">
           <h2 id="local-services-title">{isConfirmedService ? t('Leistungsdetails ansehen') : t('Leistungen für Ihr Zuhause')}</h2>
           {!isConfirmedService && <nav className="local-seo-service-nav" aria-label={t('Leistung entdecken')}>
-            {LOCAL_SERVICES.map(item => <a key={item.id} href={'#' + item.id}>{t(item.title)}</a>)}
+            {LOCAL_SERVICES.map(item => <a key={item.id} href={'#' + item.id}>{t(item.title)}</a>)}<a href="#local-construction">{servicesText(language,'Baureinigung')}</a>
           </nav>}
           <div className="local-seo-service-list">
             {shownServices.map(item => <article id={item.id} className="local-seo-service" key={item.id}>
@@ -126,7 +128,7 @@ function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
         <section className="local-seo-section" aria-labelledby="local-faq-title">
           <h2 id="local-faq-title">{t('Fragen zur Planung vor Ort')}</h2>
           <div className="local-seo-faqs">{faqs.map(faq => <details key={faq.question}>
-            <summary>{t(faq.question)}</summary><p>{t(faq.answer)}</p>
+            <summary>{t(faq.question)}</summary><p>{t(faq.answer)}{faq.termsSection && <>{' '}<a href={href(`/terms#agb-${faq.termsSection}`)}>{servicesText(language,'AGB ansehen')}</a></>}</p>
           </details>)}</div>
         </section>
 
@@ -136,7 +138,7 @@ function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
             {LOCAL_CITIES.filter(item => item.id !== city?.id).map(item => <li key={item.id}><a href={href(isConfirmedService ? `/services/${item.id}/${service.id}` : item.regionPath)}>{isConfirmedService ? `${t(service.title)} · ` : ''}{item.name}</a></li>)}
             {city && route.kind !== 'region' && <li><a href={href(city.regionPath)}>{t('Region')} · {city.name}</a></li>}
             <li><a href={href('/einsatzgebiete')}>{t('Einsatzgebiete')}</a></li>
-            <li><a href={href('/leistungen')}>{t('Unsere fünf Leistungen im Detail')}</a></li>
+            <li><a href={href('/leistungen')}>{t('Unsere Leistungen im Detail')}</a></li>
           </ul></div>
         </nav>
 

@@ -1,3 +1,4 @@
+import {publicPolicyContent} from '../src/kai/policyContent.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
@@ -52,8 +53,8 @@ test('the first homepage action sells the calculated move-out package with the r
     assert.ok(main.indexOf(action[0])<main.indexOf('id="sceneOpen"'));
     assert.ok(main.indexOf(action[0])<main.indexOf('class="scene-hotspot'));
     assert.ok(main.includes(homeText(language,'Abnahmegarantie beim Pauschalpaket')));
-    assert.ok(main.includes(homeText(language,'Für den vereinbarten Reinigungsumfang gemäss Auftragsbestätigung und AGB. Stundenreinigung ohne Abnahmegarantie.')));
-    assert.ok(main.includes('href="'+publicHref('/terms',language)+'"'));
+    assert.ok(main.includes(escapeMarkup(publicPolicyContent(language).guaranteeScope)));
+    assert.ok(main.includes('href="'+publicHref('/terms#agb-9',language)+'"'));
     // The guarantee/insurance marketing blocks cannot make blanket 100% claims.
     // The shared FAQ separately reproduces the legitimate existing cancellation charge of 100%.
     const marketing=main.slice(0,main.indexOf('<section class="faq-section'));

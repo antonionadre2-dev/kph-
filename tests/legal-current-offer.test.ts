@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { getTermsTranslation } from '../components/legal/terms';
+import {getLegacyTermsTranslation} from '../components/legal/terms-legacy';
 import { getGDPRTranslation } from '../components/legal/privacy';
 import { getTermsTranslation as compatibleTerms, getGDPRTranslation as compatiblePrivacy } from '../components/docTranslations';
 import { BOOKING_TERMS_VERSION } from '../src/booking/terms';
@@ -16,9 +17,9 @@ const originalHashes = {
   fr: ['8af67105c5298857c03b016589eea412126a8b2d4017e1309fcac11b35e49275','74f9162f52ac85ef9dbd7b6a4f852fd4e3d68eeeab5bd2084a4da68bdc5f011f','259dda78476843166030984068d909b07a5967831902b35f0f162194a8f2e04d'],
 };
 
-test('consumer terms remove retired services and unsupported fees while preserving approved payment, cancellation and handover clauses', () => {
+test('archived pre-update terms preserve the previously accepted payment, cancellation and handover clauses', () => {
   for (const language of Object.keys(originalHashes) as (keyof typeof originalHashes)[]) {
-    const terms=getTermsTranslation(language),text=JSON.stringify(terms);
+    const terms=getLegacyTermsTranslation(language),text=JSON.stringify(terms);
     assert.equal(terms.sections.length,17);
     terms.sections.forEach((section,index)=>{
       assert.ok(section.title.startsWith((index+1)+'.'),language+section.title);
@@ -29,18 +30,18 @@ test('consumer terms remove retired services and unsupported fees while preservi
     assert.match(terms.sections[1].content,/15\s*%/);
     assert.match(terms.sections[7].content,/24h/);
     assert.match(terms.sections[7].content,/72h/);
-    assert.equal(compatibleTerms(language),terms);
+
   }
   // Fixed services retain fixed scope prices; the new hourly moving tariff is an estimate.
   for (const [language, phrase] of Object.entries({de:'Festpreis',en:'fixed-price',es:'precio fijo',pt:'preço fixo',it:'prezzo fisso',fr:'forfait'})) {
-    const terms=getTermsTranslation(language);
+    const terms=getLegacyTermsTranslation(language);
     assert.ok(terms.sections[1].content.includes(phrase));
-    assert.ok(terms.lastUpdated.includes(BOOKING_TERMS_VERSION));
+    assert.ok(terms.lastUpdated.includes('kraken-2026-11-26-pricing-moving'));
     assert.match(terms.sections[1].content,/15/);
   }
-  assert.match(getTermsTranslation('de').sections[1].content,/Richtpreis.*15-Minuten-Schritten/);
-  assert.match(getTermsTranslation('de').sections[3].content,/im angezeigten Gesamtpreis enthalten/);
-  assert.doesNotMatch(JSON.stringify(getTermsTranslation('de')),/ß/);
+  assert.match(getLegacyTermsTranslation('de').sections[1].content,/Richtpreis.*15-Minuten-Schritten/);
+  assert.match(getLegacyTermsTranslation('de').sections[3].content,/im angezeigten Gesamtpreis enthalten/);
+  assert.doesNotMatch(JSON.stringify(getLegacyTermsTranslation('de')),/ß/);
 });
 
 test('privacy describes current infrastructure, separated browser storage and the controller link in six languages', () => {

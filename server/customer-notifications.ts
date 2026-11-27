@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { bookingLineLabel, bookingText } from '../src/booking/uiCopy.ts';
 import { catalogs, TEMPLATE_REVISION, languageForBackgroundEmail, normalizeEmailLanguage, snapshotEmailLanguage, prepareCollectionEnvelope } from '../integrations/email-collection/index.mjs';
+import { bookingTermsPresentation } from '../src/booking/termsPresentation.ts';
 
 const clone=<T>(value:T):T=>JSON.parse(JSON.stringify(value));
 const hash=(value:string)=>crypto.createHash('sha256').update(value).digest('hex');
@@ -61,7 +62,9 @@ export function notificationForBooking(record:any,templateId:string,eventId:stri
     ...(templateId==='payment_pending'?{paymentStatus:'pending'}:{}),...(templateId==='payment_failed'?{paymentStatus:'failed'}:{}),
     ...(templateId==='quote_ready'?{quoteApproved:Boolean(record.priceApprovedBy&&record.priceApprovedAt)}:{}),
     // Customer notes remain their own words. Door/access codes are kept in the secure portal.
-    ...extra};
+    ...extra,
+    // Persist the exact language and legal version shown for this business event.
+    ...(!accountTemplates.has(templateId)?{termsSummary:bookingTermsPresentation(locale,{booking:record})}:{})};
   // A stored free-text offer cannot be silently relabelled as translated.
   if(record.scopeNotes&&normalizeEmailLanguage(record.scopeContentLanguage)!==locale)throw new Error('STAFF_SCOPE_LANGUAGE_REQUIRED');
   return createCustomerNotification({templateId,eventId,entityId:record.bookingId,email:record.customer.email,languageSnapshot:record.languageSnapshot,renderData:data});

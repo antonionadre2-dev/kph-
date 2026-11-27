@@ -28,7 +28,7 @@ export function initApprovedHome(homeRoot, openCalculator, t = source => source)
     const changed = service !== key;
     service = key;
     refreshCalculatorLinks();
-    $$('.service-option').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.service === key)));
+    $$('button.service-option').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.service === key)));
     $('#serviceHint').textContent = t(services[key].hint);
     $$('.scene-hotspot').forEach(hotspot => {
       const active = hotspot.dataset.hotspot === services[key].hotspot;

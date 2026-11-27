@@ -51,7 +51,7 @@ export async function renderSeoHtml(root) {
           return HOME_APP_SSR_MARKER+preload+renderToString(<Application initialLanguage={language==='de'?'de-CH':language}/>);
         };
         export const local=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div><LocalSeoContent route={resolveLocalSeoRoute(pathname)} language={language}/><Footer onNavigate={noop}/></>);
-        export const legal=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page="local"/></div>{pathname==='/impressum'?<ImpressumPage onNavigate={noop}/>:pathname==='/gdpr'?<GDPRPage/>:<TermsPage onNavigate={noop}/>}<Footer onNavigate={noop}/></>);
+        export const legal=(pathname,language)=>wrap(language,<><div className="kraken-home"><ApprovedHeader onNavigate={noop} page={pathname==='/terms'?'legal':'local'}/></div>{pathname==='/impressum'?<ImpressumPage onNavigate={noop}/>:pathname==='/gdpr'?<GDPRPage/>:<TermsPage onNavigate={noop}/>}<Footer onNavigate={noop}/></>);
         export const quote=language=>{const t=key=>bookingText(language,key);return wrap(language,<>
           <div className="kraken-home"><ApprovedHeader onNavigate={noop} page="calculator"/></div>
           <main id="main" className="kr-service-calculator" lang={language}><div className="kr-calc-shell"><header className="kr-calc-intro"><p className="kr-calc-eyebrow">{t('eyebrow')}</p><h1>{t('titleStart')} <span>{t('titleAccent')}</span></h1><p className="kr-calc-lead">{t('intro')}</p></header>

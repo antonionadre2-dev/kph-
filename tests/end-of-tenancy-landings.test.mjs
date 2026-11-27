@@ -12,7 +12,7 @@ import { getPublicPriceOffers } from '../src/booking/publicPricing.ts';
 import { publicHref } from '../src/routing/site-paths.ts';
 import { LOCAL_SERVICES } from '../src/seo/local-content.ts';
 import { localText } from '../src/seo/local-translations.ts';
-import { getTermsTranslation } from '../components/docTranslations.ts';
+import {publicPolicyContent} from '../src/kai/policyContent.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
@@ -60,8 +60,8 @@ test('18 city/language landings have unique visible copy, all FAQ answers, curre
       assert.ok(html.includes(escaped(faq.question)));
       assert.ok(html.includes(escaped(faq.answer)));
     }
-    const guarantee = getTermsTranslation(language).sections.find(section => /^8\./.test(section.title));
-    assert.ok(html.includes(escaped(guarantee.content)), `AGB source mismatch: ${cityId}/${language}`);
+    const guarantee = publicPolicyContent(language).guarantee;
+    assert.ok(html.includes(escaped(guarantee)), `AGB source mismatch: ${cityId}/${language}`);
     const prices = getEndOfTenancyOfferRows(language);
     for (const price of prices) assert.ok(html.includes(escaped(money(price.priceCents, language))));
     const hrefs = [...html.matchAll(/href="([^"]*)"/g)].map(match => match[1].replaceAll('&amp;', '&'));

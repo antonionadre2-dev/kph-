@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import type { Request, Response, RequestHandler } from 'express';
 import { calculatePrice, defaultSelection, PRICING_VERSION } from '../src/booking/pricing.ts';
 import { BOOKING_TERMS_VERSION, checkoutTermsMatch } from '../src/booking/terms.ts';
+import {createTermsAcceptance,currentTermsDocuments,termsMetadata} from '../src/legal/terms-registry.ts';
 import { createFirestoreBookingStore, BookingError, digest, type BookingStore } from './booking-store.ts';
 import { createPayrexxAdapter } from './booking-payrexx.ts';
 import { createResendEmailAdapter, renderBookingEmail } from './booking-email.ts';
@@ -57,6 +58,9 @@ export function validateBookingRequest(input:any,now=Date.now()) {
   } catch {throw new BookingError('INVALID_SELECTION');}
   if(input.pricingVersion!==PRICING_VERSION || input.acceptedTotalCents!==quote.totalCents)throw new BookingError('PRICE_CHANGED',409);
   if(input.termsAccepted!==true || input.termsVersion!==BOOKING_TERMS_VERSION)throw new BookingError('TERMS_REQUIRED');
+  const acceptedLanguage=language(input.language);
+  const document=termsMetadata(BOOKING_TERMS_VERSION,acceptedLanguage)!;
+  if(input.termsHash!==undefined&&input.termsHash!==document.sha256)throw new BookingError('TERMS_REQUIRED');
   const customer=input.customer;
   if(!customer || typeof customer!=='object')throw new BookingError('INVALID_NAME');
   const name=string(customer.name,120,'INVALID_NAME',2);
@@ -69,14 +73,14 @@ export function validateBookingRequest(input:any,now=Date.now()) {
   validateAppointment(input.requestedDate,input.requestedTime,now);
   const idempotencyKey=string(input.idempotencyKey,128,'INVALID_IDEMPOTENCY_KEY',16);
   if(!/^[A-Za-z0-9_-]+$/.test(idempotencyKey))throw new BookingError('INVALID_IDEMPOTENCY_KEY');
-  return {selection,quote,customer:{name,email:customer.email.trim().toLowerCase(),phone,address,postalCode:customer.postalCode,city},requestedDate:input.requestedDate,requestedTime:input.requestedTime,language:language(input.language),notes:string(input.notes??'',4000,'INVALID_NOTES',0),idempotencyKey,recovery:input.recovery};
+  return {selection,quote,customer:{name,email:customer.email.trim().toLowerCase(),phone,address,postalCode:customer.postalCode,city},requestedDate:input.requestedDate,requestedTime:input.requestedTime,language:acceptedLanguage,termsVersion:BOOKING_TERMS_VERSION,termsHash:document.sha256,notes:string(input.notes??'',4000,'INVALID_NOTES',0),idempotencyKey,recovery:input.recovery};
 }
 
 export function createBookingService({store,tokenSecret,origin,mode='unconfigured',payment=null,sendEmail=null,sender='',clock=Date.now,recovery=null,emailCollectionEnabled=false,paymentNotificationsEnabled=false}: {store:BookingStore;tokenSecret:string;origin:string;mode?:string;payment?:any;sendEmail?:any;sender?:string;clock?:()=>number;recovery?:any;emailCollectionEnabled?:boolean;paymentNotificationsEnabled?:boolean}) {
   const token=(id:string)=>crypto.createHmac('sha256',tokenSecret).update(`booking:${id}`).digest('base64url');
   let recoveryService=recovery;
   const canCheckout=(record:any)=>Boolean(payment && ['confirmed','held'].includes(record.scheduling.status) && Date.parse(record.scheduling.holdExpiresAt)>clock() && record.quote.totalCents>0 && !record.quote.manualReviewReasons.length && !['paid','test_paid','refunded','partially_refunded','chargeback','disputed','reconciliation_required'].includes(record.payment.status) && !['cancelled','expired','completed'].includes(record.status));
-  const view=(record:any,includeToken=false)=>({bookingId:record.bookingId,reference:record.reference,...(includeToken?{publicToken:token(record.bookingId)}:{}),status:record.status,language:record.language,languageSnapshot:record.languageSnapshot,quote:record.quote,quoteRevision:record.quoteRevision,canCheckout:canCheckout(record),customer:record.customer,notes:record.notes,scopeNotes:record.scopeNotes,termsVersion:record.termsVersion,scheduling:record.scheduling,payment:record.payment,email:record.email});
+  const view=(record:any,includeToken=false)=>({bookingId:record.bookingId,reference:record.reference,...(includeToken?{publicToken:token(record.bookingId)}:{}),status:record.status,language:record.language,languageSnapshot:record.languageSnapshot,quote:record.quote,quoteRevision:record.quoteRevision,canCheckout:canCheckout(record),customer:record.customer,notes:record.notes,scopeNotes:record.scopeNotes,termsVersion:record.termsVersion,termsAcceptance:record.termsAcceptance,confirmedAt:record.confirmedAt,selection:record.selection,scheduling:record.scheduling,payment:record.payment,email:record.email});
   async function authenticated(id:string,access:string) {if(!safeId.test(id)||!timingEqual(access,token(id)))throw new BookingError('BOOKING_NOT_FOUND',404);const record=await store.get(id);if(!record || record.tokenRevoked)throw new BookingError('BOOKING_NOT_FOUND',404);return record;}
   function mailJob(record:any,kind:string,templateId:string,eventId:string,id?:string,extra:any={}) {
     let notification,notificationError;
@@ -119,7 +123,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       }
       const id=crypto.randomBytes(18).toString('base64url'), total=value.quote.totalCents;
       const now=clock();
-      const record={bookingId:id,reference:`K-${new Date(now).getUTCFullYear()}-${id.slice(0,8).toUpperCase()}`,status:'awaiting_confirmation',mode,createdAt:now,revision:1,selection:value.selection,quote:value.quote,quoteRevision:1,customer:value.customer,notes:value.notes,language:value.language,languageSnapshot:selectedEmailSnapshot(value.language),termsVersion:BOOKING_TERMS_VERSION,termsAcceptedAt:now,scheduling:{status:'requested',date:value.requestedDate,time:value.requestedTime,timeZone:'Europe/Zurich'},payment:{status:'not_started',depositPercent:DEPOSIT_PERCENT,amountDueNowCents:total===null?0:Math.round(value.quote.depositBasisCents*DEPOSIT_PERCENT/100),amountPaidCents:0,remainingBalanceCents:total??0},email:{request:'queued'},...(value.recovery?{recoveryId:value.recovery.id}:{})};
+      const record={bookingId:id,reference:`K-${new Date(now).getUTCFullYear()}-${id.slice(0,8).toUpperCase()}`,status:'awaiting_confirmation',mode,createdAt:now,revision:1,selection:value.selection,quote:value.quote,quoteRevision:1,customer:value.customer,notes:value.notes,language:value.language,languageSnapshot:selectedEmailSnapshot(value.language),termsVersion:BOOKING_TERMS_VERSION,termsAcceptedAt:now,termsAcceptance:createTermsAcceptance(value.language,now),scheduling:{status:'requested',date:value.requestedDate,time:value.requestedTime,timeZone:'Europe/Zurich'},payment:{status:'not_started',depositPercent:DEPOSIT_PERCENT,amountDueNowCents:total===null?0:Math.round(value.quote.depositBasisCents*DEPOSIT_PERCENT/100),amountPaidCents:0,remainingBalanceCents:total??0},email:{request:'queued'},...(value.recovery?{recoveryId:value.recovery.id}:{})};
       const fingerprint=digest(canonical({...value,recovery:value.recovery||null}));
       const saved=await store.create(value.idempotencyKey,fingerprint,record,mailJob(record,'request','request_received',`${id}:requested:1`,`${id}:request:1`));
       if(value.recovery)await recoveryService.linkBooking({...value.recovery,email:value.customer.email,bookingId:saved.bookingId});
@@ -241,9 +245,15 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       },record=>emailCollectionEnabled?mailJob(record,'notification','quote_ready',`${id}:quote:${record.quoteRevision}`):null);
     },
     async changeEmailLanguage(id:string,access:string,input:any) {
-      await authenticated(id,access);
+      const record=await authenticated(id,access);
       const snapshot=selectedEmailSnapshot(language(input?.language));
-      const next=await store.updateLanguageAndPending(id,snapshot,clock(),notification=>({...notification,languageSnapshot:snapshot}));
+      const next=await store.updateLanguageAndPending(id,snapshot,clock(),notification=>({
+        ...notification,languageSnapshot:snapshot,
+        ...(notification.renderData?.termsSummary?{renderData:{...notification.renderData,
+          // Translate presentation only; the stored acceptance language/version and event stay intact.
+          termsSummary:notificationForBooking({...record,language:snapshot.language,languageSnapshot:snapshot},notification.templateId,notification.eventId).renderData.termsSummary,
+        }}:{}),
+      }));
       return view(next);
     },
     async resolveBookingForRecovery(id:string,email:string) {
@@ -425,7 +435,7 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
           const signature=crypto.createHmac('sha256',runtime.secret).update(value).digest('base64url');
           res.cookie('kraken_capture',`${value}.${signature}`,{httpOnly:true,sameSite:'strict',secure:runtime.origin.startsWith('https://'),path:'/',maxAge:3600000});
         }
-        return res.json({available:Boolean(runtime.service),paymentReady:runtime.paymentReady,emailReady:runtime.emailReady,mode:runtime.mode,termsVersion:BOOKING_TERMS_VERSION,depositPercent:DEPOSIT_PERCENT});
+        return res.json({available:Boolean(runtime.service),paymentReady:runtime.paymentReady,emailReady:runtime.emailReady,mode:runtime.mode,termsVersion:BOOKING_TERMS_VERSION,termsDocuments:currentTermsDocuments(),depositPercent:DEPOSIT_PERCENT});
       }
       if(req.path.startsWith('/api/recovery/')||req.path==='/api/bookings/activity'||req.path==='/recovery/unsubscribe') {
         const headers=new Headers();for(const [key,value]of Object.entries(req.headers))if(typeof value==='string')headers.set(key,value);

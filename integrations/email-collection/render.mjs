@@ -159,6 +159,20 @@ export function renderEmail(id, data, options={}) {
   const cta=data.links?.primary || (preview?'#preview-action':undefined);
   if(!cta) throw new Error('A personal action URL is required.');
   const secondary=data.links?.secondary || `mailto:${brand.email}`;
+  // Optional, server-persisted legal presentation. Old snapshots stay unchanged.
+  const termsSummary=!accountIds.has(id)?data.termsSummary:undefined;
+  const legalUrl=value=>{
+    const url=new URL(value,brand.website),origin=new URL(brand.website).origin;
+    if(url.protocol!=='https:' || url.origin!==origin || !/^\/(?:legal\/terms\/|(?:(?:de|en|es|fr|it|pt)\/)?terms(?:[/?#]|$))/.test(url.pathname)) throw new Error('Invalid versioned terms link.');
+    return url.href;
+  };
+  if(termsSummary){
+    if(termsSummary.language!==language || typeof termsSummary.title!=='string' || typeof termsSummary.state!=='string' || !Array.isArray(termsSummary.rows) || !Array.isArray(termsSummary.sections) || !Array.isArray(termsSummary.links))throw new Error('Invalid legal snapshot language or structure.');
+    if(termsSummary.notice!==undefined && typeof termsSummary.notice!=='string')throw new Error('Invalid legal snapshot notice.');
+    for(const row of termsSummary.rows)if(typeof row.label!=='string'||typeof row.value!=='string')throw new Error('Invalid legal snapshot row.');
+    for(const section of termsSummary.sections){if(typeof section.label!=='string'||typeof section.text!=='string'||![4,7,9].includes(section.clause))throw new Error('Invalid legal snapshot section.');legalUrl(section.href);}
+    for(const item of termsSummary.links){if(typeof item.label!=='string')throw new Error('Invalid legal snapshot link.');legalUrl(item.href);}
+  }
   const hasConsent=optInKinds.has(template.kind);
   const reasonText=hasConsent?l.reasonMarketing:['quote_saved','magic_link','moving_guide'].includes(id)?l.reasonRequested:l.reasonTransaction;
   const bodyColor='#38566f';
@@ -218,6 +232,8 @@ export function renderEmail(id, data, options={}) {
     <tr><td colspan="2" style="padding:0 22px 20px;font-size:13px;color:#476176;">${escapeHtml(l.vatNote)}</td></tr>
   </table>`:'';
   const miniList=(title,items,numbered=false)=>`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td colspan="2" style="padding:0 0 12px;font-size:16px;font-weight:700;color:#002d5b;line-height:1.5;">${escapeHtml(title)}</td></tr>${items.map((item,i)=>`<tr><td width="28" valign="top" style="padding:4px 8px 10px 0;font-size:14px;font-weight:700;color:#23805e;line-height:1.6;">${numbered?String(i+1).padStart(2,'0'):'✓'}</td><td style="padding:4px 0 10px;font-size:16px;line-height:1.6;color:#38566f;">${escapeHtml(item)}</td></tr>`).join('')}</table>`;
+  const legalBlock=termsSummary?`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #dce7ef;border-radius:16px;"><tr><td style="padding:20px 22px;"><h2 style="margin:0 0 12px;font-size:19px;line-height:1.4;color:#002d5b;">${escapeHtml(termsSummary.title)}</h2>${p(termsSummary.state,'font-weight:700;')}${termsSummary.notice?p(termsSummary.notice):''}${termsSummary.rows.map(row=>p(row.label+': '+row.value,'white-space:pre-line;')).join('')}${termsSummary.sections.map(section=>`<h3 style="margin:18px 0 8px;font-size:16px;line-height:1.4;color:#002d5b;">${escapeHtml(section.label)}</h3>${p(section.text,'white-space:pre-line;')}<p style="font-size:14px;line-height:1.5;"><a href="${link(legalUrl(section.href))}" style="color:#355c79;text-decoration:underline;">${escapeHtml(section.label)} · ${section.clause}</a></p>`).join('')}<p style="margin:18px 0 0;font-size:14px;line-height:1.6;">${termsSummary.links.map(item=>`<a href="${link(legalUrl(item.href))}" style="color:#355c79;text-decoration:underline;">${escapeHtml(item.label)}</a>`).join(' · ')}</p></td></tr></table>`:'';
+  const legalText=termsSummary?[termsSummary.title,termsSummary.state,termsSummary.notice||'',...termsSummary.rows.map(row=>`${row.label}: ${row.value}`),...termsSummary.sections.flatMap(section=>[section.label,section.text,legalUrl(section.href)]),...termsSummary.links.map(item=>`${item.label}: ${legalUrl(item.href)}`)]:[];
   const button=`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td align="center" bgcolor="#002d5b" style="background-color:#002d5b;border-radius:12px;text-align:center;padding:0 18px;"><a href="${link(cta)}" style="display:block;padding:17px 8px;font-size:16px;line-height:1.5;font-weight:700;color:#ffffff;text-decoration:none;text-align:center;">${escapeHtml(t.cta)}</a></td></tr></table>`;
   const personalSignature=t.signature.includes('Antonio');
   const signature=`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td width="80" valign="middle" style="padding:0 18px 0 0;"><img src="${asset('kraken-logo.png')}" alt="Kraken" width="72" style="display:block;width:72px;height:auto;border:0;"></td><td valign="middle"><p style="margin:0 0 4px;font-size:17px;font-weight:700;color:#002d5b;">${escapeHtml(t.signature)}</p><p style="margin:0;font-size:14px;line-height:1.5;color:#61778a;">${escapeHtml(personalSignature?l.signatureRole:l.teamRole)}</p></td></tr></table>`;
@@ -237,6 +253,7 @@ export function renderEmail(id, data, options={}) {
     tr(p(greeting,'font-weight:700;color:#002d5b;margin-bottom:12px;')+p(t.intro),'28px 36px 0'),
     ...(detailsBlock?[tr(detailsBlock,'0 36px 20px')]:[]),
     ...(financeBlock?[tr(financeBlock,'0 36px 22px')]:[]),
+    ...(legalBlock?[tr(legalBlock,'0 36px 22px')]:[]),
     ...(openQuestions.length && id==='details_required'?[tr(miniList(t.nextTitle,openQuestions),'0 36px 16px')]:[]),
     ...(staffReply && id==='support_reply'?[tr(`<blockquote style="margin:0 0 18px;padding:18px 20px;border-left:3px solid #75d6ac;background-color:#eff7f3;border-radius:0 12px 12px 0;color:#244d41;font-size:16px;line-height:1.7;white-space:pre-line;">${escapeHtml(staffReply)}</blockquote>`)]:[]),
     ...(resolution && id==='issue_resolved'?[tr(p(resolution,'padding:18px;background-color:#eff7f3;border-radius:12px;'))]:[]),
@@ -260,7 +277,7 @@ export function renderEmail(id, data, options={}) {
   <!--[if mso]><table role="presentation" width="640"><tr><td><![endif]--><table class="email" role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="width:100%;max-width:640px;background-color:#ffffff;border-radius:24px;font-family:${baseFont};text-align:left;">${rows}</table><!--[if mso]></td></tr></table><![endif]-->
   <p style="margin:16px 0 0;font-family:${baseFont};font-size:12px;line-height:1.6;color:#61778a;">${escapeHtml(data.reference?`${l.reference} ${data.reference} · `:'')}${escapeHtml(l.personal)}</p></td></tr></table></body></html>`;
   const text=[greeting,'',t.headline,'',t.intro,'',...fields.map(([k,v])=>`${k}: ${v}`),'',...summaryRows.map(([k,v])=>`${k}: ${v}`),price&&priceIds.has(id)&&id!=='refund_issued'?l.vatNote:'',
-    '',staffReply||'',resolution||'',...openQuestions,...t.body,'',`${t.cta}: ${cta}`,t.secondary?`${t.secondary}: ${secondary}`:'','',
+    '',...legalText,'',staffReply||'',resolution||'',...openQuestions,...t.body,'',`${t.cta}: ${cta}`,t.secondary?`${t.secondary}: ${secondary}`:'','',
     ...(id==='moving_guide'?[l.guideTitle,...l.guideItems]:[]),...((preparationIds.has(id)?preparation[language][service]:t.next)||[]).map(item=>`• ${item}`),'',t.note,'',t.signature,l.reply,brand.phone,brand.email,`Kraken ${brand.descriptor}`,brand.address,`${l.hours} · ${l.timezone}`,brand.website,reasonText,`${l.privacy}: ${brand.privacyUrl||'#preview-privacy'}`,hasConsent?`${l.unsubscribe}: ${data.links?.unsubscribe||'#preview-unsubscribe'}`:''].filter(v=>v!==undefined).join('\n');
   const headers={};
   if(hasConsent && !preview) {

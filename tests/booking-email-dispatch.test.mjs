@@ -1,3 +1,4 @@
+import {currentTermsDocuments} from '../src/legal/terms-registry.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
@@ -354,7 +355,7 @@ test('temporary private connection checks run only from Vercel config GET and ne
     const runtime=await handlers.initialize();assert.equal(calls,0,'Initialization and webhooks do not wait for a deployment diagnostic');
     const response=await invoke(handlers,'/api/booking/config');
     assert.equal(response.statusCode,200);assert.equal(calls,scenario.expectedCalls);
-    assert.deepEqual(response.body,{available:true,paymentReady:true,emailReady:true,mode:'live',termsVersion:BOOKING_TERMS_VERSION,depositPercent:15});
+    assert.deepEqual(response.body,{available:true,paymentReady:true,emailReady:true,mode:'live',termsVersion:BOOKING_TERMS_VERSION,termsDocuments:currentTermsDocuments(),depositPercent:15});
     await invoke(handlers,'/api/booking/config');assert.equal(calls,scenario.expectedCalls,'One private probe per runtime/window');
     assert.equal(runtime.paymentReady,true,'A diagnostic failure must not disable booking requests');
     const checks=logs.filter(([prefix])=>prefix==='[booking:payrexx-connection-check]');

@@ -16,7 +16,7 @@ const temporary=mkdtempSync(path.join(cache,'about-test-'));
 let render;
 try {
   const outfile=path.join(temporary,'render.cjs');
-  await build({stdin:{contents:`import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {AboutContent} from './components/about/ApprovedAbout.tsx';import {ServicesContent} from './components/services/ApprovedServices.tsx';import WhyKrakenSection from './components/home/WhyKrakenSection.tsx';import {whyTranslations} from './components/home/whyTranslations.ts';import {homeText} from './components/home/homeTranslations.ts';export const render=language=>({about:renderToStaticMarkup(React.createElement(AboutContent,{language})),services:renderToStaticMarkup(React.createElement(ServicesContent,{language})),why:renderToStaticMarkup(React.createElement(WhyKrakenSection,{t:source=>whyTranslations[language]?.[source]??homeText(language,source)}))});`,resolveDir:root,loader:'tsx'},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',loader:{'.css':'empty'},logLevel:'warning'});
+  await build({stdin:{contents:`import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {AboutContent} from './components/about/ApprovedAbout.tsx';import {ServicesContent} from './components/services/ApprovedServices.tsx';import WhyKrakenSection from './components/home/WhyKrakenSection.tsx';import {whyTranslations} from './components/home/whyTranslations.ts';import {homeText} from './components/home/homeTranslations.ts';export const render=language=>({about:renderToStaticMarkup(React.createElement(AboutContent,{language})),services:renderToStaticMarkup(React.createElement(ServicesContent,{language})),why:renderToStaticMarkup(React.createElement(WhyKrakenSection,{language,t:source=>whyTranslations[language]?.[source]??homeText(language,source)}))});`,resolveDir:root,loader:'tsx'},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',loader:{'.css':'empty'},logLevel:'warning'});
   render=createRequire(import.meta.url)(outfile).render;
 } finally {rmSync(temporary,{recursive:true,force:true});}
 
@@ -56,7 +56,9 @@ test('Warum explains confirmation and scope without a hypothetical tax saving',(
   assert.match(text,/Vor der Bestätigung kennen Sie den vereinbarten Umfang, den Preis und den Termin/);
   assert.match(text,/Ihr Wunschtermin ist noch keine bestätigte Buchung/);
   assert.doesNotMatch(why,/7,5|7,49|8,1|Betriebshaftpflichtversichert/);
-  assert.equal((why.match(/<details\b/g)||[]).length,2);
+  assert.equal((why.match(/<details\b/g)||[]).length,1);
+  assert.doesNotMatch(why,/Versicherungsschutz|Versicherungsnachweis/);
+  assert.match(why,/\/terms#agb-9/);
   assert.equal((why.match(/id="warum-kraken"/g)||[]).length,1);
   assert.equal((why.match(/id="ueber-uns"/g)||[]).length,1);
   assert.match(why,/href="\/offerte"/);assert.match(why,/data-calculator/);

@@ -1,0 +1,181 @@
+{
+  "version": "kraken-2026-11-26-pricing-moving",
+  "language": "fr",
+  "title": "Conditions Générales de Vente (CGV)",
+  "dateLabel": "Version des conditions : kraken-2026-11-26-pricing-moving · Révision éditoriale : 26.11.2026",
+  "translationNotice": "",
+  "sections": [
+    {
+      "number": 1,
+      "title": "1. Champ d'Application & Définitions",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Ces conditions s’appliquent au nettoyage des vitres, de fin de bail, régulier, en profondeur et aux petits déménagements fournis par Kraken PFM (Kraken, nous) pour les particuliers. Des conditions différentes ne s’appliquent que si elles sont acceptées par écrit."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "2. Devis, prix fixe et conclusion du contrat",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Le calculateur indique le prix correspondant aux données déclarées et aux prestations choisies pour les services au forfait. À prestations identiques, ce prix reste inchangé. Les déménagements selon le temps passé affichent une estimation ; le travail réel est facturé par tranches de 15 minutes après la durée minimale. Les déménagements avec un prix dès nécessitent des photos ou une visite avant confirmation du prix définitif ; aucun paiement n’est possible avant cela. Une demande seule ne confirme pas de rendez-vous. Le contrat est conclu par la confirmation d’un devis ou d’une réservation en ligne. La confirmation définit les prestations. Toute donnée différente ou prestation supplémentaire est convenue avec vous avant de modifier le prix. L’acompte existant de 15 % reste inchangé ; pour les déménagements selon le temps passé, il est calculé sur le minimum, déplacement et éventuels nettoyage et réduction combinée compris."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "3. Tarifs, TVA & Majorations",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Tous les prix sont en francs suisses (CHF). Le prix du calculateur correspond aux prestations choisies ; les options sélectionnées sont comprises dans le total. Le devis confirmé et les prestations convenues font foi. Kraken n’est pas assujettie à la TVA (chiffre d’affaires annuel inférieur à CHF 100'000). Aucune TVA ne figure sur les factures."
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "4. Déplacement inclus dans le prix",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Le déplacement habituel pour les nettoyages et les déménagements au forfait est compris dans le total affiché. Pour les déménagements selon le temps passé, le forfait de déplacement est déjà inclus sur une ligne distincte de l’estimation. Les frais exceptionnels nécessitent un accord préalable et doivent figurer dans le devis écrit."
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "5. Modalités de Règlement & Retards",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Règlements sécurisés via Payrexx, virement ou QR-facture. Le solde est exigible sous 7 jours dès facturation. Tout retard entraîne un intérêt moratoire légal de 5% par an et des frais de sommation de CHF 20.00 (2e rappel) et CHF 50.00 (3e rappel). Les frais de recouvrement incombent au client."
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "6. Annulations, Reports & Non-Présentation",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Toute annulation doit être formulée par écrit. Indemnités: préavis >48 heures: gratuit; <48 heures: 50% du prix; <12 heures, non-présentation ou annulation sur place: 100% du devis. Un report gratuit est toléré >24 heures avant l'intervention, selon nos disponibilités."
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "7. Nettoyages réguliers et résiliation",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Les programmes réguliers sont à durée indéterminée. La résiliation nécessite un préavis de 30 jours pour la fin d’un mois (7 jours pendant la période d’essai de 2 mois). Sauter une visite nécessite un préavis de 48 heures. Les prix peuvent être ajustés annuellement avec un préavis de 60 jours."
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "8. Nettoyage de Fin de Bail — Garantie de Remise",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Comprend la rectification gratuite de toute lacune signalée par le bailleur lors de l'état des lieux officiel (Abgabeprotokoll). Conditions: (a) notification écrite sous 24h avec protocole/photos; (b) visite d'état des lieux sous 72h après nettoyage; (c) logement resté inoccupé et inutilisé. Exclut l'usure normale, défauts du bâtiment et éléments exclus."
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "9. Services de Déménagement & Logistique",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Vous fournissez un inventaire précis. L’argent, les bijoux, les substances dangereuses, les plantes et les animaux sont exclus du transport sans accord écrit. Les dommages cachés doivent être signalés dans un délai de 3 jours."
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "10. Devoirs du Client, Accès & Heures d'Attente",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Vous assurez l’accès, l’électricité, l’eau courante, le chauffage et l’ascenseur prévu. En l’absence d’accès, les conditions d’annulation existantes s’appliquent. Les clés remises sont conservées de manière sûre et anonyme."
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "11. Réclamations & Signalement des Défauts",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Contrôler le travail immédiatement à l'issue. Signaler les défauts apparents sous 48h; cachés sous 48h dès découverte (max 7 jours post-intervention). Le remède primaire est la retouche. Les retenues de factures sont limitées à la section concernée."
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "12. Responsabilité & Assurances",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Les informations sur une éventuelle couverture d’assurance figurent dans les documents de police correspondants et le devis écrit. Veuillez clarifier vos questions avec Kraken avant la prestation."
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "13. Sous-traitants, Partenaires Agréés & Droit de Refus",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Kraken est libre de s'adjoindre des sous-traitants spécialisés mais demeure le seul interlocuteur contractuel. Kraken se réserve d'annuler ou suspendre l'acte si les conditions compromettent la santé ou la sécurité."
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "14. Force Majeure",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Aucune partie ne répond de retards ou inexécutions consécutifs à des cas de force majeure (catastrophes, grèves, pandémies, coupures d'énergie). Obligations suspendues; si la durée excède 30 jours, chaque partie est en droit de résilier."
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "title": "15. Protection des Données & Documentation",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Traitement confidentiel des données selon la Loi suisse sur la protection des données (LPD) et le RGPD. Des photos de contrôle 'avant/après' peuvent être réalisées pour la qualité et les assurances. Usage publicitaire soumis à accord préalable."
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "title": "16. Modifications & Clause de Réserve",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Kraken se réserve d'ajuster ces CGV sous préavis de 30 jours. L'absence d'opposition vaut acceptation. Si une clause est jugée invalide, les autres demeurent en vigueur, et celle-ci est substituée par la clause la plus proche du but économique visé."
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "title": "17. Droit Applicable & Juridiction",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Tous les contrats sont soumis exclusivement au droit matériel suisse, à l'exclusion de la CIVM. Le for juridique exclusif est à Schaffhouse, en Suisse. Les fors de consommation impératifs sont réservés."
+        }
+      ]
+    }
+  ],
+  "contact": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Suisse",
+  "sha256": "4b075d45438490e53d86c8a2d8d9ced9eda26326373d4030a619d85e8d2d1f0c"
+}

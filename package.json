@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "node --import tsx scripts/generate-sitemap.mjs && vite build && node scripts/render-services.mjs && node scripts/render-about.mjs && node scripts/render-contact.mjs && node scripts/render-seo.mjs && mkdir -p dist && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build": "node --import tsx scripts/generate-sitemap.mjs && node scripts/generate-terms-policy.mjs --check && node --import tsx scripts/build-terms-manifest.mjs && node --import tsx scripts/build-terms-pdfs.mjs && vite build && node scripts/render-services.mjs && node scripts/render-about.mjs && node scripts/render-contact.mjs && node scripts/render-seo.mjs && mkdir -p dist && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "build:vercel": "node scripts/build-vercel.mjs",
     "start": "node dist/server.cjs",
     "lint": "tsc --noEmit",

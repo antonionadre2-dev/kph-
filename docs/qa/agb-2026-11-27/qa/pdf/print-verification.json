@@ -1,0 +1,78 @@
+{
+  "printPdf": "/Users/Projects/Documents/Codex/2026-11-20/files-pasted-by-the-user-abre/outputs/terms-update-2026-11-27/qa/print-preview-es.pdf",
+  "printSha256": "92c4e8faf6273c4e9e32a220f31e0f75cac6ebedb9799d329ecc079e550dc046",
+  "language": "es",
+  "pages": 7,
+  "selectableCharacters": 15888,
+  "canonicalSections": 17,
+  "canonicalBlocks": 106,
+  "allCanonicalBlocksFoundIgnoringWhitespace": true,
+  "missingBlocks": [],
+  "skipLinkAbsent": true,
+  "pageGeometry": [
+    {
+      "page": 1,
+      "width": 594.96,
+      "height": 841.92,
+      "words": 353,
+      "outOfMargins": []
+    },
+    {
+      "page": 2,
+      "width": 594.96,
+      "height": 841.92,
+      "words": 459,
+      "outOfMargins": []
+    },
+    {
+      "page": 3,
+      "width": 594.96,
+      "height": 841.92,
+      "words": 437,
+      "outOfMargins": []
+    },
+    {
+      "page": 4,
+      "width": 594.96,
+      "height": 841.92,
+      "words": 414,
+      "outOfMargins": []
+    },
+    {
+      "page": 5,
+      "width": 594.96,
+      "height": 841.92,
+      "words": 477,
+      "outOfMargins": []
+    },
+    {
+      "page": 6,
+      "width": 594.96,
+      "height": 841.92,
+      "words": 384,
+      "outOfMargins": []
+    },
+    {
+      "page": 7,
+      "width": 594.96,
+      "height": 841.92,
+      "words": 52,
+      "outOfMargins": []
+    }
+  ],
+  "allTextWithinPrintMargins": true,
+  "download": {
+    "actualPath": "/Users/Projects/Downloads/es.pdf",
+    "canonicalPath": "/Users/Projects/Documents/Codex/2026-11-20/files-pasted-by-the-user-abre/outputs/terms-update-2026-11-27/worktree/public/legal/terms/kraken-agb-2026-11-26-v2/es.pdf",
+    "actualSha256": "854699c998adabdf330287972cadde17691b6d2ee9e8802ed645f6b47383500b",
+    "canonicalSha256": "854699c998adabdf330287972cadde17691b6d2ee9e8802ed645f6b47383500b",
+    "byteIdentical": true
+  },
+  "visualInspection": {
+    "firstAndLastPageRendered": true,
+    "passed": true,
+    "issues": [],
+    "notes": "Current first and last page PNGs inspected: no skip-link, controls, clipping or text overlay. White reading surface, readable text and complete final contact/date."
+  },
+  "passed": true
+}

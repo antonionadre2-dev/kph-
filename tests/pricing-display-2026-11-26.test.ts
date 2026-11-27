@@ -42,8 +42,8 @@ test('saved emails never render a hypothetical tax comparison, including legacy 
   assert.doesNotMatch(message.html+message.text,/8[,.]1|27[,.]95|hypothet|Nettopreis/i);
  }
 });
-test('all six legal notices state the approved VAT status without changing unrelated clauses',()=>{
- for(const language of languages){const terms=getTermsTranslation(language);assert.match(terms.sections[2].content,/100['.,]000/);assert.match(terms.lastUpdated,/kraken-2026-11-26-pricing-moving/);assert.match(terms.sections[1].content,/15/);}
+test('all six current legal documents display VAT status, the deposit clause and a readable date',()=>{
+ for(const language of languages){const terms=getTermsTranslation(language);assert.match(terms.sections[2].content,/100['.,]000/);assert.match(terms.lastUpdated,/2026/);assert.doesNotMatch(terms.lastUpdated,/pricing-moving|kraken-agb/);assert.match(terms.sections[3].content,/15\s*%/);}
 });
 test('collection price summaries distinguish hourly estimates and omit VAT amounts/comparisons',()=>{
  for(const language of languages){

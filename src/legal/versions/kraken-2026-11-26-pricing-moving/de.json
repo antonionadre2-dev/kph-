@@ -1,0 +1,260 @@
+{
+  "version": "kraken-2026-11-26-pricing-moving",
+  "language": "de",
+  "title": "Allgemeine Geschäftsbedingungen (AGB)",
+  "dateLabel": "Bedingungsversion: kraken-2026-11-26-pricing-moving · Redaktionelle Prüfung: 26.11.2026",
+  "translationNotice": "",
+  "sections": [
+    {
+      "number": 1,
+      "title": "1. Geltungsbereich & Definitionen",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für Fensterreinigung, Umzugsreinigung, regelmässige Reinigung, Grundreinigung und kleine Umzüge von Kraken PFM (Kraken, wir) für Privathaushalte. Abweichende Bedingungen gelten nur bei schriftlicher Akzeptanz."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "2. Angebote, Festpreis & Vertragsabschluss",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Der Online-Rechner zeigt bei Festpreisleistungen den Preis für Ihre angegebenen Daten und ausgewählten Leistungen. Bei unverändertem Umfang bleibt dieser Preis gleich. Umzüge nach Aufwand zeigen einen Richtpreis; abgerechnet wird nach der Mindestdauer in 15-Minuten-Schritten. Umzüge mit einem Ab-Preis benötigen vor der Preisbestätigung Fotos oder eine Besichtigung; bis dahin ist keine Zahlung möglich. Eine Anfrage allein bestätigt noch keinen Termin. Ein Vertrag kommt durch die Bestätigung einer Offerte oder Online-Buchung zustande. Der Leistungsumfang ergibt sich aus der Buchungsbestätigung. Abweichende Angaben oder zusätzliche Arbeiten stimmen wir mit Ihnen ab, bevor der Preis geändert wird. Die bestehende Anzahlung von 15 % bleibt unverändert; bei Umzügen nach Aufwand bezieht sie sich auf den Mindestauftrag einschliesslich Anfahrt und gegebenenfalls kombinierter Reinigung und Rabatt."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "3. Preise, MwSt. & Zuschläge",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Alle Preise sind in Schweizer Franken (CHF) angegeben. Der Rechnerpreis bezieht sich auf den gewählten Leistungsumfang; gewählte Extras werden im Gesamtpreis ausgewiesen. Massgeblich sind die bestätigte Offerte und der vereinbarte Umfang. Kraken ist nicht mehrwertsteuerpflichtig (Jahresumsatz unter CHF 100'000). Auf Rechnungen wird keine MWST ausgewiesen."
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "4. Anfahrt im Preis enthalten",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Die übliche Anfahrt für Reinigungen und Festpreisumzüge ist im angezeigten Gesamtpreis enthalten. Bei Umzügen nach Aufwand ist die Anfahrtspauschale im Richtpreis als eigene Position enthalten. Ausserordentliche Anfahrtskosten bedürfen einer vorherigen Vereinbarung und müssen in der schriftlichen Offerte ausgewiesen sein."
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "5. Zahlungsbedingungen & Verzug",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Zahlungen erfolgen über Payrexx, Banküberweisung oder QR-Rechnung. Der Restbetrag ist innert 7 Tagen fällig. Bei Zahlungsverzug fallen 5% Verzugszins sowie Mahngebühren von CHF 20.00 (2. Mahnung) und CHF 50.00 (3. Mahnung) an. Inkassokosten gehen zu Lasten des Kunden."
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "6. Stornierungen, Terminverschiebungen & Nichterscheinen",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Stornierungen müssen schriftlich erfolgen. Gebühren: >48h vor Start: kostenlos; <48h: 50% des Preises; <12h, Nichterscheinen oder Absage vor Ort: 100% des Preises. Eine kostenlose Verschiebung ist >24h vor Start nach Verfügbarkeit zulässig."
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "7. Wiederkehrende Reinigungen und Kündigung",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Wiederkehrende Pläne laufen auf unbestimmte Zeit. Kündigung: 30 Tage auf Monatsende (7 Tage während der 2-monatigen Probezeit). Terminausfälle erfordern 48h Frist. Jährliche Preisanpassungen sind mit 60 Tagen Vorankündigung möglich."
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "8. Umzugsreinigung — Abnahmegarantie",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Beinhaltet kostenlose Mängelbehebung bei offizieller Wohnungsübergabe (Abgabeprotokoll). Gültig, wenn: (a) Kraken innert 24h schriftlich mit Protokoll/Fotos benachrichtigt wird; (b) Übergabe innert 72h nach Reinigung stattfindet; (c) Objekt unbewohnt und ungenutzt blieb. Normaler Verschleiss, Schäden oder ausgeschlossene Bereiche sind nicht gedeckt."
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "9. Umzugs- & Transportdienstleistungen",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Sie stellen ein genaues Inventar bereit. Bargeld, Schmuck, Gefahrstoffe sowie Pflanzen und Tiere sind ohne schriftliche Vereinbarung vom Transport ausgeschlossen. Verdeckte Schäden sind innert 3 Tagen zu melden."
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "10. Pflichten des Kunden, Zugang & Wartezeiten",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Sie stellen ungehinderten Zugang, Strom, fliessendes Wasser, Heizung und den vorgesehenen Aufzug bereit. Bei fehlendem Zugang gilt die bestehende Stornoregelung. Übergebene Schlüssel werden sicher und anonymisiert aufbewahrt."
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "11. Mängelrügen & Reklamationen",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Arbeiten sind sofort nach Abschluss zu prüfen. Sichtbare Mängel innerhalb von 48h rügen; verdeckte Mängel innert 48h nach Entdeckung (max. 7 Tage nach Abschluss). Primäres Recht ist Nachbesserung. Rechnungsrückbehalte sind nur anteilig für betroffene Teile zulässig."
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "12. Haftung & Versicherung",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Angaben zu einer allfälligen Versicherungsdeckung ergeben sich aus den einschlägigen Versicherungsunterlagen und der schriftlichen Offerte. Fragen dazu klären Sie vor dem Auftrag mit Kraken."
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "13. Subunternehmer, spezialisierte Partner & Ablehnungsrecht",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Kraken kann qualifizierte Drittspezialisten beiziehen, bleibt jedoch alleiniger Vertragspartner. Kraken behält sich das Recht vor, Arbeiten abzulehnen oder einzustellen, wenn vor Ort unzumutbare Sicherheits- oder Gesundheitsrisiken bestehen."
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "14. Höhere Gewalt (Force Majeure)",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Keine Partei haftet für Verzögerungen oder Nichterfüllung aufgrund von Ereignissen ausserhalb zumutbarer Kontrolle (Naturkatastrophen, Streiks, Pandemien, Infrastrukturausfälle). Die Pflichten ruhen; dauert das Ereignis >30 Tage, können beide Parteien zurücktreten."
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "title": "15. Datenschutz & Dokumentation",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Datenverarbeitung erfolgt gemäss dem Schweizer Datenschutzgesetz (DSG) und der DSGVO. Vorher-/Nachher-Fotos können zur Qualitätskontrolle und Versicherung erstellt werden. Die werbliche Nutzung von Fotos erfordert die vorherige Zustimmung."
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "title": "16. Änderungen & Salvatorische Klausel",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Kraken kann diese AGB mit einer Frist von 30 Tagen ändern. Nicht-Widerspruch gilt als Genehmigung. Sollte eine Bestimmung ungültig sein, bleibt die Gültigkeit der übrigen unberührt; die ungültige wird durch eine dem wirtschaftlichen Zweck am nächsten kommende ersetzt."
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "title": "17. Anwendbares Recht & Gerichtsstand",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Alle Verträge unterliegen ausschliesslich materiellem Schweizer Recht unter Ausschluss des UN-Kaufrechts (CISG). Gerichtsstand ist Schaffhausen, Schweiz. Zwingende gesetzliche Konsumentengerichtsstände bleiben vorbehalten."
+        }
+      ]
+    }
+  ],
+  "contact": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Schweiz",
+  "archived": true,
+  "sourceCommit": "6dc2772",
+  "legacyOriginal": {
+    "title": "Allgemeine Geschäftsbedingungen (AGB)",
+    "description": "Diese AGB gelten für Reinigungen und kleine Umzüge für Privathaushalte von Kraken PFM.",
+    "sections": [
+      {
+        "title": "1. Geltungsbereich & Definitionen",
+        "content": "Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für Fensterreinigung, Umzugsreinigung, regelmässige Reinigung, Grundreinigung und kleine Umzüge von Kraken PFM (Kraken, wir) für Privathaushalte. Abweichende Bedingungen gelten nur bei schriftlicher Akzeptanz."
+      },
+      {
+        "title": "2. Angebote, Festpreis & Vertragsabschluss",
+        "content": "Der Online-Rechner zeigt bei Festpreisleistungen den Preis für Ihre angegebenen Daten und ausgewählten Leistungen. Bei unverändertem Umfang bleibt dieser Preis gleich. Umzüge nach Aufwand zeigen einen Richtpreis; abgerechnet wird nach der Mindestdauer in 15-Minuten-Schritten. Umzüge mit einem Ab-Preis benötigen vor der Preisbestätigung Fotos oder eine Besichtigung; bis dahin ist keine Zahlung möglich. Eine Anfrage allein bestätigt noch keinen Termin. Ein Vertrag kommt durch die Bestätigung einer Offerte oder Online-Buchung zustande. Der Leistungsumfang ergibt sich aus der Buchungsbestätigung. Abweichende Angaben oder zusätzliche Arbeiten stimmen wir mit Ihnen ab, bevor der Preis geändert wird. Die bestehende Anzahlung von 15 % bleibt unverändert; bei Umzügen nach Aufwand bezieht sie sich auf den Mindestauftrag einschliesslich Anfahrt und gegebenenfalls kombinierter Reinigung und Rabatt."
+      },
+      {
+        "title": "3. Preise, MwSt. & Zuschläge",
+        "content": "Alle Preise sind in Schweizer Franken (CHF) angegeben. Der Rechnerpreis bezieht sich auf den gewählten Leistungsumfang; gewählte Extras werden im Gesamtpreis ausgewiesen. Massgeblich sind die bestätigte Offerte und der vereinbarte Umfang. Kraken ist nicht mehrwertsteuerpflichtig (Jahresumsatz unter CHF 100'000). Auf Rechnungen wird keine MWST ausgewiesen."
+      },
+      {
+        "title": "4. Anfahrt im Preis enthalten",
+        "content": "Die übliche Anfahrt für Reinigungen und Festpreisumzüge ist im angezeigten Gesamtpreis enthalten. Bei Umzügen nach Aufwand ist die Anfahrtspauschale im Richtpreis als eigene Position enthalten. Ausserordentliche Anfahrtskosten bedürfen einer vorherigen Vereinbarung und müssen in der schriftlichen Offerte ausgewiesen sein."
+      },
+      {
+        "title": "5. Zahlungsbedingungen & Verzug",
+        "content": "Zahlungen erfolgen über Payrexx, Banküberweisung oder QR-Rechnung. Der Restbetrag ist innert 7 Tagen fällig. Bei Zahlungsverzug fallen 5% Verzugszins sowie Mahngebühren von CHF 20.00 (2. Mahnung) und CHF 50.00 (3. Mahnung) an. Inkassokosten gehen zu Lasten des Kunden."
+      },
+      {
+        "title": "6. Stornierungen, Terminverschiebungen & Nichterscheinen",
+        "content": "Stornierungen müssen schriftlich erfolgen. Gebühren: >48h vor Start: kostenlos; <48h: 50% des Preises; <12h, Nichterscheinen oder Absage vor Ort: 100% des Preises. Eine kostenlose Verschiebung ist >24h vor Start nach Verfügbarkeit zulässig."
+      },
+      {
+        "title": "7. Wiederkehrende Reinigungen und Kündigung",
+        "content": "Wiederkehrende Pläne laufen auf unbestimmte Zeit. Kündigung: 30 Tage auf Monatsende (7 Tage während der 2-monatigen Probezeit). Terminausfälle erfordern 48h Frist. Jährliche Preisanpassungen sind mit 60 Tagen Vorankündigung möglich."
+      },
+      {
+        "title": "8. Umzugsreinigung — Abnahmegarantie",
+        "content": "Beinhaltet kostenlose Mängelbehebung bei offizieller Wohnungsübergabe (Abgabeprotokoll). Gültig, wenn: (a) Kraken innert 24h schriftlich mit Protokoll/Fotos benachrichtigt wird; (b) Übergabe innert 72h nach Reinigung stattfindet; (c) Objekt unbewohnt und ungenutzt blieb. Normaler Verschleiss, Schäden oder ausgeschlossene Bereiche sind nicht gedeckt."
+      },
+      {
+        "title": "9. Umzugs- & Transportdienstleistungen",
+        "content": "Sie stellen ein genaues Inventar bereit. Bargeld, Schmuck, Gefahrstoffe sowie Pflanzen und Tiere sind ohne schriftliche Vereinbarung vom Transport ausgeschlossen. Verdeckte Schäden sind innert 3 Tagen zu melden."
+      },
+      {
+        "title": "10. Pflichten des Kunden, Zugang & Wartezeiten",
+        "content": "Sie stellen ungehinderten Zugang, Strom, fliessendes Wasser, Heizung und den vorgesehenen Aufzug bereit. Bei fehlendem Zugang gilt die bestehende Stornoregelung. Übergebene Schlüssel werden sicher und anonymisiert aufbewahrt."
+      },
+      {
+        "title": "11. Mängelrügen & Reklamationen",
+        "content": "Arbeiten sind sofort nach Abschluss zu prüfen. Sichtbare Mängel innerhalb von 48h rügen; verdeckte Mängel innert 48h nach Entdeckung (max. 7 Tage nach Abschluss). Primäres Recht ist Nachbesserung. Rechnungsrückbehalte sind nur anteilig für betroffene Teile zulässig."
+      },
+      {
+        "title": "12. Haftung & Versicherung",
+        "content": "Angaben zu einer allfälligen Versicherungsdeckung ergeben sich aus den einschlägigen Versicherungsunterlagen und der schriftlichen Offerte. Fragen dazu klären Sie vor dem Auftrag mit Kraken."
+      },
+      {
+        "title": "13. Subunternehmer, spezialisierte Partner & Ablehnungsrecht",
+        "content": "Kraken kann qualifizierte Drittspezialisten beiziehen, bleibt jedoch alleiniger Vertragspartner. Kraken behält sich das Recht vor, Arbeiten abzulehnen oder einzustellen, wenn vor Ort unzumutbare Sicherheits- oder Gesundheitsrisiken bestehen."
+      },
+      {
+        "title": "14. Höhere Gewalt (Force Majeure)",
+        "content": "Keine Partei haftet für Verzögerungen oder Nichterfüllung aufgrund von Ereignissen ausserhalb zumutbarer Kontrolle (Naturkatastrophen, Streiks, Pandemien, Infrastrukturausfälle). Die Pflichten ruhen; dauert das Ereignis >30 Tage, können beide Parteien zurücktreten."
+      },
+      {
+        "title": "15. Datenschutz & Dokumentation",
+        "content": "Datenverarbeitung erfolgt gemäss dem Schweizer Datenschutzgesetz (DSG) und der DSGVO. Vorher-/Nachher-Fotos können zur Qualitätskontrolle und Versicherung erstellt werden. Die werbliche Nutzung von Fotos erfordert die vorherige Zustimmung."
+      },
+      {
+        "title": "16. Änderungen & Salvatorische Klausel",
+        "content": "Kraken kann diese AGB mit einer Frist von 30 Tagen ändern. Nicht-Widerspruch gilt als Genehmigung. Sollte eine Bestimmung ungültig sein, bleibt die Gültigkeit der übrigen unberührt; die ungültige wird durch eine dem wirtschaftlichen Zweck am nächsten kommende ersetzt."
+      },
+      {
+        "title": "17. Anwendbares Recht & Gerichtsstand",
+        "content": "Alle Verträge unterliegen ausschliesslich materiellem Schweizer Recht unter Ausschluss des UN-Kaufrechts (CISG). Gerichtsstand ist Schaffhausen, Schweiz. Zwingende gesetzliche Konsumentengerichtsstände bleiben vorbehalten."
+      }
+    ],
+    "verificationTitle": "Version der Bedingungen",
+    "lastUpdated": "Bedingungsversion: kraken-2026-11-26-pricing-moving · Redaktionelle Prüfung: 26.11.2026",
+    "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Schweiz",
+    "backHome": "Zurück zur Startseite"
+  }
+}

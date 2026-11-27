@@ -1,3 +1,4 @@
+import {currentTermsDocuments} from '../src/legal/terms-registry.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
@@ -222,7 +223,7 @@ test('unconfigured HTTP backend is explicit, private and never manufactures acti
   const server=app.listen(0,'127.0.0.1');await new Promise<void>(resolve=>server.on('listening',resolve));
   try {
     const address=server.address() as any,origin=`http://127.0.0.1:${address.port}`;
-    const config=await fetch(`${origin}/api/booking/config`);assert.equal(config.headers.get('cache-control'),'private, no-store');assert.deepEqual(await config.json(),{available:false,paymentReady:false,emailReady:false,mode:'unconfigured',termsVersion:BOOKING_TERMS_VERSION,depositPercent:15});
+    const config=await fetch(`${origin}/api/booking/config`);assert.equal(config.headers.get('cache-control'),'private, no-store');assert.deepEqual(await config.json(),{available:false,paymentReady:false,emailReady:false,mode:'unconfigured',termsVersion:BOOKING_TERMS_VERSION,termsDocuments:currentTermsDocuments(),depositPercent:15});
     const response=await fetch(`${origin}/api/booking/requests`,{method:'POST',headers:{'Content-Type':'application/json',Origin:'https://krakenpfm.ch'},body:JSON.stringify(request())});assert.equal(response.status,503);assert.deepEqual(await response.json(),{code:'BOOKING_NOT_CONFIGURED'});
     const activity=await fetch(`${origin}/api/bookings/activity`);assert.deepEqual(await activity.json(),{events:[],cursor:null});
     const crossOrigin=await fetch(`${origin}/api/booking/requests`,{method:'POST',headers:{'Content-Type':'application/json',Origin:'https://attacker.invalid'},body:'{}'});assert.equal(crossOrigin.status,403);

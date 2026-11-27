@@ -8,7 +8,7 @@ export const KAI_CONTACT = Object.freeze({
   whatsapp: 'https://wa.me/41774505705', email: 'kai@krakenpfm.ch',
   address: 'Seewadelstrasse 3, 8203 Schaffhausen',
 });
-export const KAI_FACT_TOPICS = ['guarantee', 'regions', 'payment', 'vat', 'included', 'team', 'availability', 'duration', 'cancellation', 'insurance'] as const;
+export const KAI_FACT_TOPICS = ['guarantee', 'regions', 'payment', 'vat', 'included', 'team', 'availability', 'duration', 'cancellation', 'preparation', 'insurance'] as const;
 export type KaiFactTopic = typeof KAI_FACT_TOPICS[number];
 export type KaiFact = { answer: string; contact: boolean };
 const languages: readonly HomeLanguage[] = ['de', 'en', 'es', 'pt', 'it', 'fr'];
@@ -31,14 +31,6 @@ const regions: Row = [
 const vat: Row = [
   'Es wird keine Mehrwertsteuer verrechnet.', 'No VAT is charged.', 'No se cobra IVA.',
   'Não é cobrado IVA.', 'Non viene addebitata IVA.', 'Aucune TVA n’est facturée.',
-];
-const guaranteeScope: Row = [
-  'Die Abnahmegarantie gilt für die Umzugsreinigung zum Pauschalpreis im vereinbarten Umfang. Die Reinigung auf Stundenbasis hat keine Abnahmegarantie.',
-  'The handover guarantee applies to fixed-price end-of-tenancy cleaning for the agreed scope. Hourly cleaning has no handover guarantee.',
-  'La garantía de entrega se aplica a la limpieza de fin de alquiler de precio fijo para el alcance acordado. La limpieza por horas no tiene garantía de entrega.',
-  'A garantia de entrega aplica-se à limpeza de fim de arrendamento com preço fixo e no âmbito acordado. A limpeza à hora não tem garantia de entrega.',
-  'La garanzia di consegna vale per le pulizie di fine locazione a prezzo fisso e per le prestazioni concordate. La pulizia a ore non ha garanzia di consegna.',
-  'La garantie de remise s’applique au nettoyage de fin de bail au forfait pour les prestations convenues. Le nettoyage à l’heure n’a pas de garantie de remise.',
 ];
 const included: Record<Exclude<KaiService, 'end'> | 'unspecified', Row> = {
   windows: [
@@ -88,7 +80,7 @@ export function getKaiFact(topic: KaiFactTopic, language: unknown, service?: Kai
   const locale = normalizeHomeLanguage(language);
   const policy = publicPolicyContent(locale);
   switch (topic) {
-    case 'guarantee': return { answer: `${localized(guaranteeScope, locale)} ${policy.guarantee}`, contact: false };
+    case 'guarantee': return { answer: policy.guarantee, contact: false };
     case 'regions': return { answer: localized(regions, locale), contact: false };
     case 'payment': return { answer: `${policy.payment} ${policy.deposit}`, contact: false };
     case 'vat': return { answer: localized(vat, locale), contact: false };
@@ -96,8 +88,9 @@ export function getKaiFact(topic: KaiFactTopic, language: unknown, service?: Kai
     case 'team': return { answer: `${policy.team} ${localized(personal, locale)}`, contact: true };
     case 'availability':
     case 'duration': return { answer: localized(personal, locale), contact: true };
-    case 'cancellation': return { answer: policy.cancellation, contact: false };
-    case 'insurance': return { answer: `${localized(personal, locale)} ${policy.insurance}`, contact: true };
+    case 'cancellation': return { answer: `${policy.cancellation} ${policy.rescheduling}`, contact: false };
+    case 'preparation': return { answer: policy.preparation, contact: false };
+    case 'insurance': return { answer: policy.insurance, contact: true };
   }
 }
 
@@ -111,20 +104,21 @@ const questions: Record<KaiFactTopic, Row> = {
   availability: ['Ist mein Wunschtermin verfügbar?', 'Is my preferred date available?', '¿Está disponible mi fecha preferida?', 'A data pretendida está disponível?', 'La data desiderata è disponibile?', 'La date souhaitée est-elle disponible ?'],
   duration: ['Wie lange dauert der Auftrag?', 'How long does the job take?', '¿Cuánto dura el servicio?', 'Quanto tempo demora o serviço?', 'Quanto dura il servizio?', 'Combien de temps dure l’intervention ?'],
   cancellation: ['Wie kann ich absagen oder verschieben?', 'How can I cancel or reschedule?', '¿Cómo puedo cancelar o aplazar?', 'Como posso cancelar ou adiar?', 'Come posso annullare o rinviare?', 'Comment annuler ou reporter ?'],
+  preparation: ['Wie bereite ich die Wohnung und die Materialien vor?', 'How should I prepare the home and materials?', '¿Cómo preparo el domicilio y los materiales?', 'Como preparo a casa e os materiais?', 'Come preparo l’abitazione e i materiali?', 'Comment préparer le logement et le matériel ?'],
   insurance: ['Welche Versicherung gilt?', 'What insurance applies?', '¿Qué seguro se aplica?', 'Que seguro se aplica?', 'Quale assicurazione si applica?', 'Quelle assurance s’applique ?'],
 };
 export function getKaiFaqs(language: unknown, topics: readonly KaiFactTopic[] = KAI_FACT_TOPICS, service?: KaiService | null) {
   const locale = normalizeHomeLanguage(language);
-  return topics.map(topic => ({ question: localized(questions[topic], locale), ...getKaiFact(topic, locale, service) }));
+  return topics.map(topic => ({ question: localized(questions[topic], locale), ...getKaiFact(topic, locale, service), termsSection: ({guarantee:9,payment:4,cancellation:7,preparation:6} as Partial<Record<KaiFactTopic,number>>)[topic] }));
 }
 
 const HOME_FAQS = [
-  ['Übernehmen Sie auch kleine Aufträge?', 'Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen mit 1–4 Zimmern und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.'],
+  ['Übernehmen Sie auch kleine Aufträge?', 'Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen bis 5.5 Zimmer und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.'],
   ['Wie plane ich meinen Auftrag?', 'Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.'],
   ['Welches Fahrzeug nutzen Sie für kleine Umzüge?', 'Wir nutzen einen Ford Transit. Teilen Sie uns mit, welche Möbel und Kartons transportiert werden sollen und wie die Zugänge aussehen. So können wir Fahrzeug, Helfer und benötigte Fahrten passend abstimmen.'],
 ];
 /** Public FAQ content shared by visible Home and deferred SEO, without an SEO graph dependency. */
-export function getHomeFaqs(language: string) {
+export function getHomeFaqs(language: string): {question:string;answer:string;termsSection?:number}[] {
   const basics = HOME_FAQS.map(([question,answer]) => ({question:homeText(language,question),answer:homeText(language,answer)}));
-  return [...basics.slice(0, 2), ...getKaiFaqs(language).map(({question, answer}) => ({question, answer})), ...basics.slice(2)];
+  return [...basics.slice(0, 2), ...getKaiFaqs(language, KAI_FACT_TOPICS.filter(topic => topic !== 'insurance')).map(({question, answer, termsSection}) => ({question, answer, termsSection})), ...basics.slice(2)];
 }

@@ -26,5 +26,6 @@ export const CORE_SERVICE_CATALOG = [
   { slug: 'end-of-tenancy', name: 'Umzugsreinigung', anchor: 'umzugsreinigung' },
   { slug: 'daily-cleaning', name: 'Regelmässige Reinigung', anchor: 'regelmaessige-reinigung' },
   { slug: 'deep-cleaning', name: 'Grundreinigung', anchor: 'grundreinigung' },
+  { slug: 'post-construction', name: 'Baureinigung', anchor: 'baureinigung' },
   { slug: 'moving-furniture', name: 'Kleine Umzüge', anchor: 'kleine-umzuege' },
 ] as const;

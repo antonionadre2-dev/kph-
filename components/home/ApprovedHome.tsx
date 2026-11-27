@@ -15,6 +15,7 @@ import { publicHref } from '../../src/routing/site-paths';
 import { mediaAsset } from '../../src/media/images';
 import { HERO_DAY, HERO_NIGHT, HERO_DESKTOP_MEDIA, HERO_MOBILE_MEDIA, HERO_EMPTY_SOURCE, heroImage } from '../../src/home/hero-media';
 import { initialSceneCalendar } from '../../src/home/scene-calendar';
+import { publicPolicyContent } from '../../src/kai/policyContent';
 import { getHomeFaqs } from '../../src/kai/facts';
 import { initDeferredHomeMedia } from './deferred-media';
 import { whyTranslations } from './whyTranslations';
@@ -34,6 +35,7 @@ import './conversion-home.css';
 export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
   const { language } = useTranslation();
   const homeLanguage = normalizeHomeLanguage(language);
+  const policy = publicPolicyContent(homeLanguage);
   const previewCopy = servicePreviewLabels(homeLanguage);
   const t = (source: string, params?: Record<string, string | number>) => whyTranslations[homeLanguage]?.[source] ?? homeText(homeLanguage, source, params);
   const translationRef = useRef(t);
@@ -115,7 +117,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
           <p className="hero-description">{t("Ihr Zuhause in guten Armen.")}</p>
           <FeaturedMoveoutOffer language={homeLanguage} />
           <a className="button button-navy hero-primary-action kr-button kr-button--primary" href={serviceHref('end')} data-service="end" data-calculator="">{t('Umzugsreinigung berechnen')}</a>
-          <p className="hero-guarantee"><strong>{t('Abnahmegarantie beim Pauschalpaket')}</strong><span>{t('Für den vereinbarten Reinigungsumfang gemäss Auftragsbestätigung und AGB. Stundenreinigung ohne Abnahmegarantie.')}{' '}<a href={publicHref('/terms', language)}>{t('AGB ansehen')}</a></span></p>
+          <p className="hero-guarantee"><strong>{t('Abnahmegarantie beim Pauschalpaket')}</strong><span>{policy.guaranteeScope}{' '}<a href={publicHref('/terms#agb-9', language)}>{t('AGB ansehen')}</a></span></p>
           <a className="hero-service-details kr-button kr-button--quiet" href={publicHref('/umzugsreinigung/zuerich', language)}>{t('Umzugsreinigung in Zürich entdecken')}</a>
           <CustomerReviews language={homeLanguage} />
           <div className="hero-scene-controls">
@@ -209,6 +211,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
           <button className="service-option" type="button" data-service="regular" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#regular"></use></svg><span>{t("Regelmässige Reinigung")}</span></button>
           <button className="service-option" type="button" data-service="deep" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#deep"></use></svg><span>{t("Grundreinigung")}</span></button>
           <button className="service-option" type="button" data-service="moving" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving"></use></svg><span>{t("Kleine Umzüge")}</span></button>
+          <a className="service-option service-option-link" href={publicHref('/quote?service=construction',homeLanguage)}><img className="icon brand-service-icon" src="/calculator-approved/assets/kraken-emoji-construction.svg" width="38" height="38" alt="" aria-hidden="true" loading="lazy" /><span>{t("Baureinigung")}</span></a>
         </div>
         <p className="service-hint" id="serviceHint" aria-live="polite">{t("Was dürfen wir Ihnen abnehmen? Wählen Sie Ihren Service.")}</p>
         <div className="booking-form calculator-entry">
@@ -236,10 +239,10 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
 
     <BeforeAfterComparison cases={beforeAfterCases} language={homeLanguage} />
 
-    <WhyKrakenSection t={t} quoteHref={quoteHref} />
+    <WhyKrakenSection t={t} quoteHref={quoteHref} language={homeLanguage} />
 
     <section className="faq-section section container" aria-labelledby="faq-title"><div className="faq-intro"><p className="eyebrow">{t("Gut zu wissen")}</p><h2 id="faq-title">{t("Fragen zu Reinigung und kleinen Umzügen")}</h2><p>{t("Wir sind auch persönlich für Sie da.")}</p><a href="mailto:kai@krakenpfm.ch" className="text-link">kai@krakenpfm.ch</a></div><div className="faq-list">
-      {getHomeFaqs(homeLanguage).map((faq, index) => <details key={faq.question}><summary>{faq.question}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{faq.answer}{index === 1 && <>{' '}<a href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a></>}</p></details>)}
+      {getHomeFaqs(homeLanguage).map((faq, index) => <details key={faq.question}><summary>{faq.question}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{faq.answer}{faq.termsSection && <>{' '}<a href={publicHref(`/terms#agb-${faq.termsSection}`,homeLanguage)}>{t("AGB ansehen")}</a></>}{index === 1 && <>{' '}<a href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a></>}</p></details>)}
     </div></section>
   </main>
 

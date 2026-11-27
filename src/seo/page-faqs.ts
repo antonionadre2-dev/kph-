@@ -21,14 +21,14 @@ const faqAnswers = {
   },
 };
 
-export function getServicePageFaqs(service: string | undefined, language: string) {
+export function getServicePageFaqs(service: string | undefined, language: string): {question:string;answer:string;termsSection?:number}[] {
   const selected = service === 'deep' ? faqAnswers.regular : faqAnswers[service as keyof typeof faqAnswers];
   const faqs = [ ...(selected ? [selected] : [faqAnswers.end, faqAnswers.moving]),
     { question: 'Kann ich Reinigung und kleinen Umzug zusammen anfragen?', answer: 'Ja. Geben Sie beide Aufgaben, die Adressen und die gewünschten Termine an. Wir klären den Umfang und ob sich die Reihenfolge für Ihren Auftrag abstimmen lässt.' },
     { question: 'Wo ist Kraken PFM ansässig?', answer: 'Kraken PFM ist an der Seewadelstrasse 3, 8203 Schaffhausen ansässig. Von dort planen wir Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur.' },
   ];
-  const topics: KaiFactTopic[] = service === 'end' ? ['included', 'guarantee', 'payment'] : ['included', 'payment'];
+  const topics: KaiFactTopic[] = service === 'end' ? ['included', 'guarantee', 'payment','cancellation','preparation'] : ['included', 'payment','cancellation','preparation'];
   const kaiService = ['windows', 'end', 'regular', 'deep', 'moving'].includes(service || '') ? service as KaiService : undefined;
   return [...faqs.map(faq => ({ question: localText(language,faq.question), answer: localText(language,faq.answer) })),
-    ...getKaiFaqs(language, topics, kaiService).map(({question, answer}) => ({question, answer}))];
+    ...getKaiFaqs(language, topics, kaiService).map(({question, answer,termsSection}) => ({question, answer,termsSection}))];
 }

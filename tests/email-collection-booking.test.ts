@@ -283,6 +283,8 @@ test('an explicit authenticated preference changes only unattempted notification
   const updated = await service.changeEmailLanguage(booking.bookingId, booking.publicToken!, { language: 'en' });
   assert.equal(updated.language, 'en');
   assert.equal(f.store.mail.get(first.id).notification.languageSnapshot.language, 'en');
+  assert.equal(f.store.mail.get(first.id).notification.renderData.termsSummary.language, 'en');
+  assert.ok(f.store.mail.get(first.id).notification.renderData.termsSummary.links.some(link => link.href.endsWith('/es.pdf')), 'the accepted document remains in its originally accepted language');
   await service.runDue();
   const emitted = clone(f.store.mail.get(first.id));
   assert.equal(emitted.prepared.language, 'en');

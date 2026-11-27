@@ -75,7 +75,7 @@ test('business schema uses the published daily contact hours and truthful linked
     assert.equal(hours[0].opens, '09:00');
     assert.equal(hours[0].closes, '19:00');
     const catalog = business.hasOfferCatalog as { itemListElement: { name: string; url: string }[] };
-    assert.equal(catalog.itemListElement.length, 5);
+    assert.equal(catalog.itemListElement.length, 6);
     const servicesUrl = SITE_IDENTITY.origin + publicHref('/leistungen',language);
     assert.ok(catalog.itemListElement.every(service => service.url.startsWith(servicesUrl + '#')));
     assert.doesNotMatch(JSON.stringify(meta.structuredData), /ratingValue|reviewCount|aggregateRating|offerCount|lowPrice|sameAs/);

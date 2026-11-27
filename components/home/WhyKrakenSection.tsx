@@ -1,13 +1,18 @@
 import React from 'react';
+import {normalizeHomeLanguage} from './homeTranslations';
+import {publicPolicyContent} from '../../src/kai/policyContent';
+import {publicHref} from '../../src/routing/site-paths';
 import './why-kraken.css';
 
 type WhyKrakenSectionProps = {
   quoteHref?: string;
+  language?: string;
   t: (source: string, params?: Record<string, string | number>) => string;
 };
 
 /** Personal introduction and the actual request/confirmation process. */
-export default function WhyKrakenSection({ t, quoteHref = '/offerte' }: WhyKrakenSectionProps) {
+export default function WhyKrakenSection({ t, quoteHref = '/offerte', language = 'de' }: WhyKrakenSectionProps) {
+  const policy=publicPolicyContent(normalizeHomeLanguage(language));
   return (
     <section className="why-section" id="warum-kraken" aria-labelledby="why-title">
       <span id="ueber-uns" className="why-legacy-anchor" aria-hidden="true">
@@ -17,7 +22,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/offerte' }: WhyKrake
       <div className="why-introduction">
       <p className="why-eyebrow">{t("Warum Kraken?")}</p>
       <h2 id="why-title">{t("Warum Kraken für Ihre Reinigung?")}</h2>
-      <p className="why-intro">{' '}{t("Ich bin Antonio, Ihr Ansprechpartner bei Kraken. Gemeinsam klären wir, was Sie brauchen. Unser erfahrenes Team übernimmt die vereinbarten Arbeiten – sorgfältig und passend zu Ihrem Zuhause.")}{' '}</p>
+      <p className="why-intro">{' '}{t("Ich bin Antonio, Ihr Ansprechpartner bei Kraken. Gemeinsam klären wir, was Sie brauchen. Die vereinbarten Arbeiten erledige ich sorgfältig und passend zu Ihrem Zuhause, bei Bedarf mit Helfern.")}{' '}</p>
       <div className="why-signature">
       <strong>{t("Antonio")}</strong>
       <span>{t("Inhaber & Ihr Ansprechpartner")}</span>
@@ -77,7 +82,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/offerte' }: WhyKrake
       </span>
       <div>
       <h3>{t("Auch für kleine Aufträge.")}</h3>
-      <p>{' '}{t("Einzelne Fenster, Wohnungen mit 1–4 Zimmern und kleine Umzüge sind willkommen.")}{' '}</p>
+      <p>{' '}{t("Einzelne Fenster, Wohnungen bis 5.5 Zimmer und kleine Umzüge sind willkommen.")}{' '}</p>
       </div>
       </article>
       <article className="why-promise">
@@ -104,7 +109,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/offerte' }: WhyKrake
       </div>
       </article>
       </div>
-      <div className="why-assurances" aria-label={t("Garantie und Versicherungsschutz")}>
+      <div className="why-assurances" aria-label={t("Abnahmegarantie bei Umzugsreinigungen")}>
       <details className="why-assurance">
       <summary>
       <svg className="why-icon why-assurance-symbol" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -119,23 +124,9 @@ export default function WhyKrakenSection({ t, quoteHref = '/offerte' }: WhyKrake
       </svg>
       </span>
       </summary>
-      <p>{' '}{t("Die Abnahmegarantie gilt für den vorab vereinbarten Reinigungsumfang Ihrer Umzugsreinigung. Die Details besprechen wir bei der Planung.")}{' '}</p>
+      <p>{policy.guarantee}{' '}<a href={publicHref('/terms#agb-9',language)}>{t("AGB ansehen")}</a></p>
       </details>
-      <details className="why-assurance">
-      <summary>
-      <svg className="why-icon why-assurance-symbol" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="m5 12 4 4L19 6" />
-      </svg>
-      <span className="why-assurance-title">{' '}{t("Fragen zum Versicherungsschutz")}{' '}<span>{t("Persönlich klären, was Ihnen wichtig ist")}</span>
-      </span>
-      <span className="why-disclosure" aria-hidden="true">
-      <svg className="why-icon" viewBox="0 0 24 24" focusable="false">
-      <path d="M12 5v14M5 12h14" />
-      </svg>
-      </span>
-      </summary>
-      <p>{t("Wenn Sie einen Versicherungsnachweis benötigen, kontaktieren Sie Antonio vor der Buchung. Massgeblich sind die schriftlich bestätigten Angaben zum Auftrag und die geltenden Versicherungsbedingungen.")}</p>
-      </details>
+
       </div>
       <div className="why-process" aria-labelledby="why-process-title">
       <h3 id="why-process-title">{t("So einfach geht es.")}</h3>
