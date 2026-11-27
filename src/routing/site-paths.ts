@@ -32,8 +32,11 @@ function splitPath(pathOrUrl: string) {
   const parts = url.pathname.split('/').filter(Boolean);
   const first = routeLanguage(parts[0]);
   const prefixed = first && parts[0].length === 2 ? first : null;
-  const pathname = ('/' + (prefixed ? parts.slice(1) : parts).join('/')).toLowerCase();
-  return { url, pathname, prefixed };
+  const rawPathname = ('/' + (prefixed ? parts.slice(1) : parts).join('/')).toLowerCase();
+  const legalSuffix = /^\/impressum\/(de|en|es|pt|it|fr)$/.exec(rawPathname);
+  const suffixed = legalSuffix ? legalSuffix[1] as RouteLanguage : null;
+  const pathname = suffixed ? '/impressum' : rawPathname;
+  return { url, pathname, prefixed, suffixed };
 }
 
 /** Canonical German base path, independent of a visitor's language prefix. */
@@ -67,8 +70,8 @@ export function toLegacyPath(pathOrUrl: string): string {
 }
 
 export function pathLanguage(pathOrUrl: string): RouteLanguage | null {
-  const { url, prefixed } = splitPath(pathOrUrl);
-  return prefixed || routeLanguage(url.searchParams.get('lang')) || routeLanguage(url.searchParams.get('hl'));
+  const { url, prefixed, suffixed } = splitPath(pathOrUrl);
+  return prefixed || suffixed || routeLanguage(url.searchParams.get('lang')) || routeLanguage(url.searchParams.get('hl'));
 }
 
 export function parseSitePath(pathOrUrl: string) {

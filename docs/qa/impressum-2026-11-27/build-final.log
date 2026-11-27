@@ -1,0 +1,89 @@
+
+> copy-of-kraken-properties-and-facilities-management@0.0.0 build
+> node --import tsx scripts/generate-sitemap.mjs && node scripts/generate-terms-policy.mjs --check && node --import tsx scripts/build-terms-manifest.mjs && node --import tsx scripts/build-terms-pdfs.mjs && vite build && node scripts/render-services.mjs && node scripts/render-about.mjs && node scripts/render-contact.mjs && node scripts/render-seo.mjs && mkdir -p dist && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs
+
+Generated robots.txt and sitemap.xml (144 canonical language URLs across 24 reviewed pages).
+Legal policy data matches all six immutable source documents.
+{"termsVersions":4,"documents":24,"currentVersion":"kraken-agb-2026-11-26-v2"}
+{"termsPdfs":24,"pages":90,"versions":["kraken-2026-11-24","kraken-2026-11-25-fixed-scope","kraken-2026-11-26-pricing-moving","kraken-agb-2026-11-26-v2"]}
+vite v6.4.3 building for production...
+transforming...
+✓ 2662 modules transformed.
+Circular chunk: index -> vendor-react -> index. Consider disabling the "output.onlyExplicitManualChunks" option, as enabling it causes the static dependencies of the manual chunk "vendor-react" to be bundled into the chunk "index".
+rendering chunks...
+computing gzip size...
+dist/index.html                                7.66 kB │ gzip:   2.07 kB
+dist/.vite/manifest.json                      16.85 kB │ gzip:   2.23 kB
+dist/assets/AccountForm-DbAdo7gY.css           1.39 kB │ gzip:   0.62 kB
+dist/assets/GDPRPage-BwrydFhV.css              4.42 kB │ gzip:   1.11 kB
+dist/assets/FloatingMascot-BMeKYBgA.css        9.63 kB │ gzip:   2.72 kB
+dist/assets/ImpressumPage-C66ZHw8H.css        15.13 kB │ gzip:   3.52 kB
+dist/assets/TermsPage-CfQ1Gub_.css            16.42 kB │ gzip:   3.73 kB
+dist/assets/KontaktPage-2mh6pQoP.css          17.08 kB │ gzip:   3.40 kB
+dist/assets/ApprovedServices-OCNwyI4F.css     19.65 kB │ gzip:   3.82 kB
+dist/assets/LocalSeoContent-B4h16TkQ.css      22.90 kB │ gzip:   4.92 kB
+dist/assets/ApprovedAbout-7-MkYWCi.css        38.53 kB │ gzip:   7.33 kB
+dist/assets/CalculatorRoute-BrrziaJn.css      39.56 kB │ gzip:   8.41 kB
+dist/assets/service-calculator-dhUWRR2X.css   42.45 kB │ gzip:   8.77 kB
+dist/assets/route-utilities-Bsf2o76g.css      49.73 kB │ gzip:   8.06 kB
+dist/assets/Dashboard-o4jVYqxH.css            63.71 kB │ gzip:  11.04 kB
+dist/assets/index-D1Tfm_Km.css               175.80 kB │ gzip:  32.51 kB
+dist/assets/terms-version-D9D7o4pP.js          0.15 kB │ gzip:   0.12 kB
+dist/assets/LoginPage-CzyuiTRY.js              0.25 kB │ gzip:   0.20 kB
+dist/assets/RegisterPage-CFvtI7Xi.js           0.26 kB │ gzip:   0.20 kB
+dist/assets/message-circle-CoVAIfey.js         0.43 kB │ gzip:   0.32 kB
+dist/assets/CoverageHubPage-BpYxDn_N.js        0.44 kB │ gzip:   0.31 kB
+dist/assets/RegionHubPage-Cd_NTFLh.js          0.45 kB │ gzip:   0.31 kB
+dist/assets/SeoServiceCityPage--eZ7DtPX.js     0.46 kB │ gzip:   0.31 kB
+dist/assets/KrakenServiceIcon-DRwwcusO.js      0.49 kB │ gzip:   0.35 kB
+dist/assets/printer-Daj4rlJE.js                0.50 kB │ gzip:   0.34 kB
+dist/assets/file-text-C3Nlt9Ts.js              0.57 kB │ gzip:   0.36 kB
+dist/assets/x-CkMTmWlO.js                      0.69 kB │ gzip:   0.35 kB
+dist/assets/phone-CXpZnbWI.js                  0.84 kB │ gzip:   0.44 kB
+dist/assets/chevron-down-4O9STPUC.js           0.93 kB │ gzip:   0.42 kB
+dist/assets/map-pin-DQ7mqLZf.js                1.26 kB │ gzip:   0.47 kB
+dist/assets/createLucideIcon-Bb25RQOn.js       2.59 kB │ gzip:   0.81 kB
+dist/assets/icons-B0_jebDK.js                  3.57 kB │ gzip:   0.98 kB
+dist/assets/CustomerAccessRoute-85x4llGy.js    4.42 kB │ gzip:   1.87 kB
+dist/assets/customerAccessCopy-D66sc0o7.js     4.75 kB │ gzip:   2.17 kB
+dist/assets/AccountForm-DGdAeULI.js            5.04 kB │ gzip:   2.19 kB
+dist/assets/CookieConsent-BVi-XnnP.js          7.62 kB │ gzip:   1.81 kB
+dist/assets/terms-tools-BV2dyLkB.js            7.86 kB │ gzip:   2.93 kB
+dist/assets/draft-DxbBVqXO.js                  9.00 kB │ gzip:   3.69 kB
+dist/assets/FloatingMascot-CM7CiA_P.js        16.17 kB │ gzip:   5.72 kB
+dist/assets/KontaktPage-sLEowAmg.js           18.67 kB │ gzip:   6.06 kB
+dist/assets/copy-DfpK-ht0.js                  18.78 kB │ gzip:   6.66 kB
+dist/assets/ImpressumPage-By4M09LB.js         25.37 kB │ gzip:   8.19 kB
+dist/assets/contact-copy-j66VhgCU.js          28.11 kB │ gzip:   8.71 kB
+dist/assets/purify.es-Csrj9YNg.js             28.14 kB │ gzip:  10.69 kB
+dist/assets/ReviewInvitePage-BIZK3Br9.js      28.31 kB │ gzip:  10.36 kB
+dist/assets/ApprovedServices-BRIa3HNX.js      34.73 kB │ gzip:   7.83 kB
+dist/assets/GDPRPage-3qcrFJyo.js              41.65 kB │ gzip:  13.65 kB
+dist/assets/client-DJnBEBbq.js                46.17 kB │ gzip:  14.88 kB
+dist/assets/CommercialQuotePage-B9QF3Vc3.js   57.85 kB │ gzip:  18.83 kB
+dist/assets/ApprovedAbout-DFWtKII9.js         88.75 kB │ gzip:  27.18 kB
+dist/assets/page-faqs-DizqsSBi.js             93.54 kB │ gzip:  29.93 kB
+dist/assets/uiCopy-DGVCpJCZ.js               118.11 kB │ gzip:  41.30 kB
+dist/assets/TermsPage-CALWjxkY.js            118.52 kB │ gzip:  36.04 kB
+dist/assets/proxy-bh0hCjnz.js                124.66 kB │ gzip:  41.03 kB
+dist/assets/index.es-BC1L9oyH.js             159.97 kB │ gzip:  53.71 kB
+dist/assets/vendor-react-BkL47b0s.js         193.77 kB │ gzip:  60.52 kB
+dist/assets/html2canvas.esm-B0tyYwQk.js      202.36 kB │ gzip:  48.04 kB
+dist/assets/LocalSeoContent-B4_6OeTD.js      234.93 kB │ gzip:  66.02 kB
+dist/assets/index.esm-Cou69UmR.js            236.48 kB │ gzip:  47.66 kB
+dist/assets/CalculatorRoute-DFof5zFv.js      260.41 kB │ gzip:  83.47 kB
+dist/assets/firebase-C29YyqA1.js             338.67 kB │ gzip:  85.47 kB
+dist/assets/index-CXa42-MC.js                397.26 kB │ gzip: 132.77 kB
+dist/assets/legacy-translations-CTu55u_1.js  527.05 kB │ gzip: 160.65 kB
+dist/assets/Dashboard-mQ2-uFmP.js            600.92 kB │ gzip: 181.60 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.84s
+
+  dist/server.cjs      1.2mb ⚠️
+  dist/server.cjs.map  1.8mb
+
+⚡ Done in 22ms

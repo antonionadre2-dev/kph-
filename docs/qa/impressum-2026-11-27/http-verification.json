@@ -1,0 +1,2519 @@
+{
+  "checkedAt": "2026-11-27T12:51:07.663170+00:00",
+  "baseUrl": "http://127.0.0.1:3051",
+  "scope": "Read-only local HTTP GET/HEAD; production hostname policy simulated over loopback, no production request or publication",
+  "canonicalRoutes": [
+    {
+      "language": "de",
+      "get": {
+        "path": "/impressum",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26117",
+          "etag": "W/\"6605-/BuAiA1MQGHE0G7cl+W5JCejWfM\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 26117
+      },
+      "head": {
+        "path": "/impressum",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26117",
+          "etag": "W/\"6605-/BuAiA1MQGHE0G7cl+W5JCejWfM\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "h1": [
+        "Impressum"
+      ],
+      "sections": [
+        "company",
+        "register",
+        "contact",
+        "liability",
+        "links",
+        "copyright",
+        "more"
+      ],
+      "date": "27. November 2026",
+      "literalContentVerified": true,
+      "canonical": [
+        "https://krakenpfm.ch/impressum"
+      ],
+      "hreflangs": [
+        {
+          "rel": "alternate",
+          "hreflang": "de-CH",
+          "href": "https://krakenpfm.ch/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://krakenpfm.ch/en/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "es",
+          "href": "https://krakenpfm.ch/es/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "pt",
+          "href": "https://krakenpfm.ch/pt/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "it",
+          "href": "https://krakenpfm.ch/it/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "fr",
+          "href": "https://krakenpfm.ch/fr/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://krakenpfm.ch/impressum"
+        }
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "productionHostSimulation": {
+        "get": {
+          "path": "/impressum",
+          "method": "GET",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26113",
+            "etag": "W/\"6601-W2fr7CFcdujiHKY+wc/vgEuzqEw\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 26113
+        },
+        "head": {
+          "path": "/impressum",
+          "method": "HEAD",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26113",
+            "etag": "W/\"6601-W2fr7CFcdujiHKY+wc/vgEuzqEw\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 0
+        },
+        "robots": [
+          "noindex, follow"
+        ]
+      }
+    },
+    {
+      "language": "en",
+      "get": {
+        "path": "/en/impressum",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26087",
+          "etag": "W/\"65e7-vy5QhqfyrUcgZyDpGYyhA0ODwwE\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 26087
+      },
+      "head": {
+        "path": "/en/impressum",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26087",
+          "etag": "W/\"65e7-vy5QhqfyrUcgZyDpGYyhA0ODwwE\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "h1": [
+        "Legal notice"
+      ],
+      "sections": [
+        "company",
+        "register",
+        "contact",
+        "liability",
+        "links",
+        "copyright",
+        "more"
+      ],
+      "date": "27 November 2026",
+      "literalContentVerified": true,
+      "canonical": [
+        "https://krakenpfm.ch/en/impressum"
+      ],
+      "hreflangs": [
+        {
+          "rel": "alternate",
+          "hreflang": "de-CH",
+          "href": "https://krakenpfm.ch/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://krakenpfm.ch/en/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "es",
+          "href": "https://krakenpfm.ch/es/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "pt",
+          "href": "https://krakenpfm.ch/pt/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "it",
+          "href": "https://krakenpfm.ch/it/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "fr",
+          "href": "https://krakenpfm.ch/fr/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://krakenpfm.ch/impressum"
+        }
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "productionHostSimulation": {
+        "get": {
+          "path": "/en/impressum",
+          "method": "GET",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26083",
+            "etag": "W/\"65e3-1fUZzW7FkHLPVxLZUV7E+gZjKzQ\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 26083
+        },
+        "head": {
+          "path": "/en/impressum",
+          "method": "HEAD",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26083",
+            "etag": "W/\"65e3-1fUZzW7FkHLPVxLZUV7E+gZjKzQ\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 0
+        },
+        "robots": [
+          "noindex, follow"
+        ]
+      }
+    },
+    {
+      "language": "es",
+      "get": {
+        "path": "/es/impressum",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26481",
+          "etag": "W/\"6771-WCRyzRewMYDyNcmsGBdpLiuV3Js\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 26481
+      },
+      "head": {
+        "path": "/es/impressum",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26481",
+          "etag": "W/\"6771-WCRyzRewMYDyNcmsGBdpLiuV3Js\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "h1": [
+        "Aviso legal"
+      ],
+      "sections": [
+        "company",
+        "register",
+        "contact",
+        "liability",
+        "links",
+        "copyright",
+        "more"
+      ],
+      "date": "27 de noviembre de 2026",
+      "literalContentVerified": true,
+      "canonical": [
+        "https://krakenpfm.ch/es/impressum"
+      ],
+      "hreflangs": [
+        {
+          "rel": "alternate",
+          "hreflang": "de-CH",
+          "href": "https://krakenpfm.ch/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://krakenpfm.ch/en/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "es",
+          "href": "https://krakenpfm.ch/es/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "pt",
+          "href": "https://krakenpfm.ch/pt/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "it",
+          "href": "https://krakenpfm.ch/it/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "fr",
+          "href": "https://krakenpfm.ch/fr/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://krakenpfm.ch/impressum"
+        }
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "productionHostSimulation": {
+        "get": {
+          "path": "/es/impressum",
+          "method": "GET",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26477",
+            "etag": "W/\"676d-/JGNFjPXFTV+7psBjaFufKrtmFs\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 26477
+        },
+        "head": {
+          "path": "/es/impressum",
+          "method": "HEAD",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26477",
+            "etag": "W/\"676d-/JGNFjPXFTV+7psBjaFufKrtmFs\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 0
+        },
+        "robots": [
+          "noindex, follow"
+        ]
+      }
+    },
+    {
+      "language": "fr",
+      "get": {
+        "path": "/fr/impressum",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26868",
+          "etag": "W/\"68f4-jjs2aDHrTeUnXnoqpqPp7AKXsgA\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 26868
+      },
+      "head": {
+        "path": "/fr/impressum",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26868",
+          "etag": "W/\"68f4-jjs2aDHrTeUnXnoqpqPp7AKXsgA\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "h1": [
+        "Mentions légales"
+      ],
+      "sections": [
+        "company",
+        "register",
+        "contact",
+        "liability",
+        "links",
+        "copyright",
+        "more"
+      ],
+      "date": "27 novembre 2026",
+      "literalContentVerified": true,
+      "canonical": [
+        "https://krakenpfm.ch/fr/impressum"
+      ],
+      "hreflangs": [
+        {
+          "rel": "alternate",
+          "hreflang": "de-CH",
+          "href": "https://krakenpfm.ch/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://krakenpfm.ch/en/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "es",
+          "href": "https://krakenpfm.ch/es/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "pt",
+          "href": "https://krakenpfm.ch/pt/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "it",
+          "href": "https://krakenpfm.ch/it/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "fr",
+          "href": "https://krakenpfm.ch/fr/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://krakenpfm.ch/impressum"
+        }
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "productionHostSimulation": {
+        "get": {
+          "path": "/fr/impressum",
+          "method": "GET",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26864",
+            "etag": "W/\"68f0-C3yFLG+bWUUhdtMembnaBTS90T0\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 26864
+        },
+        "head": {
+          "path": "/fr/impressum",
+          "method": "HEAD",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26864",
+            "etag": "W/\"68f0-C3yFLG+bWUUhdtMembnaBTS90T0\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 0
+        },
+        "robots": [
+          "noindex, follow"
+        ]
+      }
+    },
+    {
+      "language": "it",
+      "get": {
+        "path": "/it/impressum",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26392",
+          "etag": "W/\"6718-2vuAlu0knO6iV9/oAzksuCvDlcc\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 26392
+      },
+      "head": {
+        "path": "/it/impressum",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26392",
+          "etag": "W/\"6718-2vuAlu0knO6iV9/oAzksuCvDlcc\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "h1": [
+        "Note legali"
+      ],
+      "sections": [
+        "company",
+        "register",
+        "contact",
+        "liability",
+        "links",
+        "copyright",
+        "more"
+      ],
+      "date": "27 novembre 2026",
+      "literalContentVerified": true,
+      "canonical": [
+        "https://krakenpfm.ch/it/impressum"
+      ],
+      "hreflangs": [
+        {
+          "rel": "alternate",
+          "hreflang": "de-CH",
+          "href": "https://krakenpfm.ch/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://krakenpfm.ch/en/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "es",
+          "href": "https://krakenpfm.ch/es/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "pt",
+          "href": "https://krakenpfm.ch/pt/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "it",
+          "href": "https://krakenpfm.ch/it/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "fr",
+          "href": "https://krakenpfm.ch/fr/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://krakenpfm.ch/impressum"
+        }
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "productionHostSimulation": {
+        "get": {
+          "path": "/it/impressum",
+          "method": "GET",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26388",
+            "etag": "W/\"6714-1MophP9jVmcxOJe4QOJADIt/nZ0\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:06 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 26388
+        },
+        "head": {
+          "path": "/it/impressum",
+          "method": "HEAD",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26388",
+            "etag": "W/\"6714-1MophP9jVmcxOJe4QOJADIt/nZ0\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 0
+        },
+        "robots": [
+          "noindex, follow"
+        ]
+      }
+    },
+    {
+      "language": "pt",
+      "get": {
+        "path": "/pt/impressum",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26383",
+          "etag": "W/\"670f-ftZveRKHl8N8TO1bLtfqLpSGxd8\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 26383
+      },
+      "head": {
+        "path": "/pt/impressum",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26383",
+          "etag": "W/\"670f-ftZveRKHl8N8TO1bLtfqLpSGxd8\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "h1": [
+        "Aviso legal"
+      ],
+      "sections": [
+        "company",
+        "register",
+        "contact",
+        "liability",
+        "links",
+        "copyright",
+        "more"
+      ],
+      "date": "27 de novembro de 2026",
+      "literalContentVerified": true,
+      "canonical": [
+        "https://krakenpfm.ch/pt/impressum"
+      ],
+      "hreflangs": [
+        {
+          "rel": "alternate",
+          "hreflang": "de-CH",
+          "href": "https://krakenpfm.ch/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "en",
+          "href": "https://krakenpfm.ch/en/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "es",
+          "href": "https://krakenpfm.ch/es/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "pt",
+          "href": "https://krakenpfm.ch/pt/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "it",
+          "href": "https://krakenpfm.ch/it/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "fr",
+          "href": "https://krakenpfm.ch/fr/impressum"
+        },
+        {
+          "rel": "alternate",
+          "hreflang": "x-default",
+          "href": "https://krakenpfm.ch/impressum"
+        }
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "productionHostSimulation": {
+        "get": {
+          "path": "/pt/impressum",
+          "method": "GET",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26379",
+            "etag": "W/\"670b-e10rHnwBJ10THJO/+VjbM0yBGlw\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 26379
+        },
+        "head": {
+          "path": "/pt/impressum",
+          "method": "HEAD",
+          "status": 200,
+          "headers": {
+            "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+            "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "referrer-policy": "no-referrer",
+            "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+            "x-robots-tag": "noindex, follow",
+            "content-type": "text/html; charset=utf-8",
+            "content-length": "26379",
+            "etag": "W/\"670b-e10rHnwBJ10THJO/+VjbM0yBGlw\"",
+            "vary": "Accept-Encoding",
+            "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+            "connection": "keep-alive",
+            "keep-alive": "timeout=5"
+          },
+          "bytes": 0
+        },
+        "robots": [
+          "noindex, follow"
+        ]
+      }
+    }
+  ],
+  "aliases": [
+    {
+      "source": "/impressum?lang=de",
+      "get": {
+        "path": "/impressum?lang=de",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26117",
+          "etag": "W/\"6605-/BuAiA1MQGHE0G7cl+W5JCejWfM\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 26117
+      },
+      "head": {
+        "path": "/impressum?lang=de",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "26117",
+          "etag": "W/\"6605-/BuAiA1MQGHE0G7cl+W5JCejWfM\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/impressum?lang=de",
+      "finalStatus": 200,
+      "finalH1": [
+        "Impressum"
+      ]
+    },
+    {
+      "source": "/impressum?hl=de",
+      "get": {
+        "path": "/impressum?hl=de",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/impressum?lang=de",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "52",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 52
+      },
+      "head": {
+        "path": "/impressum?hl=de",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/impressum?lang=de",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "52",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/impressum?lang=de",
+      "finalStatus": 200,
+      "finalH1": [
+        "Impressum"
+      ]
+    },
+    {
+      "source": "/impressum/de",
+      "get": {
+        "path": "/impressum/de",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/impressum?lang=de",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "52",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 52
+      },
+      "head": {
+        "path": "/impressum/de",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/impressum?lang=de",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "52",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/impressum?lang=de",
+      "finalStatus": 200,
+      "finalH1": [
+        "Impressum"
+      ]
+    },
+    {
+      "source": "/impressum?lang=en",
+      "get": {
+        "path": "/impressum?lang=en",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/en/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?lang=en",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/en/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/en/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Legal notice"
+      ]
+    },
+    {
+      "source": "/impressum?hl=en",
+      "get": {
+        "path": "/impressum?hl=en",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/en/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?hl=en",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/en/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/en/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Legal notice"
+      ]
+    },
+    {
+      "source": "/impressum/en",
+      "get": {
+        "path": "/impressum/en",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/en/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum/en",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/en/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/en/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Legal notice"
+      ]
+    },
+    {
+      "source": "/impressum?lang=es",
+      "get": {
+        "path": "/impressum?lang=es",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/es/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?lang=es",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/es/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/es/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Aviso legal"
+      ]
+    },
+    {
+      "source": "/impressum?hl=es",
+      "get": {
+        "path": "/impressum?hl=es",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/es/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?hl=es",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/es/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/es/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Aviso legal"
+      ]
+    },
+    {
+      "source": "/impressum/es",
+      "get": {
+        "path": "/impressum/es",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/es/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum/es",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/es/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/es/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Aviso legal"
+      ]
+    },
+    {
+      "source": "/impressum?lang=fr",
+      "get": {
+        "path": "/impressum?lang=fr",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/fr/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?lang=fr",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/fr/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/fr/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Mentions légales"
+      ]
+    },
+    {
+      "source": "/impressum?hl=fr",
+      "get": {
+        "path": "/impressum?hl=fr",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/fr/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?hl=fr",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/fr/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/fr/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Mentions légales"
+      ]
+    },
+    {
+      "source": "/impressum/fr",
+      "get": {
+        "path": "/impressum/fr",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/fr/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum/fr",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/fr/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/fr/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Mentions légales"
+      ]
+    },
+    {
+      "source": "/impressum?lang=it",
+      "get": {
+        "path": "/impressum?lang=it",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/it/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?lang=it",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/it/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/it/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Note legali"
+      ]
+    },
+    {
+      "source": "/impressum?hl=it",
+      "get": {
+        "path": "/impressum?hl=it",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/it/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?hl=it",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/it/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/it/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Note legali"
+      ]
+    },
+    {
+      "source": "/impressum/it",
+      "get": {
+        "path": "/impressum/it",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/it/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum/it",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/it/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/it/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Note legali"
+      ]
+    },
+    {
+      "source": "/impressum?lang=pt",
+      "get": {
+        "path": "/impressum?lang=pt",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/pt/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?lang=pt",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/pt/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/pt/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Aviso legal"
+      ]
+    },
+    {
+      "source": "/impressum?hl=pt",
+      "get": {
+        "path": "/impressum?hl=pt",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/pt/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum?hl=pt",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/pt/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/pt/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Aviso legal"
+      ]
+    },
+    {
+      "source": "/impressum/pt",
+      "get": {
+        "path": "/impressum/pt",
+        "method": "GET",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/pt/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 47
+      },
+      "head": {
+        "path": "/impressum/pt",
+        "method": "HEAD",
+        "status": 301,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "location": "/pt/impressum",
+          "vary": "Accept, Accept-Encoding",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "47",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "destination": "/pt/impressum",
+      "finalStatus": 200,
+      "finalH1": [
+        "Aviso legal"
+      ]
+    }
+  ],
+  "localeConflict": {
+    "get": {
+      "path": "/es/impressum?lang=fr",
+      "method": "GET",
+      "status": 301,
+      "headers": {
+        "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+        "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+        "x-robots-tag": "noindex, nofollow",
+        "location": "/es/impressum",
+        "vary": "Accept, Accept-Encoding",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "47",
+        "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+        "connection": "keep-alive",
+        "keep-alive": "timeout=5"
+      },
+      "bytes": 47
+    },
+    "head": {
+      "path": "/es/impressum?lang=fr",
+      "method": "HEAD",
+      "status": 301,
+      "headers": {
+        "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+        "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+        "x-robots-tag": "noindex, nofollow",
+        "location": "/es/impressum",
+        "vary": "Accept, Accept-Encoding",
+        "content-type": "text/plain; charset=utf-8",
+        "content-length": "47",
+        "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+        "connection": "keep-alive",
+        "keep-alive": "timeout=5"
+      },
+      "bytes": 0
+    }
+  },
+  "negativeRoutes": [
+    {
+      "get": {
+        "path": "/impressum/xx",
+        "method": "GET",
+        "status": 404,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "14635",
+          "etag": "W/\"392b-htKhDK1upaTGLDYCOIxt6vf8gwI\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 14635
+      },
+      "head": {
+        "path": "/impressum/xx",
+        "method": "HEAD",
+        "status": 404,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "14635",
+          "etag": "W/\"392b-htKhDK1upaTGLDYCOIxt6vf8gwI\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      }
+    },
+    {
+      "get": {
+        "path": "/entrega/impressum.zip",
+        "method": "GET",
+        "status": 404,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "9",
+          "etag": "W/\"9-R1yEhnOj95+nePAcK9WnIdTEFwc\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 9
+      },
+      "head": {
+        "path": "/entrega/impressum.zip",
+        "method": "HEAD",
+        "status": 404,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/plain; charset=utf-8",
+          "content-length": "9",
+          "etag": "W/\"9-R1yEhnOj95+nePAcK9WnIdTEFwc\"",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      }
+    },
+    {
+      "get": {
+        "path": "/entrega/impressum-codigo.txt",
+        "method": "GET",
+        "status": 404,
+        "headers": {
+          "content-security-policy": "default-src 'none'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "167",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 167
+      },
+      "head": {
+        "path": "/entrega/impressum-codigo.txt",
+        "method": "HEAD",
+        "status": 404,
+        "headers": {
+          "content-security-policy": "default-src 'none'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "168",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      }
+    },
+    {
+      "get": {
+        "path": "/entrega/impressum-prompt.txt",
+        "method": "GET",
+        "status": 404,
+        "headers": {
+          "content-security-policy": "default-src 'none'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "167",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 167
+      },
+      "head": {
+        "path": "/entrega/impressum-prompt.txt",
+        "method": "HEAD",
+        "status": 404,
+        "headers": {
+          "content-security-policy": "default-src 'none'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "168",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      }
+    }
+  ],
+  "assets": [
+    {
+      "get": {
+        "path": "/assets/GDPRPage-BwrydFhV.css",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"1144-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "4420",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 4420
+      },
+      "head": {
+        "path": "/assets/GDPRPage-BwrydFhV.css",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"1144-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "4420",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "sha256": "3f39ac9952c7841d00ba8284b137beb8f7b574ff6656d25a66ab880a00a388c7"
+    },
+    {
+      "get": {
+        "path": "/assets/ImpressumPage-C66ZHw8H.css",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"3b1b-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "15131",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 15131
+      },
+      "head": {
+        "path": "/assets/ImpressumPage-C66ZHw8H.css",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"3b1b-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "15131",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "sha256": "1c558bfc3bb3be401c04caf51dcb18634576cb69cfac2813134591620451f1e6"
+    },
+    {
+      "get": {
+        "path": "/assets/TermsPage-CfQ1Gub_.css",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"4022-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "16418",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 16418
+      },
+      "head": {
+        "path": "/assets/TermsPage-CfQ1Gub_.css",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"4022-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "16418",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "sha256": "80b492d042c49a7b9cae8589626c776e990695ce943a85fffe00f28ba6eb184c"
+    },
+    {
+      "get": {
+        "path": "/assets/index-CXa42-MC.js",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"60fcb-1a21d02bc13\"",
+          "content-type": "text/javascript; charset=utf-8",
+          "content-length": "397259",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 397259
+      },
+      "head": {
+        "path": "/assets/index-CXa42-MC.js",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"60fcb-1a21d02bc13\"",
+          "content-type": "text/javascript; charset=utf-8",
+          "content-length": "397259",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "sha256": "0bdc7ed814a1cc38bfdae93ba4f7980e17e2a20aaeb4fce88501097a5224eb1a"
+    },
+    {
+      "get": {
+        "path": "/assets/index-D1Tfm_Km.css",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"2aeb5-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "175797",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 175797
+      },
+      "head": {
+        "path": "/assets/index-D1Tfm_Km.css",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"2aeb5-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "175797",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "sha256": "2828faabe1eb52fdffb45bd073bcf650e4c5bf9239dc2bcae61ae84708a1a4ec"
+    },
+    {
+      "get": {
+        "path": "/assets/route-utilities-Bsf2o76g.css",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"c23f-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "49727",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 49727
+      },
+      "head": {
+        "path": "/assets/route-utilities-Bsf2o76g.css",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"c23f-1a21d02bc11\"",
+          "content-type": "text/css; charset=utf-8",
+          "content-length": "49727",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "sha256": "ba70f2eead8f82b4338faf617277ce1e20d63716624a4d664a2fb2101ed96b34"
+    },
+    {
+      "get": {
+        "path": "/assets/vendor-react-BkL47b0s.js",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"2f4ea-1a21d02bc11\"",
+          "content-type": "text/javascript; charset=utf-8",
+          "content-length": "193770",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 193770
+      },
+      "head": {
+        "path": "/assets/vendor-react-BkL47b0s.js",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=31536000, immutable",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:37:28 GMT",
+          "etag": "W/\"2f4ea-1a21d02bc11\"",
+          "content-type": "text/javascript; charset=utf-8",
+          "content-length": "193770",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "sha256": "986f501842efabbcd2c7aeb7cb8ae8583802b7530f312c12fed5f4630d683451"
+    },
+    {
+      "get": {
+        "path": "/legal/impressum-document.svg",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=3600, must-revalidate",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:32:12 GMT",
+          "etag": "W/\"538-1a21cfdeb3a\"",
+          "content-type": "image/svg+xml",
+          "content-length": "1336",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 1336
+      },
+      "head": {
+        "path": "/legal/impressum-document.svg",
+        "method": "HEAD",
+        "status": 200,
+        "headers": {
+          "content-security-policy": "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+          "content-security-policy-report-only": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://api.open-meteo.com; frame-src 'self' https://*.firebaseapp.com https://*.payrexx.com https://www.google.com https://challenges.cloudflare.com; form-action 'self' https://*.payrexx.com; worker-src 'self' blob:",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "referrer-policy": "no-referrer",
+          "permissions-policy": "camera=(), microphone=(), geolocation=(self), payment=(self \"https://krakenpfm.payrexx.com\"), usb=(), browsing-topics=()",
+          "x-robots-tag": "noindex, nofollow",
+          "cache-control": "public, max-age=3600, must-revalidate",
+          "accept-ranges": "bytes",
+          "last-modified": "Fri, 27 Nov 2026 12:32:12 GMT",
+          "etag": "W/\"538-1a21cfdeb3a\"",
+          "content-type": "image/svg+xml",
+          "content-length": "1336",
+          "vary": "Accept-Encoding",
+          "date": "Fri, 27 Nov 2026 12:51:07 GMT",
+          "connection": "keep-alive",
+          "keep-alive": "timeout=5"
+        },
+        "bytes": 0
+      },
+      "sha256": "feccf9c350b5014750737d5d70aa9c018fea597519b6685af72072983560467a"
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

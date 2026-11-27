@@ -42,7 +42,8 @@ export function getRouteDisposition(pathOrUrl: string): { status: 200 | 301 | 40
   // German has no URL prefix. Keep an explicit query choice until the browser
   // has persisted it, otherwise a saved non-German preference would win after a 301.
   const explicitQueryLanguage = pathLanguage('/' + url.search);
-  if (language === 'de' && explicitQueryLanguage === 'de') {
+  const explicitGermanLegalAlias = language === 'de' && /^\/(?:de\/impressum|impressum\/de)\/?$/i.test(url.pathname);
+  if (language === 'de' && (explicitQueryLanguage === 'de' || explicitGermanLegalAlias)) {
     const destination = new URL(location, 'https://krakenpfm.ch');
     const selectedQuery = new URLSearchParams(url.search);
     selectedQuery.delete('hl');
