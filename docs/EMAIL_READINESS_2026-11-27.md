@@ -15,7 +15,7 @@ No hace falta migrar producción para activar registros nuevos compatibles. El w
 | `BOOKING_RECOVERY_REMINDERS_ENABLED` | `false` | Antes de activarlo: feed de rebotes/quejas realmente aislado para Kraken, webhook verificado, `RESEND_WEBHOOK_SECRET`, `RESEND_WEBHOOK_SENDER_DOMAIN=krakenpfm.ch`, `CRON_SECRET`, cron y consentimiento vigente. Máximo dos recordatorios; nunca tras pago/cancelación ni si el estado real no se puede verificar. |
 | `BOOKING_CUSTOMER_ACCESS_ENABLED` | `false` | Requiere habilitar Email link en Firebase Authentication y autorizar el dominio de producción/continuación. El proveedor Email/Password existente por sí solo no habilita email-link. Se debe probar login/cierre de sesión y usuario ajeno antes del rollout. |
 
-El código no activa variables remotas, no crea cuentas y no envía pruebas. El único destino de las pruebas preparadas es `antonionadre2@gmail.com`. Son datos ficticios con TEST visible y acciones desactivadas.
+El código no activa variables remotas, no crea cuentas y no envía pruebas. Las pruebas usan exclusivamente el destinatario autorizado, definido localmente mediante `KRAKEN_TEST_EMAIL_RECIPIENT`; su dirección no forma parte de la configuración pública. Son datos ficticios con TEST visible y acciones desactivadas.
 
 ## Rebotes/quejas: defensa y aislamiento
 

@@ -1,6 +1,6 @@
 /** Local-only preparation. No transport, credentials, database or send command.
- * All recipients are fixed to the single test address authorized by the owner.
- * Usage: node scripts/build-email-test-plan.mjs /absolute/output/folder
+ * Every payload uses one explicitly configured local review recipient.
+ * Usage: KRAKEN_TEST_EMAIL_RECIPIENT=owner@example.invalid node scripts/build-email-test-plan.mjs /absolute/output/folder
  */
 import {mkdirSync,writeFileSync} from 'node:fs';
 import {join,resolve} from 'node:path';
@@ -10,7 +10,8 @@ import {demoData} from '../reference/kraken-emails/src/demo-data.mjs';
 
 const output=resolve(process.argv[2]||'.cache/kraken-email-tests');
 if(process.argv.length>3)throw new Error('Pass one output directory only. This script cannot send emails.');
-const recipient='antonionadre2@gmail.com',origin='https://krakenpfm.ch';
+const recipient=(process.env.KRAKEN_TEST_EMAIL_RECIPIENT||'').trim(),origin='https://krakenpfm.ch';
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient))throw new Error('Configure one explicitly authorized KRAKEN_TEST_EMAIL_RECIPIENT locally. No messages were prepared or sent.');
 const notice={de:'TEST · Fiktive Daten. Keine echte Buchung, Zahlung oder Stornierung. Musteraktionen sind deaktiviert.',en:'TEST · Fictional data. No real booking, payment or cancellation. Sample actions are disabled.',es:'PRUEBA · Datos ficticios. Sin reserva, pago ni cancelación real. Acciones de muestra desactivadas.',fr:'TEST · Données fictives. Aucune réservation, aucun paiement ni annulation réels. Actions de démonstration désactivées.',it:'TEST · Dati fittizi. Nessuna prenotazione, pagamento o cancellazione reale. Azioni di esempio disattivate.',pt:'TESTE · Dados fictícios. Sem reserva, pagamento ou cancelamento reais. Ações de exemplo desativadas.'};
 const disabled={de:'TEST: Aktion deaktiviert',en:'TEST: action disabled',es:'PRUEBA: acción desactivada',fr:'TEST : action désactivée',it:'TEST: azione disattivata',pt:'TESTE: ação desativada'};
 const ids=Object.keys(catalogs.de),plan=[];
