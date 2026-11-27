@@ -16,7 +16,7 @@ import { languageForBackgroundEmail, normalizeEmailLanguage } from '../integrati
 import type { PaymentEmailScheduler } from './booking-lifecycle.ts';
 import { runPayrexxConnectionCheckOnce } from './payrexx-connection-check.ts';
 import { safeMailFailure } from './booking-mail-safety.ts';
-import { logRecoveryOriginRejection } from './security.ts';
+import { logRecoveryOriginRejection, missingOriginRequestProof } from './security.ts';
 import { createBookingOperatorHandler } from './booking-operator.ts';
 import { createBookingAccessRecovery, issueBookingBrowserCookie, redeemBookingBrowserCookie } from './booking-access-recovery.ts';
 import { pinnedAccessRequest } from './booking-access-dispatch.ts';
@@ -451,8 +451,18 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
         return res.json({booking:{sent:booking.sent,unknown:booking.unknown},recovery});
       }
       const runtime=await initialize();
+      let verifiedMissingOrigin=false;
       if(req.method!=='GET') {
-        if(req.get('Origin')!==runtime.origin){logRecoveryOriginRejection(req,'booking');throw new BookingError('ORIGIN_NOT_ALLOWED',403);}
+        if(req.get('Origin')!==runtime.origin){
+          let proof:ReturnType<typeof missingOriginRequestProof>|undefined;
+          if(req.get('Origin')===undefined){
+            let cookieValid=false;
+            try{cookieValid=Boolean(cookieSession(req.get('cookie')||'',runtime.secret,clock()));}catch{}
+            proof=missingOriginRequestProof(req,runtime.origin,cookieValid);
+            verifiedMissingOrigin=proof.allowed;
+          }
+          if(!verifiedMissingOrigin){logRecoveryOriginRejection(req,'booking',proof?.evidence);throw new BookingError('ORIGIN_NOT_ALLOWED',403);}
+        }
         if(!req.is('application/json'))throw new BookingError('JSON_REQUIRED',415);
         if(JSON.stringify(req.body||{}).length>32768)throw new BookingError('BODY_TOO_LARGE',413);
       }
@@ -474,6 +484,9 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       }
       if(req.path.startsWith('/api/recovery/')||req.path==='/api/bookings/activity'||req.path==='/recovery/unsubscribe') {
         const headers=new Headers();for(const [key,value]of Object.entries(req.headers))if(typeof value==='string')headers.set(key,value);
+        // The standalone recovery adapter keeps its exact-Origin gate. Supply
+        // the configured origin only after this request's first-party proof passed.
+        if(verifiedMissingOrigin)headers.set('Origin',runtime.origin);
         // Overwrite this internal header; forwarded/client-controlled addresses are never rate keys.
         headers.set('x-kraken-server-remote',digest(req.socket.remoteAddress||'unknown'));
         const response=await runtime.handleRecovery(new globalThis.Request(`${runtime.origin}${req.originalUrl}`,{method:req.method,headers,...(req.method==='GET'?{}:{body:JSON.stringify(req.body)})}));

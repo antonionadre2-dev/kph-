@@ -103,7 +103,7 @@ test('booking exact-origin rejection logs categories without changing its gate o
       assert.deepEqual(await response.json(), { code: 'ORIGIN_NOT_ALLOWED' });
     }
     assert.deepEqual(logs.filter(entry => entry[0] === marker), [
-      [marker, { layer: 'booking', originKind: 'missing', hostKind: 'canonical', method: 'POST' }],
+      [marker, { layer: 'booking', originKind: 'missing', hostKind: 'canonical', method: 'POST', fetchSite: 'missing', referrerKind: 'missing', cookieValid: false }],
       [marker, { layer: 'booking', originKind: 'www', hostKind: 'canonical', method: 'POST' }],
     ]);
     const valid = await call(`${base}/api/recovery/drafts`, { method: 'POST', headers: { Origin: 'https://krakenpfm.ch', Host: 'krakenpfm.ch', 'Content-Type': 'application/json' }, body: '{}' });

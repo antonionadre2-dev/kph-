@@ -28,17 +28,40 @@ export function isAllowedOrigin(origin: string, requestHost: string): boolean {
     return ['https://krakenpfm.ch', 'https://www.krakenpfm.ch'].includes(origin) || url.host === requestHost;
   } catch { return false; }
 }
+type MissingOriginEvidence = {
+  fetchSite: 'missing' | 'same-origin' | 'same-site' | 'cross-site' | 'none' | 'other';
+  referrerKind: 'missing' | 'same-origin' | 'other' | 'invalid';
+  cookieValid: boolean;
+};
+/** An absent Origin needs independent first-party evidence; explicit origins never use this fallback. */
+export function missingOriginRequestProof(req: Pick<Request, 'get'>, expectedOrigin: string, cookieValid: boolean): { allowed: boolean; evidence: MissingOriginEvidence } {
+  const site = req.get('Sec-Fetch-Site');
+  const fetchSite = site === undefined ? 'missing' : site === 'same-origin' ? 'same-origin'
+    : site === 'same-site' ? 'same-site' : site === 'cross-site' ? 'cross-site' : site === 'none' ? 'none' : 'other';
+  const mode = req.get('Sec-Fetch-Mode');
+  const referrer = req.get('Referer');
+  let referrerKind: MissingOriginEvidence['referrerKind'] = 'missing';
+  if (referrer !== undefined) {
+    try {
+      const parsed = new URL(referrer);
+      referrerKind = parsed.username || parsed.password ? 'invalid' : parsed.origin === expectedOrigin ? 'same-origin' : 'other';
+    } catch { referrerKind = 'invalid'; }
+  }
+  const evidence: MissingOriginEvidence = { fetchSite, referrerKind, cookieValid: cookieValid === true };
+  return { allowed: req.get('Origin') === undefined && fetchSite === 'same-origin' && (mode === 'cors' || mode === 'same-origin') && referrerKind === 'same-origin' && evidence.cookieValid, evidence };
+}
 /** Fixed categories only: rejected recovery requests must never disclose request data. */
-export function logRecoveryOriginRejection(req: Pick<Request, 'path' | 'method' | 'get'>, layer: 'cors' | 'booking'): void {
+export function logRecoveryOriginRejection(req: Pick<Request, 'path' | 'method' | 'get'>, layer: 'cors' | 'booking', evidence?: MissingOriginEvidence): void {
   if (req.path !== '/api/recovery/drafts') return;
   const origin = req.get('Origin');
   const host = (req.get('host') || '').toLowerCase();
-  const originKind = !origin ? 'missing' : origin === 'null' ? 'opaque'
+  const originKind = origin === undefined ? 'missing' : origin === 'null' ? 'opaque'
     : origin === 'https://krakenpfm.ch' ? 'canonical' : origin === 'https://www.krakenpfm.ch' ? 'www' : 'other';
   const hostKind = /^krakenpfm\.ch(?::\d+)?$/.test(host) ? 'canonical'
     : /^www\.krakenpfm\.ch(?::\d+)?$/.test(host) ? 'www'
     : /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+vercel\.app(?::\d+)?$/.test(host) ? 'deployment' : 'other';
-  console.warn('[recovery:origin-rejected]', { layer, originKind, hostKind, method: req.method === 'POST' ? 'POST' : 'other' });
+  console.warn('[recovery:origin-rejected]', { layer, originKind, hostKind, method: req.method === 'POST' ? 'POST' : 'other',
+    ...(origin === undefined && evidence ? { fetchSite: evidence.fetchSite, referrerKind: evidence.referrerKind, cookieValid: evidence.cookieValid } : {}) });
 }
 /** Browser origins are restricted. This is not authentication; webhook signatures and access tokens still apply. */
 export function sameOriginCors(req: Request, res: Response, next: NextFunction): void {
