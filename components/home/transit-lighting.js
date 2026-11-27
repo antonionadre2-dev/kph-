@@ -15,9 +15,12 @@ export function initTransitLighting(section) {
     const box = stage.getBoundingClientRect();
     const image = art.getBoundingClientRect();
     if (!box.width || !box.height || !image.width) return;
+    // Read every icon before changing SVG geometry, avoiding a style/layout
+    // recalculation for each of the four beams on mount, resize and translation.
+    const targets = icons.map(icon => icon.getBoundingClientRect());
     beams.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
     icons.forEach((icon, index) => {
-      const target = icon.getBoundingClientRect();
+      const target = targets[index];
       // The native 1254px photograph is a width-sized square centred in the art slot.
       const lampX = index === 0 ? 52 : 375;
       const lampY = index === 0 ? 670 : 660;

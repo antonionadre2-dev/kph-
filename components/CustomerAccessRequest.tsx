@@ -13,7 +13,7 @@ export default function CustomerAccessRequest({ language, email, recovery }: {
   useEffect(() => {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => { setEnabled(false); controller.abort(); }, 10000);
-    void fetch('/api/customer/access/config', { signal: controller.signal, credentials: 'same-origin', headers: { Accept: 'application/json' } })
+    void fetch('/api/customer/access/config', { signal: controller.signal, credentials: 'same-origin', referrerPolicy: 'strict-origin', headers: { Accept: 'application/json' } })
       .then(async response => response.ok && response.headers.get('content-type')?.includes('application/json') ? response.json() : { enabled: false })
       .then(value => { if (!controller.signal.aborted) setEnabled(value.enabled === true); })
       .catch(() => { if (!controller.signal.aborted) setEnabled(false); })
@@ -28,7 +28,7 @@ export default function CustomerAccessRequest({ language, email, recovery }: {
     if (!key.current) key.current = crypto.randomUUID();
     setState('loading');
     try {
-      const response = await fetch('/api/customer/access', { method: 'POST', signal: controller.signal, credentials: 'same-origin',
+      const response = await fetch('/api/customer/access', { method: 'POST', signal: controller.signal, credentials: 'same-origin', referrerPolicy: 'strict-origin',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'Idempotency-Key': key.current },
         body: JSON.stringify({ email, language, idempotencyKey: key.current, recovery }) });
       if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error('Unavailable');

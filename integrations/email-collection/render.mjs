@@ -132,7 +132,8 @@ export function renderEmail(id, data, options={}) {
     if(id==='support_reply' && !staffReply) throw new Error('Provide the real staff reply.');
     if(id==='details_required' && !openQuestions.length) throw new Error('Provide the actual missing information.');
     if(id==='issue_resolved' && !resolution) throw new Error('Provide the completed resolution.');
-    if(id==='magic_link' && !data.expiresAt) throw new Error('An actual login expiry is required.');
+    if(id==='magic_link' && !data.expiresAt && data.accessType!=='firebase_email_link') throw new Error('An actual login expiry is required.');
+    if(id==='magic_link' && data.accessType==='firebase_email_link' && data.expiresAt) throw new Error('Firebase manages its sign-in-code lifetime; do not invent an expiry.');
     if(id==='balance_due' && !(price.totalRappen>price.paidRappen)) throw new Error('A positive outstanding balance is required.');
     if(id==='quote_ready' && !(price && data.quoteApproved===true)) throw new Error('An approved quote and price snapshot are required.');
     if(id==='cancellation_confirmed' && data.appointment?.status!=='cancelled') throw new Error('A verified cancellation is required.');

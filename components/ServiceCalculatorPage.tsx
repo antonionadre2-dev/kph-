@@ -158,7 +158,7 @@ async function api<T>(url: string, options: RequestInit = {}): Promise<T> {
   const timeout = window.setTimeout(() => controller.abort(), 20_000);
   try {
     const response = await fetch(url, {
-      ...options, credentials: 'same-origin', signal: controller.signal,
+      ...options, credentials: 'same-origin', referrerPolicy: 'strict-origin', signal: controller.signal,
       headers: { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers },
     });
     if (!response.headers.get('content-type')?.includes('application/json')) throw new BookingApiError('UNAVAILABLE', response.status);

@@ -28,7 +28,7 @@ export default function ContactMessageForm({ language }: { language: string; onN
     const controller = new AbortController(); let active = true;
     const timer = setTimeout(() => controller.abort(), 10_000);
     setConfiguration(null);
-    fetch('/api/contact/intake/config', { signal: controller.signal, credentials: 'same-origin', cache: 'no-store' })
+    fetch('/api/contact/intake/config', { signal: controller.signal, credentials: 'same-origin', cache: 'no-store', referrerPolicy: 'strict-origin' })
       .then(async response => {
         const config = await response.json();
         if (!response.ok || typeof config.available !== 'boolean') throw new Error('unavailable');
@@ -84,7 +84,7 @@ export default function ContactMessageForm({ language }: { language: string; onN
     try {
       retry.current = contactRetryIdentity(retry.current, fields, locale);
       const response = await fetch('/api/contact/messages', {
-        method: 'POST', credentials: 'same-origin', cache: 'no-store', signal: controller.signal,
+        method: 'POST', credentials: 'same-origin', cache: 'no-store', referrerPolicy: 'strict-origin', signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...normalizeContactFields(fields), idempotencyKey: retry.current.key, language: retry.current.language, website: honeypot.current?.value || '', turnstileToken: token }),
       });

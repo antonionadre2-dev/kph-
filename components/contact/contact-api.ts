@@ -15,7 +15,7 @@ export interface ContactConfig { geocoding: boolean; routing: { available: boole
 const errorCodes = new Set<ContactApiErrorCode>(['invalid_request', 'unavailable', 'not_configured', 'rate_limited', 'no_route']);
 async function request(path: string, signal: AbortSignal, body?: unknown): Promise<any> {
   const response = await fetch(path, {
-    method: body === undefined ? 'GET' : 'POST', signal, credentials: 'same-origin', cache: 'no-store',
+    method: body === undefined ? 'GET' : 'POST', signal, credentials: 'same-origin', cache: 'no-store', referrerPolicy: 'strict-origin',
     headers: {Accept:'application/json', ...(body === undefined ? {} : {'Content-Type':'application/json'})},
     ...(body === undefined ? {} : {body:JSON.stringify(body)}),
   });

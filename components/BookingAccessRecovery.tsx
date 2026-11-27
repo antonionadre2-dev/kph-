@@ -20,13 +20,13 @@ export default function BookingAccessRecovery({ language, bookingId, onRecovered
   const text = (key: Parameters<typeof accessRecoveryText>[1]) => accessRecoveryText(language, key);
 
   async function call(path: string, body: unknown, signal: AbortSignal): Promise<any> {
-    const response = await fetch(path, { method: 'POST', signal, credentials: 'same-origin', cache: 'no-store',
+    const response = await fetch(path, { method: 'POST', signal, credentials: 'same-origin', referrerPolicy: 'strict-origin', cache: 'no-store',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) });
     if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error('ACCESS_UNAVAILABLE');
     return response.json();
   }
   async function prepare(signal: AbortSignal) {
-    const response = await fetch('/api/booking/config', { signal, credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } });
+    const response = await fetch('/api/booking/config', { signal, credentials: 'same-origin', referrerPolicy: 'strict-origin', cache: 'no-store', headers: { Accept: 'application/json' } });
     if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error('ACCESS_UNAVAILABLE');
     const config = await response.json();
     if (config.available !== true) throw new Error('ACCESS_UNAVAILABLE');
