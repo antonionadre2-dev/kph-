@@ -277,6 +277,27 @@ export function createRecoveryService({ store, sendEmail, calculatePrice, resolv
       // Check again after rendering and before the irreversible provider call.
       draft=await store.getDraft(draft.id);
       if(!draft || draft.status!=='active' || draft.expiresAt<=clock() || (candidate.kind!=='saved' && (!draft.reminderConsent || await store.isSuppressed(draft.emailHash)))) {await cancel();continue;}
+      // A payment/cancellation may settle while the durable envelope is being
+      // prepared. Read the authoritative booking again, not just the draft's
+      // asynchronously propagated stage.
+      if(draft.bookingId) {
+        try {draft=(await resolveBooking(draft)).draft;}
+        catch {
+          await store.markJob(candidate.id,'sending',{status:'queued',due_at:clock()+HOUR_MS,lease_until:null,last_error_code:'BOOKING_STATUS_UNAVAILABLE'});report.deferred++;continue;
+        }
+        if(draft.status!=='active'){await cancel();continue;}
+        if(candidate.kind!=='saved'&&draft.stage!=='payment_ready') {
+          await store.markJob(candidate.id,'sending',{status:'queued',due_at:clock()+HOUR_MS,lease_until:null});report.deferred++;continue;
+        }
+      }
+      if(candidate.kind!=='saved') {
+        const first=await store.getJob(`${draft.id}:reminder1`);
+        const firstSent=first?.status==='sent'?first.sent_at:null;
+        const due=Math.max(reminderDue(candidate.kind,draft.lastActivityAt,firstSent),isServiceWindow(clock())?0:nextServiceWindow(clock()));
+        if(due>clock()) {
+          await store.markJob(candidate.id,'sending',{status:'queued',due_at:Math.max(due,clock()+HOUR_MS),lease_until:null});report.deferred++;continue;
+        }
+      }
       if(candidate.kind!=='saved')attemptedReminders.add(draft.id);
       try {
         const result=await sendEmail(message);

@@ -85,6 +85,9 @@ export function createFirestoreBookingStore(db:Firestore) {
     async addMail(job:any) {
       return db.runTransaction(async tx=>{const ref=outbox.doc(digest(job.id));if((await tx.get(ref)).exists)return false;tx.create(ref,clean(job));return true;});
     },
+    async getMail(id:string) {
+      return (await outbox.doc(digest(id)).get()).data()||null;
+    },
     async prepareMail(id:string,message:any,preparedAt:number,expiresAt?:number) {
       return db.runTransaction(async tx=>{
         const ref=outbox.doc(digest(id)),current=(await tx.get(ref)).data();

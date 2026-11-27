@@ -1,5 +1,5 @@
 import { escapedDocumentRecord, DOCUMENT_PREVIEW_CSP, documentDraftLabel, documentPreviewBlocked, documentPreviewDate, connectPreviewPrint } from '../src/security/documentPreview';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from '../i18n';
 import { getDashboardTranslation } from './dashboardTranslations';
@@ -37,7 +37,8 @@ import {
   Trash2,
   MessageSquare
 } from 'lucide-react';
-import { doc, updateDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, runTransaction, serverTimestamp } from 'firebase/firestore';
+import {PRIVATE_REQUEST_NOTES,resolveStaffNotes} from '../src/auth/private-request-notes';
 import { db, sanitizeFirestoreData } from './firebase';
 import { detectZone } from './ConsultationPage';
 
@@ -129,6 +130,8 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
 }) => {
   const { language } = useTranslation();
   const dt = getDashboardTranslation(language);
+  const notesErrors:Record<string,[string,string]>={de:['Interne Notizen konnten nicht geladen werden. Öffnen Sie den Auftrag erneut.','Interne Notizen konnten nicht gespeichert werden. Vorherige Daten bleiben erhalten. Öffnen Sie den Auftrag erneut.'],en:['Internal notes could not be loaded. Reopen the request.','Internal notes could not be saved. Previous data is retained. Reopen the request.'],es:['No se pudieron cargar las notas internas. Vuelva a abrir el encargo.','No se pudieron guardar las notas internas. Los datos anteriores se conservan. Vuelva a abrir el encargo.'],pt:['Não foi possível carregar as notas internas. Abra novamente o pedido.','Não foi possível guardar as notas internas. Os dados anteriores foram mantidos. Abra novamente o pedido.'],it:['Impossibile caricare le note interne. Riapra la richiesta.','Impossibile salvare le note interne. I dati precedenti sono conservati. Riapra la richiesta.'],fr:['Impossible de charger les notes internes. Rouvrez la demande.','Impossible d’enregistrer les notes internes. Les données précédentes sont conservées. Rouvrez la demande.']};
+  const notesError=notesErrors[language.split('-')[0]]||notesErrors.de;
   const [teamNotes, setTeamNotes] = useState<TeamNote[]>([]);
   const [noteAuthor, setNoteAuthor] = useState('');
   const [newNoteText, setNewNoteText] = useState('');
@@ -137,87 +140,47 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
   const [editText, setEditText] = useState('');
   const [editAuthor, setEditAuthor] = useState('');
   const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [notesReady,setNotesReady]=useState(false);
+  const notesScope=useRef('');
+  const notesRevision=useRef<number|null>(null),notesWriteScope=useRef('');
   const [actionAlert, setActionAlert] = useState<string | null>(null);
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string; title?: string } | null>(null);
 
   useEffect(() => {
-    let notesList: TeamNote[] = [];
-
-    if (selectedRequest.teamNotes && Array.isArray(selectedRequest.teamNotes) && selectedRequest.teamNotes.length > 0) {
-      notesList = selectedRequest.teamNotes;
-    } else if (selectedRequest.id) {
-      try {
-        const localKey = `kraken_team_notes_${selectedRequest.id}`;
-        const stored = localStorage.getItem(localKey);
-        if (stored) {
-          notesList = JSON.parse(stored);
+    const scope=`${selectedRequest.id}:${isStaff}`;notesScope.current=scope;
+    let active=true;setTeamNotes([]);setNotesReady(false);setIsSavingNotes(false);setNewNoteText('');setEditingNoteId(null);notesRevision.current=null;
+    if(!isStaff)return()=>{active=false;};
+    void (async()=>{
+      try{
+        const snapshot=await getDoc(doc(db,PRIVATE_REQUEST_NOTES,selectedRequest.id));
+        let local:unknown;
+        if(!snapshot.exists()){
+          try{const stored=localStorage.getItem(`kraken_team_notes_${selectedRequest.id}`);if(stored)local=JSON.parse(stored);}catch{/* Preserve historical local values; never delete them. */}
         }
-      } catch (e) {
-        console.warn('Error reading team notes from local storage:', e);
-      }
-    }
+        const notes=resolveStaffNotes(snapshot.exists()?snapshot.data():undefined,selectedRequest,local);
+        if(active){notesRevision.current=snapshot.exists()?(Number.isSafeInteger(snapshot.data().revision)?snapshot.data().revision:0):null;setTeamNotes(notes);setNotesReady(true);}
+      }catch{if(active)setActionAlert(notesError[0]);}
+    })();
+    return()=>{active=false;if(notesScope.current===scope)notesScope.current='';};
+  },[selectedRequest.id,isStaff]);
 
-    if (notesList.length === 0 && selectedRequest.notes && selectedRequest.notes.trim()) {
-      notesList = [{
-        id: 'legacy_note_1',
-        author: 'Sistema / Equipo',
-        text: selectedRequest.notes,
-        createdAt: selectedRequest.createdAt ? new Date(selectedRequest.createdAt).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : 'Fecha registrada'
-      }];
-    }
-
-    setTeamNotes(notesList);
-    setNewNoteText('');
-    setEditingNoteId(null);
-  }, [selectedRequest]);
-
-  const updateAndPersistTeamNotes = async (updatedNotes: TeamNote[], successMsg: string) => {
-    setIsSavingNotes(true);
-    try {
-      setTeamNotes(updatedNotes);
-
-      const summaryText = updatedNotes
-        .map(n => `[${n.author} - ${n.createdAt}]: ${n.text}`)
-        .join('\n\n');
-
-      const updatedList = requests.map(req => {
-        if (req.id === selectedRequest.id) {
-          const updated = { 
-            ...req, 
-            teamNotes: updatedNotes, 
-            notes: summaryText 
-          };
-          if (selectedRequest?.id === req.id) {
-            setSelectedRequest(updated);
-          }
-          return updated;
-        }
-        return req;
+  const updateAndPersistTeamNotes = async (updatedNotes:TeamNote[],successMsg:string) => {
+    if(!isStaff||!notesReady||isSavingNotes)return false;
+    const scope=notesScope.current,expectedRevision=notesRevision.current;
+    if(notesWriteScope.current===scope)return false;notesWriteScope.current=scope;setIsSavingNotes(true);
+    try{
+      // Internal history is never copied into the owner-readable request or its notes field.
+      const nextRevision=await runTransaction(db,async transaction=>{
+        const ref=doc(db,PRIVATE_REQUEST_NOTES,selectedRequest.id),current=await transaction.get(ref);
+        const actual=current.exists()?(Number.isSafeInteger(current.data().revision)?current.data().revision:0):null;
+        if(actual!==expectedRevision)throw Error('PRIVATE_NOTES_CHANGED');
+        const revision=(actual??0)+1;transaction.set(ref,sanitizeFirestoreData({requestId:selectedRequest.id,teamNotes:updatedNotes,revision,updatedAt:serverTimestamp()}),{merge:true});return revision;
       });
-      setRequests(updatedList);
-
-      // Team notes stay in memory until the existing Firestore write succeeds; no new local copy.
-
-      try {
-        await setDoc(doc(db, 'maintenance_requests', selectedRequest.id), sanitizeFirestoreData({
-          teamNotes: updatedNotes,
-          notes: summaryText,
-          updatedAt: serverTimestamp()
-        }), { merge: true });
-      } catch (dbErr) {
-        console.warn('Firestore sync note warning:', dbErr);
-        throw dbErr; // Do not report a server-saved note when persistence failed.
-      }
-
-      setActionAlert(successMsg);
-      setTimeout(() => setActionAlert(null), 3500);
-    } catch (err) {
-      console.error('Error persisting notes:', err);
-      setActionAlert("Error al guardar las notas.");
-      setTimeout(() => setActionAlert(null), 3500);
-    } finally {
-      setIsSavingNotes(false);
-    }
+      if(notesScope.current!==scope)return false;
+      notesRevision.current=nextRevision;setTeamNotes(updatedNotes);
+      setActionAlert(successMsg);setTimeout(()=>setActionAlert(null),3500);return true;
+    }catch{if(notesScope.current===scope)setActionAlert(notesError[1]);return false;}
+    finally{if(notesWriteScope.current===scope)notesWriteScope.current='';if(notesScope.current===scope)setIsSavingNotes(false);}
   };
 
   const handleAddNote = async (e?: React.FormEvent) => {
@@ -253,8 +216,7 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
     };
 
     const updated = [newNoteObj, ...teamNotes];
-    await updateAndPersistTeamNotes(updated, "Nota guardada e historial actualizado correctamente.");
-    setNewNoteText('');
+    if(await updateAndPersistTeamNotes(updated, "Nota guardada e historial actualizado correctamente."))setNewNoteText('');
   };
 
   const handleStartEditNote = (note: TeamNote) => {
@@ -293,14 +255,12 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
       return n;
     });
 
-    await updateAndPersistTeamNotes(updated, "Nota editada correctamente.");
-    setEditingNoteId(null);
+    if(await updateAndPersistTeamNotes(updated, "Nota editada correctamente."))setEditingNoteId(null);
   };
 
   const handleDeleteNote = async (noteId: string) => {
     const updated = teamNotes.filter(n => n.id !== noteId);
-    await updateAndPersistTeamNotes(updated, "Nota eliminada correctamente.");
-    setDeletingNoteId(null);
+    if(await updateAndPersistTeamNotes(updated, "Nota eliminada correctamente."))setDeletingNoteId(null);
   };
 
   const extractPostcode = (addr?: string): string => {
@@ -1080,7 +1040,7 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
                     </div>
 
                     {/* Admin notes memo text area */}
-                    <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-200 space-y-4">
+                    {isStaff && <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-200 space-y-4">
                         <div className="flex justify-between items-center">
                             <h3 className="text-xs font-black uppercase text-slate-700 tracking-widest flex items-center gap-2">
                                 <MessageSquare className="w-4 h-4 text-blue-600" />
@@ -1127,7 +1087,7 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
 
                             <button 
                                 type="submit"
-                                disabled={isSavingNotes || !newNoteText.trim() || !noteAuthor.trim()}
+                                disabled={!notesReady || isSavingNotes || !newNoteText.trim() || !noteAuthor.trim()}
                                 className="w-full py-2 bg-gradient-to-r from-blue-700 to-indigo-800 hover:from-blue-600 hover:to-indigo-700 active:scale-[0.99] text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
                                 {isSavingNotes ? (
@@ -1222,7 +1182,7 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
                                                             <button
                                                                 type="button"
                                                                 onClick={() => handleDeleteNote(note.id)}
-                                                                disabled={isSavingNotes}
+                                                                disabled={!notesReady || isSavingNotes}
                                                                 className="px-2.5 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[9px] font-black uppercase tracking-wider shadow-xs flex items-center gap-1"
                                                             >
                                                                 <Trash2 className="w-2.5 h-2.5" />
@@ -1268,7 +1228,7 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
                                                             <button 
                                                                 type="button"
                                                                 onClick={() => handleSaveEditNote(note.id)}
-                                                                disabled={isSavingNotes}
+                                                                disabled={!notesReady || isSavingNotes}
                                                                 className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-[9px] font-black uppercase tracking-wider flex items-center gap-1"
                                                             >
                                                                 <Check className="w-3 h-3" />
@@ -1288,6 +1248,8 @@ export const DetailInspectorModal: React.FC<DetailInspectorModalProps> = ({
                             )}
                         </div>
                     </div>
+
+                    }
 
                     {/* Danger Zone: Delete Option */}
                     {(isStaff || selectedRequest.status === 'Pending') && (

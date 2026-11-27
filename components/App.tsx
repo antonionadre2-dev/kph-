@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, lazy, Suspense, Component, ReactNode } from 'react';
+import React, { useState, useEffect, useRef, useCallback, lazy, Suspense, Component, ReactNode } from 'react';
 import { useTranslation } from '../i18n';
 import { parsePath } from '../src/routing/router';
 import { toLegacyPath } from '../src/routing/site-paths';
@@ -301,7 +301,7 @@ const App: React.FC = () => {
     }
   }, [page]);
 
-  const handleNavigate = (targetPage: string) => {
+  const handleNavigate = useCallback((targetPage: string) => {
     const isReviewUser = typeof window !== 'undefined' && localStorage.getItem('kraken_review_user') === 'true';
     const isStaff = user?.staff === true;
 
@@ -337,7 +337,7 @@ const App: React.FC = () => {
     changeLocation(targetPath, language);
     setPage(targetPage);
     if (!window.location.hash) window.scrollTo(0, 0);
-  };
+  }, [language, user]);
 
   // The server head is authoritative on arrival; load page metadata only for a stale SPA head.
   const seoScheduler=useRef<ReturnType<typeof createClientSeoScheduler>|null>(null);

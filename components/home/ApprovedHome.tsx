@@ -18,6 +18,7 @@ import { initialSceneCalendar } from '../../src/home/scene-calendar';
 import { publicPolicyContent } from '../../src/kai/policyContent';
 import { getHomeFaqs } from '../../src/kai/facts';
 import { initDeferredHomeMedia } from './deferred-media';
+import { initDeferredHomeEnhancements } from './deferred-enhancements';
 import { whyTranslations } from './whyTranslations';
 import { initApprovedHome } from './app';
 import { initApartmentScene } from './scene';
@@ -32,7 +33,7 @@ import './design-system.css';
 import './conversion-home.css';
 
 // The approved illustration layers and accessible controls remain one React route.
-export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
+function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
   const { language } = useTranslation();
   const homeLanguage = normalizeHomeLanguage(language);
   const policy = publicPolicyContent(homeLanguage);
@@ -58,9 +59,11 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
     const cleanups = [
       initDeferredHomeMedia(root),
       initApprovedHome(root, (service: HomeService | null) => openHomeCalculator(service, (path) => navigateRef.current(publicHref(path, localeRef.current))), translate),
-      initApartmentScene(root, { t: translate, getLocale: () => localeRef.current }),
-      initTransit(root, translate),
-      initServicePreview(root, { getLanguage: () => localeRef.current }),
+      initDeferredHomeEnhancements(root, {
+        scene: () => initApartmentScene(root, { t: translate, getLocale: () => localeRef.current }),
+        services: () => initServicePreview(root, { getLanguage: () => localeRef.current }),
+        transit: () => initTransit(root, translate),
+      }),
     ];
     let hashFrame = 0;
     // App resolves its route before the illustration mounts. Honour inbound
@@ -250,3 +253,7 @@ export default function ApprovedHome({ onNavigate }: { onNavigate: (page: string
 
   </div>;
 }
+
+// Mounting consent/Kai updates App state; it must not reconcile the complete,
+// unchanged illustration again. Locale context updates still render immediately.
+export default React.memo(ApprovedHome);

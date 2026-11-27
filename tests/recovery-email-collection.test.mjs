@@ -30,7 +30,7 @@ function fixture(t,options={}) {
     return {id:'n'+createHash('sha256').update(eventId).digest('hex'),eventId,eventType:catalogs.de[templateId].event,entityId:draft.id,recipientIdentity,recipientEmail:draft.email,templateId,templateRevision:'1.2.0',languageSnapshot:structuredClone(draft.languageSnapshot),renderData:{customer:{id:recipientIdentity,firstName:'Synthetic',email:draft.email},reference:`Q-${draft.id.slice(0,8)}`,service:'regular',frequency:Object.fromEntries(languages.map(language=>[language,labels[language].weekly])),pricing:{currency:'CHF',totalRappen:draft.quote.totalCents,paidRappen:0,vatRappen:0},consent:{reminder_consented:draft.reminderConsent}}};
   };
   const collection={enabled:options.enabled!==false,snapshot,async prepare(notification,links){prepareCalls++;if(options.beforePrepare)await options.beforePrepare(notification);return prepareServerEmail({templateId:notification.templateId,notificationSnapshot:notification,links},{catalogs,brand:{name:'Kraken PFM',email:'kai@kraken.example',privacyUrl:`${origin}/gdpr?lang=${notification.languageSnapshot.language}`},assetBaseUrl:`${origin}/kraken-emails/assets`});}};
-  const service=createRecoveryService({store,sendEmail:async message=>{sent.push(structuredClone(message));return options.send?options.send(message,sent.length):{id:`synthetic-accepted-${sent.length}`};},calculatePrice,publicBaseUrl:origin,sender:'Kraken <kai@kraken.example>',tokenSecret:'synthetic-recovery-secret-at-least-thirty-two-bytes',clock:()=>now,remindersEnabled:true,emailCollection:collection});
+  const service=createRecoveryService({store,sendEmail:async message=>{sent.push(structuredClone(message));return options.send?options.send(message,sent.length):{id:`synthetic-accepted-${sent.length}`};},calculatePrice,resolveBookingForRecovery:options.resolveBookingForRecovery,publicBaseUrl:origin,sender:'Kraken <kai@kraken.example>',tokenSecret:'synthetic-recovery-secret-at-least-thirty-two-bytes',clock:()=>now,remindersEnabled:true,emailCollection:collection});
   const capture=(overrides={})=>service.capture({email:'synthetic@example.test',selection:defaultSelection('regular'),language:'es',reminderConsent:false,consentVersion:CONSENT_VERSION,idempotencyKey:`synthetic-capture-${++count}-0000`,...overrides},{rateKey:'synthetic-server-verified'});
   return {sqlite,store,service,sent,capture,advance:ms=>now+=ms,clock:()=>now,prepares:()=>prepareCalls};
 }
@@ -89,6 +89,33 @@ test('a consent withdrawal during preparation prevents a voluntary reminder prov
   const f=fixture(t,{async beforePrepare(notification){if(notification.templateId==='quote_reminder_1')await f.service.withdrawConsent(active.id,active.accessToken);}});
   active=await f.capture({reminderConsent:true});await f.service.sendSaved(active.id);f.advance(4*HOUR_MS);
   await f.service.runDue();assert.equal(f.sent.length,1);assert.equal((await f.store.getJob(`${active.id}:reminder1`)).status,'cancelled');
+});
+
+test('payment or cancellation during reminder preparation stops the pending provider call',async t=>{
+  for(const terminal of ['paid','test_paid','cancelled']) {
+    let state='confirmed';
+    const f=fixture(t,{resolveBookingForRecovery:async(id,email)=>({bookingId:id,email,publicToken:'synthetic-access-token-over-twenty-chars',mode:'live',status:state==='cancelled'?'cancelled':'confirmed',paymentStatus:state==='cancelled'?'not_started':state,canCheckout:state==='confirmed',holdExpiresAt:'2026-12-01T10:00:00Z'}),beforePrepare(notification){if(notification.templateId==='quote_reminder_1')state=terminal;}});
+    const saved=await f.capture({reminderConsent:true});await f.service.sendSaved(saved.id);
+    await f.service.linkBooking({id:saved.id,accessToken:saved.accessToken,email:'synthetic@example.test',bookingId:'synthetic-booking-id-000000'});
+    await f.service.read(saved.id,saved.accessToken);f.advance(4*HOUR_MS);
+    await f.service.runDue();
+    assert.equal(f.sent.length,1,terminal);
+    assert.equal((await f.store.getJob(`${saved.id}:reminder1`)).status,'cancelled',terminal);
+    assert.equal((await f.store.getDraft(saved.id)).status,terminal==='cancelled'?'cancelled':'paid');
+  }
+});
+
+test('a lost booking-status read or fresh activity during preparation defers the reminder',async t=>{
+  for(const change of ['unavailable','activity']) {
+    let unavailable=false,active;
+    const f=fixture(t,{resolveBookingForRecovery:async(id,email)=>{if(unavailable)throw new Error('synthetic unavailable');return {bookingId:id,email,publicToken:'synthetic-access-token-over-twenty-chars',mode:'live',status:'confirmed',paymentStatus:'not_started',canCheckout:true,holdExpiresAt:'2026-12-01T10:00:00Z'};},async beforePrepare(notification){if(notification.templateId==='quote_reminder_1'){if(change==='unavailable')unavailable=true;else await f.service.activity(active.id,active.accessToken,{});}}});
+    active=await f.capture({reminderConsent:true});await f.service.sendSaved(active.id);
+    await f.service.linkBooking({id:active.id,accessToken:active.accessToken,email:'synthetic@example.test',bookingId:'synthetic-booking-id-000000'});
+    await f.service.read(active.id,active.accessToken);f.advance(4*HOUR_MS);
+    const result=await f.service.runDue();
+    assert.equal(f.sent.length,1,change);assert.equal(result.deferred,1,change);
+    assert.equal((await f.store.getJob(`${active.id}:reminder1`)).status,'queued',change);
+  }
 });
 
 test('legacy language migration is explicit, preserves an old valid choice and never silently repairs corrupt values',async t=>{

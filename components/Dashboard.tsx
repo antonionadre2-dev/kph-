@@ -81,6 +81,7 @@ type MaintenanceRequest = {
     phone?: string;
     address?: string;
     notes?: string;
+    teamNotes?: import('./DetailInspectorModal').TeamNote[];
     mediaUrls?: string[];
     mediaNames?: string[];
     bookingMode?: string;
@@ -407,6 +408,7 @@ const Dashboard: React.FC = () => {
             phone: data.phone || '',
             address: data.address || '',
             notes: data.notes || '',
+            ...(isStaff && Array.isArray(data.teamNotes)?{teamNotes:data.teamNotes}:{}),
             mediaUrls: data.mediaUrls || [],
             mediaNames: data.mediaNames || [],
             bookingMode: data.bookingMode || '',
