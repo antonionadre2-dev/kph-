@@ -19,6 +19,8 @@ import { safeMailFailure } from './booking-mail-safety.ts';
 import { createBookingOperatorHandler } from './booking-operator.ts';
 import { createBookingAccessRecovery, issueBookingBrowserCookie, redeemBookingBrowserCookie } from './booking-access-recovery.ts';
 import { pinnedAccessRequest } from './booking-access-dispatch.ts';
+import { applyVerifiedSuppression, suppressionScope } from './booking-email-suppression.ts';
+import { customerAccountAccessJob, firebaseCustomerAccessLink } from './customer-account-access.ts';
 import firebaseConfig from '../firebase-applet-config.json' with {type:'json'};
 
 export { BOOKING_TERMS_VERSION };
@@ -80,6 +82,7 @@ export function validateBookingRequest(input:any,now=Date.now()) {
 export function createBookingService({store,tokenSecret,origin,mode='unconfigured',payment=null,sendEmail=null,sender='',clock=Date.now,recovery=null,emailCollectionEnabled=false,paymentNotificationsEnabled=false}: {store:BookingStore;tokenSecret:string;origin:string;mode?:string;payment?:any;sendEmail?:any;sender?:string;clock?:()=>number;recovery?:any;emailCollectionEnabled?:boolean;paymentNotificationsEnabled?:boolean}) {
   const token=(id:string)=>crypto.createHmac('sha256',tokenSecret).update(`booking:${id}`).digest('base64url');
   let recoveryService=recovery;
+  let createCustomerAccessLink:((email:string,language:string)=>Promise<string>)|null=null;
   const checkoutDeadline=(record:any)=>Math.min(Date.parse(record.scheduling.holdExpiresAt),usesTermsPaymentDeadline(record)?Date.parse(record.payment.depositDueAt):Infinity);
   const canCheckout=(record:any)=>Boolean(payment && ['confirmed','held'].includes(record.scheduling.status) && checkoutDeadline(record)>clock() && record.quote.totalCents>0 && !record.quote.manualReviewReasons.length && !['paid','test_paid','refunded','partially_refunded','chargeback','disputed','reconciliation_required'].includes(record.payment.status) && !['cancelled','expired','completed'].includes(record.status));
   const view=(record:any,includeToken=false)=>({bookingId:record.bookingId,reference:record.reference,...(includeToken?{publicToken:token(record.bookingId)}:{}),status:record.status,language:record.language,languageSnapshot:record.languageSnapshot,quote:record.quote,quoteRevision:record.quoteRevision,canCheckout:canCheckout(record),customer:record.customer,notes:record.notes,scopeNotes:record.scopeNotes,termsVersion:record.termsVersion,termsAcceptance:record.termsAcceptance,confirmedAt:record.confirmedAt,selection:record.selection,scheduling:record.scheduling,payment:record.payment,email:record.email});
@@ -114,6 +117,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       return record&&!record.tokenRevoked?{id,token:token(id)}:null;
     },
     setRecovery(value:any){recoveryService=value;},
+    setCustomerAccessLink(value:(email:string,language:string)=>Promise<string>){createCustomerAccessLink=value;},
     async create(input:any) {
       const value=validateBookingRequest(input,clock());
       // Validate a linked recovery capability before creating the booking.
@@ -288,19 +292,26 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       for(const pending of pendingJobs.slice(0,batch)) {
         if(performance.now()+15000>=deadlineAt)break;
         const job=await store.claimMail(pending.id,clock());if(!job)continue;
-        if(!emailCollectionEnabled&&job.kind!=='payment_ready'&&(job.kind==='notification'||job.prepared?.notificationId)){await store.finishMail(job.id,'cancelled',null);continue;}
+        if(!emailCollectionEnabled&&job.kind!=='payment_ready'&&job.accessProvider!=='firebase'&&(job.kind==='notification'||job.prepared?.notificationId)){await store.finishMail(job.id,'cancelled',null);continue;}
         if(emailCollectionEnabled&&!paymentNotificationsEnabled&&job.kind==='receipt'){await store.finishMail(job.id,'cancelled',null);continue;}
-        if(job.kind==='customer_access' && (!job.message || job.expiresAt<=clock())) {await store.finishMail(job.id,'cancelled',null);continue;}
+        if(job.kind==='customer_access' && ((!job.message&&job.accessProvider!=='firebase') || job.expiresAt<=clock())) {await store.finishMail(job.id,'cancelled',null);continue;}
         const record=job.bookingId?await store.get(job.bookingId):null;
         if(!eligibleNotification(record,job)){await store.finishMail(job.id,'cancelled',null);continue;}
         const recipient=job.email||record.customer.email;
         if(await store.isEmailSuppressed(recipient)) {await store.finishMail(job.id,'cancelled',null);if(record&&job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:'failed'}}));continue;}
+        let providerAttempted=false;
         try {
           let message=job.prepared;
           if(!message) {
-            if(emailCollectionEnabled||job.kind==='payment_ready') {
+            if(emailCollectionEnabled||job.kind==='payment_ready'||job.accessProvider==='firebase') {
               if(!job.notification)throw Object.assign(new Error('EMAIL_SNAPSHOT_REVIEW_REQUIRED'),{definitelyNotSent:true});
-              const links=job.kind==='customer_access'?job.authorisedLinks:bookingEmailLinks(record,job.notification,origin,token(record.bookingId));
+              let links=job.kind==='customer_access'?job.authorisedLinks:bookingEmailLinks(record,job.notification,origin,token(record.bookingId));
+              if(job.accessProvider==='firebase') {
+                if(!createCustomerAccessLink||job.notification.templateId!=='magic_link'||job.notification.renderData.accessType!=='firebase_email_link')throw Object.assign(new Error('EMAIL_PREPARATION_FAILED'),{definitelyNotSent:true});
+                const locale=languageForBackgroundEmail(job.notification.languageSnapshot);
+                const primary=await createCustomerAccessLink(recipient,locale);
+                links={primary,secondary:new URL(`/kontakt?lang=${locale}`,origin).href};
+              }
               message=prepareCustomerEnvelope(job.notification,links,origin);
               // Keep the old stable job/provider key across a renderer rollout.
               message={...message,idempotencyKey:`kraken-booking:${job.id}`};
@@ -309,23 +320,27 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
               message={from:sender,to:job.email||record.customer.email,...rendered,idempotencyKey:`kraken-booking:${job.id}`};
             }
             if(typeof store.prepareMail==='function')message=await store.prepareMail(job.id,message,clock(),job.expiresAt);
-            else if(emailCollectionEnabled)throw Object.assign(new Error('EMAIL_PREPARATION_STORE_REQUIRED'),{definitelyNotSent:true});
+            else if(emailCollectionEnabled||job.accessProvider==='firebase')throw Object.assign(new Error('EMAIL_PREPARATION_STORE_REQUIRED'),{definitelyNotSent:true});
             if(!message)continue;
           }
           if(job.preparedExpiresAt&&job.preparedExpiresAt<=clock()){await store.finishMail(job.id,'cancelled',null);continue;}
           if(await store.isEmailSuppressed(message.to)){await store.finishMail(job.id,'cancelled',null);continue;}
           if(!eligibleNotification(job.bookingId?await store.get(job.bookingId):null,job)){await store.finishMail(job.id,'cancelled',null);continue;}
+          providerAttempted=true;
           const accepted=await sendEmail(message);
           await store.finishMail(job.id,'sent',accepted.id);
           if(job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:'sent'}}));
           sent++;
         } catch(cause:any) {
-          const definitive=cause?.definitelyNotSent===true;
+          // Rendering/credential-link/storage failures happen before transport.
+          // They need review, not an invented language or an unknown delivery.
+          const failure=providerAttempted?cause:{code:cause?.code,message:cause?.message,definitelyNotSent:true,retryable:false};
+          const definitive=failure?.definitelyNotSent===true;
           const attempts=Number.isSafeInteger(job.attempts)?job.attempts:1;
-          const retry=definitive&&cause?.retryable===true&&attempts<3;
+          const retry=definitive&&failure?.retryable===true&&attempts<3;
           const status=retry?'queued':definitive?'failed':'delivery_unknown';
           const retryAfterMs=Number.isSafeInteger(cause?.retryAfterMs)&&cause.retryAfterMs>=0?cause.retryAfterMs:0;
-          await store.finishMail(job.id,status,null,retry?clock()+Math.max(15*60000,retryAfterMs):undefined,safeMailFailure(cause,clock()));
+          await store.finishMail(job.id,status,null,retry?clock()+Math.max(15*60000,retryAfterMs):undefined,safeMailFailure(failure,clock()));
           if(job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:status}}));
           if(status==='delivery_unknown')unknown++;
         }
@@ -384,7 +399,7 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       const sendEmail=providerEmail?async(message:any)=>{if(await store.isEmailSuppressed(message.to)){const error:any=new BookingError('EMAIL_SUPPRESSED');error.definitelyNotSent=true;throw error;}return providerEmail(message);}:null;
       const emailCollection=collectionConfiguration(env,origin);
       const service=createBookingService({store,tokenSecret:secret,origin,mode,payment,sendEmail,sender:env.BOOKING_EMAIL_FROM,clock,emailCollectionEnabled:emailCollection.enabled,paymentNotificationsEnabled:env.BOOKING_EMAIL_COLLECTION_PAYMENTS_ENABLED==='true'});
-      const remindersEnabled=env.BOOKING_RECOVERY_REMINDERS_ENABLED==='true'&&(env.RESEND_WEBHOOK_SECRET||'').length>=32;
+      const remindersEnabled=env.BOOKING_RECOVERY_REMINDERS_ENABLED==='true'&&(env.RESEND_WEBHOOK_SECRET||'').length>=32&&Boolean(suppressionScope(env));
       const recovery=emailReady&&(env.RECOVERY_TOKEN_SECRET||'').length>=32&&(env.CRON_SECRET||'').length>=32?createRecoveryService({store:createFirestoreRecoveryStore(db),calculatePrice,sendEmail,resolveBookingForRecovery:service.resolveBookingForRecovery,publicBaseUrl:origin,sender:env.BOOKING_EMAIL_FROM!,tokenSecret:env.RECOVERY_TOKEN_SECRET!,remindersEnabled,emailCollection,clock}):null;
       const customerAccess=env.BOOKING_CUSTOMER_ACCESS_ENABLED==='true'&&emailReady&&Boolean(recovery);
       let auth=null;
@@ -393,6 +408,7 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
         const {getAuth}=await import('firebase-admin/auth');
         phase='auth';
         auth=getAuth(app);
+        service.setCustomerAccessLink((email,locale)=>firebaseCustomerAccessLink(auth,email,locale,origin,firebaseConfig.authDomain));
       }
       phase='services';
       service.setRecovery(recovery);
@@ -510,21 +526,27 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
         if(!runtime.customerAccess||!runtime.recovery)throw new BookingError('CUSTOMER_ACCESS_NOT_CONFIGURED',503);
         if(!validEmail(req.body?.email))throw new BookingError('INVALID_EMAIL');
         const email=req.body.email.trim().toLowerCase(),locale=language(req.body.language);
+        const idempotencyKey=string(req.body.idempotencyKey,128,'INVALID_IDEMPOTENCY_KEY',16);
+        if(!/^[A-Za-z0-9_-]+$/.test(idempotencyKey))throw new BookingError('INVALID_IDEMPOTENCY_KEY');
         const draft=await runtime.recovery.read(req.body.recovery?.id,req.body.recovery?.accessToken);
         if(draft.email!==email)throw new BookingError('RECOVERY_EMAIL_MISMATCH',403);
-        if(!await runtime.store.consumeRate(`access:${digest(email)}`,clock(),86400000,3))throw new BookingError('TOO_MANY_REQUESTS',429);
-        // Firebase itself verifies email ownership; no account exists merely because this was queued.
-        const link=await runtime.auth.generateSignInWithEmailLink(email,{url:`${runtime.origin}/customer-access?lang=${locale}`,handleCodeInApp:true});
-        const copy={de:['Ihr Kraken-Zugang','Mit diesem persönlichen Link können Sie sich bei Kraken anmelden.'],en:['Your Kraken access','Use this personal link to sign in to Kraken.'],es:["Su acceso a Kraken","Utilice este enlace personal para iniciar sesión en Kraken."],fr:['Votre accès Kraken','Utilisez ce lien personnel pour vous connecter à Kraken.'],it:['Il tuo accesso Kraken','Usa questo link personale per accedere a Kraken.'],pt:['O seu acesso Kraken','Utilize esta ligação pessoal para iniciar sessão na Kraken.']}[locale]!;
-        const idempotencyKey=string(req.body.idempotencyKey,128,'INVALID_IDEMPOTENCY_KEY',16);
-        // Separate account outbox also handles drafts that have no booking yet.
-        await runtime.store.addMail({id:`access:${draft.id}:${digest(idempotencyKey)}`,bookingId:null,kind:'customer_access',email,status:'queued',dueAt:clock(),expiresAt:clock()+15*60000,message:{subject:copy[0],text:`${copy[1]}\n\n${link}`,html:`<p>${copy[1]}</p><p><a href="${link.replaceAll('&','&amp;').replaceAll('"','&quot;')}">${copy[0]}</a></p>`}});
-        return res.status(202).json({status:'queued'});
+        if(await runtime.store.isEmailSuppressed(email))throw new BookingError('EMAIL_SUPPRESSED',409);
+        const job=customerAccountAccessJob({draftId:draft.id,email,language:locale,idempotencyKey,now:clock()});
+        if(!await runtime.store.getMail(job.id)) {
+          if(!await runtime.store.consumeRate(`access:${digest(email)}`,clock(),86400000,3))throw new BookingError('TOO_MANY_REQUESTS',429);
+          await runtime.store.addMail(job);
+        }
+        // Persist before generating the provider link, then dispatch only this
+        // request. Firebase verifies ownership; queueing creates no account.
+        await runtime.service.runDue({jobId:job.id,limit:1});
+        const mail=await runtime.store.getMail(job.id);
+        if(!mail||['failed','cancelled'].includes(mail.status))throw new BookingError('CUSTOMER_ACCESS_UNAVAILABLE',503);
+        return res.status(202).json({status:'queued',mailStatus:mail.status});
       }
       if(req.path==='/api/customer/bookings'&&req.method==='GET') {
         if(!runtime.customerAccess)throw new BookingError('CUSTOMER_ACCESS_NOT_CONFIGURED',503);
         const claims=await runtime.auth.verifyIdToken(bearer(req),true).catch(()=>null);
-        if(!claims?.email_verified||!claims.email)throw new BookingError('UNAUTHORIZED',401);
+        if(claims?.email_verified!==true||!validEmail(claims.email))throw new BookingError('UNAUTHORIZED',401);
         const records=await runtime.store.listByEmail(claims.email.toLowerCase());
         return res.json({bookings:records.map(record=>runtime.service!.view(record))});
       }
@@ -549,21 +571,10 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
     privateResponse(res);
     try {
       const runtime=await initialize();
-      if(!runtime.store||!env.RESEND_WEBHOOK_SECRET)throw new BookingError('EMAIL_WEBHOOK_NOT_CONFIGURED',503);
+      const domain=suppressionScope(env);
+      if(!runtime.store||!env.RESEND_WEBHOOK_SECRET||!domain)throw new BookingError('EMAIL_WEBHOOK_NOT_CONFIGURED',503);
       const {id,event}=verifyResendWebhook(req.body,{'svix-id':req.get('svix-id')||'','svix-timestamp':req.get('svix-timestamp')||'','svix-signature':req.get('svix-signature')||''},env.RESEND_WEBHOOK_SECRET);
-      const fingerprint=digest(req.body.toString('utf8'));
-      if(await runtime.store.emailEventProcessed(id,fingerprint))return res.json({received:true});
-      if(['email.bounced','email.complained','email.suppressed'].includes(event.type)) {
-        const recipients=event.data?.to;
-        if(!Array.isArray(recipients)||recipients.length!==1||!validEmail(recipients[0]))throw new BookingError('INVALID_EMAIL_EVENT');
-        const email=recipients[0].trim().toLowerCase(),reason=event.type==='email.complained'?'complaint':'bounced';
-        // Both operations are idempotent; mark the event complete only after both.
-        // An interrupted delivery can retry without losing the suppression.
-        await runtime.store.suppressEmail(email,reason,clock());
-        if(runtime.recovery)await runtime.recovery.suppressEmail(email,reason);
-      }
-      await runtime.store.finishEmailEvent(id,fingerprint,clock());
-      return res.json({received:true});
+      return res.json(await applyVerifiedSuppression({event,id,fingerprint:digest(req.body.toString('utf8')),domain,store:runtime.store,recovery:runtime.recovery,now:clock()}));
     }catch(cause){return res.status(cause instanceof BookingError?cause.status:503).json({code:cause instanceof BookingError?cause.code:'EMAIL_WEBHOOK_UNAVAILABLE'});}
   };
   return {middleware:middleware as RequestHandler,webhook,emailWebhook,initialize,async runDue(){const runtime=await initialize();const deadlineAt=performance.now()+180000;return {booking:await runtime.service?.runDue({limit:6,deadlineAt})||{disabled:true},recovery:await runtime.recovery?.runDue({limit:6,deadlineAt})||{disabled:true}};}};

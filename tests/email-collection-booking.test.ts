@@ -82,10 +82,10 @@ function durableStore() {
       Object.assign(job, { status: 'sending', attempts: (job.attempts || 0) + 1, leaseUntil: time + 60_000 });
       return clone(job);
     },
-    async finishMail(id: string, status: string, providerId: string | null, retryAt?: number) {
+    async finishMail(id: string, status: string, providerId: string | null, retryAt?: number, failure?:any) {
       const job = mail.get(id);
       if (job?.status !== 'sending') return;
-      Object.assign(job, { status, providerId, leaseUntil: null, ...(status === 'queued' && Number.isSafeInteger(retryAt) ? { dueAt: retryAt } : {}) });
+      Object.assign(job, { status, providerId, leaseUntil: null, ...(failure?{failure:clone(failure)}:{}), ...(status === 'queued' && Number.isSafeInteger(retryAt) ? { dueAt: retryAt } : {}) });
     },
     async markStaleMail(time: number) {
       for (const job of mail.values()) if (job.status === 'sending' && job.leaseUntil <= time) job.status = 'delivery_unknown';
@@ -375,5 +375,17 @@ test('a concurrent verified paid or refund result during preparation cancels the
       assert.equal(f.sent.filter(message => message.templateId === 'booking_confirmed').length, 0);
       assert.equal(jobsOf(f.store, 'booking_confirmed')[0].status, 'cancelled');
     }
+  }
+});
+
+test('collection rollout quarantines incompatible legacy snapshots without remote migration or guessed language',async()=>{
+  for(const missing of ['notification','languageSnapshot','templateRevision']) {
+    const f=scenario(),service=f.worker(),booking=await service.create(request('es'));
+    const id=`${booking.bookingId}:request:1`,job=f.store.mail.get(id)!;
+    if(missing==='notification')delete job.notification;else delete job.notification[missing];
+    await service.runDue({jobId:id,limit:1});
+    assert.equal(f.sent.length,0,missing);assert.equal(f.store.mail.get(id)!.status,'failed',missing);
+    assert.equal(f.store.mail.get(id)!.failure.definitelyNotSent,true,missing);
+    assert.ok(['EMAIL_SNAPSHOT_REVIEW_REQUIRED','EMAIL_PREPARATION_FAILED'].includes(f.store.mail.get(id)!.failure.code));
   }
 });
