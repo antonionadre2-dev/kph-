@@ -28,12 +28,25 @@ export function isAllowedOrigin(origin: string, requestHost: string): boolean {
     return ['https://krakenpfm.ch', 'https://www.krakenpfm.ch'].includes(origin) || url.host === requestHost;
   } catch { return false; }
 }
+/** Fixed categories only: rejected recovery requests must never disclose request data. */
+export function logRecoveryOriginRejection(req: Pick<Request, 'path' | 'method' | 'get'>, layer: 'cors' | 'booking'): void {
+  if (req.path !== '/api/recovery/drafts') return;
+  const origin = req.get('Origin');
+  const host = (req.get('host') || '').toLowerCase();
+  const originKind = !origin ? 'missing' : origin === 'null' ? 'opaque'
+    : origin === 'https://krakenpfm.ch' ? 'canonical' : origin === 'https://www.krakenpfm.ch' ? 'www' : 'other';
+  const hostKind = /^krakenpfm\.ch(?::\d+)?$/.test(host) ? 'canonical'
+    : /^www\.krakenpfm\.ch(?::\d+)?$/.test(host) ? 'www'
+    : /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+vercel\.app(?::\d+)?$/.test(host) ? 'deployment' : 'other';
+  console.warn('[recovery:origin-rejected]', { layer, originKind, hostKind, method: req.method === 'POST' ? 'POST' : 'other' });
+}
 /** Browser origins are restricted. This is not authentication; webhook signatures and access tokens still apply. */
 export function sameOriginCors(req: Request, res: Response, next: NextFunction): void {
   const origin = req.get('Origin');
   if (!origin) { next(); return; }
   res.vary('Origin');
   if (!isAllowedOrigin(origin, req.get('host') || '')) {
+    logRecoveryOriginRejection(req, 'cors');
     res.status(403).json({ code: 'ORIGIN_NOT_ALLOWED' }); return;
   }
   res.setHeader('Access-Control-Allow-Origin', origin);

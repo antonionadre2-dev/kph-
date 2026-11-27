@@ -16,6 +16,7 @@ import { languageForBackgroundEmail, normalizeEmailLanguage } from '../integrati
 import type { PaymentEmailScheduler } from './booking-lifecycle.ts';
 import { runPayrexxConnectionCheckOnce } from './payrexx-connection-check.ts';
 import { safeMailFailure } from './booking-mail-safety.ts';
+import { logRecoveryOriginRejection } from './security.ts';
 import { createBookingOperatorHandler } from './booking-operator.ts';
 import { createBookingAccessRecovery, issueBookingBrowserCookie, redeemBookingBrowserCookie } from './booking-access-recovery.ts';
 import { pinnedAccessRequest } from './booking-access-dispatch.ts';
@@ -451,7 +452,7 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       }
       const runtime=await initialize();
       if(req.method!=='GET') {
-        if(req.get('Origin')!==runtime.origin)throw new BookingError('ORIGIN_NOT_ALLOWED',403);
+        if(req.get('Origin')!==runtime.origin){logRecoveryOriginRejection(req,'booking');throw new BookingError('ORIGIN_NOT_ALLOWED',403);}
         if(!req.is('application/json'))throw new BookingError('JSON_REQUIRED',415);
         if(JSON.stringify(req.body||{}).length>32768)throw new BookingError('BODY_TOO_LARGE',413);
       }
