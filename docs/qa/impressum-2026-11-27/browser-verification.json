@@ -1,0 +1,177 @@
+{
+  "screenshots": [
+    {
+      "language": "de",
+      "width": 1280,
+      "height": 900,
+      "scrollWidth": 1280,
+      "h1": "Impressum",
+      "sections": 7,
+      "screenshot": "impressum-de-1280.jpg"
+    },
+    {
+      "h1": "Impressum",
+      "height": 812,
+      "language": "de",
+      "screenshot": "impressum-de-375.jpg",
+      "scrollWidth": 375,
+      "scrollY": 0,
+      "sections": 7,
+      "width": 375
+    },
+    {
+      "h1": "Aviso legal",
+      "height": 812,
+      "language": "es",
+      "screenshot": "impressum-es-375.jpg",
+      "scrollWidth": 375,
+      "scrollY": 0,
+      "sections": 7,
+      "width": 375
+    },
+    {
+      "h1": "Aviso legal",
+      "height": 900,
+      "language": "es",
+      "screenshot": "impressum-es-1280.jpg",
+      "scrollWidth": 1280,
+      "scrollY": 0,
+      "sections": 7,
+      "width": 1280
+    }
+  ],
+  "localeChangedWithoutReload": true,
+  "anchor": {
+    "activeId": "impressum-title-register",
+    "hash": "#register",
+    "headerBottom": -592.5,
+    "selectedLinks": [
+      "#register",
+      "#register"
+    ],
+    "targetTop": 165.2109375
+  },
+  "mobileIndex": {
+    "activeId": "impressum-title-more",
+    "contactLinks": [
+      "mailto:kai@krakenpfm.ch",
+      "tel:+41774505705"
+    ],
+    "hash": "#more",
+    "headingTop": 227.78125,
+    "policyLinks": [
+      "/es/gdpr",
+      "/es/terms"
+    ],
+    "scrollWidth": 375,
+    "tocOpen": false,
+    "width": 375
+  },
+  "uid": {
+    "url": "https://www.uid.admin.ch/Detail.aspx?uid_id=CHE-435.882.969",
+    "title": "UID Version: 4.27.1.0",
+    "uid": "CHE-435.882.969",
+    "company": "Kraken Properties and Facilities Management Gomes Mendes",
+    "recordDisplayed": true
+  },
+  "privacy": {
+    "path": "/es/gdpr",
+    "h1": "Política de privacidad",
+    "insuranceReferenceAbsent": true
+  },
+  "terms": {
+    "h1": "Condiciones generales",
+    "sections": 17,
+    "url": "http://127.0.0.1:3051/es/terms"
+  },
+  "remount": {
+    "pages": 1,
+    "sections": 7,
+    "uniqueIds": 7
+  },
+  "germanAlias": {
+    "h1": "Impressum",
+    "language": "de",
+    "sections": 7,
+    "url": "http://127.0.0.1:3051/impressum"
+  },
+  "smallScreen": {
+    "h1": "Impressum",
+    "scrollWidth": 320,
+    "sections": 7,
+    "transition": "0s",
+    "width": 320
+  },
+  "menuEscape": {
+    "expanded": "false",
+    "focusId": "menuToggle"
+  },
+  "printMedia": {
+    "h1": "Aviso legal",
+    "heroBackground": "none",
+    "hiddenControls": [
+      {
+        "display": "none",
+        "selector": ".site-header"
+      },
+      {
+        "display": "none",
+        "selector": ".kraken-site-footer"
+      },
+      {
+        "display": "none",
+        "selector": ".kai-assistant-launcher"
+      },
+      {
+        "display": "none",
+        "selector": ".ln-breadcrumb"
+      },
+      {
+        "display": "none",
+        "selector": ".ln-quick-links"
+      },
+      {
+        "display": "none",
+        "selector": ".ln-sidebar"
+      },
+      {
+        "display": "none",
+        "selector": ".ln-mobile-toc"
+      },
+      {
+        "display": "none",
+        "selector": ".ln-hero-right"
+      }
+    ],
+    "sections": [
+      {
+        "display": "block",
+        "id": "company"
+      },
+      {
+        "display": "block",
+        "id": "register"
+      },
+      {
+        "display": "block",
+        "id": "contact"
+      },
+      {
+        "display": "block",
+        "id": "liability"
+      },
+      {
+        "display": "block",
+        "id": "links"
+      },
+      {
+        "display": "block",
+        "id": "copyright"
+      },
+      {
+        "display": "block",
+        "id": "more"
+      }
+    ]
+  }
+}

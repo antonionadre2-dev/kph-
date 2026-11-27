@@ -1,0 +1,67 @@
+{
+  "scope": "editable source only; no publication performed by this content task",
+  "impressum": {
+    "sourceSha256": "baef4d9fa28c74ab1cae0827bbc8f27ee6df75f1c8002798fef1e50266393210",
+    "copySha256": "baef4d9fa28c74ab1cae0827bbc8f27ee6df75f1c8002798fef1e50266393210",
+    "identicalBytes": true,
+    "languages": [
+      "de",
+      "en",
+      "es",
+      "fr",
+      "it",
+      "pt"
+    ],
+    "sourceUpdatedAt": "2026-11-27"
+  },
+  "privacy": {
+    "descriptorSha256": "f0ca2b0e0eeba10212d6bf3e08398d83c7434bd81f2c2ce5049e2db226a0829d",
+    "baseRevision": "f9346d1",
+    "beforeSha256": "09e8cb47f8162bc6165f26d1eecf51cd993c7d3ed9a5b280512b2d1732343b10",
+    "afterSha256": "ba06fcf944b452c792c5a581d5a29738fbb8bcc3da92c7bd587cef7222528314",
+    "onlyChangedKey": "liabilityP1",
+    "exactPairs": {
+      "de": {
+        "before": "Kontaktieren Sie Kraken vor der Buchung, wenn Sie Fragen zum Leistungsumfang, zu Abgabebedingungen, zur Versicherung oder zu den Bedingungen Ihrer Anfrage haben.",
+        "after": "Kontaktieren Sie Kraken vor der Buchung, wenn Sie Fragen zum Leistungsumfang, zu Abgabebedingungen oder zu den Bedingungen Ihrer Anfrage haben.",
+        "removedLiteral": ", zur Versicherung",
+        "expectedOccurrences": 1
+      },
+      "en": {
+        "before": "Contact Kraken before booking if you need clarification about the service scope, handover conditions, insurance or the terms that apply to your request.",
+        "after": "Contact Kraken before booking if you need clarification about the service scope, handover conditions or the terms that apply to your request.",
+        "removedLiteral": ", insurance",
+        "expectedOccurrences": 1
+      },
+      "es": {
+        "before": "Contacte con Kraken antes de contratar si necesita aclarar el alcance del servicio, las condiciones de entrega, el seguro o las condiciones aplicables a su solicitud.",
+        "after": "Contacte con Kraken antes de contratar si necesita aclarar el alcance del servicio, las condiciones de entrega o las condiciones aplicables a su solicitud.",
+        "removedLiteral": ", el seguro",
+        "expectedOccurrences": 1
+      },
+      "fr": {
+        "before": "Contactez Kraken avant de réserver pour clarifier les prestations, les conditions de remise, l’assurance ou les conditions applicables à votre demande.",
+        "after": "Contactez Kraken avant de réserver pour clarifier les prestations, les conditions de remise ou les conditions applicables à votre demande.",
+        "removedLiteral": ", l’assurance",
+        "expectedOccurrences": 1
+      },
+      "it": {
+        "before": "Contatti Kraken prima di prenotare per chiarimenti sulle prestazioni, sulle condizioni di consegna, sull’assicurazione o sulle condizioni applicabili alla richiesta.",
+        "after": "Contatti Kraken prima di prenotare per chiarimenti sulle prestazioni, sulle condizioni di consegna o sulle condizioni applicabili alla richiesta.",
+        "removedLiteral": ", sull’assicurazione",
+        "expectedOccurrences": 1
+      },
+      "pt": {
+        "before": "Contacte a Kraken antes de contratar para esclarecer o âmbito do serviço, as condições de entrega, o seguro ou as condições aplicáveis ao pedido.",
+        "after": "Contacte a Kraken antes de contratar para esclarecer o âmbito do serviço, as condições de entrega ou as condições aplicáveis ao pedido.",
+        "removedLiteral": ", o seguro",
+        "expectedOccurrences": 1
+      }
+    }
+  },
+  "tests": {
+    "file": "tests/impressum-source.test.ts",
+    "passed": 4,
+    "failed": 0
+  }
+}

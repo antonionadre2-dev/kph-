@@ -1,0 +1,705 @@
+{
+  "common": {
+    "companyName": "Kraken Properties and Facilities Management Gomes Mendes",
+    "owner": "Antonio Nadre Gomes Mendes",
+    "address": "Seewadelstrasse 3, 8203 Schaffhausen",
+    "uid": "CHE-435.882.969",
+    "uidUrl": "https://www.uid.admin.ch/Detail.aspx?uid_id=CHE-435.882.969",
+    "email": "kai@krakenpfm.ch",
+    "phone": "+41 77 450 57 05",
+    "phoneHref": "tel:+41774505705",
+    "updatedAt": "2026-11-27"
+  },
+  "locales": {
+    "de": {
+      "title": "Impressum",
+      "updatedLabel": "Stand",
+      "date": "27. November 2026",
+      "eyebrow": "Rechtliche Informationen",
+      "lead": "Unternehmensangaben und rechtliche Hinweise.",
+      "nav": {
+        "home": "Startseite",
+        "services": "Leistungen",
+        "about": "Über Kraken",
+        "contact": "Kontakt",
+        "calculator": "Service berechnen",
+        "language": "Sprache",
+        "menu": "Menü",
+        "skip": "Zum Inhalt"
+      },
+      "contents": "Inhalt",
+      "helpTitle": "Fragen zum Impressum?",
+      "helpText": "Sie erreichen uns per E-Mail oder telefonisch.",
+      "sections": [
+        {
+          "id": "company",
+          "title": "Unternehmensangaben",
+          "rows": [
+            {
+              "label": "Firmenname",
+              "value": "Kraken Properties and Facilities Management Gomes Mendes"
+            },
+            {
+              "label": "Rechtsform",
+              "value": "Einzelunternehmen"
+            },
+            {
+              "label": "Inhaber und verantwortlich für den Inhalt",
+              "value": "Antonio Nadre Gomes Mendes"
+            },
+            {
+              "label": "Geschäftsadresse",
+              "value": "Seewadelstrasse 3, 8203 Schaffhausen, Schweiz"
+            }
+          ]
+        },
+        {
+          "id": "register",
+          "title": "Register und MWST",
+          "uidLabel": "UID / Firmennummer",
+          "uidLinkText": "CHE-435.882.969",
+          "paragraphs": [
+            "Eingetragen im Handelsregister des Kantons Schaffhausen.",
+            "Kraken ist nicht mehrwertsteuerpflichtig (Jahresumsatz unter CHF 100'000). Auf Rechnungen wird keine MWST ausgewiesen."
+          ]
+        },
+        {
+          "id": "contact",
+          "title": "Kontakt",
+          "rows": [
+            {
+              "label": "E-Mail",
+              "value": "kai@krakenpfm.ch",
+              "kind": "email"
+            },
+            {
+              "label": "Telefon",
+              "value": "+41 77 450 57 05",
+              "kind": "phone"
+            }
+          ]
+        },
+        {
+          "id": "liability",
+          "title": "Haftung für Inhalte",
+          "paragraphs": [
+            "Wir erstellen und prüfen die Inhalte dieser Website sorgfältig. Trotzdem übernehmen wir keine Gewähr für Richtigkeit, Vollständigkeit und Aktualität. Verbindlich für Preise und Leistungsumfang sind die Auftragsbestätigung und die AGB."
+          ]
+        },
+        {
+          "id": "links",
+          "title": "Links zu anderen Websites",
+          "paragraphs": [
+            "Diese Website enthält Links zu Websites Dritter. Für deren Inhalte sind ausschliesslich die jeweiligen Betreiber verantwortlich."
+          ]
+        },
+        {
+          "id": "copyright",
+          "title": "Urheberrecht und Bilder",
+          "paragraphs": [
+            "Texte, Gestaltung und Bilder dieser Website sind urheberrechtlich geschützt. Eine Verwendung ausserhalb der gesetzlichen Schranken braucht unsere schriftliche Zustimmung. Die Bilder sind Illustrationen und zeigen keine realen Einsätze oder Personen. «Kraken» ist die auf dieser Website verwendete Geschäftsbezeichnung; Namen und Logos Dritter gehören den jeweiligen Inhabern."
+          ]
+        },
+        {
+          "id": "more",
+          "title": "Weitere Informationen",
+          "links": [
+            {
+              "label": "Datenschutz",
+              "path": "/gdpr"
+            },
+            {
+              "label": "AGB",
+              "path": "/terms"
+            }
+          ]
+        }
+      ],
+      "footer": {
+        "legal": "Impressum",
+        "privacy": "Datenschutz",
+        "terms": "AGB",
+        "credit": "Website made by seociety.ch"
+      },
+      "print": "Drucken",
+      "tocToggle": "Abschnitte anzeigen",
+      "openMenu": "Menü öffnen",
+      "closeMenu": "Menü schliessen"
+    },
+    "en": {
+      "title": "Legal notice",
+      "updatedLabel": "Last updated",
+      "date": "27 November 2026",
+      "eyebrow": "Legal information",
+      "lead": "Company details and legal information.",
+      "nav": {
+        "home": "Home",
+        "services": "Services",
+        "about": "About Kraken",
+        "contact": "Contact",
+        "calculator": "Calculate your service",
+        "language": "Language",
+        "menu": "Menu",
+        "skip": "Skip to content"
+      },
+      "contents": "Contents",
+      "helpTitle": "Questions about this legal notice?",
+      "helpText": "You can contact us by email or telephone.",
+      "sections": [
+        {
+          "id": "company",
+          "title": "Company details",
+          "rows": [
+            {
+              "label": "Company name",
+              "value": "Kraken Properties and Facilities Management Gomes Mendes"
+            },
+            {
+              "label": "Legal form",
+              "value": "Sole proprietorship"
+            },
+            {
+              "label": "Owner and person responsible for the content",
+              "value": "Antonio Nadre Gomes Mendes"
+            },
+            {
+              "label": "Business address",
+              "value": "Seewadelstrasse 3, 8203 Schaffhausen, Switzerland"
+            }
+          ]
+        },
+        {
+          "id": "register",
+          "title": "Register and VAT",
+          "uidLabel": "UID / company number",
+          "uidLinkText": "CHE-435.882.969",
+          "paragraphs": [
+            "Registered in the Commercial Register of the Canton of Schaffhausen.",
+            "Kraken is not subject to VAT (annual turnover below CHF 100'000). No VAT is shown on invoices."
+          ]
+        },
+        {
+          "id": "contact",
+          "title": "Contact details",
+          "rows": [
+            {
+              "label": "Email",
+              "value": "kai@krakenpfm.ch",
+              "kind": "email"
+            },
+            {
+              "label": "Telephone",
+              "value": "+41 77 450 57 05",
+              "kind": "phone"
+            }
+          ]
+        },
+        {
+          "id": "liability",
+          "title": "Liability for content",
+          "paragraphs": [
+            "We prepare and review the content of this website carefully. Nevertheless, we do not guarantee its accuracy, completeness or currency. The order confirmation and the general terms and conditions are binding with respect to prices and the scope of services."
+          ]
+        },
+        {
+          "id": "links",
+          "title": "Links to other websites",
+          "paragraphs": [
+            "This website contains links to third-party websites. Their respective operators are solely responsible for their content."
+          ]
+        },
+        {
+          "id": "copyright",
+          "title": "Copyright and images",
+          "paragraphs": [
+            "The text, design and images on this website are protected by copyright. Any use not covered by statutory exceptions requires our written consent. The images are illustrations and do not depict actual service work or real people. «Kraken» is the business name used on this website; third-party names and logos belong to their respective owners."
+          ]
+        },
+        {
+          "id": "more",
+          "title": "Further information",
+          "links": [
+            {
+              "label": "Privacy policy",
+              "path": "/gdpr"
+            },
+            {
+              "label": "General terms and conditions",
+              "path": "/terms"
+            }
+          ]
+        }
+      ],
+      "footer": {
+        "legal": "Legal notice",
+        "privacy": "Privacy policy",
+        "terms": "Terms and conditions",
+        "credit": "Website made by seociety.ch"
+      },
+      "print": "Print",
+      "tocToggle": "Show sections",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "es": {
+      "title": "Aviso legal",
+      "updatedLabel": "Actualizado el",
+      "date": "27 de noviembre de 2026",
+      "eyebrow": "Información legal",
+      "lead": "Datos de la empresa e información legal.",
+      "nav": {
+        "home": "Inicio",
+        "services": "Servicios",
+        "about": "Sobre Kraken",
+        "contact": "Contacto",
+        "calculator": "Calcular mi servicio",
+        "language": "Idioma",
+        "menu": "Menú",
+        "skip": "Ir al contenido"
+      },
+      "contents": "Contenido",
+      "helpTitle": "¿Tienes preguntas sobre el aviso legal?",
+      "helpText": "Puedes contactar con nosotros por correo electrónico o teléfono.",
+      "sections": [
+        {
+          "id": "company",
+          "title": "Datos de la empresa",
+          "rows": [
+            {
+              "label": "Nombre de la empresa",
+              "value": "Kraken Properties and Facilities Management Gomes Mendes"
+            },
+            {
+              "label": "Forma jurídica",
+              "value": "Empresa individual"
+            },
+            {
+              "label": "Titular y responsable del contenido",
+              "value": "Antonio Nadre Gomes Mendes"
+            },
+            {
+              "label": "Dirección comercial",
+              "value": "Seewadelstrasse 3, 8203 Schaffhausen, Suiza"
+            }
+          ]
+        },
+        {
+          "id": "register",
+          "title": "Registro e IVA",
+          "uidLabel": "UID / número de empresa",
+          "uidLinkText": "CHE-435.882.969",
+          "paragraphs": [
+            "Inscrita en el Registro Mercantil del cantón de Schaffhausen.",
+            "Kraken no está sujeta al IVA (facturación anual inferior a CHF 100'000). En las facturas no se indica IVA."
+          ]
+        },
+        {
+          "id": "contact",
+          "title": "Datos de contacto",
+          "rows": [
+            {
+              "label": "Correo electrónico",
+              "value": "kai@krakenpfm.ch",
+              "kind": "email"
+            },
+            {
+              "label": "Teléfono",
+              "value": "+41 77 450 57 05",
+              "kind": "phone"
+            }
+          ]
+        },
+        {
+          "id": "liability",
+          "title": "Responsabilidad por los contenidos",
+          "paragraphs": [
+            "Elaboramos y revisamos cuidadosamente el contenido de este sitio web. No obstante, no garantizamos su exactitud, integridad ni actualidad. La confirmación del pedido y las condiciones generales son vinculantes en cuanto a los precios y al alcance de los servicios."
+          ]
+        },
+        {
+          "id": "links",
+          "title": "Enlaces a otros sitios web",
+          "paragraphs": [
+            "Este sitio web contiene enlaces a sitios web de terceros. Sus respectivos operadores son los únicos responsables de sus contenidos."
+          ]
+        },
+        {
+          "id": "copyright",
+          "title": "Derechos de autor e imágenes",
+          "paragraphs": [
+            "Los textos, el diseño y las imágenes de este sitio web están protegidos por derechos de autor. Cualquier uso que no esté amparado por las excepciones legales requiere nuestro consentimiento por escrito. Las imágenes son ilustraciones y no muestran trabajos ni personas reales. «Kraken» es el nombre comercial utilizado en este sitio web; los nombres y logotipos de terceros pertenecen a sus respectivos titulares."
+          ]
+        },
+        {
+          "id": "more",
+          "title": "Más información",
+          "links": [
+            {
+              "label": "Política de privacidad",
+              "path": "/gdpr"
+            },
+            {
+              "label": "Condiciones generales",
+              "path": "/terms"
+            }
+          ]
+        }
+      ],
+      "footer": {
+        "legal": "Aviso legal",
+        "privacy": "Política de privacidad",
+        "terms": "Condiciones generales",
+        "credit": "Website made by seociety.ch"
+      },
+      "print": "Imprimir",
+      "tocToggle": "Ver secciones",
+      "openMenu": "Abrir menú",
+      "closeMenu": "Cerrar menú"
+    },
+    "fr": {
+      "title": "Mentions légales",
+      "updatedLabel": "Mise à jour",
+      "date": "27 novembre 2026",
+      "eyebrow": "Informations juridiques",
+      "lead": "Informations sur l’entreprise et mentions légales.",
+      "nav": {
+        "home": "Accueil",
+        "services": "Prestations",
+        "about": "À propos de Kraken",
+        "contact": "Contact",
+        "calculator": "Calculer votre prestation",
+        "language": "Langue",
+        "menu": "Menu",
+        "skip": "Aller au contenu"
+      },
+      "contents": "Sommaire",
+      "helpTitle": "Des questions sur les mentions légales ?",
+      "helpText": "Vous pouvez nous contacter par e-mail ou par téléphone.",
+      "sections": [
+        {
+          "id": "company",
+          "title": "Informations sur l’entreprise",
+          "rows": [
+            {
+              "label": "Nom de l’entreprise",
+              "value": "Kraken Properties and Facilities Management Gomes Mendes"
+            },
+            {
+              "label": "Forme juridique",
+              "value": "Entreprise individuelle"
+            },
+            {
+              "label": "Titulaire et responsable du contenu",
+              "value": "Antonio Nadre Gomes Mendes"
+            },
+            {
+              "label": "Adresse professionnelle",
+              "value": "Seewadelstrasse 3, 8203 Schaffhausen, Suisse"
+            }
+          ]
+        },
+        {
+          "id": "register",
+          "title": "Registre et TVA",
+          "uidLabel": "IDE / numéro d’entreprise",
+          "uidLinkText": "CHE-435.882.969",
+          "paragraphs": [
+            "Inscrite au registre du commerce du canton de Schaffhausen.",
+            "Kraken n’est pas assujettie à la TVA (chiffre d’affaires annuel inférieur à CHF 100'000). Aucune TVA n’est indiquée sur les factures."
+          ]
+        },
+        {
+          "id": "contact",
+          "title": "Coordonnées",
+          "rows": [
+            {
+              "label": "E-mail",
+              "value": "kai@krakenpfm.ch",
+              "kind": "email"
+            },
+            {
+              "label": "Téléphone",
+              "value": "+41 77 450 57 05",
+              "kind": "phone"
+            }
+          ]
+        },
+        {
+          "id": "liability",
+          "title": "Responsabilité concernant les contenus",
+          "paragraphs": [
+            "Nous élaborons et vérifions soigneusement les contenus de ce site web. Nous ne garantissons toutefois pas leur exactitude, leur exhaustivité ni leur actualité. La confirmation de commande et les conditions générales font foi pour les prix et l’étendue des prestations."
+          ]
+        },
+        {
+          "id": "links",
+          "title": "Liens vers d’autres sites web",
+          "paragraphs": [
+            "Ce site web contient des liens vers des sites web de tiers. Leurs exploitants respectifs sont seuls responsables de leurs contenus."
+          ]
+        },
+        {
+          "id": "copyright",
+          "title": "Droit d’auteur et images",
+          "paragraphs": [
+            "Les textes, la conception et les images de ce site web sont protégés par le droit d’auteur. Toute utilisation non couverte par les exceptions légales nécessite notre accord écrit. Les images sont des illustrations et ne montrent ni interventions ni personnes réelles. «Kraken» est la dénomination commerciale utilisée sur ce site web ; les noms et logos de tiers appartiennent à leurs titulaires respectifs."
+          ]
+        },
+        {
+          "id": "more",
+          "title": "Informations complémentaires",
+          "links": [
+            {
+              "label": "Politique de confidentialité",
+              "path": "/gdpr"
+            },
+            {
+              "label": "Conditions générales",
+              "path": "/terms"
+            }
+          ]
+        }
+      ],
+      "footer": {
+        "legal": "Mentions légales",
+        "privacy": "Politique de confidentialité",
+        "terms": "Conditions générales",
+        "credit": "Website made by seociety.ch"
+      },
+      "print": "Imprimer",
+      "tocToggle": "Afficher les sections",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu"
+    },
+    "it": {
+      "title": "Note legali",
+      "updatedLabel": "Aggiornato al",
+      "date": "27 novembre 2026",
+      "eyebrow": "Informazioni legali",
+      "lead": "Dati dell’impresa e informazioni legali.",
+      "nav": {
+        "home": "Home",
+        "services": "Servizi",
+        "about": "Su Kraken",
+        "contact": "Contatti",
+        "calculator": "Calcola il tuo servizio",
+        "language": "Lingua",
+        "menu": "Menu",
+        "skip": "Vai al contenuto"
+      },
+      "contents": "Indice",
+      "helpTitle": "Domande sulle note legali?",
+      "helpText": "Puoi contattarci via e-mail o per telefono.",
+      "sections": [
+        {
+          "id": "company",
+          "title": "Dati dell’impresa",
+          "rows": [
+            {
+              "label": "Nome dell’impresa",
+              "value": "Kraken Properties and Facilities Management Gomes Mendes"
+            },
+            {
+              "label": "Forma giuridica",
+              "value": "Ditta individuale"
+            },
+            {
+              "label": "Titolare e responsabile dei contenuti",
+              "value": "Antonio Nadre Gomes Mendes"
+            },
+            {
+              "label": "Indirizzo commerciale",
+              "value": "Seewadelstrasse 3, 8203 Schaffhausen, Svizzera"
+            }
+          ]
+        },
+        {
+          "id": "register",
+          "title": "Registro e IVA",
+          "uidLabel": "IDI / numero d’impresa",
+          "uidLinkText": "IDI CHE-435.882.969",
+          "paragraphs": [
+            "Iscritta nel registro di commercio del cantone di Schaffhausen.",
+            "Kraken non è soggetta all’IVA (fatturato annuo inferiore a CHF 100'000). Sulle fatture non viene indicata l’IVA."
+          ]
+        },
+        {
+          "id": "contact",
+          "title": "Dati di contatto",
+          "rows": [
+            {
+              "label": "E-mail",
+              "value": "kai@krakenpfm.ch",
+              "kind": "email"
+            },
+            {
+              "label": "Telefono",
+              "value": "+41 77 450 57 05",
+              "kind": "phone"
+            }
+          ]
+        },
+        {
+          "id": "liability",
+          "title": "Responsabilità per i contenuti",
+          "paragraphs": [
+            "Creiamo e verifichiamo con cura i contenuti di questo sito web. Tuttavia, non ne garantiamo l’esattezza, la completezza e l’attualità. Per i prezzi e l’entità delle prestazioni fanno fede la conferma d’ordine e le condizioni generali."
+          ]
+        },
+        {
+          "id": "links",
+          "title": "Link ad altri siti web",
+          "paragraphs": [
+            "Questo sito web contiene link a siti web di terzi. I rispettivi gestori sono gli unici responsabili dei loro contenuti."
+          ]
+        },
+        {
+          "id": "copyright",
+          "title": "Diritto d’autore e immagini",
+          "paragraphs": [
+            "I testi, la grafica e le immagini di questo sito web sono protetti dal diritto d’autore. Qualsiasi utilizzo non coperto dalle eccezioni di legge richiede il nostro consenso scritto. Le immagini sono illustrazioni e non mostrano interventi o persone reali. «Kraken» è la denominazione commerciale utilizzata su questo sito web; i nomi e i loghi di terzi appartengono ai rispettivi titolari."
+          ]
+        },
+        {
+          "id": "more",
+          "title": "Ulteriori informazioni",
+          "links": [
+            {
+              "label": "Informativa sulla privacy",
+              "path": "/gdpr"
+            },
+            {
+              "label": "Condizioni generali",
+              "path": "/terms"
+            }
+          ]
+        }
+      ],
+      "footer": {
+        "legal": "Note legali",
+        "privacy": "Informativa sulla privacy",
+        "terms": "Condizioni generali",
+        "credit": "Website made by seociety.ch"
+      },
+      "print": "Stampa",
+      "tocToggle": "Mostra le sezioni",
+      "openMenu": "Apri il menu",
+      "closeMenu": "Chiudi il menu"
+    },
+    "pt": {
+      "title": "Aviso legal",
+      "updatedLabel": "Atualizado em",
+      "date": "27 de novembro de 2026",
+      "eyebrow": "Informações legais",
+      "lead": "Dados da empresa e informações legais.",
+      "nav": {
+        "home": "Início",
+        "services": "Serviços",
+        "about": "Sobre a Kraken",
+        "contact": "Contacto",
+        "calculator": "Calcular o seu serviço",
+        "language": "Idioma",
+        "menu": "Menu",
+        "skip": "Ir para o conteúdo"
+      },
+      "contents": "Índice",
+      "helpTitle": "Tem dúvidas sobre o aviso legal?",
+      "helpText": "Pode contactar-nos por e-mail ou por telefone.",
+      "sections": [
+        {
+          "id": "company",
+          "title": "Dados da empresa",
+          "rows": [
+            {
+              "label": "Nome da empresa",
+              "value": "Kraken Properties and Facilities Management Gomes Mendes"
+            },
+            {
+              "label": "Forma jurídica",
+              "value": "Empresa em nome individual"
+            },
+            {
+              "label": "Titular e responsável pelo conteúdo",
+              "value": "Antonio Nadre Gomes Mendes"
+            },
+            {
+              "label": "Morada comercial",
+              "value": "Seewadelstrasse 3, 8203 Schaffhausen, Suíça"
+            }
+          ]
+        },
+        {
+          "id": "register",
+          "title": "Registo e IVA",
+          "uidLabel": "UID / número da empresa",
+          "uidLinkText": "CHE-435.882.969",
+          "paragraphs": [
+            "Inscrita no registo comercial do cantão de Schaffhausen.",
+            "A Kraken não está sujeita a IVA (volume de negócios anual inferior a CHF 100'000). Não é indicado IVA nas faturas."
+          ]
+        },
+        {
+          "id": "contact",
+          "title": "Informações de contacto",
+          "rows": [
+            {
+              "label": "E-mail",
+              "value": "kai@krakenpfm.ch",
+              "kind": "email"
+            },
+            {
+              "label": "Telefone",
+              "value": "+41 77 450 57 05",
+              "kind": "phone"
+            }
+          ]
+        },
+        {
+          "id": "liability",
+          "title": "Responsabilidade pelos conteúdos",
+          "paragraphs": [
+            "Criamos e verificamos cuidadosamente os conteúdos deste site. No entanto, não garantimos a sua exatidão, integridade ou atualidade. A confirmação da encomenda e as condições gerais são vinculativas quanto aos preços e ao âmbito dos serviços."
+          ]
+        },
+        {
+          "id": "links",
+          "title": "Ligações a outros sites",
+          "paragraphs": [
+            "Este site contém ligações a sites de terceiros. Os respetivos operadores são os únicos responsáveis pelos seus conteúdos."
+          ]
+        },
+        {
+          "id": "copyright",
+          "title": "Direitos de autor e imagens",
+          "paragraphs": [
+            "Os textos, o design e as imagens deste site estão protegidos por direitos de autor. Qualquer utilização não abrangida pelas exceções legais exige o nosso consentimento por escrito. As imagens são ilustrações e não mostram trabalhos ou pessoas reais. «Kraken» é a designação comercial utilizada neste site; os nomes e logótipos de terceiros pertencem aos respetivos titulares."
+          ]
+        },
+        {
+          "id": "more",
+          "title": "Mais informações",
+          "links": [
+            {
+              "label": "Política de privacidade",
+              "path": "/gdpr"
+            },
+            {
+              "label": "Condições gerais",
+              "path": "/terms"
+            }
+          ]
+        }
+      ],
+      "footer": {
+        "legal": "Aviso legal",
+        "privacy": "Política de privacidade",
+        "terms": "Condições gerais",
+        "credit": "Website made by seociety.ch"
+      },
+      "print": "Imprimir",
+      "tocToggle": "Ver secções",
+      "openMenu": "Abrir menu",
+      "closeMenu": "Fechar menu"
+    }
+  }
+}

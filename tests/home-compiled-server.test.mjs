@@ -93,6 +93,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
           ['/services/zurich/end-of-tenancy?hl=fr','/fr/umzugsreinigung/zuerich'],
           ['/reinigung/uster?lang=it','/it/reinigung/region-zuerich'],['/reinigung/neuhausen-am-rheinfall','/reinigung/kanton-schaffhausen'],
           ['/en/about?lang=es','/en/ueber-uns'],['/de/offerte','/offerte'],
+          ['/impressum/es','/es/impressum'],['/impressum/de','/impressum?lang=de'],['/de/impressum','/impressum?lang=de'],['/impressum?lang=fr','/fr/impressum'],
           ['/index.html?lang=de','/?lang=de'],['/about?lang=de','/ueber-uns?lang=de'],['/en/index.html','/en/'],
         ]){const result=await call(source);assert.equal(result.status,301,source);assert.equal(result.headers.location,destination);}
         for(const route of ['/services/zurich/gardening','/reinigung-zurich-property-managers','/commercial','/en/blog/iot-smart-facility-management-schweizer-bueros']){

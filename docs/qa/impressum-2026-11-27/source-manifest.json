@@ -1,0 +1,77 @@
+[
+  {
+    "file": "content/impressum-copy.json",
+    "bytes": 24962,
+    "sha256": "baef4d9fa28c74ab1cae0827bbc8f27ee6df75f1c8002798fef1e50266393210"
+  },
+  {
+    "file": "scripts/build-impressum-page.mjs",
+    "bytes": 12505,
+    "sha256": "6988cf5905ac146bcee57706cd647efe9ef3ce7ec87a0777b2b10229cf7d2b0e"
+  },
+  {
+    "file": "scripts/patch-gdpr-wording.mjs",
+    "bytes": 9760,
+    "sha256": "66b9419dc00a4712f87bc47ebf1a2f4ffb2f1cc21f8e5c37bca514a954dc99a7"
+  },
+  {
+    "file": "integrations/impressum/gdpr-wording-patch.json",
+    "bytes": 3357,
+    "sha256": "f0ca2b0e0eeba10212d6bf3e08398d83c7434bd81f2c2ce5049e2db226a0829d"
+  },
+  {
+    "file": "docs/impressum-codex-handoff.md",
+    "bytes": 7593,
+    "sha256": "f572493b33f366592bdce3a3e1720c6af07b535e8868e5e701a019196bce0995"
+  },
+  {
+    "file": "web/impressum.html",
+    "bytes": 12857,
+    "sha256": "0eedaa9accd67b091ef5179354dd4dff3d1304567b743ccf01e382c91d8e6b28"
+  },
+  {
+    "file": "web/legal-notice/en.html",
+    "bytes": 12853,
+    "sha256": "07e933c879641a288b3ecf770768dfbffc7641902e9159e4960db00ab5dfa905"
+  },
+  {
+    "file": "web/legal-notice/es.html",
+    "bytes": 13147,
+    "sha256": "079f8e547984640036145a8e46ff34fabc5576a91c9fac7116b40fe7e5bbf9db"
+  },
+  {
+    "file": "web/legal-notice/fr.html",
+    "bytes": 13405,
+    "sha256": "e755e1a346bd32da104026ee783d91aac3f7871d4661218403f935acf852135d"
+  },
+  {
+    "file": "web/legal-notice/it.html",
+    "bytes": 13014,
+    "sha256": "23390262fd66d6b26f1f2a76adbff98416d7dc42b5a7f4ca9d3c7ef377dac6df"
+  },
+  {
+    "file": "web/legal-notice/pt.html",
+    "bytes": 13063,
+    "sha256": "b3cc513c96a247030f8646bb2a80581b0f86396ec63d14187b415a25445286bd"
+  },
+  {
+    "file": "web/legal-notice.css",
+    "bytes": 17513,
+    "sha256": "b1b68b21554abe27327069afe6c5b807d20c13c27370b9c496e574b534821e72"
+  },
+  {
+    "file": "web/legal-notice.js",
+    "bytes": 2732,
+    "sha256": "1f49bd1f9a3c7ffb59368333ea43e24b9b8d987b4604f70a8a59b23b11070d91"
+  },
+  {
+    "file": "web/assets/legal-document.svg",
+    "bytes": 1336,
+    "sha256": "feccf9c350b5014750737d5d70aa9c018fea597519b6685af72072983560467a"
+  },
+  {
+    "file": "tests/impressum-page.test.mjs",
+    "bytes": 13675,
+    "sha256": "f81e1413259dcf517c839c0c4fc8a35e1ad4fc70ae852a4bdf1c35d12be7257e"
+  }
+]

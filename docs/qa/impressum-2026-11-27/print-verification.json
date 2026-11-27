@@ -1,0 +1,22 @@
+{
+  "pages": 2,
+  "expectedTextBlocks": 30,
+  "allCanonicalTextPresent": true,
+  "navigationAndControlsAbsent": true,
+  "textSelectable": true,
+  "paperSizes": [
+    [
+      595.91998,
+      841.91998
+    ],
+    [
+      595.91998,
+      841.91998
+    ]
+  ],
+  "visualInspection": {
+    "result": "passed",
+    "pages": 2,
+    "method": "Both rendered page PNGs inspected; no clipping, overlap or missing text."
+  }
+}
