@@ -21,6 +21,16 @@ function walk(directory, prefix = '') {
   });
 }
 
+// A verified local closure replaces Vercel's workspace dependency-directory map.
+// Leaving that map makes the uploader follow an external node_modules symlink.
+function removeMaterializedDependencyMap(directory) {
+  const filename = path.join(directory, '.vc-config.json');
+  const config = JSON.parse(readFileSync(filename, 'utf8'));
+  if (config.filePathMap?.node_modules !== 'node_modules') return;
+  delete config.filePathMap.node_modules;
+  writeFileSync(filename, JSON.stringify(config, null, 2) + '\n');
+}
+
 /** The resulting manifest and every SDK file are local build artifacts only. */
 export function verifyRuntimeClosure(root) {
   root = realpathSync(root);
@@ -101,6 +111,7 @@ export async function materializeVercelRuntime(root, { nftModule, trace, dryRun 
     const existing = verifyRuntimeClosure(root);
     const manifest = JSON.parse(readFileSync(path.join(root, '.vercel/output', manifestName), 'utf8'));
     if (manifest.files.length !== files.size || manifest.files.some(file => files.get(file.path)?.sha256 !== file.sha256)) throw new Error('Existing function dependencies differ; rebuild the generated function before materializing again.');
+    removeMaterializedDependencyMap(directory);
     return { ...result, ...existing };
   }
   for (const file of files.values()) {
@@ -109,7 +120,9 @@ export async function materializeVercelRuntime(root, { nftModule, trace, dryRun 
     copyFileSync(file.source, destination);
   }
   writeFileSync(path.join(root, '.vercel/output', manifestName), JSON.stringify({ version: 1, tracer: '@vercel/nft', maxBytes, bytes, files: [...files.values()].map(({ source, ...file }) => file).sort((a, b) => a.path.localeCompare(b.path)) }, null, 2) + '\n');
-  return { ...result, ...verifyRuntimeClosure(root) };
+  const verified = verifyRuntimeClosure(root);
+  removeMaterializedDependencyMap(directory);
+  return { ...result, ...verified };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

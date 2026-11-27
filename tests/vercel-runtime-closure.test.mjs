@@ -38,6 +38,51 @@ test('runtime closure copies only traced dependencies, never the workspace symli
   } finally { f.destroy(); }
 });
 
+test('verified external dependency closure removes only its redundant upload map on first and repeated packaging', async () => {
+  const f = fixture();
+  try {
+    const filename = path.join(f.directory, '.vc-config.json');
+    const config = {
+      runtime: 'nodejs24.x', handler: 'server.js', environment: { EXAMPLE: 'unchanged' },
+      filePathMap: { 'dist/index.html': 'dist/index.html', 'dist/terms.html': 'dist/terms.html', node_modules: 'node_modules' },
+    };
+    const original = JSON.stringify(config);
+    writeFileSync(filename, original);
+    assert.equal(realpathSync(path.join(f.root, 'node_modules')), f.dependencies);
+    await materializeVercelRuntime(f.root, { trace: f.trace, dryRun: true });
+    assert.equal(readFileSync(filename, 'utf8'), original);
+
+    const result = await materializeVercelRuntime(f.root, { trace: f.trace });
+    assert.equal(result.sha256Verified, 2);
+    const expected = { ...config, filePathMap: { 'dist/index.html': 'dist/index.html', 'dist/terms.html': 'dist/terms.html' } };
+    assert.deepEqual(JSON.parse(readFileSync(filename, 'utf8')), expected);
+    const prepared = readFileSync(filename, 'utf8');
+    await materializeVercelRuntime(f.root, { trace: f.trace });
+    assert.equal(readFileSync(filename, 'utf8'), prepared);
+
+    // Existing prebuilt artifacts can retain the stale map from an older run.
+    writeFileSync(filename, original);
+    await materializeVercelRuntime(f.root, { trace: f.trace });
+    assert.deepEqual(JSON.parse(readFileSync(filename, 'utf8')), expected);
+
+    writeFileSync(filename, original);
+    writeFileSync(path.join(f.directory, 'node_modules/sdk/index.js'), 'changed');
+    await assert.rejects(materializeVercelRuntime(f.root, { trace: f.trace }), /Missing or changed runtime dependency/);
+    assert.equal(readFileSync(filename, 'utf8'), original);
+  } finally { f.destroy(); }
+});
+
+test('runtime closure preserves dependency maps whose source differs from the verified package', async () => {
+  const f = fixture();
+  try {
+    const filename = path.join(f.directory, '.vc-config.json');
+    const config = JSON.stringify({ runtime: 'nodejs24.x', handler: 'server.js', filePathMap: { node_modules: 'vendor/node_modules', 'dist/index.html': 'dist/index.html' } });
+    writeFileSync(filename, config);
+    await materializeVercelRuntime(f.root, { trace: f.trace });
+    assert.equal(readFileSync(filename, 'utf8'), config);
+  } finally { f.destroy(); }
+});
+
 test('runtime closure rejects excess size and symlinks escaping the real dependency tree before copying', async () => {
   const f = fixture();
   try {
