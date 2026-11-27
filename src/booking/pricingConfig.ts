@@ -4,7 +4,7 @@ function immutable<T>(value:T):Readonly<T>{
   return value;
 }
 export const pricingConfig=immutable({
-  version:'kraken-private-2026-11-26-v3',
+  version:'kraken-private-2026-11-27-v4',
   currency:'CHF',
   vat:{registered:false,rate:0.081},
   minimumLabourRateCents:4_000,

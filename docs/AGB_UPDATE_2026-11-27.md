@@ -1,5 +1,7 @@
 # Actualización de condiciones de Kraken PFM
 
+> Actualización posterior: los anticipos y plazos señalados en este informe inicial ya se han alineado para las nuevas reservas. Consulte la [corrección financiera y sus pruebas](PAYMENT_TERMS_ALIGNMENT_2026-11-27.md). Las reservas históricas conservan sus condiciones e importes. La nueva revisión continúa en preview.
+
 27 de noviembre de 2026 · Rama `codex/agb-update-2026-11-27`
 
 **Resultado: implementación preparada para revisión local. No se ha publicado esta versión en producción.** Quedan incompatibilidades concretas entre la nueva cláusula 4 y el funcionamiento financiero existente. Se documentan abajo y no se han corregido alterando importes, tarifas, fórmulas o Payrexx, conforme al alcance autorizado.

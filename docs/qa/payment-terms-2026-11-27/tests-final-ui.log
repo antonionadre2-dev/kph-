@@ -1,0 +1,18 @@
+✔ end-of-tenancy is the first service and is selected by default or the existing end CTA alias (254.552083ms)
+✔ entry recovery stays in a closed disclosure and missing/proof links never mount a new booking form (28.643333ms)
+✔ a reloaded review restores typed form values with legal links in new tabs and consent unchecked (21.447708ms)
+✔ an explicit different service is preserved and an unknown intent is not silently booked as end-of-tenancy (47.510875ms)
+✔ moving renders an honest hourly estimate and minimum-based deposit in all six languages (15.819083ms)
+✔ hourly cleaning shows its minimum-based deposit instead of a fixed-price promise in six languages (38.103583ms)
+✔ fixed move exposes distance, stairs, extras and a request-only from price without assuming a route (32.193541ms)
+✔ combined move restores matching structured cleaning with the discount and unchecked booking consent (37.318875ms)
+✔ end-of-tenancy extra area is a separate capped line and deep cleaning keeps its own minimum (38.327833ms)
+✔ historical inventory-only moving drafts remain personal and never select an hourly tariff on reload (2.200583ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 978.268875

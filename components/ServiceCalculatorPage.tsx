@@ -936,7 +936,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
         {selection.mode === 'fixed' && selection.propertyType === 'apartment' && <EotAreaRule rooms={selection.rooms} language={locale} money={money} />}
         {selection.mode === 'fixed' && selection.propertyType === 'apartment' ? <ul className="kr-calc-included-benefits">
           {['eotBenefitKitchenBath', 'eotBenefitWindowsFloors', 'eotBenefitHandover'].map(key => <li key={key}><CheckCircle2 aria-hidden="true" /><span>{text(key)}</span></li>)}
-        </ul> : <p className="kr-calc-included"><Info aria-hidden="true" />{text(selection.mode === 'hourly' ? 'notice.hourly_no_handover_guarantee' : 'houseHint')}</p>}
+        </ul> : selection.mode === 'fixed' ? <p className="kr-calc-included"><Info aria-hidden="true" />{text('houseHint')}</p> : null}
         {extras(<>
         <div className="kr-calc-fields">
           {number('bathrooms', 'bathrooms', 0, 1, text('bathroomsHint'))}{number('guestWcs')}
@@ -1158,7 +1158,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
             <aside className="kr-calc-summary kr-calc-card" aria-labelledby="kr-calc-summary-title"><h2 id="kr-calc-summary-title">{text('summary')}</h2>
               {choice && <div className="kr-calc-summary-selection"><KrakenServiceIcon name={choice || 'regular'} size={36} /><span>{text(choice)}</span></div>}
               <PriceSummary quote={quote} text={text} language={locale} money={money} hasSelection={Boolean(selection)} />
-              {quote?.service === 'moving' && quote.priceType === 'estimate' && typeof quote.depositBasisCents === 'number' && <p className="kr-calc-deposit-preview">{pricingText('depositMinimum', { percent: depositPercent })}<strong>{pricingText('depositPreview', { amount: money(Math.round(quote.depositBasisCents * depositPercent / 100)) })}</strong></p>}
+              {quote?.priceType === 'estimate' && typeof quote.depositBasisCents === 'number' && <p className="kr-calc-deposit-preview">{pricingText(quote.service === 'moving' ? 'depositMinimum' : 'cleaningDepositMinimum', { percent: depositPercent })}<strong>{pricingText('depositPreview', { amount: money(Math.round(quote.depositBasisCents * depositPercent / 100)) })}</strong></p>}
               <CustomerReviews language={locale} />
               {!preview && config?.paymentReady && <p className="kr-calc-payment-method-note">{frictionText(locale, 'paymentReady')}{quote?.priceType !== 'estimate' && typeof config.depositPercent === 'number' && config.depositPercent > 0 && config.depositPercent <= 100 && <span>{frictionText(locale, 'deposit', { percent: String(config.depositPercent) })}</span>}</p>}
               {CONFIRMATION_WINDOW_COPY[locale] && <p className="kr-calc-request-note">{CONFIRMATION_WINDOW_COPY[locale]}</p>}

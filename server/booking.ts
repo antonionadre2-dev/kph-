@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import type { Request, Response, RequestHandler } from 'express';
 import { calculatePrice, defaultSelection, PRICING_VERSION } from '../src/booking/pricing.ts';
 import { BOOKING_TERMS_VERSION, checkoutTermsMatch } from '../src/booking/terms.ts';
+import { depositPaymentDeadline, usesTermsPaymentDeadline } from '../src/booking/paymentDeadline.ts';
 import {createTermsAcceptance,currentTermsDocuments,termsMetadata} from '../src/legal/terms-registry.ts';
 import { createFirestoreBookingStore, BookingError, digest, type BookingStore } from './booking-store.ts';
 import { createPayrexxAdapter } from './booking-payrexx.ts';
@@ -79,7 +80,8 @@ export function validateBookingRequest(input:any,now=Date.now()) {
 export function createBookingService({store,tokenSecret,origin,mode='unconfigured',payment=null,sendEmail=null,sender='',clock=Date.now,recovery=null,emailCollectionEnabled=false,paymentNotificationsEnabled=false}: {store:BookingStore;tokenSecret:string;origin:string;mode?:string;payment?:any;sendEmail?:any;sender?:string;clock?:()=>number;recovery?:any;emailCollectionEnabled?:boolean;paymentNotificationsEnabled?:boolean}) {
   const token=(id:string)=>crypto.createHmac('sha256',tokenSecret).update(`booking:${id}`).digest('base64url');
   let recoveryService=recovery;
-  const canCheckout=(record:any)=>Boolean(payment && ['confirmed','held'].includes(record.scheduling.status) && Date.parse(record.scheduling.holdExpiresAt)>clock() && record.quote.totalCents>0 && !record.quote.manualReviewReasons.length && !['paid','test_paid','refunded','partially_refunded','chargeback','disputed','reconciliation_required'].includes(record.payment.status) && !['cancelled','expired','completed'].includes(record.status));
+  const checkoutDeadline=(record:any)=>Math.min(Date.parse(record.scheduling.holdExpiresAt),usesTermsPaymentDeadline(record)?Date.parse(record.payment.depositDueAt):Infinity);
+  const canCheckout=(record:any)=>Boolean(payment && ['confirmed','held'].includes(record.scheduling.status) && checkoutDeadline(record)>clock() && record.quote.totalCents>0 && !record.quote.manualReviewReasons.length && !['paid','test_paid','refunded','partially_refunded','chargeback','disputed','reconciliation_required'].includes(record.payment.status) && !['cancelled','expired','completed'].includes(record.status));
   const view=(record:any,includeToken=false)=>({bookingId:record.bookingId,reference:record.reference,...(includeToken?{publicToken:token(record.bookingId)}:{}),status:record.status,language:record.language,languageSnapshot:record.languageSnapshot,quote:record.quote,quoteRevision:record.quoteRevision,canCheckout:canCheckout(record),customer:record.customer,notes:record.notes,scopeNotes:record.scopeNotes,termsVersion:record.termsVersion,termsAcceptance:record.termsAcceptance,confirmedAt:record.confirmedAt,selection:record.selection,scheduling:record.scheduling,payment:record.payment,email:record.email});
   async function authenticated(id:string,access:string) {if(!safeId.test(id)||!timingEqual(access,token(id)))throw new BookingError('BOOKING_NOT_FOUND',404);const record=await store.get(id);if(!record || record.tokenRevoked)throw new BookingError('BOOKING_NOT_FOUND',404);return record;}
   function mailJob(record:any,kind:string,templateId:string,eventId:string,id?:string,extra:any={}) {
@@ -150,33 +152,46 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         // A timed-out/unknown POST must be reconciled by an operator, never retried into a second charge.
         if(current.checkout && ['creating','unknown'].includes(current.checkout.status))throw new BookingError('PAYMENT_RECONCILIATION_REQUIRED',409);
         if(current.checkout?.expiresAt<=clock())throw new BookingError('CHECKOUT_EXPIRED',409);
-        const expiresAt=Math.min(Date.parse(current.scheduling.holdExpiresAt),clock()+30*60000);
+        // Current terms provide one gateway for the entire remaining payment window.
+        // Reusing that gateway avoids manufacturing another potentially payable attempt.
+        const expiresAt=Math.min(checkoutDeadline(current),usesTermsPaymentDeadline(current)?Infinity:clock()+30*60000);
+        if(expiresAt-clock()<60000)throw new BookingError('CHECKOUT_NOT_AVAILABLE',409);
         return {...current,checkout:{status:'creating',reference:`${id}-r${current.quoteRevision}`,expiresAt,createdAt:clock()},revision:current.revision+1};
       });
       if(claimed.checkout.link)return {link:claimed.checkout.link};
       try {
-        const gateway=await payment.create(claimed,token(id),Math.max(1,Math.floor((claimed.checkout.expiresAt-clock())/60000)),presentationLanguage);
-        await store.mutateWithMail(id,current=>({...current,checkout:{...current.checkout,gatewayId:gateway.id,link:gateway.link,status:'created'},payment:{...current.payment,status:'pending',checkoutExpiresAt:new Date(current.checkout.expiresAt).toISOString()}}),record=>emailCollectionEnabled?mailJob(record,'notification','payment_requested',`${id}:gateway:${gateway.id}`):null);
+        const validity=Math.floor((claimed.checkout.expiresAt-clock())/60000);
+        if(validity<1)throw new BookingError('CHECKOUT_NOT_AVAILABLE',409);
+        const gateway=await payment.create(claimed,token(id),validity,presentationLanguage);
+        const saved=await store.mutateWithMail(id,current=>{
+          if(current.checkout?.reference!==claimed.checkout.reference||current.checkout.createdAt!==claimed.checkout.createdAt)throw new BookingError('PAYMENT_MISMATCH',409);
+          const payable=canCheckout(current);
+          return {...current,checkout:{...current.checkout,gatewayId:gateway.id,link:gateway.link,status:payable?'created':'review_required'},payment:{...current.payment,status:payable?'pending':'reconciliation_required',checkoutExpiresAt:new Date(current.checkout.expiresAt).toISOString()}};
+        },record=>emailCollectionEnabled&&record.checkout.status==='created'?mailJob(record,'notification','payment_requested',`${id}:gateway:${gateway.id}`):null);
+        if(saved.checkout.status!=='created')throw new BookingError('PAYMENT_RECONCILIATION_REQUIRED',409);
         if(emailCollectionEnabled)try{await service.runDue({jobId:`${id}:payment_requested:${digest(`${id}:gateway:${gateway.id}`).slice(0,24)}`,limit:1});}catch{console.warn('[booking:email-dispatch]',{phase:'payment-request'});}
         return {link:gateway.link};
       } catch {
-        await store.mutate(id,current=>({...current,checkout:{...current.checkout,status:'unknown'}}));
+        await store.mutate(id,current=>current.checkout?.reference===claimed.checkout.reference&&current.checkout.createdAt===claimed.checkout.createdAt&&current.checkout.status==='creating'?{...current,checkout:{...current.checkout,status:'unknown'}}:current);
         throw new BookingError('PAYMENT_RECONCILIATION_REQUIRED',503);
       }
     },
     async reconcile(id:string,{scheduleEmails}:{scheduleEmails?:PaymentEmailScheduler}={}) {
       const current=await store.get(id);if(!current?.checkout?.gatewayId || !payment)throw new BookingError('PAYMENT_NOT_STARTED',409);
       let verified:any;
-      try {verified=await payment.verify(current);}catch(cause){if(cause instanceof BookingError && cause.status===409)await store.mutate(id,record=>({...record,payment:{...record.payment,status:'reconciliation_required'},revision:record.revision+1}));throw cause;}
+      try {verified=await payment.verify(current);}catch(cause){if(cause instanceof BookingError && cause.status===409)await store.mutate(id,record=>record.checkout?.reference===current.checkout.reference&&record.checkout?.gatewayId===current.checkout.gatewayId?{...record,payment:{...record.payment,status:'reconciliation_required'},revision:record.revision+1}:record);throw cause;}
       const next=await store.mutateWithMail(id,record=>{
-        if(record.checkout.reference!==current.checkout.reference)throw new BookingError('PAYMENT_MISMATCH',409);
+        if(record.checkout.reference!==current.checkout.reference||record.checkout.gatewayId!==current.checkout.gatewayId)throw new BookingError('PAYMENT_MISMATCH',409);
         // A stale waiting notification cannot undo a completed payment.
         const previous=record.payment.status;
         const terminal=['refunded','partially_refunded','chargeback','disputed','reconciliation_required'];
-        const status=(terminal.includes(previous)&&!terminal.includes(verified.status))||(['paid','test_paid'].includes(previous)&&['pending','failed','cancelled','expired'].includes(verified.status))?previous:verified.status;
+        const lateSettlement=['paid','test_paid'].includes(verified.status)&&!['paid','test_paid','refunded','partially_refunded','chargeback','disputed'].includes(previous)&&(['cancelled','expired'].includes(record.status)||['cancelled','needs_reschedule'].includes(record.scheduling.status));
+        const staleResult=(terminal.includes(previous)&&!terminal.includes(verified.status))||(['paid','test_paid'].includes(previous)&&['pending','failed','cancelled','expired'].includes(verified.status));
+        const status=lateSettlement?'reconciliation_required':staleResult?previous:verified.status;
         const paid=['paid','test_paid'].includes(status);
-        const amount=paid?record.payment.amountDueNowCents:record.payment.amountPaidCents;
-        return {...record,lastVerifiedAt:clock(),revision:record.payment.status===status?record.revision:record.revision+1,payment:{...record.payment,status,transactionId:verified.transactionId,amountPaidCents:amount,remainingBalanceCents:Math.max(0,(record.quote.totalCents||0)-amount)},...(paid?{scheduling:{...record.scheduling,status:'confirmed'},email:{...record.email,...(!emailCollectionEnabled||paymentNotificationsEnabled?{receipt:record.email.receipt||'queued'}:{})}}:{})};
+        const reviewedSettlement=status==='reconciliation_required'&&['paid','test_paid'].includes(verified.status);
+        const amount=paid||reviewedSettlement?record.payment.amountDueNowCents:record.payment.amountPaidCents;
+        return {...record,lastVerifiedAt:clock(),revision:record.payment.status===status?record.revision:record.revision+1,payment:{...record.payment,status,transactionId:staleResult&&!reviewedSettlement?record.payment.transactionId:verified.transactionId,amountPaidCents:amount,remainingBalanceCents:Math.max(0,(record.quote.totalCents||0)-amount),...(reviewedSettlement?{verifiedPaymentStatus:verified.status,settlementNeedsReview:true}:{})},...(paid?{scheduling:{...record.scheduling,status:'confirmed'},email:{...record.email,...(!emailCollectionEnabled||paymentNotificationsEnabled?{receipt:record.email.receipt||'queued'}:{})}}:{})};
       },record=>{
         if(['paid','test_paid'].includes(record.payment.status)){
           const jobs=(!emailCollectionEnabled||paymentNotificationsEnabled)?[mailJob(record,'receipt',record.payment.remainingBalanceCents>0?'deposit_received':'payment_received',`${id}:settled:${record.checkout.reference}`,`${id}:receipt:${record.checkout.reference}`)]:[];
@@ -221,14 +236,17 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       return next;
     },
     /** Server-only operation. Invoke after an authorized person actually checks availability. */
-    async confirmAppointment(id:string,{holdExpiresAt,operatorId,expectedRevision,notifyPaymentReady=false}:{holdExpiresAt:string;operatorId:string;expectedRevision?:number;notifyPaymentReady?:boolean}) {
-      if(!operatorId || !Number.isFinite(Date.parse(holdExpiresAt)) || Date.parse(holdExpiresAt)<=clock() || Date.parse(holdExpiresAt)>clock()+7*86400000)throw new BookingError('INVALID_HOLD');
+    async confirmAppointment(id:string,{holdExpiresAt,operatorId,expectedRevision,notifyPaymentReady=false}:{holdExpiresAt?:string;operatorId:string;expectedRevision?:number;notifyPaymentReady?:boolean}) {
+      if(!operatorId || (holdExpiresAt!==undefined&&(!Number.isFinite(Date.parse(holdExpiresAt)) || Date.parse(holdExpiresAt)<=clock() || Date.parse(holdExpiresAt)>clock()+7*86400000)))throw new BookingError('INVALID_HOLD');
       return store.mutateWithMail(id,record=>{
         if(expectedRevision!==undefined&&record.revision!==expectedRevision)throw new BookingError('BOOKING_CHANGED',409);
-        validateAppointment(record.scheduling.date,record.scheduling.time,clock());
+        const confirmedAt=clock(),start=validateAppointment(record.scheduling.date,record.scheduling.time,confirmedAt);
         if(['cancelled','expired','completed'].includes(record.status)||record.quote.totalCents===null||record.quote.manualReviewReasons.length)throw new BookingError('MANUAL_REVIEW_REQUIRED',409);
         if(record.checkout)throw new BookingError('CHECKOUT_ALREADY_STARTED',409);
-        return {...record,status:'confirmed',mode,confirmedAt:clock(),confirmedBy:operatorId,revision:record.revision+1,...(notifyPaymentReady?{email:{...record.email,payment_ready:'queued'}}:{}),scheduling:{...record.scheduling,status:'held',holdExpiresAt}};
+        const currentTerms=usesTermsPaymentDeadline(record);
+        if(!currentTerms&&holdExpiresAt===undefined)throw new BookingError('INVALID_HOLD');
+        const deadline=currentTerms?new Date(depositPaymentDeadline(confirmedAt,start)).toISOString():holdExpiresAt!;
+        return {...record,status:'confirmed',mode,confirmedAt,confirmedBy:operatorId,revision:record.revision+1,...(currentTerms?{payment:{...record.payment,depositDueAt:deadline}}:{}),...(notifyPaymentReady?{email:{...record.email,payment_ready:'queued'}}:{}),scheduling:{...record.scheduling,status:'held',holdExpiresAt:deadline}};
       },record=>notifyPaymentReady?mailJob(record,'payment_ready','payment_requested',`${id}:availability:${record.revision}`,`${id}:payment-ready:${record.revision}`):null);
     },
     /** Private commercial approval; the customer must accept the resulting revision in checkout. */

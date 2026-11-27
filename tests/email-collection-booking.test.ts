@@ -202,7 +202,8 @@ test('German first visit followed by a Spanish choice survives checkout locale, 
   assert.equal(receipt[0].status, 'sent');
   assert.equal(receipt[0].prepared.language, 'es');
   assert.match(receipt[0].prepared.subject, /Anticipo recibido/);
-  assert.ok(receipt[0].prepared.text.includes('Importe pendiente'));
+  assert.ok(receipt[0].prepared.text.includes('Saldo orientativo pendiente'));
+  assert.equal(receipt[0].notification.renderData.pricing.priceType, 'estimate');
   assert.ok(receipt[0].prepared.text.includes('lang=es'));
   assert.ok(f.sent.every(message => message.language === 'es'));
   const record = await f.store.get(booking.bookingId);

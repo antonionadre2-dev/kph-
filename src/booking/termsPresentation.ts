@@ -100,8 +100,10 @@ export function bookingTermsPresentation(language: string, { selection, booking 
     }
     if (Number.isSafeInteger(booking.payment?.amountDueNowCents) && booking.payment.amountDueNowCents > 0) presentation.rows.push({ label: text('depositAmount'), value: new Intl.NumberFormat(formatLocale[locale], { style: 'currency', currency: 'CHF' }).format(booking.payment.amountDueNowCents / 100) });
     const confirmedAt = validTimestamp(booking.confirmedAt);
+    const recordedDeadline = validTimestamp(booking.payment?.depositDueAt);
     const regular = storedSelection?.service === 'regular' && storedSelection.cleaningKind !== 'deep' && storedSelection.frequency !== 'once';
-    if (!paid && regular) presentation.rows.push({ label: text('depositDue'), value: text('regularSchedule') });
+    if (!paid && confirmed && recordedDeadline !== null) presentation.rows.push({ label: text('depositDue'), value: new Intl.DateTimeFormat(formatLocale[locale], { timeZone: 'Europe/Zurich', dateStyle: 'long', timeStyle: 'short' }).format(recordedDeadline) + ` · Europe/Zurich · ${text('beforeStart')}` });
+    else if (!paid && regular) presentation.rows.push({ label: text('depositDue'), value: text('regularSchedule') });
     else if (!paid && confirmed && confirmedAt !== null) {
       const limit = plusCalendarDays(zurichDate(confirmedAt), 3);
       const start = booking.scheduling?.date;
