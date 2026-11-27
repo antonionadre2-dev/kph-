@@ -20,7 +20,7 @@ test('public contact requests keep address data out of URLs and preserve abort/l
   assert.deepEqual(calls.map(call=>call.path),['/api/contact/config','/api/contact/geocode','/api/contact/route']);
   assert.deepEqual(JSON.parse(String(calls[1].init.body)),{query:candidate.label,language:'es'});
   assert.deepEqual(JSON.parse(String(calls[2].init.body)),{coordinates:candidate.coordinates,direction:'inbound'});
-  for(const call of calls){assert.equal(call.init.signal,signal);assert.equal(call.init.cache,'no-store');assert.equal(call.init.credentials,'same-origin');assert.ok(!('Authorization' in (call.init.headers as object)));}
+  for(const call of calls){assert.equal(call.init.signal,signal);assert.equal(call.init.cache,'no-store');assert.equal(call.init.credentials,'same-origin');assert.equal(call.init.referrerPolicy,'strict-origin');assert.ok(!('Authorization' in (call.init.headers as object)));}
 });
 
 test('a missing provider, failed service or malformed route never returns fabricated metrics',async context=>{

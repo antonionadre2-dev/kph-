@@ -16,7 +16,7 @@ export default function CalculatorPostcodeCheck({ value, onChange, language, err
     const timeout = window.setTimeout(() => controller.abort(), 10_000);
     setState('loading'); setPlace('');
     try {
-      const response = await fetch('/api/contact/geocode', { method: 'POST', credentials: 'same-origin', signal: controller.signal, headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ query: value, language }) });
+      const response = await fetch('/api/contact/geocode', { method: 'POST', credentials: 'same-origin', referrerPolicy: 'strict-origin', signal: controller.signal, headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ query: value, language }) });
       if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw Error('Unavailable');
       const data = await response.json();
       if (request.current !== controller || controller.signal.aborted) return;

@@ -6,11 +6,11 @@ export function createOperatorClient({uid,currentUser,fetcher=fetch}:{uid:string
     const token=await person.getIdToken();
     if(signal?.aborted||currentUser()?.uid!==uid)throw new Error('UNAUTHORIZED');
     if(body!==undefined){
-      const config=await fetcher('/api/booking/config',{credentials:'same-origin',cache:'no-store',signal});
+      const config=await fetcher('/api/booking/config',{credentials:'same-origin',referrerPolicy:'strict-origin',cache:'no-store',signal});
       if(!config.ok)throw new Error('BOOKING_OPERATOR_UNAVAILABLE');
     }
     if(signal?.aborted||currentUser()?.uid!==uid)throw new Error('UNAUTHORIZED');
-    const response=await fetcher(path,{method:body===undefined?'GET':'POST',credentials:'same-origin',cache:'no-store',signal,
+    const response=await fetcher(path,{method:body===undefined?'GET':'POST',credentials:'same-origin',referrerPolicy:'strict-origin',cache:'no-store',signal,
       headers:{Authorization:`Bearer ${token}`,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})});
     const result=await response.json().catch(()=>null);
     if(signal?.aborted||currentUser()?.uid!==uid)throw new Error('UNAUTHORIZED');

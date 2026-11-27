@@ -128,7 +128,15 @@ test('client sends only Firebase authorization and body-only reference, and disc
  let current:any={uid:'operator-one',getIdToken:async()=>'synthetic.id.token'},release!:()=>void;
  const calls:any[]=[];const client=createOperatorClient({uid:'operator-one',currentUser:()=>current,fetcher:async(url:any,options:any)=>{calls.push({url,options});if(url==='/api/booking/config')return Response.json({});await new Promise<void>(resolve=>{release=resolve;});return Response.json({bookings:[]});}});
  const pending=client(base+'/search',{reference:'K-2026-XXXXXXXX'});await new Promise(resolve=>setImmediate(resolve));assert.equal(calls[0].url,'/api/booking/config');assert.equal(calls[1].url,base+'/search');assert.equal(calls[1].options.method,'POST');assert.equal(calls[1].options.headers.Authorization,'Bearer synthetic.id.token');assert.equal(calls[1].options.body,'{"reference":"K-2026-XXXXXXXX"}');assert.equal(calls[1].options.cache,'no-store');
+ for(const call of calls){assert.equal(call.options.referrerPolicy,'strict-origin');assert.equal(call.options.credentials,'same-origin');}
  current={uid:'operator-two'};release();await assert.rejects(pending,{message:'UNAUTHORIZED'});
+});
+test('operator list reads use an origin-only referrer without creating a capture preflight',async()=>{
+ const calls:any[]=[];const person={uid:'operator-one',getIdToken:async()=>'synthetic.id.token'};
+ const client=createOperatorClient({uid:person.uid,currentUser:()=>person,fetcher:async(url:any,options:any)=>{calls.push({url,options});return Response.json({bookings:[]});}});
+ assert.deepEqual(await client(base),{bookings:[]});assert.equal(calls.length,1);assert.equal(calls[0].url,base);
+ assert.equal(calls[0].options.method,'GET');assert.equal(calls[0].options.referrerPolicy,'strict-origin');assert.equal(calls[0].options.credentials,'same-origin');
+ assert.equal(calls[0].options.headers.Authorization,'Bearer synthetic.id.token');assert.equal(calls[0].options.body,undefined);
 });
 test('anonymous access pins before any lookup and acknowledges before provider; unsupported schedulers never look up a recipient',async()=>{
  for(const schedule of [undefined,()=>false,()=>{throw Error('No host lifecycle');}]){let reads=0,sends=0;await assert.rejects(pinnedAccessRequest({schedule,request:async()=>{reads++;return{};},dispatch:async()=>{sends++;}}),{code:'ACCESS_EMAIL_DISPATCH_UNAVAILABLE'});assert.equal(reads,0);assert.equal(sends,0);}
