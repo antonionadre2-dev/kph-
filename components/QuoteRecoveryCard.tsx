@@ -216,7 +216,7 @@ export default function QuoteRecoveryCard({ preview, language, selection, select
     setSaveState('saving');
     try {
       const response = await fetch('/api/recovery/drafts', {
-        method: 'POST', credentials: 'same-origin', signal: controller.signal,
+        method: 'POST', credentials: 'same-origin', referrerPolicy: 'strict-origin', signal: controller.signal,
         headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'Idempotency-Key': idempotencyKey },
         body: JSON.stringify({ ...payload, idempotencyKey }),
       });

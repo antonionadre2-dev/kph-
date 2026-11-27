@@ -210,7 +210,7 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
     request.current = controller;
     const timeout = window.setTimeout(() => controller.abort(), 14000);
     try {
-      const response = await fetch('/api/kai/assist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal,
+      const response = await fetch('/api/kai/assist', { method: 'POST', referrerPolicy: 'strict-origin', headers: { 'Content-Type': 'application/json' }, signal: controller.signal,
         body: JSON.stringify({ message, messages: history.slice(-20), draft, language: chatLocale }) });
       if (!response.ok) throw new Error('Assistant unavailable');
       const data = await response.json() as KaiAssistantResponse;

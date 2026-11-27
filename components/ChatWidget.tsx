@@ -292,6 +292,7 @@ const ChatWidget: React.FC = () => {
 
         const response = await fetch("/api/chat", {
             method: "POST",
+            referrerPolicy: "strict-origin",
             headers: {
                 "Content-Type": "application/json"
             },
