@@ -10,6 +10,7 @@ import { publicPriceText } from '../booking/publicPricingCopy.ts';
 import { getHomeFaqs, getServicePageFaqs } from './page-faqs.ts';
 import { getRegionalPageMetadata } from './regional-metadata.ts';
 import { getContactCopy } from '../contact/contact-copy.ts';
+import { getTermsUiCopy } from '../legal/terms-tools.ts';
 
 export { normalizeCanonicalPath } from '../../seoConfig.ts';
 
@@ -56,6 +57,11 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
   let baseMeta = getMetadataForPath(url.pathname + url.search, locale);
   const canonicalPath = normalizeCanonicalPath(url.pathname);
   const legacyPath = toLegacyPath(canonicalPath);
+  if (canonicalPath === '/terms') {
+    const termsCopy = getTermsUiCopy(locale);
+    baseMeta = { ...baseMeta, title: termsCopy.seoTitle, description: termsCopy.seoDescription,
+      h1: termsCopy.seoTitle.replace(/ \| Kraken PFM$/, ''), bodyText: termsCopy.seoDescription };
+  }
   const endOfTenancyMatch = /^\/services\/(schaffhausen|zurich|winterthur)\/end-of-tenancy$/.exec(legacyPath);
   const endOfTenancy = endOfTenancyMatch ? getEndOfTenancyMetadata(endOfTenancyMatch[1], locale) : null;
   if (endOfTenancy) baseMeta = { ...baseMeta, title: endOfTenancy.title, description: endOfTenancy.description, h1: endOfTenancy.h1, bodyText: endOfTenancy.description };

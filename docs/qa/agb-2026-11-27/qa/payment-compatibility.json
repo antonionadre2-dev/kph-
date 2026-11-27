@@ -1,0 +1,84 @@
+{
+  "scope": "Read-only comparison; financial engine and provider logic unchanged",
+  "pricingVersion": "kraken-private-2026-11-26-v3",
+  "examples": [
+    {
+      "selection": {
+        "service": "regular",
+        "cleaningKind": "regular",
+        "frequency": "weekly",
+        "hours": 4,
+        "materials": false,
+        "oven": false,
+        "fridge": false,
+        "ironingHours": 0
+      },
+      "totalCents": 16000,
+      "currentDepositBasisCents": 16000,
+      "currentDepositCents": 2400,
+      "newClause4MinimumCents": 10000,
+      "newClause4DepositCents": 1500
+    },
+    {
+      "selection": {
+        "service": "endOfTenancy",
+        "mode": "hourly",
+        "propertyType": "apartment",
+        "rooms": 2.5,
+        "areaM2": 65,
+        "hours": 4,
+        "bathrooms": 1,
+        "guestWcs": 0,
+        "slatBlinds": 0,
+        "rollerShutters": 0,
+        "smallBalconies": 0,
+        "largeBalconies": 0,
+        "storageRooms": 0,
+        "garages": 0,
+        "carpetRooms": 0,
+        "heavySoiling": false
+      },
+      "totalCents": 18000,
+      "currentDepositBasisCents": 18000,
+      "currentDepositCents": 2700,
+      "newClause4MinimumCents": 13500,
+      "newClause4DepositCents": 2025
+    },
+    {
+      "selection": {
+        "service": "construction",
+        "mode": "hourly",
+        "level": "light",
+        "areaM2": 50,
+        "hours": 5,
+        "cementM2": 0,
+        "filmWindows": 0,
+        "slatBlinds": 0,
+        "extraArea": false
+      },
+      "totalCents": 24000,
+      "currentDepositBasisCents": 24000,
+      "currentDepositCents": 3600,
+      "newClause4MinimumCents": 19200,
+      "newClause4DepositCents": 2880
+    }
+  ],
+  "appointmentHold": {
+    "defaultMinutes": 120,
+    "optionsMinutes": [
+      30,
+      120,
+      1440,
+      10080
+    ],
+    "clause4Days": 3
+  },
+  "checkout": {
+    "validityMinutes": 30,
+    "expiredCheckout": "CHECKOUT_EXPIRED; existing workflow requires operator intervention"
+  },
+  "productionPublished": false,
+  "realBookingsCreated": 0,
+  "paymentsCreated": 0,
+  "realCustomerEmailsSent": 0
+}

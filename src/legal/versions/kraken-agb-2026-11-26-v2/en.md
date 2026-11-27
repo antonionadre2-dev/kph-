@@ -1,0 +1,198 @@
+# General Terms and Conditions (GTC)
+
+Effective date: 26 November 2026
+
+## 1. Contracting party and scope
+
+1.1 The contracting party is Kraken Properties and Facilities Management Gomes Mendes, a sole proprietorship owned by Antonio Nadre Gomes Mendes, Seewadelstrasse 3, 8203 Schaffhausen, UID CHE-435.882.969 (hereinafter “Kraken”).
+
+1.2 These GTC apply to window cleaning, end-of-tenancy cleaning, regular cleaning, deep cleaning, post-construction cleaning and small moves for private households in the Zurich, Schaffhausen and Winterthur regions.
+
+1.3 The version published on the website at the time of your booking applies. Deviations apply only if Kraken has confirmed them in writing; email is sufficient.
+
+1.4 The German version prevails. Translations are provided for understanding only.
+
+## 2. Quotation, booking and formation of the contract
+
+2.1 The online calculator shows the price based on your information and the services selected. An enquiry or a preferred appointment is not yet a booking.
+
+2.2 The contract is formed once Kraken confirms the appointment, scope of services and price in writing (order confirmation).
+
+2.3 The scope of services is defined by the order confirmation. Work not listed there is not part of the order.
+
+2.4 For moves with a “from” price, houses, apartments with more than 5.5 rooms, and pianos, safes or furniture lifts, Kraken prepares a personal quotation based on photographs or a site visit. No payment is due until the price is confirmed.
+
+## 3. Prices
+
+3.1 All prices are in Swiss francs (CHF). Kraken is not subject to VAT (annual turnover below CHF 100'000). No VAT is charged or shown separately; the prices displayed are final prices.
+
+3.2 Fixed prices apply to the confirmed scope and your information about the number of rooms, floor area, condition, access and goods to be moved. Selected extras are itemised in the total price.
+
+3.3 If the circumstances on site differ materially from your information, for example because of a larger floor area, heavy soiling, items left behind, additional goods to be moved or a missing lift, Kraken informs you before work begins and states the adjusted price. You decide whether Kraken works at the adjusted price or performs only the originally agreed scope. If the order is not carried out for this reason, you owe 50 % of the agreed price.
+
+3.4 For work charged by time spent (hourly cleaning, moves charged by time spent), the calculator shows an indicative price. The actual working time is charged, subject to the minimum duration stated in the calculator, and thereafter in increments of 15 minutes.
+
+3.5 For cleaning and fixed-price moves, normal travel to the site is included in the price. For moves charged by time spent, the travel charge is shown separately. Parking charges and permits for stopping or parking spaces are at your expense unless otherwise agreed.
+
+3.6 The combined discount for a move and end-of-tenancy cleaning applies only if both services are carried out.
+
+## 4. Deposit and payment
+
+4.1 Following the order confirmation, a deposit of 15 % of the confirmed price is due; for work charged by time spent, it is 15 % of the minimum order including travel. The deposit must be paid online through Payrexx within 3 days of confirmation, and no later than before work begins. If it is not received in time, Kraken may release the appointment after a reminder.
+
+4.2 Kraken issues the invoice after the work has been carried out. The balance is payable within 7 days of the invoice date, through Payrexx, by bank transfer or QR-bill. For regular cleaning, the payment dates in the order confirmation apply.
+
+4.3 If payment is late, you owe default interest of 5 % per year. The first reminder is free; the second reminder costs CHF 20 and the third CHF 50. Necessary debt collection costs are at your expense.
+
+4.4 In the event of a justified defect complaint, you may withhold only the part of the price attributable to the service complained of.
+
+## 5. Appointments
+
+5.1 Confirmed appointments are binding. If arrival is delayed by more than 30 minutes, Kraken informs you promptly.
+
+5.2 If Kraken has to cancel an appointment for an important reason, such as illness, an accident or vehicle failure, Kraken offers you the earliest possible replacement appointment. If that is unsuitable, you may withdraw free of charge and receive a full refund of the deposit. Further claims exist only in cases of intent or gross negligence.
+
+## 6. Your cooperation
+
+6.1 At the agreed time, you provide unobstructed access, electricity, running hot water, heating and, where stated, a usable lift.
+
+6.2 For end-of-tenancy cleaning, the apartment must be cleared, booked ancillary rooms accessible, and refrigerators and freezers defrosted. You must report any items being left behind in advance.
+
+6.3 The order confirmation states which cleaning products and equipment Kraken brings. For regular cleaning and deep cleaning, you provide cleaning products and equipment unless you have booked “Kraken materials”.
+
+6.4 Before the order, you report sensitive surfaces, special materials, existing damage and requirements imposed by your property management.
+
+6.5 Before the visit, you store cash, jewellery and other valuables securely.
+
+6.6 Kraken stores handed-over keys securely and without an address label, and returns them as agreed.
+
+6.7 If access is not possible at the agreed time, Kraken waits for 15 minutes free of charge. Further waiting time is charged at the hourly rate in the calculator. After 30 minutes without access, the appointment is treated as a no-show (clause 7.2).
+
+## 7. Cancellation and rescheduling
+
+7.1 Cancellations and rescheduling must be made in writing by email to kai@krakenpfm.ch or through WhatsApp. The time of receipt by Kraken is decisive.
+
+7.2 For a cancellation, the following applies, measured until the agreed start of work:
+
+- 48 hours or more beforehand: free of charge; the deposit is refunded in full;
+- less than 48 and at least 12 hours beforehand: 50 % of the agreed price;
+- less than 12 hours beforehand, in the event of a no-show or cancellation on site: 100 % of the agreed price.
+
+For work charged by time spent, the minimum order is treated as the agreed price. Any deposit paid is credited against the amount due.
+
+7.3 Rescheduling is free of charge 24 hours or more before work begins, provided Kraken can offer a replacement appointment. Otherwise clause 7.2 applies.
+
+7.4 If Kraken can allocate the vacated appointment to another customer, the compensation is reduced accordingly.
+
+## 8. Regular cleaning
+
+8.1 Regular cleaning arrangements run for an indefinite period. During the first two months (trial period), either party may terminate on 7 days’ notice, and thereafter on 30 days’ notice to the end of a month. Notice of termination must be given in writing.
+
+8.2 You must cancel individual appointments at least 48 hours in advance. For later cancellations, clause 7.2 applies to the visit concerned.
+
+8.3 If an appointment falls on a public holiday, we agree on a replacement appointment.
+
+8.4 Kraken may adjust prices once per year and gives at least 60 days’ notice. You may terminate with effect from the date of the adjustment.
+
+## 9. End-of-tenancy cleaning with handover guarantee
+
+9.1 The handover guarantee applies only to end-of-tenancy cleaning at a fixed package price and only to the cleaning work agreed in the order confirmation. Hourly cleaning is provided without a handover guarantee.
+
+9.2 If your property management or landlord raises a cleaning complaint at the official property handover, Kraken recleans the areas complained of free of charge.
+
+9.3 The guarantee applies if all the following requirements are met:
+
+- The property handover takes place within 72 hours after cleaning.
+- The apartment remained unoccupied and unused after cleaning.
+- You report the complaints in writing within 24 hours after the handover, with the handover report or photographs.
+- Kraken is granted access for the recleaning.
+
+9.4 Recleaning takes place as soon as possible, normally within 48 hours after notification, in coordination with you and the property management.
+
+9.5 The following are not covered:
+
+- normal wear, damage, discolouration, and limescale or rust marks that cannot be removed with normal methods without causing damage;
+- painting, repairs and filling wall-plug holes;
+- rooms and extras not booked, for example a balcony, cellar, external blinds or carpets;
+- areas that were inaccessible during cleaning.
+
+9.6 Kraken attends the property handover only if this has been expressly agreed.
+
+9.7 If you have third parties rectify the cleaning without giving Kraken an opportunity to reclean, Kraken does not cover those costs.
+
+9.8 The guarantee concerns cleaning only. It does not replace repairs or clarification of tenancy-law matters.
+
+## 10. Small moves and transport
+
+10.1 The order is based on your information about the goods to be moved, addresses, floors, lifts, carrying distances and stopping possibilities.
+
+10.2 For moves charged by time spent, working time runs from arrival at the first address until unloading is completed, including travel between the addresses and any waiting time. The minimum duration, hourly rates and travel charge are specified in the calculator and order confirmation.
+
+10.3 Fixed prices apply to the declared goods, access conditions and distance stated in the calculator. Surcharges and extras are itemised in the order confirmation.
+
+10.4 With the “1 person + van” offer, you or your helpers assist with carrying. You and your helpers work at your own responsibility. Kraken is not liable for damage caused by you or your helpers.
+
+10.5 You pack the goods securely for transport in closed, portable boxes. Kraken disassembles and reassembles furniture only if agreed. Kraken is not liable for the contents of boxes packed by you that are externally undamaged.
+
+10.6 Without a written agreement, Kraken does not transport cash, jewellery, securities or documents, works of art or antiques, hazardous materials, plants or animals. Pianos, safes and work involving a furniture lift require a personal quotation.
+
+10.7 You provide a lawful stopping place at both addresses. Additional time caused by the lack of a stopping place is charged by time spent.
+
+10.8 You must report visible damage immediately upon delivery; we record it together. You must report concealed damage in writing with photographs within 3 days.
+
+10.9 Kraken disposes only of items whose disposal has been agreed.
+
+## 11. Defects and complaints
+
+11.1 This clause applies to all services except the handover guarantee (clause 9) and transport damage (clause 10.8).
+
+11.2 Inspect the work immediately upon completion. You must report visible defects within 48 hours after completion and concealed defects within 48 hours after discovery, no later than 7 days after completion. Notification must be in writing, with photographs where possible.
+
+11.3 Kraken rectifies justified defects free of charge. If rectification is unsuccessful, you may request an appropriate price reduction.
+
+## 12. Liability
+
+12.1 Kraken is liable for damage culpably caused by Kraken or helpers engaged by Kraken in carrying out the order.
+
+12.2 In cases of intent, gross negligence and personal injury, Kraken’s liability is unlimited.
+
+12.3 In cases of minor negligence, liability is limited to CHF 5'000 per damaging event and, for goods being moved, additionally to CHF 1'000 per item, unless you reported a higher value in writing before the order and Kraken confirmed it.
+
+12.4 Kraken is not liable for:
+
+- pre-existing damage and normal wear;
+- damage to surfaces and materials whose sensitivity you did not report, provided the work was carried out professionally;
+- damage caused by you, your helpers or third parties;
+- consequential loss and lost profit, to the extent permitted by law.
+
+12.5 You must report damage promptly, no later than 48 hours after completion of the work, in writing with photographs. Clause 10.8 applies to goods being moved.
+
+## 13. Helpers and refusal of work
+
+13.1 Kraken may engage helpers or specialised partners and remains your sole contracting party.
+
+13.2 Kraken may refuse or interrupt work if unreasonable safety or health risks exist on site, for example mould infestation, vermin or dangerous access. Work already carried out is charged.
+
+## 14. Force majeure
+
+Neither party is liable for delays or non-performance caused by events beyond its reasonable control, such as natural disasters, strikes, pandemics or infrastructure failures. Obligations are suspended for the duration of the event. If it lasts longer than 30 days, either party may withdraw from the contract; any deposit paid is refunded.
+
+## 15. Data protection and photographs
+
+15.1 Kraken processes personal data in accordance with the Swiss Federal Act on Data Protection (DSG) and the privacy policy on the website.
+
+15.2 Kraken may take before-and-after photographs of the areas worked on and goods being moved to document quality, the handover guarantee and damage claims. The photographs do not show people. Kraken uses photographs for advertising only with your prior consent.
+
+## 16. Changes to the GTC and severability
+
+16.1 For one-off orders, the version in force at the time of booking applies.
+
+16.2 For regular cleaning, Kraken announces changes at least 30 days in advance by email. If you disagree, you may terminate with effect from the date of the change. Without termination, the new version applies from that date.
+
+16.3 If a provision is invalid, the remaining provisions remain valid. The invalid provision is replaced by a provision that comes closest to its economic purpose.
+
+## 17. Applicable law and jurisdiction
+
+Swiss law applies. The place of jurisdiction is Schaffhausen. Mandatory places of jurisdiction for consumers remain reserved.
+
+Kraken Properties and Facilities Management Gomes Mendes · Seewadelstrasse 3, 8203 Schaffhausen · kai@krakenpfm.ch · +41 77 450 57 05

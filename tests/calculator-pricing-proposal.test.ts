@@ -14,7 +14,7 @@ test('approved regular frequency rates preserve 2.5 minimum booked hours and CHF
     assert.ok(REGULAR_RATES[freq] >= 4_000);
     assert.throws(() => calculatePrice({ ...selection, hours: minimum - .25 }));
   }
-  assert.match(PRICING_VERSION, /2026-11-26/);
+  assert.equal(PRICING_VERSION, 'kraken-private-2026-11-27-v4');
 });
 
 test('materials remain CHF 10 once per visit, without changing the labour or ironing rates', () => {

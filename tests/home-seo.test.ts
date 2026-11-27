@@ -46,12 +46,12 @@ test('calculator metadata follows the integrated design and informational routes
   assert.equal(getPageSeo('/quote-demo', 'es').pageType, 'calculator-demo');
   assert.equal(getPageSeo('/quote-demo', 'es').indexable, false);
   const about = getPageSeo('/about', 'en');
-  assert.equal(about.title, 'About Kraken: Antonio, our team & Kai | Kraken PFM');
+  assert.equal(about.title, 'About Kraken: Antonio & Kai | Kraken PFM');
   assert.equal(about.canonical, 'https://krakenpfm.ch/en/ueber-uns');
   assert.equal(getPageSeo('/ueber-kraken', 'en').canonical, about.canonical);
 });
 
-test('the initial HTML exposes the approved five services without fabricated prices, ratings or opening hours', () => {
+test('the initial HTML exposes the approved services without fabricated prices, ratings or opening hours', () => {
   const json = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
   assert.ok(json);
   const business = JSON.parse(json);
@@ -59,7 +59,7 @@ test('the initial HTML exposes the approved five services without fabricated pri
   assert.equal(business.email, 'kai@krakenpfm.ch');
   assert.deepEqual(business.areaServed.map((city: { name: string }) => city.name), ['Zürich', 'Schaffhausen', 'Winterthur']);
   assert.deepEqual(business.hasOfferCatalog.itemListElement.map((offer: { itemOffered: { name: string } }) => offer.itemOffered.name), [
-    'Fensterreinigung', 'Umzugsreinigung', 'Regelmässige Reinigung', 'Grundreinigung', 'Kleine Umzüge',
+    'Fensterreinigung', 'Umzugsreinigung', 'Regelmässige Reinigung', 'Grundreinigung', 'Baureinigung', 'Kleine Umzüge',
   ]);
   assert.doesNotMatch(json, /"(?:priceRange|price|lowPrice|highPrice|aggregateRating|ratingValue|review|openingHours)"/);
   assert.match(html, /<html lang="de-CH">/);

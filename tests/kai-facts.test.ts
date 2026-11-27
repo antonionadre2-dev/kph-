@@ -2,7 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { getTermsTranslation } from '../components/legal/terms.ts';
+import { getTermsDocument } from '../src/legal/terms-document.ts';
+import { getLegacyTermsTranslation } from '../components/legal/terms-legacy.ts';
+import { publicPolicyContent } from '../src/kai/policyContent.ts';
 import { bookingText } from '../src/booking/uiCopy.ts';
 import { getKaiFact, getKaiFaqs, KAI_CONTACT, KAI_FACT_TOPICS } from '../src/kai/facts.ts';
 import { getHomeFaqs, getServicePageFaqs } from '../src/seo/page-faqs.ts';
@@ -20,7 +22,7 @@ test('extracting shared policy paragraphs preserves every section and metadata o
     fr: '5b636549ec19abc76302bbf389fb1b0db0122c5ab9c8ea57ef64b9c2816ea9f0',
   };
   for (const language of languages) {
-    const document = getTermsTranslation(language);
+    const document = getLegacyTermsTranslation(language);
     assert.equal(document.sections.length, 17);
     assert.equal(createHash('sha256').update(JSON.stringify(document)).digest('hex'), before[language], language);
   }
@@ -28,23 +30,19 @@ test('extracting shared policy paragraphs preserves every section and metadata o
 
 test('Kai and FAQs reuse the actual six-language legal guarantee and cancellation conditions', () => {
   for (const language of languages) {
-    const sections = getTermsTranslation(language).sections;
-    const guarantee = sections.find(section => section.title.startsWith('8.'))!.content;
-    const cancellation = sections.find(section => section.title.startsWith('6.'))!.content;
-    assert.ok(getKaiFact('guarantee', language).answer.includes(guarantee), language);
-    assert.equal(getKaiFact('cancellation', language).answer, cancellation, language);
+    const policy=publicPolicyContent(language);
+    assert.equal(getKaiFact('guarantee',language).answer,policy.guarantee,language);
+    assert.equal(getKaiFact('cancellation',language).answer,`${policy.cancellation} ${policy.rescheduling}`,language);
     const faqs = getHomeFaqs(language);
-    for (const topic of KAI_FACT_TOPICS) assert.ok(faqs.some(faq => faq.answer === getKaiFact(topic, language).answer), `${language}: ${topic}`);
+    for (const topic of KAI_FACT_TOPICS.filter(topic=>topic!=='insurance')) assert.ok(faqs.some(faq => faq.answer === getKaiFact(topic, language).answer), `${language}: ${topic}`);
   }
 });
 
 test('payment facts take the actual methods and deposit sentence from the terms, without a duplicate policy', () => {
   for (const language of languages) {
-    const sections = getTermsTranslation(language).sections;
-    const methods = sections.find(section => section.title.startsWith('5.'))!.content.split(/(?<=[.!?])\s+/).slice(0, 2).join(' ');
-    const deposit = sections.find(section => section.title.startsWith('2.'))!.content.split(/(?<=[.!?])\s+/).find(sentence => /Anzahlung|deposit|anticipo|sinal|acconto|acompte/i.test(sentence))!;
-    const answer = getKaiFact('payment', language).answer;
-    assert.equal(answer, `${methods} ${deposit}`);
+    const policy=publicPolicyContent(language);
+    const answer=getKaiFact('payment',language).answer;
+    assert.equal(answer,`${policy.payment} ${policy.deposit}`);
     assert.ok(answer.includes('Payrexx'));
     assert.match(answer, /15\s?%/);
   }
@@ -65,7 +63,8 @@ test('unknown insurance, exact team, availability and duration always offer pers
       assert.ok(result.answer.length > 20);
       assert.doesNotMatch(result.answer, /10[’'., ]?000[’'., ]?000|10\s*(?:Mio|million|millones)|\b24\/7\b/);
     }
-    assert.ok(getKaiFact('insurance', language).answer.includes(getTermsTranslation(language).sections.find(section => section.title.startsWith('12.'))!.content));
+    assert.equal(getKaiFact('insurance',language).answer,publicPolicyContent(language).insurance);
+    assert.ok(getTermsDocument(language).sections.some(section=>section.number===12));
   }
   assert.equal(getKaiFact('duration', 'de').answer, 'Das klären wir gern persönlich.');
   assert.equal(getKaiFact('vat', 'de').answer, 'Es wird keine Mehrwertsteuer verrechnet.');

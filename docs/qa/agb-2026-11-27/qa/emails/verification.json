@@ -1,0 +1,368 @@
+{
+  "scope": "Pure renderer calls with synthetic records, no requests to email or payment providers",
+  "emailsSent": 0,
+  "bookingsCreated": 0,
+  "paymentsCreated": 0,
+  "samples": [
+    {
+      "name": "de-request_received",
+      "language": "de",
+      "template": "request_received",
+      "htmlBytes": 19682,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "awaiting_confirmation",
+        "scheduling": "requested",
+        "payment": "not_started"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "de-payment_requested",
+      "language": "de",
+      "template": "payment_requested",
+      "htmlBytes": 21607,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "held",
+        "payment": "pending"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "de-booking_confirmed",
+      "language": "de",
+      "template": "booking_confirmed",
+      "htmlBytes": 19919,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "confirmed",
+        "payment": "test_paid"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "de-legacy-renderer-request",
+      "language": "de",
+      "template": "request",
+      "htmlBytes": 7349,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "de-legacy-renderer-receipt",
+      "language": "de",
+      "template": "receipt",
+      "htmlBytes": 7422,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "en-request_received",
+      "language": "en",
+      "template": "request_received",
+      "htmlBytes": 19542,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "awaiting_confirmation",
+        "scheduling": "requested",
+        "payment": "not_started"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "en-payment_requested",
+      "language": "en",
+      "template": "payment_requested",
+      "htmlBytes": 21354,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "held",
+        "payment": "pending"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "en-booking_confirmed",
+      "language": "en",
+      "template": "booking_confirmed",
+      "htmlBytes": 19782,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "confirmed",
+        "payment": "test_paid"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "en-legacy-renderer-request",
+      "language": "en",
+      "template": "request",
+      "htmlBytes": 7209,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "en-legacy-renderer-receipt",
+      "language": "en",
+      "template": "receipt",
+      "htmlBytes": 7265,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "es-request_received",
+      "language": "es",
+      "template": "request_received",
+      "htmlBytes": 20121,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "awaiting_confirmation",
+        "scheduling": "requested",
+        "payment": "not_started"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "es-payment_requested",
+      "language": "es",
+      "template": "payment_requested",
+      "htmlBytes": 22017,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "held",
+        "payment": "pending"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "es-booking_confirmed",
+      "language": "es",
+      "template": "booking_confirmed",
+      "htmlBytes": 20384,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "confirmed",
+        "payment": "test_paid"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "es-legacy-renderer-request",
+      "language": "es",
+      "template": "request",
+      "htmlBytes": 7778,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "es-legacy-renderer-receipt",
+      "language": "es",
+      "template": "receipt",
+      "htmlBytes": 7821,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "pt-request_received",
+      "language": "pt",
+      "template": "request_received",
+      "htmlBytes": 20068,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "awaiting_confirmation",
+        "scheduling": "requested",
+        "payment": "not_started"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "pt-payment_requested",
+      "language": "pt",
+      "template": "payment_requested",
+      "htmlBytes": 21971,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "held",
+        "payment": "pending"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "pt-booking_confirmed",
+      "language": "pt",
+      "template": "booking_confirmed",
+      "htmlBytes": 20354,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "confirmed",
+        "payment": "test_paid"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "pt-legacy-renderer-request",
+      "language": "pt",
+      "template": "request",
+      "htmlBytes": 7681,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "pt-legacy-renderer-receipt",
+      "language": "pt",
+      "template": "receipt",
+      "htmlBytes": 7790,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "it-request_received",
+      "language": "it",
+      "template": "request_received",
+      "htmlBytes": 19935,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "awaiting_confirmation",
+        "scheduling": "requested",
+        "payment": "not_started"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "it-payment_requested",
+      "language": "it",
+      "template": "payment_requested",
+      "htmlBytes": 21833,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "held",
+        "payment": "pending"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "it-booking_confirmed",
+      "language": "it",
+      "template": "booking_confirmed",
+      "htmlBytes": 20178,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "confirmed",
+        "payment": "test_paid"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "it-legacy-renderer-request",
+      "language": "it",
+      "template": "request",
+      "htmlBytes": 7564,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "it-legacy-renderer-receipt",
+      "language": "it",
+      "template": "receipt",
+      "htmlBytes": 7651,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "fr-request_received",
+      "language": "fr",
+      "template": "request_received",
+      "htmlBytes": 20297,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "awaiting_confirmation",
+        "scheduling": "requested",
+        "payment": "not_started"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "fr-payment_requested",
+      "language": "fr",
+      "template": "payment_requested",
+      "htmlBytes": 22179,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "held",
+        "payment": "pending"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "fr-booking_confirmed",
+      "language": "fr",
+      "template": "booking_confirmed",
+      "htmlBytes": 20582,
+      "testNotice": true,
+      "sent": false,
+      "sourceState": {
+        "status": "confirmed",
+        "scheduling": "confirmed",
+        "payment": "test_paid"
+      },
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "fr-legacy-renderer-request",
+      "language": "fr",
+      "template": "request",
+      "htmlBytes": 7850,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    },
+    {
+      "name": "fr-legacy-renderer-receipt",
+      "language": "fr",
+      "template": "receipt",
+      "htmlBytes": 7917,
+      "testNotice": true,
+      "sent": false,
+      "version": "kraken-agb-2026-11-26-v2"
+    }
+  ]
+}

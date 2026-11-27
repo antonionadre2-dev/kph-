@@ -88,7 +88,7 @@
 .kraken-services .services-hero-art{position:relative;aspect-ratio:1.08;min-width:0;max-width:555px;width:100%;justify-self:end;isolation:isolate}
 .kraken-services .services-glass-label{position:absolute;top:20px;left:20px;right:20px;z-index:1;display:flex;align-items:center;gap:8px;width:fit-content;max-width:calc(100% - 40px);background:#ffffffe6;border:1px solid #fff;box-shadow:inset 0 1px 0 #fff,0 4px 14px #002d5b12;border-radius:30px;padding:9px 13px;font-size:14px;font-weight:700}
 .kraken-services .services-glass-label .icon{width:20px;height:20px}
-.kraken-services .services-jump-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.kraken-services .services-jump-nav{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
 .kraken-services .services-jump-nav a{display:flex;align-items:center;gap:11px;min-width:0;min-height:76px;padding:15px 17px;background:#ffffffb3;border:1px solid #fff;border-radius:18px;box-shadow:inset 0 1px 0 #fff,0 6px 16px #123e6407;font-size:14px;font-weight:800;line-height:1.45;transition:background .18s,box-shadow .18s}
 .kraken-services .services-jump-nav a:hover,.kraken-services .services-jump-nav a[aria-current]{background:#fff;box-shadow:0 5px 18px #123e6415}
 .kraken-services .services-jump-nav a .brand-service-icon{width:34px;height:34px;padding:3px;flex:0 0 34px;background:linear-gradient(145deg,#fff,#e5f1f8);border:1px solid #dbe9f2;border-radius:11px}

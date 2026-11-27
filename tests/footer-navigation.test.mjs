@@ -33,17 +33,21 @@ test('all footer service links are native information destinations with real ser
     const nav = html.match(/<div class="footer-services">([\s\S]*?)<\/nav>/)?.[1];
     assert.ok(nav);
     const links = [...nav.matchAll(/<a([^>]*)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/g)];
-    assert.equal(links.length, 5);
+    assert.equal(links.length, 6);
+    const expectedLinks=[...serviceInformationLinks,{service:'construction',section:'baureinigung',label:'Baureinigung'}];
     for (let index = 0; index < links.length; index++) {
       const [, before, href, after, label] = links[index];
-      const expected = serviceInformationLinks[index];
+      const expected = expectedLinks[index];
       const url = new URL(decode(href), 'https://krakenpfm.ch');
       assert.equal(url.pathname, (language === 'de' ? '' : '/' + language) + '/leistungen');
       assert.equal(url.hash, '#' + expected.section);
       assert.equal(url.searchParams.get('lang'), null);
       assert.ok(label.includes(homeText(language, expected.label)));
       assert.doesNotMatch(before + after, /data-(?:calculator|service|open-kai)|onclick|target=/);
-      assert.match(servicesHtml, new RegExp('<details[^>]*id="' + expected.section + '"[^>]*data-service-detail="' + expected.service + '"'));
+      if(expected.service==='construction'){
+        assert.match(servicesHtml,/<details[^>]*id="baureinigung"/);
+        assert.ok(servicesHtml.includes('href="'+footerInformationHref('/quote?service=construction',language)+'"'));
+      }else assert.match(servicesHtml, new RegExp('<details[^>]*id="' + expected.section + '"[^>]*data-service-detail="' + expected.service + '"'));
     }
     // The shared footer must not alter the visitor's saved calculator draft or intercept navigation.
     assert.doesNotMatch(html, /data-calculator|data-service=|data-open-kai|onclick=/);

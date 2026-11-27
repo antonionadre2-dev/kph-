@@ -107,6 +107,24 @@ test('moving renders an honest hourly estimate and minimum-based deposit in all 
   }
 });
 
+test('hourly cleaning shows its minimum-based deposit instead of a fixed-price promise in six languages',()=>{
+  const cases=[
+    {service:'regular',selected:{...defaultSelection('regular'),hours:4},amount:1500},
+    {service:'end',selected:{...defaultSelection('endOfTenancy'),mode:'hourly',hours:4},amount:2025},
+    {service:'construction',selected:{...defaultSelection('construction'),mode:'hourly',hours:5},amount:2880},
+  ];
+  for(const {service,selected,amount} of cases)for(const language of ['de','en','es','fr','it','pt']){
+    const html=render(language,service,{choice:selected.service,selection:selected,wizardStep:0});
+    const quote=calculatePrice(selected);
+    assert.equal(quote.priceType,'estimate');
+    assert.equal(Math.round(quote.depositBasisCents*0.15),amount);
+    assert.ok(html.includes(escaped(pricingUiText(language,'cleaningDepositMinimum',{percent:15}))),`${language}/${service}`);
+    assert.ok(html.includes(escaped(pricingUiText(language,'estimate'))));
+    assert.match(html,/kr-calc-deposit-preview/);
+    if(service==='end')assert.equal(html.split(escaped(bookingText(language,'notice.hourly_no_handover_guarantee'))).length-1,1);
+  }
+});
+
 test('fixed move exposes distance, stairs, extras and a request-only from price without assuming a route',()=>{
   for(const language of ['de','en','es','fr','it','pt']){
     const absent=render(language,'moving',{choice:'moving',selection:{...defaultSelection('moving'),mode:'fixed'},wizardStep:0});

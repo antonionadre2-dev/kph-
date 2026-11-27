@@ -1102,3 +1102,4 @@
     transition: none;
   }
 }
+.why-assurances:has(>.why-assurance:only-child){grid-template-columns:1fr}

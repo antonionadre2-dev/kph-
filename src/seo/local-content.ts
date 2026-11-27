@@ -23,15 +23,15 @@ export const LOCAL_SERVICES = [
   },
   {
     id: 'end-of-tenancy', calculatorService: 'end', anchor: 'umzugsreinigung', title: 'Umzugsreinigung',
-    description: 'Der Auszug steht an? Wir übernehmen die Endreinigung Ihrer Wohnung mit 1–5.5 Zimmern und besprechen, was für die Wohnungsabgabe gereinigt werden soll. Küche, Bad, Böden und weitere Bereiche planen wir nach dem vereinbarten Umfang. Anforderungen Ihrer Verwaltung und besondere Verschmutzungen können Sie bei der Anfrage angeben.',
+    description: 'Der Auszug steht an? Wir übernehmen die Endreinigung Ihrer Wohnung bis 5.5 Zimmer und besprechen, was für die Wohnungsabgabe gereinigt werden soll. Küche, Bad, Böden und weitere Bereiche planen wir nach dem vereinbarten Umfang. Anforderungen Ihrer Verwaltung und besondere Verschmutzungen können Sie bei der Anfrage angeben.',
     preparation: 'Zimmerzahl, Zustand und gewünschter Reinigungstermin.',
-    metadata: 'Umzugsreinigung in {city} für private Wohnungen mit 1–5.5 Zimmern. Küche, Bad und Wohnräume nach Absprache. Umfang und Termin im Rechner planen.',
+    metadata: 'Umzugsreinigung in {city} für private Wohnungen bis 5.5 Zimmer. Küche, Bad und Wohnräume nach Absprache. Umfang und Termin im Rechner planen.',
   },
   {
     id: 'daily-cleaning', calculatorService: 'regular', anchor: 'regelmaessige-reinigung', title: 'Regelmässige Reinigung',
     description: 'Ein gepflegtes Zuhause, auch wenn der Alltag voll ist. Unsere regelmässige Wohnungsreinigung entlastet Sie bei wiederkehrenden Aufgaben. Wir besprechen Ihre Prioritäten, die Räume und den gewünschten Rhythmus. Ob Küche, Bad, Böden oder Oberflächen: Sie bestimmen mit, welche Arbeiten Ihnen im Haushalt am meisten helfen.',
     preparation: 'Wohnungsgrösse, gewünschte Häufigkeit und Prioritäten.',
-    metadata: 'Regelmässige Reinigung in {city} für Wohnungen mit 1–4 Zimmern. Aufgaben, Rhythmus und Prioritäten nach Absprache. Ihre Unterstützung im Rechner planen.',
+    metadata: 'Regelmässige Reinigung in {city} für Wohnungen bis 5.5 Zimmer. Aufgaben, Rhythmus und Prioritäten nach Absprache. Ihre Unterstützung im Rechner planen.',
   },
   {
     id: 'deep-cleaning', calculatorService: 'deep', anchor: 'grundreinigung', title: 'Grundreinigung',
@@ -83,7 +83,7 @@ export function getLocalRoutePlace(route: LocalSeoRoute): { city?: typeof LOCAL_
 
 export function localHref(path: string, language: string): string { return publicHref(path, language); }
 
-export const LOCAL_SCOPE = 'Persönliche Hilfe für Privathaushalte in Zürich, Schaffhausen und Winterthur. Von einzelnen Fenstern bis zur Wohnung mit 1–4 Zimmern.';
+export const LOCAL_SCOPE = 'Persönliche Hilfe für Privathaushalte in Zürich, Schaffhausen und Winterthur. Für einzelne Fenster und Wohnungen bis 5.5 Zimmer.';
 export const LOCAL_ADDRESS_CONFIRMATION = 'Diese Ortsseite bestätigt keinen verfügbaren Termin. Teilen Sie uns Adresse, Aufgabe und Wunschdatum mit, damit wir prüfen können, ob Ihr Auftrag in unsere Planung passt.';
 
 /** Shared by HTTP metadata and the visible React body; deliberately contains no numeric prices. */
@@ -106,7 +106,7 @@ export function getLocalSeoDescriptor(pathname: string, language: string = 'de')
         ? `${t('Reinigung und kleine Umzüge')} · ${name}`
         : `${t('Anfrage für Ihre Adresse')} · ${name}`;
   const descriptionSource = city && service ? service.metadata
-    : route.kind === 'coverage' ? 'Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur. Fünf Leistungen für Ihr Zuhause, auch Wohnungen mit 1–4 Zimmern. Persönlich planen.'
+    : route.kind === 'coverage' ? 'Reinigung und kleine Umzüge für Privathaushalte in Zürich, Schaffhausen und Winterthur. Leistungen für Ihr Zuhause, auch Wohnungen bis 5.5 Zimmer. Persönlich planen.'
       : route.kind === 'region' ? 'Reinigung und kleine Umzüge in {city} für Privathaushalte. Fenster, Umzugsreinigung, regelmässige Reinigung und Grundreinigung. Auftrag im Rechner planen.'
         : 'Reinigung oder kleinen Umzug für Ihre Adresse in {city} anfragen. Senden Sie Aufgabe und Wunschdatum; Verfügbarkeit und Umfang werden persönlich geprüft.';
   const moving = getPublicPriceOffers().find(offer => offer.service === 'moving')!;

@@ -10,7 +10,7 @@ import './design-system.css';
 import './conversion-home.css';
 
 /** The approved navigation is shared by the home and the services page. */
-export default function ApprovedHeader({ servicesPage = false, page, accountControls }: { onNavigate: (path: string) => void; servicesPage?: boolean; page?: 'home' | 'services' | 'about' | 'contact' | 'calculator' | 'local'; accountControls?: React.ReactNode }) {
+export default function ApprovedHeader({ servicesPage = false, page, accountControls }: { onNavigate: (path: string) => void; servicesPage?: boolean; page?: 'home' | 'services' | 'about' | 'contact' | 'calculator' | 'local' | 'legal'; accountControls?: React.ReactNode }) {
   const { language } = useTranslation();
   const t = (source: string) => homeText(normalizeHomeLanguage(language), source);
   const [open, setOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function ApprovedHeader({ servicesPage = false, page, accountCont
   </>;
   return <>
     <a className="skip-link" href="#main">{t('Zum Inhalt')}</a>
-    <header className="site-header">
+    <header className={currentPage === 'legal' ? 'site-header kr-terms-header' : 'site-header'}>
       <nav className="header-contact-bar" aria-label={t('Direkter Kontakt')}>
         <div className="header-contact-inner container">
           <a href="tel:+41774505705"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16.5v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.8 2 2 0 0 1 3.1 1.6h3a2 2 0 0 1 2 1.7 12.8 12.8 0 0 0 .7 2.8 2 2 0 0 1-.5 2.1L7 9.5a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5 12.8 12.8 0 0 0 2.8.7 2 2 0 0 1 1.8 2.1Z" /></svg><span className="sr-only">{t('Anrufen')}{' '}</span><span>+41 77 450 57 05</span></a>
@@ -51,7 +51,7 @@ export default function ApprovedHeader({ servicesPage = false, page, accountCont
       <div className="header-inner container">
         <a className="brand-lockup kr-brand-link" href={href('/')} aria-label={getBrandTranslation(language, 'header.logoAria')}>
           <span className="brand-logo"><img {...responsiveImage('/home-approved/assets/logo.webp','160px')} alt="Kraken" /></span>
-          <BrandIdentity language={language} />
+          {currentPage === 'legal' ? <span className="kr-terms-header-company"><span>Properties &amp; Facilities</span><span>Management</span></span> : <BrandIdentity language={language} />}
         </a>
         <nav className="desktop-nav" aria-label={t('Hauptnavigation')}>{links}</nav>
         <div className="header-actions"><HomeLanguageSelector /><button className="icon-button menu-toggle" id="menuToggle" ref={toggle} type="button"

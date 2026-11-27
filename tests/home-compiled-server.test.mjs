@@ -22,8 +22,8 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
       'src/contact/routing-server.ts', 'src/booking/pricing.ts', 'src/booking/publicPricing.ts', 'src/booking/publicPricingCopy.ts',
       'src/booking/kaiTransfer.ts', 'src/booking/privateStorage.ts', 'src/home/calculator.ts',
       'src/home/hero-media.ts', 'src/home/hero-response.ts', 'src/home/scene-calendar.ts', 'src/media/images.ts',
-      'src/booking/uiCopy.ts', 'src/booking/pricingConfig.ts', 'src/booking/pricingUiCopy.ts', 'src/booking/terms.ts', 'src/home/paint-start.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',
-      ...['server', 'src/kai', 'src/seo', 'src/routing', 'src/i18n', 'src/contact'].flatMap(folder => readdirSync(path.join(root, folder)).filter(name => name.endsWith('.ts')).map(name => `${folder}/${name}`)),
+      'src/booking/termsPresentation.ts', 'src/booking/paymentDeadline.ts', 'src/booking/uiCopy.ts', 'src/booking/pricingConfig.ts', 'src/booking/pricingUiCopy.ts', 'src/booking/terms.ts', 'src/home/paint-start.ts', 'src/booking/journeyCopy.ts', 'src/booking/customerAccessCopy.ts',
+      ...['server', 'src/kai', 'src/seo', 'src/routing', 'src/i18n', 'src/contact', 'src/legal'].flatMap(folder => readdirSync(path.join(root, folder)).filter(name => name.endsWith('.ts')).map(name => `${folder}/${name}`)),
     ];
     for (const name of new Set(names)) {
       const output = ts.transpileModule(readFileSync(path.join(root, name), 'utf8'), { fileName: name, compilerOptions: options }).outputText;
@@ -31,10 +31,11 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
       const destination = path.join(directory, name.replace(/\.ts$/, '.js'));
       mkdirSync(path.dirname(destination), { recursive: true }); writeFileSync(destination, output);
     }
-    for (const name of ['firebase-applet-config.json', 'src/media/manifest.json', 'src/media/hero-formats.json', ...['service', 'http', 'policy', 'emails', 'firestore-store'].map(name => `integrations/recovery/${name}.mjs`)]) {
+    for (const name of ['src/legal/terms-manifest.json', 'src/legal/terms-policy.generated.json', 'firebase-applet-config.json', 'src/media/manifest.json', 'src/media/hero-formats.json', ...['service', 'http', 'policy', 'emails', 'firestore-store'].map(name => `integrations/recovery/${name}.mjs`)]) {
       const destination = path.join(directory, name); mkdirSync(path.dirname(destination), { recursive: true });
       writeFileSync(destination, readFileSync(path.join(root, name)));
     }
+    cpSync(path.join(root, 'src/legal/versions'), path.join(directory, 'src/legal/versions'), {recursive:true});
     cpSync(path.join(root, 'integrations/email-collection'), path.join(directory, 'integrations/email-collection'), { recursive: true });
     writeFileSync(path.join(directory, 'package.json'), '{"type":"module"}');
     symlinkSync(path.join(root, 'node_modules'), path.join(directory, 'node_modules'), 'dir');

@@ -1,0 +1,82 @@
+{
+  "searchResult": {
+    "focus": "agb-title-9",
+    "hash": "#agb-9",
+    "headerBottom": -3327,
+    "headingTop": 1480.78125,
+    "sections": 17
+  },
+  "noResults": {
+    "message": 2,
+    "sections": 17
+  },
+  "clear": "",
+  "finalAnchor": {
+    "focus": "agb-title-9",
+    "hash": "#agb-9",
+    "headerBottom": -4612,
+    "scrollY": 4780,
+    "top": 195.78125
+  },
+  "download": {
+    "path": "/Users/Projects/Downloads/es.pdf"
+  },
+  "mobile": {
+    "focus": "agb-title-9",
+    "hash": "#agb-9",
+    "mobileDetailsOpen": false,
+    "scrollWidth": 375,
+    "width": 375
+  },
+  "at320": {
+    "descriptorVisible": true,
+    "header": 320,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  "keyboardReduced": {
+    "focus": "agb-title-9",
+    "hash": "#agb-9",
+    "reduced": true,
+    "scrollWidth": 375,
+    "top": 219.859375
+  },
+  "print": {
+    "headerVisible": false,
+    "media": true,
+    "searchVisible": false,
+    "sections": 17
+  },
+  "construction": {
+    "requestedService": "construction",
+    "summaryText": "Nettoyage de fin de chantier",
+    "url": "http://127.0.0.1:3051/fr/offerte?service=construction"
+  },
+  "consent": {
+    "initiallyChecked": false,
+    "termsLink": "/es/terms",
+    "afterCheck": true,
+    "afterLanguage": {
+      "checked": false,
+      "step": "2",
+      "submitDisabled": true,
+      "termsLink": "/fr/terms",
+      "text": true,
+      "url": "http://127.0.0.1:3051/fr/offerte?service=construction"
+    }
+  },
+  "germanLink": {
+    "href": "/terms?lang=de",
+    "after": {
+      "h1": "Allgemeine Geschäftsbedingungen (AGB)",
+      "htmlLang": "de-CH",
+      "url": "http://127.0.0.1:3051/terms"
+    }
+  },
+  "printButton": {
+    "openedNativePrintPreview": true,
+    "pages": 7,
+    "destination": "Save as PDF",
+    "cancelledWithoutPrintingOrSaving": true
+  }
+}

@@ -63,7 +63,7 @@ export interface PriceQuote {
   /** Null means no binding price exists and checkout must be disabled. */
   totalCents: number | null;
   priceType:'fixed'|'estimate'|'from'|'personal';
-  /** Deposit base can be lower than an hourly moving estimate; null forbids payment. */
+  /** Minimum confirmed order for hourly work, including booked extras and travel; null forbids payment. */
   depositBasisCents:number|null;
   /** A non-binding minimum for request-only cases, never a payable total. */
   fromPriceCents?:number;
@@ -167,9 +167,11 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
       const frequency = choice(s.frequency, 'frequency', ['weekly', 'fortnightly', 'monthly', 'once'] as const);
       const cleaningKind=s.cleaningKind===undefined?(frequency==='once'?'deep':'regular'):choice(s.cleaningKind,'cleaningKind',['regular','deep'] as const);
       if(cleaningKind==='deep'&&frequency!=='once')fail('invalid_choice','frequency','Grundreinigung wird einmalig gebucht.');
-      const cleaningHours = hours(s.hours, 'hours', getRegularMinimumHours(s));
+      const minimumHours = getRegularMinimumHours(s);
+      const cleaningHours = hours(s.hours, 'hours', minimumHours);
       const ironingHours = hours(s.ironingHours ?? 0, 'ironingHours', 0);
-      add('regular-labour', `Unterhaltsreinigung – ${FREQUENCY_LABELS[frequency]}`, cleaningHours, 'hour', cleaningKind==='deep'?pricingConfig.regular.deep.hourlyRateCents:REGULAR_RATES[frequency], { frequency,cleaningKind });
+      const rateCents = cleaningKind==='deep'?pricingConfig.regular.deep.hourlyRateCents:REGULAR_RATES[frequency];
+      add('regular-labour', `Unterhaltsreinigung – ${FREQUENCY_LABELS[frequency]}`, cleaningHours, 'hour', rateCents, { frequency,cleaningKind });
       if (flag(s.materials, 'materials')) {
         materialsCents = MATERIALS_PER_VISIT_CENTS;
         add('regular-materials', 'Reinigungsmittel & Material von Kraken – pro Besuch', 1, 'visit', materialsCents);
@@ -178,6 +180,10 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
       if (flag(s.fridge, 'fridge')) add('regular-fridge', 'Kühlschrank innen – Zusatzleistung', 1, 'unit', pricingConfig.regular.extras.fridgeCents);
       add('regular-ironing', 'Bügeln – zusätzliche Arbeitszeit', ironingHours, 'hour', pricingConfig.regular.extras.ironingHourlyRateCents);
       bookedPersonHours = cleaningHours + ironingHours;
+      // Materials, fixed extras and explicitly ordered ironing remain in the minimum scope.
+      // Cleaning travel is already included in the tariff; do not add a second travel fee.
+      depositBasisCents = knownSubtotal() - (cleaningHours - minimumHours) * rateCents;
+      priceType = 'estimate';
       break;
     }
     case 'endOfTenancy': {
@@ -190,6 +196,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
       const roomIndex=END_OF_TENANCY_TIERS.findIndex(tier=>rooms<=tier.rooms);
       const tier=roomIndex>=0?END_OF_TENANCY_TIERS[roomIndex]:undefined;
       const roundedM2=Math.ceil(m2),excessM2=tier?Math.max(0,roundedM2-tier.maxAreaM2):0;
+      let hourlyLabourAboveMinimumCents = 0;
       if (propertyType === 'house') manualReviewReasons.push(notice('house_visit_required', `Einfamilienhaus: ab CHF ${pricingConfig.endOfTenancy.houseFromCents/100} nach kostenloser Besichtigung. Der genaue Preis wird vorher vereinbart.`));
       if (excessM2>pricingConfig.endOfTenancy.maxExcessAreaM2) manualReviewReasons.push(notice('eot_excess_area_over_limit', `Mehr als ${pricingConfig.endOfTenancy.maxExcessAreaM2} m² Mehrfläche: persönliche verbindliche Offerte.`));
       if (!tier) manualReviewReasons.push(notice('eot_rooms_over_limit', 'Für mehr als 5.5 Zimmer erstellen wir eine individuelle verbindliche Offerte.'));
@@ -197,7 +204,9 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
         const h = hours(s.hours, 'hours', pricingConfig.endOfTenancy.hourly.minimumHours);
         add('eot-hourly', 'Stundenreinigung ohne Abnahmegarantie', h, 'hour', pricingConfig.endOfTenancy.hourly.rateCents);
         bookedPersonHours = h;
-        notices.push(notice('hourly_no_handover_guarantee', 'Gebucht wird ein festes Arbeitszeitkontingent ohne Abnahmegarantie. Zusatzleistungen werden separat ausgewiesen.'));
+        hourlyLabourAboveMinimumCents = (h - pricingConfig.endOfTenancy.hourly.minimumHours) * pricingConfig.endOfTenancy.hourly.rateCents;
+        priceType = 'estimate';
+        notices.push(notice('hourly_no_handover_guarantee', 'Reinigung nach Aufwand ohne Abnahmegarantie. Nach der Mindestdauer wird die tatsächliche Arbeitszeit in 15-Minuten-Schritten abgerechnet. Zusatzleistungen werden separat ausgewiesen.'));
       } else if (propertyType === 'apartment' && tier && excessM2<=pricingConfig.endOfTenancy.maxExcessAreaM2) {
         appliedTier = { ...tier, raisedForArea:false };
         add('eot-package', `Umzugsreinigung mit Abnahmegarantie – bis ${tier.rooms} Zimmer / ${tier.maxAreaM2} m²`, 1, 'package', tier.priceCents, { tierRooms: tier.rooms, maxAreaM2: tier.maxAreaM2 });
@@ -218,10 +227,12 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
       add('eot-storage', 'Kellerabteil / Estrich', count(s.storageRooms, 'storageRooms'), 'unit', pricingConfig.endOfTenancy.extras.storageCents);
       add('eot-garage', 'Garagenbox', count(s.garages, 'garages'), 'unit', pricingConfig.endOfTenancy.extras.garageCents);
       add('eot-carpet', 'Teppich-Shampoonierung – pro Zimmer', count(s.carpetRooms, 'carpetRooms'), 'unit', pricingConfig.endOfTenancy.extras.carpetRoomCents);
+      if (mode === 'hourly') depositBasisCents = knownSubtotal() - hourlyLabourAboveMinimumCents;
       if (flag(s.heavySoiling, 'heavySoiling')) {
         const basisCents = knownSubtotal();
         const surchargeCents = Math.floor((basisCents * pricingConfig.endOfTenancy.extras.heavySoilingPercent + 50) / 100);
         if (surchargeCents > 0) add('eot-heavy-soiling', `Starke Verschmutzung – ${pricingConfig.endOfTenancy.extras.heavySoilingPercent} % auf Reinigung und Extras`, 1, 'package', surchargeCents, { percentage: pricingConfig.endOfTenancy.extras.heavySoilingPercent, basisCents });
+        if (depositBasisCents !== undefined) depositBasisCents += Math.floor((depositBasisCents * pricingConfig.endOfTenancy.extras.heavySoilingPercent + 50) / 100);
       }
       break;
     }
@@ -230,10 +241,13 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
       const mode = choice(s.mode, 'mode', ['area', 'hourly'] as const);
       const level = choice(s.level, 'level', ['light', 'full'] as const);
       const m2 = area(s.areaM2, 'areaM2', mode === 'hourly');
+      let hourlyLabourAboveMinimumCents = 0;
       if (mode === 'hourly') {
         const h = hours(s.hours, 'hours', pricingConfig.construction.hourly.minimumHours);
         add('construction-hourly', 'Baureinigung auf Stundenbasis', h, 'hour', pricingConfig.construction.hourly.rateCents);
         bookedPersonHours = h;
+        hourlyLabourAboveMinimumCents = (h - pricingConfig.construction.hourly.minimumHours) * pricingConfig.construction.hourly.rateCents;
+        priceType = 'estimate';
       } else {
         const rate = pricingConfig.construction.area[level].rateCents;
         const minimum = pricingConfig.construction.area[level].minimumCents;
@@ -247,6 +261,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
       add('construction-film', 'Schutzfolien & Aufkleber entfernen – pro Fenster', count(s.filmWindows, 'filmWindows'), 'unit', pricingConfig.construction.extras.filmWindowCents);
       add('construction-slat-blinds', 'Storen – pro Fenster', count(s.slatBlinds, 'slatBlinds'), 'unit', pricingConfig.construction.extras.slatBlindsCents);
       if (flag(s.extraArea, 'extraArea')) manualReviewReasons.push(notice('construction_extra_area_quote_required', `Terrasse / Wintergarten / Garage: CHF ${pricingConfig.construction.extras.extraAreaFromCents/100}–${pricingConfig.construction.extras.extraAreaToCents/100} zusätzlich. Der genaue Umfang und Preis werden vor der Zahlung bestätigt.`));
+      if (mode === 'hourly') depositBasisCents = knownSubtotal() - hourlyLabourAboveMinimumCents;
       break;
     }
     case 'windows': {
@@ -347,6 +362,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
   const subtotalCents = knownSubtotal();
   if (!Number.isSafeInteger(subtotalCents) || subtotalCents < 0) fail('invalid_total', 'total', 'Der Preis konnte nicht sicher berechnet werden.');
   const totalCents = manualReviewReasons.length ? null : subtotalCents;
+  if (depositBasisCents !== undefined && (!Number.isSafeInteger(depositBasisCents) || depositBasisCents < 0 || depositBasisCents > subtotalCents)) fail('invalid_total', 'total', 'Die Anzahlung konnte nicht sicher berechnet werden.');
   return {
     pricingVersion: PRICING_VERSION, currency: pricingConfig.currency, service, lines, subtotalCents, totalCents,
     priceType:manualReviewReasons.length?(fromPriceCents!==undefined?'from':'personal'):priceType,depositBasisCents:totalCents===null?null:depositBasisCents??totalCents,...(fromPriceCents!==undefined?{fromPriceCents}:{}),

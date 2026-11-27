@@ -202,7 +202,8 @@ test('German first visit followed by a Spanish choice survives checkout locale, 
   assert.equal(receipt[0].status, 'sent');
   assert.equal(receipt[0].prepared.language, 'es');
   assert.match(receipt[0].prepared.subject, /Anticipo recibido/);
-  assert.ok(receipt[0].prepared.text.includes('Importe pendiente'));
+  assert.ok(receipt[0].prepared.text.includes('Saldo orientativo pendiente'));
+  assert.equal(receipt[0].notification.renderData.pricing.priceType, 'estimate');
   assert.ok(receipt[0].prepared.text.includes('lang=es'));
   assert.ok(f.sent.every(message => message.language === 'es'));
   const record = await f.store.get(booking.bookingId);
@@ -283,6 +284,8 @@ test('an explicit authenticated preference changes only unattempted notification
   const updated = await service.changeEmailLanguage(booking.bookingId, booking.publicToken!, { language: 'en' });
   assert.equal(updated.language, 'en');
   assert.equal(f.store.mail.get(first.id).notification.languageSnapshot.language, 'en');
+  assert.equal(f.store.mail.get(first.id).notification.renderData.termsSummary.language, 'en');
+  assert.ok(f.store.mail.get(first.id).notification.renderData.termsSummary.links.some(link => link.href.endsWith('/es.pdf')), 'the accepted document remains in its originally accepted language');
   await service.runDue();
   const emitted = clone(f.store.mail.get(first.id));
   assert.equal(emitted.prepared.language, 'en');

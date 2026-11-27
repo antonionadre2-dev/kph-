@@ -63,7 +63,7 @@ test('the integrated page, selector and runtime branches only request covered tr
     'Kraken', 'Properties and Facilities', 'Management', '01', '02', '03',
     'kai@krakenpfm.ch', 'Kraken PFM', 'Seewadelstrasse 3', '+41 77 450 57 05',
     'Instagram', 'LinkedIn', 'WhatsApp', '©', '2026', '🌎',
-    'Kraken Properties and Facilities Management Gomes Mendes', 'seociety.ch',
+    'Kraken Properties and Facilities Management Gomes Mendes', 'Properties & Facilities', 'Management', 'seociety.ch',
   ]);
   const runtimeMaps = new Set(['seasonNames', 'weatherNames', 'phaseNames', 'holidayNames', 'descriptions', 'imageDescriptions']);
   const files = [

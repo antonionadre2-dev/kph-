@@ -20,7 +20,7 @@
     "eyebrow": "Per la sua casa a Zurigo",
     "h1": "Pulizie e piccoli traslochi a Zurigo. Ben pianificati, seguiti personalmente.",
     "intro": [
-      "Qualche finestra, un alloggio prima della riconsegna o scatoloni da portare nella nuova casa: non serve un grande incarico per ricevere aiuto. Kraken sostiene le abitazioni private a Zurigo con cinque servizi chiari. Lei sceglie ciò che le occorre. Concordiamo insieme la portata del lavoro.",
+      "Qualche finestra, un alloggio prima della riconsegna o scatoloni da portare nella nuova casa: non serve un grande incarico per ricevere aiuto. Kraken sostiene le abitazioni private a Zurigo con servizi adatti. Lei sceglie ciò che le occorre. Concordiamo insieme la portata del lavoro.",
       "La nostra sede è a Sciaffusa. Pianifichiamo il suo servizio a Zurigo in base a indirizzo, accessi e data desiderata. Piano, ascensore e percorso dal veicolo alla porta fanno così parte della preparazione fin dall’inizio."
     ],
     "heroFacts": [
@@ -45,7 +45,7 @@
       {
         "id": "moveout",
         "title": "Pulizie di fine locazione prima della riconsegna",
-        "body": "Dopo lo sgombero ci occupiamo della pulizia finale concordata. Numero di locali, superficie, condizioni e data di riconsegna ci aiutano a pianificare cucina, bagno, finestre e pavimenti. La garanzia di riconsegna riguarda le prestazioni di pulizia concordate contrattualmente; definiamo la portata esatta prima dell’incarico.",
+        "body": "Dopo lo sgombero ci occupiamo della pulizia finale concordata. Numero di locali, superficie, condizioni e data di riconsegna ci aiutano a pianificare cucina, bagno, finestre e pavimenti.",
         "ctaLabel": "Pianificare le mie pulizie di fine locazione"
       },
       {
@@ -59,6 +59,12 @@
         "title": "Pulizia a fondo per ripartire",
         "body": "Una pulizia accurata una tantum aiuta dove la cura quotidiana non basta. Descriva locali interessati, depositi di sporco e lavori desiderati. Le foto possono facilitare la valutazione. Definiamo la portata prima che una piccola esigenza diventi un incarico poco chiaro.",
         "ctaLabel": "Preparare la mia pulizia a fondo"
+      },
+      {
+        "id": "construction",
+        "title": "Pulizia di fine cantiere",
+        "body": "Dopo lavori di costruzione o ristrutturazione puliamo le aree concordate. Indichi superficie, condizioni e residui; Antonio conferma le prestazioni per iscritto.",
+        "ctaLabel": "Calcolare la pulizia di fine cantiere"
       },
       {
         "id": "moving",
@@ -97,7 +103,7 @@
     },
     "why": {
       "title": "Anche un piccolo incarico merita piena attenzione.",
-      "body": "Kraken offre un aiuto che fa la differenza nella vita domestica. Antonio e il nostro piccolo team esperto concordano personalmente con lei il lavoro. Accettiamo anche singole attività di pulizia e piccoli incarichi.",
+      "body": "Kraken offre un aiuto che fa la differenza nella vita domestica. Antonio concorda personalmente con lei il lavoro. Accettiamo anche singole attività di pulizia e piccoli incarichi.",
       "points": [
         {
           "title": "La portata del lavoro è al centro",
@@ -160,7 +166,7 @@
     "slug": "/reinigung/kanton-schaffhausen",
     "seo": {
       "title": "Impresa di pulizie a Sciaffusa | Kraken PFM",
-      "description": "Pulizie personali e piccoli traslochi a Sciaffusa. Contatto diretto, cinque servizi per abitazioni private e senza IVA. Prepari il suo incarico nel calcolatore.",
+      "description": "Pulizie personali e piccoli traslochi a Sciaffusa. Contatto diretto, servizi per abitazioni private e senza IVA. Prepari il suo incarico nel calcolatore.",
       "primaryIntent": "Private Haushalte suchen einen persönlich erreichbaren Reinigungsdienst mit echtem Standort in Schaffhausen.",
       "secondaryKeywords": [
         "Reinigungsfirma Schaffhausen",
@@ -175,8 +181,8 @@
     "eyebrow": "A Sciaffusa, per la sua casa",
     "h1": "Pulizie a Sciaffusa. Un contatto personale, meno pensieri a casa.",
     "intro": [
-      "La sua casa richiede attenzione nella vita quotidiana, prima di una riconsegna o quando il tempo scarseggia. Kraken aiuta le abitazioni private di Sciaffusa con cinque servizi: pulizia delle finestre, di fine locazione, regolare, a fondo e piccoli traslochi. Anche i piccoli compiti sono benvenuti.",
-      "La nostra sede è in Seewadelstrasse 3, 8203 Schaffhausen. Antonio e il nostro team esperto concordano personalmente il lavoro con lei. Dalla prima domanda alla pianificazione conta l’aiuto concreto di cui la sua casa ha bisogno."
+      "La sua casa richiede attenzione nella vita quotidiana, prima di una riconsegna o quando il tempo scarseggia. Kraken aiuta le abitazioni private di Sciaffusa con servizi: pulizia delle finestre, di fine locazione, regolare, a fondo, di fine cantiere e piccoli traslochi. Anche i piccoli compiti sono benvenuti.",
+      "La nostra sede è in Seewadelstrasse 3, 8203 Schaffhausen. Antonio concorda personalmente il lavoro con lei. Dalla prima domanda alla pianificazione conta l’aiuto concreto di cui la sua casa ha bisogno."
     ],
     "heroFacts": [
       "Sede a Sciaffusa",
@@ -211,9 +217,15 @@
       },
       {
         "id": "moveout",
-        "title": "Pulizie di fine locazione con garanzia concordata",
-        "body": "Alla riconsegna dell’alloggio contano una portata chiara del servizio e una data ben coordinata. Pianifichiamo la pulizia finale in base a dimensioni, condizioni ed extra concordati. La garanzia di riconsegna vale per le prestazioni di pulizia concordate contrattualmente; portata e condizioni vengono definite prima dell’incarico.",
+        "title": "Pulizia di fine locazione",
+        "body": "Alla riconsegna dell’alloggio contano una portata chiara del servizio e una data ben coordinata. Pianifichiamo la pulizia finale in base a dimensioni, condizioni ed extra concordati.",
         "ctaLabel": "Preparare la riconsegna del mio alloggio"
+      },
+      {
+        "id": "construction",
+        "title": "Pulizia di fine cantiere",
+        "body": "Dopo lavori di costruzione o ristrutturazione puliamo le aree concordate. Indichi superficie, condizioni e residui; Antonio conferma le prestazioni per iscritto.",
+        "ctaLabel": "Calcolare la pulizia di fine cantiere"
       },
       {
         "id": "moving",
@@ -256,7 +268,7 @@
       "points": [
         {
           "title": "Un contatto personale a Sciaffusa",
-          "body": "Kraken ha sede a Sciaffusa. Per domande può contattare Antonio e il team per telefono o e-mail; concordi in anticipo un’eventuale visita di persona."
+          "body": "Kraken ha sede a Sciaffusa. Per domande può contattare Antonio per telefono o e-mail; concordi in anticipo un’eventuale visita di persona."
         },
         {
           "title": "Nessuna IVA addebitata",
@@ -332,7 +344,7 @@
     "h1": "Pulizie a Winterthur. Più spazio per la sua vita quotidiana.",
     "intro": [
       "Un aiuto settimanale, una pulizia a fondo una tantum o un trasporto verso la nuova casa: a Winterthur le priorità sono le sue. Kraken sostiene le abitazioni private con pulizie e piccoli traslochi. Lei sceglie ciò che la alleggerisce; noi concordiamo la portata adatta.",
-      "Da Sciaffusa pianifichiamo con lei gli interventi concordati a Winterthur. Scelga fra pulizia delle finestre, di fine locazione, regolare, a fondo e piccoli traslochi. Per pianificare con chiarezza contano la situazione del suo alloggio e i lavori desiderati."
+      "Da Sciaffusa pianifichiamo con lei gli interventi concordati a Winterthur. Scelga fra pulizia delle finestre, di fine locazione, regolare, a fondo, di fine cantiere e piccoli traslochi. Per pianificare con chiarezza contano la situazione del suo alloggio e i lavori desiderati."
     ],
     "heroFacts": [
       "Una tantum o regolare",
@@ -368,8 +380,14 @@
       {
         "id": "moveout",
         "title": "Pulizie di fine locazione prima della restituzione",
-        "body": "Quando lascia l’alloggio, la pulizia finale dipende dalla casa e dalla portata concordata. Indichi superficie, numero di locali, condizioni e data prevista di riconsegna. La garanzia di riconsegna vale per le prestazioni di pulizia concordate contrattualmente; definiamo le condizioni prima della conclusione dell’incarico.",
+        "body": "Quando lascia l’alloggio, la pulizia finale dipende dalla casa e dalla portata concordata. Indichi superficie, numero di locali, condizioni e data prevista di riconsegna.",
         "ctaLabel": "Calcolare la mia pulizia finale"
+      },
+      {
+        "id": "construction",
+        "title": "Pulizia di fine cantiere",
+        "body": "Dopo lavori di costruzione o ristrutturazione puliamo le aree concordate. Indichi superficie, condizioni e residui; Antonio conferma le prestazioni per iscritto.",
+        "ctaLabel": "Calcolare la pulizia di fine cantiere"
       },
       {
         "id": "moving",
@@ -408,7 +426,7 @@
     },
     "why": {
       "title": "Un aiuto orientato alle sue priorità.",
-      "body": "Lei conosce meglio di chiunque altro ciò che serve a casa sua. Antonio e il nostro team apportano esperienza nella pianificazione e nell’esecuzione dei lavori concordati. Una portata chiara semplifica la collaborazione, dal primo contatto all’intervento successivo.",
+      "body": "Lei conosce meglio di chiunque altro ciò che serve a casa sua. Antonio apporta esperienza nella pianificazione e nell’esecuzione dei lavori concordati. Una portata chiara semplifica la collaborazione, dal primo contatto all’intervento successivo.",
       "points": [
         {
           "title": "Pianificare solo ciò che serve",

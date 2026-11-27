@@ -35,7 +35,7 @@
       {
         "id": "moveout",
         "title": "End of tenancy cleaning before handover",
-        "body": "Once your flat is empty, we take care of the agreed final clean. The number of rooms, floor area, condition and handover date help us plan the kitchen, bathroom, windows and floors. The handover guarantee covers the cleaning services agreed in the contract; we clarify its exact scope before the job.",
+        "body": "Once your flat is empty, we take care of the agreed final clean. The number of rooms, floor area, condition and handover date help us plan the kitchen, bathroom, windows and floors.",
         "ctaLabel": "Plan my end of tenancy clean"
       },
       {
@@ -49,6 +49,12 @@
         "title": "Deep cleaning for a fresh start",
         "body": "A thorough one-off clean helps where everyday care is not enough. Describe the rooms, any build-up and the work you would like done. Photos can help us assess the job. We agree the scope so that a small concern does not turn into an unclear assignment.",
         "ctaLabel": "Put together my deep clean"
+      },
+      {
+        "id": "construction",
+        "title": "Post-construction cleaning",
+        "body": "After construction or renovation, we clean the agreed areas. Describe the floor area, condition and residues; Antonio confirms the scope in writing.",
+        "ctaLabel": "Calculate post-construction cleaning"
       },
       {
         "id": "moving",
@@ -87,7 +93,7 @@
     },
     "why": {
       "title": "A manageable job deserves our full attention.",
-      "body": "Kraken focuses on help that makes a difference in everyday life at home. Antonio and our small, experienced team agree the work with you personally. Individual cleaning tasks and small jobs are welcome too.",
+      "body": "Kraken focuses on help that makes a difference in everyday life at home. Antonio agrees the work with you personally. Individual cleaning tasks and small jobs are welcome too.",
       "points": [
         {
           "title": "The scope comes first",
@@ -154,8 +160,8 @@
     "eyebrow": "Based in Schaffhausen. Here for you personally.",
     "h1": "Your cleaning company in Schaffhausen. For the tasks that take up your time.",
     "intro": [
-      "A home needs care. Sometimes regularly, sometimes before a handover, and sometimes just when everyday life gets too busy. Kraken helps with window cleaning, end of tenancy cleaning, regular cleaning, deep cleaning and small moves. Individual, manageable tasks are welcome too.",
-      "Our base is at Seewadelstrasse 3 in 8203 Schaffhausen. Antonio and our small, experienced team take care of the personal arrangements. Tell us what matters to you, and we turn it into a clearly described job."
+      "A home needs care. Sometimes regularly, sometimes before a handover, and sometimes just when everyday life gets too busy. Kraken helps with window cleaning, end of tenancy cleaning, regular cleaning, deep cleaning, post-construction cleaning and small moves. Individual, manageable tasks are welcome too.",
+      "Our base is at Seewadelstrasse 3 in 8203 Schaffhausen. Antonio takes care of the personal arrangements. Tell us what matters to you, and we turn it into a clearly described job."
     ],
     "heroFacts": [
       "Based in Schaffhausen",
@@ -167,7 +173,7 @@
       "href": "/quote?lang=en",
       "city": "Schaffhausen"
     },
-    "servicesTitle": "Five services. Suited to your situation.",
+    "servicesTitle": "Services suited to your situation.",
     "servicesIntro": "You do not have to have everything done at once. Start with the area where a little help would make the biggest difference.",
     "services": [
       {
@@ -190,9 +196,15 @@
       },
       {
         "id": "moveout",
-        "title": "End of tenancy cleaning with an agreed handover guarantee",
-        "body": "When you hand back your flat, a clear scope and a well coordinated appointment matter. We plan the final clean around its size, condition and the agreed extras. The handover guarantee applies to the cleaning services agreed in the contract; its scope and conditions are set before the job.",
+        "title": "End-of-tenancy cleaning",
+        "body": "When you hand back your flat, a clear scope and a well coordinated appointment matter. We plan the final clean around its size, condition and the agreed extras.",
         "ctaLabel": "Prepare my property handover"
+      },
+      {
+        "id": "construction",
+        "title": "Post-construction cleaning",
+        "body": "After construction or renovation, we clean the agreed areas. Describe the floor area, condition and residues; Antonio confirms the scope in writing.",
+        "ctaLabel": "Calculate post-construction cleaning"
       },
       {
         "id": "moving",
@@ -235,7 +247,7 @@
       "points": [
         {
           "title": "Personal contact in Schaffhausen",
-          "body": "Kraken is based in Schaffhausen. You can reach Antonio and the team by phone or email with any questions. Please arrange a personal visit with us in advance."
+          "body": "Kraken is based in Schaffhausen. You can reach Antonio by phone or email with any questions. Please arrange a personal visit with us in advance."
         },
         {
           "title": "No VAT charged",
@@ -299,7 +311,7 @@
     "h1": "Cleaning in Winterthur that fits your everyday life.",
     "intro": [
       "Do you need help every week, a thorough one-off clean or support with moving to your next flat? Kraken helps private households in Winterthur with a service suited to their situation. You set the priorities, and together we plan the right tasks.",
-      "Our small, experienced team travels from our base in Schaffhausen to arranged jobs in Winterthur. Start in the calculator with what you need: regular cleaning, deep cleaning, windows, end of tenancy cleaning or a small move."
+      "Antonio travels from our base in Schaffhausen to arranged jobs in Winterthur. Start in the calculator with what you need: regular cleaning, deep cleaning, windows, end of tenancy cleaning or a small move."
     ],
     "heroFacts": [
       "One-off or regular",
@@ -335,8 +347,14 @@
       {
         "id": "moveout",
         "title": "End of tenancy cleaning before you hand back your home",
-        "body": "When you move out, the final clean depends on your flat and the agreed scope of work. Tell us the floor area, number of rooms, condition and planned handover date. A handover guarantee applies to the cleaning services agreed in the contract; we clarify the conditions before the job is confirmed.",
+        "body": "When you move out, the final clean depends on your flat and the agreed scope of work. Tell us the floor area, number of rooms, condition and planned handover date.",
         "ctaLabel": "Calculate my final clean"
+      },
+      {
+        "id": "construction",
+        "title": "Post-construction cleaning",
+        "body": "After construction or renovation, we clean the agreed areas. Describe the floor area, condition and residues; Antonio confirms the scope in writing.",
+        "ctaLabel": "Calculate post-construction cleaning"
       },
       {
         "id": "moving",
@@ -375,7 +393,7 @@
     },
     "why": {
       "title": "Help guided by your priorities.",
-      "body": "You know best what needs doing in your home. Antonio and our team bring experience to planning and carrying out the agreed work. A clear scope makes working together easier, from your first enquiry to the next visit.",
+      "body": "You know best what needs doing in your home. Antonio brings experience to planning and carrying out the agreed work. A clear scope makes working together easier, from your first enquiry to the next visit.",
       "points": [
         {
           "title": "Plan only what you need",

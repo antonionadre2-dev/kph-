@@ -1,15 +1,16 @@
+import {publicPolicyContent} from '../src/kai/policyContent.ts';
 import { calculatePrice, defaultSelection, pricingConfig, type BookingSelection } from '../src/booking/pricing.ts';
 import { applyKaiBookingTransfer } from '../src/booking/kaiTransfer.ts';
 import type { KaiAssistantResponse, KaiDraft } from '../src/kai/types.ts';
 import { foldKai } from './kaiIntents.ts';
 
 const text = {
-  de: { from:'ab',fixed:'Festpreis für den Basisumfang mit Abnahmegarantie gemäss AGB.',estimate:'für den angegebenen Leistungsumfang.',vat:'Endpreis – keine MwSt.', review:'Extras und abweichender Umfang werden im Rechner ausgewiesen.' },
-  en: { from:'from',fixed:'Fixed price for the basic scope, with handover guarantee subject to terms.',estimate:'for the stated scope.',vat:'Final price – no VAT.',review:'Extras and any different scope are itemised in the calculator.' },
-  es: { from:'desde',fixed:'Precio cerrado para el servicio base, con garantía de entrega según las condiciones.',estimate:'para el trabajo indicado.',vat:'Precio final, sin IVA.',review:'Los extras y los cambios de alcance se detallan en el calculador.' },
-  pt: { from:'desde',fixed:'Preço fixo para o serviço base, com garantia de entrega segundo as condições.',estimate:'para o serviço indicado.',vat:'Preço final, sem IVA.',review:'Os extras e as alterações ao âmbito são discriminados no simulador.' },
-  it: { from:'da',fixed:'Prezzo fisso per il servizio base, con garanzia di consegna secondo le condizioni.',estimate:'per il servizio indicato.',vat:'Prezzo finale, senza IVA.',review:'Gli extra e le variazioni sono indicati nel calcolatore.' },
-  fr: { from:'dès',fixed:'Forfait pour les prestations de base, avec garantie de remise selon conditions.',estimate:'pour les prestations indiquées.',vat:'Prix final, sans TVA.',review:'Les options et changements de prestations sont détaillés dans le calculateur.' },
+  de: { from:'ab',estimate:'für den angegebenen Leistungsumfang.',vat:'Endpreis – keine MwSt.', review:'Extras und abweichender Umfang werden im Rechner ausgewiesen.' },
+  en: { from:'from',estimate:'for the stated scope.',vat:'Final price – no VAT.',review:'Extras and any different scope are itemised in the calculator.' },
+  es: { from:'desde',estimate:'para el trabajo indicado.',vat:'Precio final, sin IVA.',review:'Los extras y los cambios de alcance se detallan en el calculador.' },
+  pt: { from:'desde',estimate:'para o serviço indicado.',vat:'Preço final, sem IVA.',review:'Os extras e as alterações ao âmbito são discriminados no simulador.' },
+  it: { from:'da',estimate:'per il servizio indicato.',vat:'Prezzo finale, senza IVA.',review:'Gli extra e le variazioni sono indicati nel calcolatore.' },
+  fr: { from:'dès',estimate:'pour les prestations indiquées.',vat:'Prix final, sans TVA.',review:'Les options et changements de prestations sont détaillés dans le calculateur.' },
 } as const;
 function number(value:string|undefined) { return value&&/^\d+(?:[.,]\d{1,2})?$/.test(value)?Number(value.replace(',','.')):undefined; }
 function withKai(selection:BookingSelection,draft:KaiDraft):BookingSelection {
@@ -34,7 +35,7 @@ export function calculateKaiQuote(draft:KaiDraft):{message:string;quote:NonNulla
       const from=rooms===undefined||area===undefined;
       const quantity=[rooms!==undefined?rooms+' '+({de:'Zimmer',en:'rooms',es:'habitaciones',pt:'divisões',it:'locali',fr:'pièces'}[draft.language]):'',area!==undefined?area+' m²':''].filter(Boolean).join(', ');
       return {quote:{amountCents:price.totalCents,currency:'CHF',priceType:from?'from':'fixed'},
-        message:[quantity?quantity+':':'',from?copy.from:'',formatKaiMoney(price.totalCents),copy.fixed,copy.vat,copy.review].filter(Boolean).join(' ')};
+        message:[quantity?quantity+':':'',from?copy.from:'',formatKaiMoney(price.totalCents),publicPolicyContent(draft.language).guaranteeScope,copy.vat,copy.review].filter(Boolean).join(' ')};
     }
     if(draft.service==='regular'||draft.service==='deep'){
       const frequency=foldKai(fields.frequency||'');

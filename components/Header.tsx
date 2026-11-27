@@ -18,7 +18,7 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
   const [logoutError, setLogoutError] = useState(false);
   const t = (source: string) => homeText(language, source);
   const href = (path: string) => publicHref(path, language);
-  const page = currentPage === 'home' ? 'home' : currentPage === 'about' ? 'about'
+  const page = currentPage === 'terms' ? 'legal' : currentPage === 'home' ? 'home' : currentPage === 'about' ? 'about'
     : currentPage === 'services-page' ? 'services' : currentPage === 'consultation' ? 'calculator' : 'local';
   const accountControls = user ? <>
     <a href={href('/dashboard')}>{t('Mein Konto')}</a>

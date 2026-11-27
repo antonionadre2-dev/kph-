@@ -35,7 +35,8 @@ function publicCopy(page) {
     ...page.faqs.flatMap(item => [item.question, item.answer]), page.closing.title, page.closing.body];
 }
 
-test('approved regional articles retain all content except the explicitly authorized price-comparison paragraphs', () => {
+test('historical approved regional content stays verifiable and only authorized current text fields change', () => {
+  const before=JSON.parse(readFileSync(path.join(root,'tests/fixtures/public-regions-before-agb-2026-11-26.json'),'utf8'));
   const source = JSON.parse(readFileSync(path.join(root, 'reference/local-seo-footer/content/locations.de.json'), 'utf8'));
   source.pages[0].why.body = source.pages[0].why.body.replace('Sie brauchen keine umfangreiche Hausbetreuung zu buchen, wenn Sie eine konkrete Aufgabe abgeben möchten.', 'Auch einzelne Reinigungsaufgaben und kleine Aufträge sind willkommen.');
   const approvedPriceCopy = {
@@ -48,7 +49,7 @@ test('approved regional articles retain all content except the explicitly author
   };
   // Only these three paths change in the source package; its on-disk reference stays intact.
   for (const page of source.pages) page.why.points[1].body = approvedPriceCopy.de;
-  assert.deepEqual(locales.de, source.pages);
+  assert.deepEqual(before.de, source.pages);
   // Structural snapshots of the approved a0591e6 translations, excluding ONLY those three paragraphs.
   const retainedContentSha256 = {
     de: '522800d1bf715f0ed6f69b0d0e691389c908e18cd33fbcb916f773f2d7c0cf49',
@@ -60,13 +61,23 @@ test('approved regional articles retain all content except the explicitly author
   };
   const stable = value => Array.isArray(value) ? value.map(stable) : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])])) : value;
   for (const language of languages) {
-    const retained = structuredClone(locales[language]);
+    const retained = structuredClone(before[language]);
     assert.equal(retained.length, 3);
     for (const page of retained) {
       assert.equal(page.why.points[1].body, approvedPriceCopy[language]);
       delete page.why.points[1].body;
     }
     assert.equal(createHash('sha256').update(JSON.stringify(stable(retained))).digest('hex'), retainedContentSha256[language], `${language}: unrelated approved content changed`);
+  }
+  const authorized=['0.intro.0','0.why.body','1.intro.0','1.intro.1','1.servicesTitle','1.why.points.0.body','2.intro.1','2.why.body'];
+  for(const language of languages){
+    const original=structuredClone(before[language]);
+    const current=structuredClone(locales[language]);
+    for(const [i,page] of current.entries()){assert.equal(page.services.filter(s=>s.id==='construction').length,1);page.services=page.services.filter(s=>s.id!=='construction');const oldMoveout=original[i].services.find(s=>s.id==='moveout'),newMoveout=page.services.find(s=>s.id==='moveout');oldMoveout.body=newMoveout.body;if(i===1)oldMoveout.title=newMoveout.title;}
+    for(const dotted of [...authorized,...(['pt','it'].includes(language)?['1.seo.description']:[])]){
+      const parts=dotted.split('.');let a=original,b=current;for(const part of parts.slice(0,-1)){a=a[part];b=b[part];}a[parts.at(-1)]=b[parts.at(-1)];
+    }
+    assert.deepEqual(current,original,language+': unrelated fields or structures changed');
   }
   assert.equal(new Set(locales.de.map(page => page.intro[0])).size, 3);
   assert.equal(new Set(locales.de.map(page => page.planning.title)).size, 3);
@@ -98,7 +109,7 @@ test('all 18 regional articles expose complete translated copy and matching meta
 });
 
 test('regional service links use existing calculator keys and chosen language in real native hrefs', () => {
-  const calculatorKeys = ['windows', 'end', 'regular', 'deep', 'moving'];
+  const calculatorKeys = ['windows', 'end', 'regular', 'deep', 'construction', 'moving'];
   const serviceIds = ['window-cleaning', 'end-of-tenancy', 'daily-cleaning', 'deep-cleaning', 'moving-furniture'];
   for (const language of languages) for (const page of locales[language]) {
     const html = render(page.slug, language);
@@ -123,7 +134,7 @@ test('the area index links all three real regions and all fifteen preserved serv
       for (const service of page.services) assert.ok(html.includes(escapeHtml(service.title)));
     }
     const serviceIds = { windows: 'window-cleaning', moveout: 'end-of-tenancy', regular: 'daily-cleaning', deep: 'deep-cleaning', moving: 'moving-furniture' };
-    for (const page of locales[language]) for (const service of page.services) assert.ok(html.includes(publicHref(`/services/${page.id === 'zuerich' ? 'zurich' : page.id}/${serviceIds[service.id]}`, language)));
+    for (const page of locales[language]) for (const service of page.services) assert.ok(html.includes(publicHref(service.id==='construction'?'/leistungen#baureinigung':`/services/${page.id === 'zuerich' ? 'zurich' : page.id}/${serviceIds[service.id]}`, language)));
     assert.match(html, /Seewadelstrasse 3/);
     assert.match(html, /8203 Schaffhausen/);
     assert.match(html, /href="tel:\+41774505705"/);

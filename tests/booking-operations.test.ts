@@ -84,6 +84,17 @@ test('operator approval changes the real store and canCheckout, queues one appro
  assert.equal((await invoke(f.handler,path,{method:'POST',body})).statusCode,409);assert.equal(f.sent.length,1);
  assert.doesNotMatch(JSON.stringify(result.body),/publicToken|#access=|prepared|<html|synthetic-mail-accepted/);
 });
+test('current terms operator confirmation needs no browser hold and emails the same server-owned capped deadline',async()=>{
+ const f=await fixture(),path=`${base}/${f.booking.bookingId}/confirm`;
+ const result=await invoke(f.handler,path,{method:'POST',body:{expectedRevision:1,availabilityChecked:true}});
+ assert.equal(result.statusCode,200);
+ const record=await f.db.store.get(f.booking.bookingId);
+ assert.equal(record.payment.depositDueAt,'2026-11-28T09:00:00.000Z');
+ assert.equal(record.scheduling.holdExpiresAt,record.payment.depositDueAt);
+ assert.equal(record.confirmedAt,now);assert.equal(f.gatewayCalls,0);
+ assert.equal(f.sent.length,1);assert.match(f.sent[0].text,/28 de noviembre de 2026.*10:00.*Europe\/Zurich/);
+ assert.equal(result.body.booking.payment.depositDueAt,record.payment.depositDueAt);
+});
 test('operator lookup uses exact reference in POST body and unavailable mail/payment cannot imply approval',async()=>{
  const f=await fixture();const result=await invoke(f.handler,base+'/search',{method:'POST',body:{reference:f.booking.reference.toLowerCase()}});
  assert.equal(result.statusCode,200);assert.equal(result.body.bookings.length,1);

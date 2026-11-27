@@ -71,7 +71,7 @@ test('service offers use calculator amounts and genuine visible FAQs, excluding 
     const service = meta.structuredData.find(item => item['@type'] === 'Service')!;
     const faq = meta.structuredData.find(item => item['@type'] === 'FAQPage')!;
     assert.equal((service.offers as unknown[]).length, 5);
-    assert.equal((faq.mainEntity as unknown[]).length, 4);
+    assert.equal((faq.mainEntity as unknown[]).length, 7);
     assert.doesNotMatch(JSON.stringify(meta.structuredData), /AggregateRating|Review|ratingValue/);
     const windows = getPageSeo(publicHref('/fensterreinigung/' + city, language)).structuredData.find(item => item['@type'] === 'Service')!;
     assert.equal((windows.offers as {price: string}).price, (getPublicPriceOffers().find(offer => offer.service === 'windows')!.minimumCents! / 100).toFixed(2));

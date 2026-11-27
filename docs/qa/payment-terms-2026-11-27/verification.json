@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-11-27T11:40:39.126Z",
+  "pricingVersion": "kraken-private-2026-11-27-v4",
+  "termsVersion": "kraken-agb-2026-11-26-v2",
+  "cases": [
+    {
+      "name": "regular-4h",
+      "totalCents": 16000,
+      "depositBasisCents": 10000,
+      "depositCents": 1500,
+      "priceType": "estimate"
+    },
+    {
+      "name": "end-hourly-4h",
+      "totalCents": 18000,
+      "depositBasisCents": 13500,
+      "depositCents": 2025,
+      "priceType": "estimate"
+    },
+    {
+      "name": "construction-hourly-5h",
+      "totalCents": 24000,
+      "depositBasisCents": 19200,
+      "depositCents": 2880,
+      "priceType": "estimate"
+    }
+  ],
+  "syntheticDeadlines": {
+    "confirmedAt": "2026-11-27T10:00:00.000Z",
+    "normal": "2026-11-30T10:00:00.000Z",
+    "beforeEarlyWork": "2026-11-28T08:00:00.000Z"
+  },
+  "preview": {
+    "available": false,
+    "paymentReady": false,
+    "mode": "unconfigured"
+  },
+  "liveChargesCreated": 0
+}

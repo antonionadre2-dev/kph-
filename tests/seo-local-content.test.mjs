@@ -35,7 +35,7 @@ test('all 19 local landing pages expose substantive, factual HTML before JavaScr
     assert.equal(descriptor.indexable, true, pathname);
     assert.equal((html.match(/<h1\b/g) || []).length, 1, pathname);
     assert.ok(html.includes(descriptor.h1), pathname);
-    if (!pathname.endsWith('/end-of-tenancy')) assert.match(html, /1–4/);
+    if (!pathname.endsWith('/end-of-tenancy')) assert.match(html, /5[.,]5/);
     assert.match(html, /Seewadelstrasse 3/);
     assert.match(html, /8203 Schaffhausen/);
     assert.match(html, /href="tel:\+41774505705"/);
@@ -44,7 +44,7 @@ test('all 19 local landing pages expose substantive, factual HTML before JavaScr
     if (!pathname.startsWith('/services/')) assert.doesNotMatch(html, /(?:CHF|EUR)\s*\d/);
     assert.doesNotMatch(html, /99\.4%|zertifizier|GAV-konform|CO2|10 Millionen|offerCount|AggregateOffer/);
     assert.doesNotMatch(html, /<script|<button|Reaktionszeit|Schweizer Meisterklasse/);
-    if (html.includes('Abnahmegarantie')) assert.match(html, /vertraglich vereinbarten Reinigungsleistungen|mit vereinbarter Abnahmegarantie/);
+    if (html.includes('Abnahmegarantie')) assert.match(html, /Umzugsreinigung zum Pauschalpreis|in der Auftragsbestätigung vereinbarten Reinigungsarbeiten/);
     assert.ok(html.replace(/<[^>]+>/g, ' ').length > 1800, pathname);
   }
 });

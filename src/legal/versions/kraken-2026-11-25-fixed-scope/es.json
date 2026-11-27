@@ -1,0 +1,260 @@
+{
+  "version": "kraken-2026-11-25-fixed-scope",
+  "language": "es",
+  "title": "Condiciones Generales de Contratación (CGC)",
+  "dateLabel": "Versión de condiciones: kraken-2026-11-25-fixed-scope · Revisión editorial: 25.11.2026",
+  "translationNotice": "",
+  "sections": [
+    {
+      "number": 1,
+      "title": "1. Ámbito de Aplicación y Definiciones",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Estas condiciones se aplican a la limpieza de ventanas, de fin de alquiler, periódica, a fondo y a las pequeñas mudanzas que presta Kraken PFM (Kraken, nosotros) a hogares particulares. Las condiciones distintas solo se aplican si se aceptan por escrito."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "2. Presupuestos, precio cerrado y contratación",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "El calculador muestra un precio cerrado para los datos y servicios seleccionados. Si el alcance no cambia, el precio se mantiene. Una solicitud no confirma por sí sola una fecha. El contrato se formaliza al confirmar un presupuesto o una reserva en línea. La confirmación define el alcance. Los cambios de datos o trabajos adicionales se acuerdan con usted antes de modificar el precio. Las reservas exprés requieren un anticipo del 15%."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "3. Precios, IVA y Recargos",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Todos los precios se indican en francos suizos (CHF). El precio del calculador corresponde al alcance elegido; los extras seleccionados figuran en el total. Se aplican el presupuesto confirmado y los trabajos acordados. Actualmente Kraken no está sujeto a IVA y no lo factura."
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "4. Desplazamiento incluido en el precio",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "El desplazamiento ordinario para el servicio seleccionado está incluido en el precio del calculador. Cualquier gasto extraordinario de desplazamiento requiere acuerdo previo y debe constar en el presupuesto escrito."
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "5. Condiciones de Pago y Mora",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Pagos vía Payrexx, transferencia o QR-bill. El saldo vence a los 7 días de la factura. Mora automática tras vencer plazo, con un interés anual del 5% y cargos por reclamación de 20,00 CHF (2ª reclamación) y 50,00 CHF (3ª reclamación). Costes de cobro a cargo del cliente."
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "6. Cancelaciones, Aplazamientos y No Presentación",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Cancelaciones por escrito. Tasas: >48 horas de antelación: gratis; <48 horas: 50% del importe; <12 horas, no presentación o cancelación en puerta: 100% del presupuesto. Un aplazamiento gratuito es permitido >24 horas antes, según disponibilidad."
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "7. Limpiezas periódicas y rescisión",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Los planes periódicos tienen duración indefinida. Para rescindirlos se requiere un preaviso de 30 días a fin de mes (7 días durante el periodo de prueba de 2 meses). Omitir una visita requiere 48 horas de aviso. Los precios pueden ajustarse anualmente con 60 días de preaviso."
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "8. Limpieza de Final de Arrendamiento — Garantía de Entrega",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Garantía de entrega (Wohnungsabgabe): subsanación gratuita de deficiencias. Válido si: (a) notificado por escrito en 24h tras inspección con protocolo/fotos; (b) inspección en 72h tras limpieza; (c) propiedad desocupada e inutilizada. No cubre daños estructurales, desgaste o áreas excluidas."
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "9. Servicios de Mudanza y Transporte",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Debe facilitar un inventario preciso. El dinero, las joyas, las sustancias peligrosas, las plantas y los animales quedan excluidos del transporte sin acuerdo escrito. Los daños ocultos deben comunicarse en un plazo de 3 días."
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "10. Responsabilidades del Cliente, Acceso y Tiempos de Espera",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Debe facilitar el acceso, electricidad, agua corriente, calefacción y el ascensor previsto. Si no se facilita el acceso, se aplican las condiciones de cancelación existentes. Las llaves entregadas se guardan de forma segura y anónima."
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "11. Quejas y Notificación de Defectos",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Inspeccionar al finalizar. Defectos visibles en 48h; ocultos en 48h tras descubrimiento (máx 7 días post-servicio). Remedio primario es la rectificación. Retenciones parciales solo permitidas para la sección afectada."
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "12. Responsabilidad Civil y Seguros",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "La información sobre una posible cobertura de seguro figura en la documentación de la póliza y el presupuesto escrito correspondientes. Aclare sus dudas con Kraken antes del encargo."
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "title": "13. Subcontratistas, Socios Especializados y Derecho de Rechazo",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Kraken puede contratar terceros cualificados pero sigue siendo el único socio contractual. Kraken puede rechazar o suspender el servicio si hay riesgos de seguridad o salud."
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "title": "14. Fuerza Mayor",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Ninguna parte responde de retrasos o incumplimientos por causas fuera de control (desastres, huelgas, pandemias, fallos eléctricos). Obligaciones suspendidas; si dura >30 días, se puede rescindir."
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "title": "15. Protección de Datos y Documentación",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Procesamiento de datos conforme a la Ley Suiza de Protección de Datos (revDSG) y el RGPD. Fotos de antes/después para control de calidad y seguros. Uso comercial de fotos requiere consentimiento previo."
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "title": "16. Modificaciones y Divisibilidad",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Kraken puede modificar estas CGC con aviso de 30 días. No oponerse implica aceptación. Si una cláusula es inválida, el resto sigue vigente y la inválida se reemplaza por otra que cumpla el mismo fin económico."
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "title": "17. Legislación Aplicable y Jurisdicción",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Todos los contratos se rigen por el derecho suizo, excluyendo la CISG. Fuero exclusivo en Schaffhausen, Suiza. Se reservan los fueros de consumo obligatorios."
+        }
+      ]
+    }
+  ],
+  "contact": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Suiza",
+  "archived": true,
+  "sourceCommit": "d105e2e",
+  "legacyOriginal": {
+    "title": "Condiciones Generales de Contratación (CGC)",
+    "description": "Estas condiciones generales regulan la limpieza y las pequeñas mudanzas para hogares particulares de Kraken PFM.",
+    "sections": [
+      {
+        "title": "1. Ámbito de Aplicación y Definiciones",
+        "content": "Estas condiciones se aplican a la limpieza de ventanas, de fin de alquiler, periódica, a fondo y a las pequeñas mudanzas que presta Kraken PFM (Kraken, nosotros) a hogares particulares. Las condiciones distintas solo se aplican si se aceptan por escrito."
+      },
+      {
+        "title": "2. Presupuestos, precio cerrado y contratación",
+        "content": "El calculador muestra un precio cerrado para los datos y servicios seleccionados. Si el alcance no cambia, el precio se mantiene. Una solicitud no confirma por sí sola una fecha. El contrato se formaliza al confirmar un presupuesto o una reserva en línea. La confirmación define el alcance. Los cambios de datos o trabajos adicionales se acuerdan con usted antes de modificar el precio. Las reservas exprés requieren un anticipo del 15%."
+      },
+      {
+        "title": "3. Precios, IVA y Recargos",
+        "content": "Todos los precios se indican en francos suizos (CHF). El precio del calculador corresponde al alcance elegido; los extras seleccionados figuran en el total. Se aplican el presupuesto confirmado y los trabajos acordados. Actualmente Kraken no está sujeto a IVA y no lo factura."
+      },
+      {
+        "title": "4. Desplazamiento incluido en el precio",
+        "content": "El desplazamiento ordinario para el servicio seleccionado está incluido en el precio del calculador. Cualquier gasto extraordinario de desplazamiento requiere acuerdo previo y debe constar en el presupuesto escrito."
+      },
+      {
+        "title": "5. Condiciones de Pago y Mora",
+        "content": "Pagos vía Payrexx, transferencia o QR-bill. El saldo vence a los 7 días de la factura. Mora automática tras vencer plazo, con un interés anual del 5% y cargos por reclamación de 20,00 CHF (2ª reclamación) y 50,00 CHF (3ª reclamación). Costes de cobro a cargo del cliente."
+      },
+      {
+        "title": "6. Cancelaciones, Aplazamientos y No Presentación",
+        "content": "Cancelaciones por escrito. Tasas: >48 horas de antelación: gratis; <48 horas: 50% del importe; <12 horas, no presentación o cancelación en puerta: 100% del presupuesto. Un aplazamiento gratuito es permitido >24 horas antes, según disponibilidad."
+      },
+      {
+        "title": "7. Limpiezas periódicas y rescisión",
+        "content": "Los planes periódicos tienen duración indefinida. Para rescindirlos se requiere un preaviso de 30 días a fin de mes (7 días durante el periodo de prueba de 2 meses). Omitir una visita requiere 48 horas de aviso. Los precios pueden ajustarse anualmente con 60 días de preaviso."
+      },
+      {
+        "title": "8. Limpieza de Final de Arrendamiento — Garantía de Entrega",
+        "content": "Garantía de entrega (Wohnungsabgabe): subsanación gratuita de deficiencias. Válido si: (a) notificado por escrito en 24h tras inspección con protocolo/fotos; (b) inspección en 72h tras limpieza; (c) propiedad desocupada e inutilizada. No cubre daños estructurales, desgaste o áreas excluidas."
+      },
+      {
+        "title": "9. Servicios de Mudanza y Transporte",
+        "content": "Debe facilitar un inventario preciso. El dinero, las joyas, las sustancias peligrosas, las plantas y los animales quedan excluidos del transporte sin acuerdo escrito. Los daños ocultos deben comunicarse en un plazo de 3 días."
+      },
+      {
+        "title": "10. Responsabilidades del Cliente, Acceso y Tiempos de Espera",
+        "content": "Debe facilitar el acceso, electricidad, agua corriente, calefacción y el ascensor previsto. Si no se facilita el acceso, se aplican las condiciones de cancelación existentes. Las llaves entregadas se guardan de forma segura y anónima."
+      },
+      {
+        "title": "11. Quejas y Notificación de Defectos",
+        "content": "Inspeccionar al finalizar. Defectos visibles en 48h; ocultos en 48h tras descubrimiento (máx 7 días post-servicio). Remedio primario es la rectificación. Retenciones parciales solo permitidas para la sección afectada."
+      },
+      {
+        "title": "12. Responsabilidad Civil y Seguros",
+        "content": "La información sobre una posible cobertura de seguro figura en la documentación de la póliza y el presupuesto escrito correspondientes. Aclare sus dudas con Kraken antes del encargo."
+      },
+      {
+        "title": "13. Subcontratistas, Socios Especializados y Derecho de Rechazo",
+        "content": "Kraken puede contratar terceros cualificados pero sigue siendo el único socio contractual. Kraken puede rechazar o suspender el servicio si hay riesgos de seguridad o salud."
+      },
+      {
+        "title": "14. Fuerza Mayor",
+        "content": "Ninguna parte responde de retrasos o incumplimientos por causas fuera de control (desastres, huelgas, pandemias, fallos eléctricos). Obligaciones suspendidas; si dura >30 días, se puede rescindir."
+      },
+      {
+        "title": "15. Protección de Datos y Documentación",
+        "content": "Procesamiento de datos conforme a la Ley Suiza de Protección de Datos (revDSG) y el RGPD. Fotos de antes/después para control de calidad y seguros. Uso comercial de fotos requiere consentimiento previo."
+      },
+      {
+        "title": "16. Modificaciones y Divisibilidad",
+        "content": "Kraken puede modificar estas CGC con aviso de 30 días. No oponerse implica aceptación. Si una cláusula es inválida, el resto sigue vigente y la inválida se reemplaza por otra que cumpla el mismo fin económico."
+      },
+      {
+        "title": "17. Legislación Aplicable y Jurisdicción",
+        "content": "Todos los contratos se rigen por el derecho suizo, excluyendo la CISG. Fuero exclusivo en Schaffhausen, Suiza. Se reservan los fueros de consumo obligatorios."
+      }
+    ],
+    "verificationTitle": "Versión de las condiciones",
+    "lastUpdated": "Versión de condiciones: kraken-2026-11-25-fixed-scope · Revisión editorial: 25.11.2026",
+    "companyInfo": "Kraken PFM | Seewadelstrasse 3, 8203 Schaffhausen, Suiza",
+    "backHome": "Volver al Inicio"
+  }
+}

@@ -116,7 +116,7 @@ export function extractKaiDraft(request: KaiAssistantRequest, now = new Date()):
 
 function factTopic(text: string): KaiFactTopic | undefined {
   if (/\bvat\b|\biva\b|\btva\b|mwst|mehrwertsteuer/.test(text)) return 'vat';
-  if (/garant|handover guarantee|abnahme/.test(text)) return 'guarantee';
+  if (/garant|garanz|handover guarantee|abnahme/.test(text)) return 'guarantee';
   if (/versicherung|insured|insurance|seguro|assicur|assur/.test(text)) return 'insurance';
   if (/storn|cancel|annul|disdire|annull/.test(text)) return 'cancellation';
   if (/anzahl|zahl|payment|deposit|pagar|pagamento|pago|anticipo|acconto|sinal|acompte|paiement|payrexx/.test(text)) return 'payment';
@@ -124,18 +124,21 @@ function factTopic(text: string): KaiFactTopic | undefined {
   if (/verfugbar|termin.*frei|available|availability|disponib|disponiv|disponibil|frei.*termin/.test(text)) return 'availability';
   if (/wer kommt|wer reinigt|who (?:comes|cleans)|quien (?:viene|limpia)|quem (?:vem|limpa)|chi (?:viene|pulisce)|qui (?:vient|nettoie)|team|equipo|equipe/.test(text)) return 'team';
   if (/region|areas|where.*work|zona|regiao|wo.*tatig|kommt ihr auch|do you.*(?:serve|come)|vienen.*tambien/.test(text)) return 'regions';
-  if (/include|inclu|compris|enthalt|prepar|vorbereit/.test(text)) return 'included';
+  if (/prepar|vorbereit|material|reinigungsmittel|gerate|products|equipment|productos|produtos|attrezz|materiel/.test(text)) return 'preparation';
+  if (/include|inclu|compris|enthalt/.test(text)) return 'included';
 }
 function guidedResponse(request: KaiAssistantRequest, draft: KaiDraft): KaiAssistantResponse {
   const copy = kaiCopy(request.language), replies = kaiReplies[request.language], text = fold(request.message);
   const missing = missingKaiFields(draft);
-  const immediate = complaintKai(request.message) ? replies.apology
+  const immediate = /baureinigung|post.?construction|fin de obra|pos.?obra|fine cantiere|fin de chantier/.test(text) ? replies.human
+    : complaintKai(request.message) ? replies.apology
     : humanKai(request.message) ? replies.human
     : commercialKai(request.message) ? replies.privateOnly
     : outsideKaiArea(request.message) ? replies.outside : '';
   if (immediate) return { message: immediate, draft, missing, suggestions: [], actions: ['contact'], mode:'guided', contactCard:true };
   const topic = factTopic(text), fact = topic ? getKaiFact(topic, request.language, draft.service) : undefined;
-  let answer = discountKai(request.message) ? replies.discount : fact?.answer || '';
+  // French «garantie de remise» describes handover, not a discount request.
+  let answer = discountKai(request.message) && topic !== 'guarantee' ? replies.discount : fact?.answer || '';
   if (!answer && /ford|transit|van\b|furgon|fahrzeug|laderaum|capacity|dimensions|masse|medidas|dimensioni|cabe|fit\b/.test(text)) answer = copy.vehicle;
   if (!answer && /wetter|weather|clima|politic|bitcoin|competitor|konkurrent|competidor|concorrent|concurrent|capital of|hauptstadt/.test(text)) answer = replies.offtopic;
   if (!answer && deferredPattern.test(text)) answer = copy.deferred;

@@ -241,7 +241,7 @@ const REGIONAL_METADATA = {
     },
     "/reinigung/kanton-schaffhausen": {
       "title": "Empresa de limpeza em Schaffhausen | Kraken PFM",
-      "description": "Limpeza pessoal e pequenas mudanças em Schaffhausen. Contacto direto, cinco serviços para casas particulares e sem IVA. Prepare o seu pedido na calculadora.",
+      "description": "Limpeza pessoal e pequenas mudanças em Schaffhausen. Contacto direto, serviços para casas particulares e sem IVA. Prepare o seu pedido na calculadora.",
       "h1": "Limpeza em Schaffhausen. Contacto pessoal, menos preocupações em casa.",
       "faqs": [
         {
@@ -312,7 +312,7 @@ const REGIONAL_METADATA = {
     },
     "/reinigung/kanton-schaffhausen": {
       "title": "Impresa di pulizie a Sciaffusa | Kraken PFM",
-      "description": "Pulizie personali e piccoli traslochi a Sciaffusa. Contatto diretto, cinque servizi per abitazioni private e senza IVA. Prepari il suo incarico nel calcolatore.",
+      "description": "Pulizie personali e piccoli traslochi a Sciaffusa. Contatto diretto, servizi per abitazioni private e senza IVA. Prepari il suo incarico nel calcolatore.",
       "h1": "Pulizie a Sciaffusa. Un contatto personale, meno pensieri a casa.",
       "faqs": [
         {

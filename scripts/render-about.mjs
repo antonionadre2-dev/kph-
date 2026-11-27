@@ -16,7 +16,7 @@ export async function renderAboutHtml(root) {
   const outfile = path.join(temporary, 'render.cjs');
   try {
     await build({
-      stdin: { contents: `import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {AboutContent} from './components/about/ApprovedAbout.tsx';import WhyKrakenSection from './components/home/WhyKrakenSection.tsx';import {whyTranslations} from './components/home/whyTranslations.ts';import {homeText} from './components/home/homeTranslations.ts';export const renderAbout=language=>renderToStaticMarkup(React.createElement(AboutContent,{language}));export const renderWhy=language=>renderToStaticMarkup(React.createElement(WhyKrakenSection,{t:source=>whyTranslations[language]?.[source]??homeText(language,source)}));`, resolveDir: root, loader: 'tsx' },
+      stdin: { contents: `import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {AboutContent} from './components/about/ApprovedAbout.tsx';import WhyKrakenSection from './components/home/WhyKrakenSection.tsx';import {whyTranslations} from './components/home/whyTranslations.ts';import {homeText} from './components/home/homeTranslations.ts';export const renderAbout=language=>renderToStaticMarkup(React.createElement(AboutContent,{language}));export const renderWhy=language=>renderToStaticMarkup(React.createElement(WhyKrakenSection,{language,t:source=>whyTranslations[language]?.[source]??homeText(language,source)}));`, resolveDir: root, loader: 'tsx' },
       outfile, bundle:true, platform:'node', format:'cjs', packages:'external', loader:{'.css':'empty'}, logLevel:'warning',
     });
     const {renderAbout,renderWhy} = createRequire(import.meta.url)(outfile);
@@ -26,7 +26,7 @@ export async function renderAboutHtml(root) {
       if ((body.match(/<h1\b/g)||[]).length!==1 || !body.includes('id="kai-help"') || !body.includes('id="story-switzerland"')) throw new Error('Incomplete About HTML.');
       writeFileSync(path.join(root,`dist/about-content-${language}.html`),`${styles(about)}<div class="kraken-home kraken-about about-page" lang="${language==='de'?'de-CH':language}">${body}</div>`);
       const why=renderWhy(language);
-      if (!why.includes('id="warum-kraken"') || (why.match(/<details\b/g)||[]).length!==2) throw new Error('Incomplete Warum Kraken HTML.');
+      if (!why.includes('id="warum-kraken"') || (why.match(/<details\b/g)||[]).length!==1 || /Versicherungsnachweis|Versicherungsschutz|proof of insurance|justificante del seguro/i.test(why)) throw new Error('Incomplete Warum Kraken HTML.');
       writeFileSync(path.join(root,`dist/why-content-${language}.html`),`${styles(home)}<div class="kraken-home" lang="${language==='de'?'de-CH':language}">${why}</div>`);
     }
   } finally {rmSync(temporary,{recursive:true,force:true});}
