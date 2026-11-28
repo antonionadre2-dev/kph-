@@ -1,6 +1,7 @@
 import React from 'react';
 import { SITE_IDENTITY } from '../src/seo/site-identity.ts';
 import { safeSchemaJson } from '../src/seo/metadata.ts';
+import { businessOpeningHoursSpecification } from '../src/config/business-hours.mjs';
 
 export interface BreadcrumbItem {
   name: string;
@@ -77,21 +78,7 @@ export const LocalBusinessSchema: React.FC<LocalBusinessSchemaProps> = ({ cities
       ...SITE_IDENTITY.address,
     },
     "url": `${SITE_IDENTITY.origin}/`,
-    "openingHoursSpecification": [
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-          "Sunday"
-        ],
-        ...SITE_IDENTITY.openingHours,
-      }
-    ],
+    "openingHoursSpecification": businessOpeningHoursSpecification(),
   };
 
   if (citiesServed && citiesServed.length > 0) {

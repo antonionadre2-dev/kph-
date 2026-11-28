@@ -31,7 +31,7 @@ test('compiled server serves migrated language URLs and real HTTP redirect/remov
       const destination = path.join(directory, name.replace(/\.ts$/, '.js'));
       mkdirSync(path.dirname(destination), { recursive: true }); writeFileSync(destination, output);
     }
-    for (const name of ['src/legal/terms-manifest.json', 'src/legal/terms-policy.generated.json', 'firebase-applet-config.json', 'src/media/manifest.json', 'src/media/hero-formats.json', ...['service', 'http', 'policy', 'emails', 'firestore-store'].map(name => `integrations/recovery/${name}.mjs`)]) {
+    for (const name of ['src/config/business-hours.mjs', 'src/legal/terms-manifest.json', 'src/legal/terms-policy.generated.json', 'firebase-applet-config.json', 'src/media/manifest.json', 'src/media/hero-formats.json', ...['service', 'http', 'policy', 'emails', 'firestore-store'].map(name => `integrations/recovery/${name}.mjs`)]) {
       const destination = path.join(directory, name); mkdirSync(path.dirname(destination), { recursive: true });
       writeFileSync(destination, readFileSync(path.join(root, name)));
     }

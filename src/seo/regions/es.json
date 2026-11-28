@@ -105,7 +105,7 @@
         },
         {
           "title": "Contacto personal",
-          "body": "Si tiene preguntas, puede contactar con nosotros de lunes a domingo, de 09:00 a 19:00. La realización del trabajo y la fecha que desea se acuerdan por separado."
+          "body": "{{businessHoursSentence}} La realización del trabajo y la fecha que desea se acuerdan por separado."
         }
       ]
     },
@@ -255,7 +255,7 @@
         },
         {
           "title": "Disponibles cuando organiza su encargo",
-          "body": "Nuestro horario de contacto es de lunes a domingo, de 09:00 a 19:00. Puede consultarnos sus dudas sobre el proceso, sus preferencias o la coordinación de la cita."
+          "body": "{{businessHoursSentence}} Puede consultarnos sus dudas sobre el proceso, sus preferencias o la coordinación de la cita."
         }
       ]
     },
@@ -278,7 +278,7 @@
     "faqs": [
       {
         "question": "¿Cómo puedo contactar con Kraken en Schaffhausen?",
-        "answer": "Puede llamarnos al +41 77 450 57 05 o escribir a kai@krakenpfm.ch de lunes a domingo, de 09:00 a 19:00. Nuestra sede está en Seewadelstrasse 3, 8203 Schaffhausen. Acuerde una cita antes de venir."
+        "answer": "Puede llamarnos al +41 77 450 57 05 o escribir a kai@krakenpfm.ch, {{businessHours}}. Nuestra sede está en Seewadelstrasse 3, 8203 Schaffhausen. Acuerde una cita antes de venir."
       },
       {
         "question": "¿Puedo solicitar un servicio en la región del Rheinfall?",
@@ -405,7 +405,7 @@
         },
         {
           "title": "Personas con las que puede contactar",
-          "body": "Estamos disponibles para sus preguntas de lunes a domingo, de 09:00 a 19:00. Acordamos personalmente la cita y el acceso. Winterthur es nuestra zona de servicio; la sede de la empresa sigue estando en Schaffhausen."
+          "body": "{{businessHoursSentence}} Acordamos personalmente la cita y el acceso. Winterthur es nuestra zona de servicio; la sede de la empresa sigue estando en Schaffhausen."
         }
       ]
     },

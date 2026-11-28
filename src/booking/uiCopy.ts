@@ -1,6 +1,7 @@
 import { END_OF_TENANCY_INCLUDED_ROW } from '../kai/policyContent.ts';
 import { pricingUiText } from './pricingUiCopy.ts';
 import { pricingConfig } from './pricingConfig.ts';
+import { businessHoursLabel, businessHoursLongLabel, businessHoursSentence } from '../config/business-hours.mjs';
 
 /** Customer-facing copy, in the six languages already offered by Kraken. */
 export type BookingLanguage = 'de' | 'en' | 'es' | 'fr' | 'it' | 'pt';
@@ -61,7 +62,14 @@ const copy: Record<string, CopyRow> = {
   contactPage: ["Persönliche Beratung", "Get personal help", "Atención personalizada", "Conseil personnalisé", "Assistenza personale", "Apoio personalizado"],
   previewTools: ["Vorschau ausprobieren", "Explore the preview", "Probar la vista previa", "Essayer l’aperçu", "Prova l’anteprima", "Experimentar a pré-visualização"],
   nudgeShowHelp: ["Hilfehinweis zeigen", "Show help card", "Mostrar tarjeta de ayuda", "Afficher l’aide", "Mostra assistenza", "Mostrar cartão de ajuda"],
-  nudgeHelpBody: ["Noch unsicher, welche Hilfe passt? Wir beraten Sie persönlich – Mo–So, 09:00–19:00.", "Not sure which service fits? We can help personally – Mon–Sun, 09:00–19:00.", "¿Dudas sobre qué servicio elegir? Le asesoramos personalmente de lunes a domingo, de 09:00 a 19:00.", "Vous hésitez sur la prestation ? Nous vous conseillons personnellement, lun–dim, 09:00–19:00.", "Ha dubbi sul servizio da scegliere? La aiutiamo di persona, lun–dom, 09:00–19:00.", "Tem dúvidas sobre o serviço? Ajudamos pessoalmente, seg–dom, 09:00–19:00."],
+  nudgeHelpBody: [
+    `Noch unsicher, welche Hilfe passt? Wir beraten Sie persönlich – ${businessHoursLongLabel('de')}.`,
+    `Not sure which service fits? We can help personally – ${businessHoursLongLabel('en')}.`,
+    `¿Dudas sobre qué servicio elegir? Le asesoramos personalmente: ${businessHoursLongLabel('es')}.`,
+    `Vous hésitez sur la prestation ? Nous vous conseillons personnellement : ${businessHoursLongLabel('fr')}.`,
+    `Ha dubbi sul servizio da scegliere? La aiutiamo di persona: ${businessHoursLongLabel('it')}.`,
+    `Tem dúvidas sobre o serviço? Ajudamos pessoalmente: ${businessHoursLongLabel('pt')}.`,
+  ],
   eyebrow: ['DER KRAKEN SERVICE-RECHNER', 'THE KRAKEN SERVICE CALCULATOR', 'LA CALCULADORA DE KRAKEN', 'LE CALCULATEUR KRAKEN', 'IL CALCOLATORE KRAKEN', 'A CALCULADORA KRAKEN'],
   title: ['Ihre Offerte. Einfach geplant.', 'Your quote. Simply planned.', "Su presupuesto. Así de fácil.", 'Votre devis. Tout simplement.', "Il suo preventivo. Senza complicazioni.", 'O seu orçamento. Sem complicações.'],
   intro: ['Leistung wählen, Preis sehen und Wunschtermin anfragen.', 'Choose your service, see the price and request your preferred time.', "Elija el servicio, consulte el precio y solicite su fecha preferida.", 'Choisissez la prestation, consultez le prix et demandez la date souhaitée.', "Scelga il servizio, consulti il prezzo e richieda la data che preferisce.", 'Escolha o serviço, veja o preço e peça a data que prefere.'],
@@ -110,7 +118,14 @@ const copy: Record<string, CopyRow> = {
   nudgeOptionalTitle: ['Nur buchen, was Sie brauchen.', 'Book only what you need.', "Reserve solo lo que necesita.", 'Réservez uniquement ce dont vous avez besoin.', 'Prenoti solo ciò che le serve.', 'Reserve apenas o que precisa.'],
   nudgeOptionalBody: ['Alle Extras sind freiwillig. Ihr Preis passt sich sofort an.', 'All extras are optional. Your price updates instantly.', 'Todos los extras son opcionales. El precio se actualiza al momento.', 'Tous les suppléments sont facultatifs. Le prix s’ajuste immédiatement.', 'Tutti gli extra sono facoltativi. Il prezzo si aggiorna subito.', 'Todos os extras são opcionais. O preço ajusta-se de imediato.'],
   nudgeContactTitle: ['Persönlich für Sie da.', 'Personal help when you need it.', "Atención personal para usted.", 'À votre écoute, personnellement.', 'Qui per aiutarla di persona.', 'Atendimento pessoal para si.'],
-  nudgeContactBody: ['Montag bis Sonntag, 09:00–19:00. Wir helfen Ihnen bei Ihrer Auswahl.', 'Monday to Sunday, 09:00–19:00. We can help you choose.', "De lunes a domingo, de 09:00 a 19:00. Le ayudamos a elegir.", 'Du lundi au dimanche, de 09:00 à 19:00. Nous vous aidons à choisir.', "Dal lunedì alla domenica, dalle 09:00 alle 19:00. La aiutiamo a scegliere.", 'De segunda-feira a domingo, das 09:00 às 19:00. Ajudamos a escolher.'],
+  nudgeContactBody: [
+    `${businessHoursSentence('de')} Wir helfen Ihnen bei Ihrer Auswahl.`,
+    `${businessHoursSentence('en')} We can help you choose.`,
+    `${businessHoursSentence('es')} Le ayudamos a elegir.`,
+    `${businessHoursSentence('fr')} Nous vous aidons à choisir.`,
+    `${businessHoursSentence('it')} La aiutiamo a scegliere.`,
+    `${businessHoursSentence('pt')} Ajudamos a escolher.`,
+  ],
   nudgeClose: ['Hinweis schliessen', 'Close message', 'Cerrar aviso', 'Fermer le message', "Chiudere l’avviso", 'Fechar aviso'],
   nudgeDemoBadge: ['BEISPIEL · keine echte Buchung', 'EXAMPLE · not a real booking', 'EJEMPLO · no es una reserva real', 'EXEMPLE · aucune réservation réelle', 'ESEMPIO · non è una prenotazione reale', 'EXEMPLO · não é uma reserva real'],
   nudgeDemoTitle: ['Fensterreinigung in Zürich', 'Window cleaning in Zurich', 'Limpieza de ventanas en Zúrich', 'Nettoyage des vitres à Zurich', 'Pulizia delle finestre a Zurigo', 'Limpeza de janelas em Zurique'],
@@ -246,7 +261,7 @@ const copy: Record<string, CopyRow> = {
   loadingConfig: ['Online-Anfrage wird geprüft…', 'Checking online requests…', 'Comprobando la solicitud online…', 'Vérification des demandes en ligne…', "Verifica delle richieste online…", 'A verificar pedidos online…'],
   retry: ['Erneut versuchen', 'Try again', 'Intentar de nuevo', 'Réessayer', "Riprovi", 'Tentar novamente'],
   helpTitle: ['Eine Frage? Wir sind persönlich da.', 'A question? We’re here to help.', "¿Alguna duda? Le atendemos personalmente.", 'Une question ? Nous sommes à votre écoute.', 'Una domanda? Siamo qui per aiutarla.', 'Alguma dúvida? Estamos aqui para ajudar.'],
-  helpHours: ['Mo–So · 09:00–19:00', 'Mon–Sun · 09:00–19:00', 'Lun–dom · 09:00–19:00', 'Lun–dim · 09:00–19:00', 'Lun–dom · 09:00–19:00', 'Seg–dom · 09:00–19:00'],
+  helpHours: order.map(language => businessHoursLabel(language)) as CopyRow,
   receivedTitle: ['Ihre Anfrage ist angekommen.', 'Your request is with us.', "Hemos recibido su solicitud.", 'Nous avons reçu votre demande.', "Abbiamo ricevuto la sua richiesta.", 'Recebemos o seu pedido.'],
   receivedBody: ['Wir prüfen Ihren Wunschtermin und melden uns persönlich. Bezahlt ist noch nichts.', 'We’ll check your preferred appointment and get back to you personally. Nothing has been paid yet.', "Revisaremos la fecha que prefiere y le responderemos personalmente. Todavía no ha pagado nada.", 'Nous vérifions le créneau souhaité et vous répondons personnellement. Rien n’a encore été payé.', 'Verifichiamo la data desiderata e le rispondiamo personalmente. Non è stato ancora pagato nulla.', 'Vamos verificar a data pretendida e responder-lhe pessoalmente. Ainda não foi pago nada.'],
   heldTitle: ['Ihr Termin ist vorbereitet.', 'Your appointment is ready.', "Su cita está preparada.", 'Votre rendez-vous est prêt.', "Il suo appuntamento è pronto.", 'A sua data está preparada.'],

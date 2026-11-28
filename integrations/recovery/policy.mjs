@@ -1,4 +1,5 @@
 import { normalizeEmailLanguage } from '../email-collection/language.mjs';
+import { isBusinessOpen } from '../../src/config/business-hours.mjs';
 
 export const CONSENT_VERSION = 'recovery-2026-11-24';
 export const DAY_MS = 86_400_000;
@@ -10,7 +11,6 @@ export const GUIDE_PLACES = Object.freeze(['unknown', 'zurich', 'winterthur', 's
 export const SERVICES = Object.freeze(['regular', 'deep', 'endOfTenancy', 'windows', 'construction', 'moving']);
 export const REGIONS = Object.freeze(['Zürich', 'Schaffhausen', 'Winterthur']);
 export const STOP_REASONS = Object.freeze(['completed', 'paid', 'cancelled', 'unsubscribed', 'bounced', 'complaint', 'expired']);
-const localClock = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Zurich', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 const SELECTION_KEYS = {
   regular:['service','cleaningKind','frequency','hours','materials','oven','fridge','ironingHours'],
   endOfTenancy:['service','mode','propertyType','rooms','areaM2','hours','bathrooms','guestWcs','slatBlinds','rollerShutters','smallBalconies','largeBalconies','storageRooms','garages','carpetRooms','heavySoiling'],
@@ -62,15 +62,13 @@ export function nextServiceWindow(instant) {
   if (!Number.isFinite(instant)) throw new RecoveryError('INVALID_TIME');
   let candidate = Math.ceil(instant / 60_000) * 60_000;
   for (let i = 0; i < 36 * 60; i++, candidate += 60_000) {
-    const clock = localClock.format(new Date(candidate));
-    if (clock >= '09:00' && clock < '19:00') return candidate;
+    if (isBusinessOpen(new Date(candidate))) return candidate;
   }
   throw new RecoveryError('TIME_WINDOW_UNAVAILABLE', 500);
 }
 
 export function isServiceWindow(instant) {
-  const clock = localClock.format(new Date(instant));
-  return clock >= '09:00' && clock < '19:00';
+  return isBusinessOpen(new Date(instant));
 }
 
 export function reminderDue(kind, lastActivityAt, firstReminderSentAt = null) {

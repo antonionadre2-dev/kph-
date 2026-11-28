@@ -11,6 +11,7 @@ import { LocalRegionalContent } from './LocalRegionalContent';
 import { EndOfTenancyLanding } from './EndOfTenancyLanding';
 import { SelectedServicePrice } from './SelectedServicePrice';
 import { calculatorCta } from '../src/home/cta';
+import { businessHoursLongLabel } from '../src/config/business-hours.mjs';
 import './local-seo.css';
 
 interface LocalSeoContentProps {
@@ -143,7 +144,7 @@ function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
         </nav>
 
         <section className="local-seo-contact" aria-labelledby="local-contact-title">
-          <div><p className="local-seo-eyebrow">Kraken PFM</p><h2 id="local-contact-title">{t('Persönlich erreichbar')}</h2><p>{t('Montag–Sonntag, 09:00–19:00 Uhr (Europe/Zurich)')}</p><a href={href('/kontakt')}>{t('Kontakt und Adresse')} <span aria-hidden="true">→</span></a></div>
+          <div><p className="local-seo-eyebrow">Kraken PFM</p><h2 id="local-contact-title">{t('Persönlich erreichbar')}</h2><p>{businessHoursLongLabel(language)}</p><a href={href('/kontakt')}>{t('Kontakt und Adresse')} <span aria-hidden="true">→</span></a></div>
           <address>Seewadelstrasse 3<br />8203 Schaffhausen<br /><a href="tel:+41774505705">+41 77 450 57 05</a><br /><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></address>
         </section>
       </div>

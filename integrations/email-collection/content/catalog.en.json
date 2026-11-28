@@ -640,7 +640,7 @@
     "headline": "Thank you for getting in touch.",
     "intro": "We have received your message and will look into your enquiry. The details you shared help us focus on what you need.",
     "body": [
-      "Our customer service is available Monday to Sunday, from 09:00 to 19:00. If you would like to add anything, simply reply to this email."
+      "{{businessHoursSentence}} If you would like to add anything, simply reply to this email."
     ],
     "cta": "View my message",
     "secondary": "Contact Kraken",

@@ -105,7 +105,7 @@
         },
         {
           "title": "People you can reach",
-          "body": "You can contact us with questions from Monday to Sunday, 09:00–19:00. We arrange the work and your preferred appointment separately with you."
+          "body": "{{businessHoursSentence}} We arrange the work and your preferred appointment separately with you."
         }
       ]
     },
@@ -255,7 +255,7 @@
         },
         {
           "title": "Available when you are planning",
-          "body": "Our contact hours are Monday to Sunday, 09:00–19:00. You can ask about the process, discuss your wishes or arrange an appointment during these hours."
+          "body": "{{businessHoursSentence}} You can ask about the process, discuss your wishes or arrange an appointment during these hours."
         }
       ]
     },
@@ -278,7 +278,7 @@
     "faqs": [
       {
         "question": "How can I contact Kraken in Schaffhausen?",
-        "answer": "You can reach us on +41 77 450 57 05 or at kai@krakenpfm.ch, Monday to Sunday, 09:00–19:00. Our base is at Seewadelstrasse 3, 8203 Schaffhausen. Please arrange a visit in advance."
+        "answer": "You can reach us on +41 77 450 57 05 or at kai@krakenpfm.ch, {{businessHours}}. Our base is at Seewadelstrasse 3, 8203 Schaffhausen. Please arrange a visit in advance."
       },
       {
         "question": "Can I request a job in the Rhine Falls area?",
@@ -405,7 +405,7 @@
         },
         {
           "title": "People you can reach",
-          "body": "We are available for questions Monday to Sunday, 09:00–19:00. We arrange your appointment and access with you personally. Winterthur is a service area; our business remains based in Schaffhausen."
+          "body": "{{businessHoursSentence}} We arrange your appointment and access with you personally. Winterthur is a service area; our business remains based in Schaffhausen."
         }
       ]
     },

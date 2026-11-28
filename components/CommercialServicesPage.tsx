@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from '../i18n';
+import { businessHoursLabel } from '../src/config/business-hours.mjs';
 import { MUNICIPALITIES } from '../src/data/locations';
 import { getServiceLinkForMunicipality } from '../seoConfig';
 import { 
@@ -495,12 +496,12 @@ const d: Record<string, Record<string, string>> = {
     pt: 'Conforme GAV'
   },
   badgeSupport: {
-    en: '24/7 Support',
-    de: '24/7 Support',
-    es: 'Soporte 24/7',
-    fr: 'Support 24/7',
-    it: 'Supporto 24/7',
-    pt: 'Suporte 24/7'
+    en: `Support · ${businessHoursLabel('en')}`,
+    de: `Support · ${businessHoursLabel('de')}`,
+    es: `Soporte · ${businessHoursLabel('es')}`,
+    fr: `Support · ${businessHoursLabel('fr')}`,
+    it: `Supporto · ${businessHoursLabel('it')}`,
+    pt: `Suporte · ${businessHoursLabel('pt')}`
   },
   badgeIso: {
     en: 'ISO / HACCP',

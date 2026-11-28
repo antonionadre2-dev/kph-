@@ -1,9 +1,10 @@
 import { normalizeHomeLanguage } from './homeTranslations';
+import { businessHoursLabel, businessHoursTimeZoneLabel } from '../../src/config/business-hours.mjs';
 
 // Only the new footer copy lives here; the approved homepage copy remains unchanged.
 const copy = {
-  hours: ['Mo–So · 09:00–19:00', 'Mon–Sun · 09:00–19:00', 'Lun–dom · 09:00–19:00', 'Seg–dom · 09:00–19:00', 'Lun–dom · 09:00–19:00', 'Lun–dim · 09:00–19:00'],
-  localTime: ['Ortszeit Zürich', 'Zurich local time', 'Hora de Zúrich', 'Hora de Zurique', 'Ora locale di Zurigo', 'Heure locale de Zurich'],
+  hours: ['de', 'en', 'es', 'pt', 'it', 'fr'].map(businessHoursLabel),
+  localTime: ['de', 'en', 'es', 'pt', 'it', 'fr'].map(businessHoursTimeZoneLabel),
   visits: ['Besuche nach Vereinbarung', 'Visits by appointment', 'Visitas con cita previa', 'Visitas por marcação', 'Visite su appuntamento', 'Visites sur rendez-vous'],
   allServices: ['Alle Leistungen', 'All services', 'Todos los servicios', 'Todos os serviços', 'Tutti i servizi', 'Toutes les prestations'],
   allAreas: ['Alle Einsatzgebiete', 'All service areas', 'Todas las zonas de servicio', 'Todas as zonas de serviço', 'Tutte le zone servite', 'Toutes les zones desservies'],

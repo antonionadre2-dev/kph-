@@ -115,7 +115,7 @@
         },
         {
           "title": "Contacto pessoal",
-          "body": "Para esclarecer dúvidas, pode contactar-nos de segunda a domingo entre as 09:00 e as 19:00. A realização do serviço e a data pretendida são acordadas separadamente consigo."
+          "body": "{{businessHoursSentence}} A realização do serviço e a data pretendida são acordadas separadamente consigo."
         }
       ]
     },
@@ -276,7 +276,7 @@
         },
         {
           "title": "Contactáveis enquanto planeia",
-          "body": "O nosso horário de contacto é de segunda a domingo, das 09:00 às 19:00. Pode esclarecer dúvidas sobre o processo, os seus desejos ou a coordenação das datas."
+          "body": "{{businessHoursSentence}} Pode esclarecer dúvidas sobre o processo, os seus desejos ou a coordenação das datas."
         }
       ]
     },
@@ -299,7 +299,7 @@
     "faqs": [
       {
         "question": "Como posso contactar a Kraken em Schaffhausen?",
-        "answer": "Pode contactar-nos pelo +41 77 450 57 05 ou por kai@krakenpfm.ch, de segunda a domingo, das 09:00 às 19:00. A nossa sede fica em Seewadelstrasse 3, 8203 Schaffhausen. Combine uma visita com antecedência."
+        "answer": "Pode contactar-nos pelo +41 77 450 57 05 ou por kai@krakenpfm.ch, {{businessHours}}. A nossa sede fica em Seewadelstrasse 3, 8203 Schaffhausen. Combine uma visita com antecedência."
       },
       {
         "question": "Posso pedir um serviço na região das Cataratas do Reno?",
@@ -438,7 +438,7 @@
         },
         {
           "title": "Pessoas que pode contactar",
-          "body": "Para dúvidas, estamos disponíveis de segunda a domingo, das 09:00 às 19:00. Acordamos pessoalmente a marcação e o acesso. Winterthur é uma zona de serviço; a nossa sede continua em Schaffhausen."
+          "body": "{{businessHoursSentence}} Acordamos pessoalmente a marcação e o acesso. Winterthur é uma zona de serviço; a nossa sede continua em Schaffhausen."
         }
       ]
     },

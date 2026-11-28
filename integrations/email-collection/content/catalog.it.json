@@ -640,7 +640,7 @@
     "headline": "Grazie per averci scritto.",
     "intro": "Abbiamo ricevuto il tuo messaggio e ci occuperemo della tua richiesta. Le tue informazioni ci aiutano a capire subito come assisterti.",
     "body": [
-      "Il servizio clienti è raggiungibile dal lunedì alla domenica, dalle 09:00 alle 19:00. Per aggiungere un dettaglio, rispondi semplicemente a questa email."
+      "{{businessHoursSentence}} Per aggiungere un dettaglio, rispondi semplicemente a questa email."
     ],
     "cta": "Visualizza il mio messaggio",
     "secondary": "Contattare Kraken",

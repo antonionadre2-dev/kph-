@@ -1,3 +1,4 @@
+import { businessHoursLongLabel } from '../../src/config/business-hours.mjs';
 import type { GDPRTranslation } from './types';
 import { routeLanguage } from '../../src/routing/site-paths';
 
@@ -8,7 +9,7 @@ const documents = {
     "badge": "Ihre Personendaten",
     "subtitle": "Wie wir Reinigungs- und Umzugsanfragen bearbeiten",
     "introTitle": "Einleitung",
-    "introP1": "Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Schweiz, ist für diese Website verantwortlich. Die vollständige rechtliche Identität finden Sie im Impressum. Kontakt: kai@krakenpfm.ch, Montag bis Sonntag, 09:00–19:00 Uhr (Europe/Zurich). Diese Erklärung beschreibt die Verwendung von Personendaten für diese Website, Reinigungen und kleine Umzüge.",
+    "introP1": `Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Schweiz, ist für diese Website verantwortlich. Die vollständige rechtliche Identität finden Sie im Impressum. Kontakt: kai@krakenpfm.ch, ${businessHoursLongLabel('de')}. Diese Erklärung beschreibt die Verwendung von Personendaten für diese Website, Reinigungen und kleine Umzüge.`,
     "collectTitle": "Erhobene Daten & Verwendungszweck",
     "collectP1": "Wir verwenden die Angaben, die wir für Offerten, Anfragen sowie Reinigungen und kleine Umzüge benötigen:",
     "collectItems": [
@@ -55,7 +56,7 @@ const documents = {
     "badge": "Your personal data",
     "subtitle": "How we handle cleaning and moving requests",
     "introTitle": "Introduction",
-    "introP1": "Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Switzerland, is responsible for this website. Its full legal identity is in the legal notice. Contact: kai@krakenpfm.ch, Monday to Sunday, 09:00–19:00 (Europe/Zurich). This notice describes the use of personal data for this website, cleaning and small moves.",
+    "introP1": `Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Switzerland, is responsible for this website. Its full legal identity is in the legal notice. Contact: kai@krakenpfm.ch, ${businessHoursLongLabel('en')}. This notice describes the use of personal data for this website, cleaning and small moves.`,
     "collectTitle": "Data We Collect & Purpose",
     "collectP1": "We use the information needed to prepare quotes, handle requests and carry out cleaning and small moves:",
     "collectItems": [
@@ -102,7 +103,7 @@ const documents = {
     "badge": "Sus datos personales",
     "subtitle": "Cómo gestionamos las solicitudes de limpieza y mudanzas",
     "introTitle": "Introducción",
-    "introP1": "Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Suiza, es responsable de esta web. Su identidad jurídica completa figura en el aviso legal. Contacto: kai@krakenpfm.ch, de lunes a domingo, 09:00–19:00 (Europe/Zurich). Esta declaración describe el uso de datos personales para esta web, la limpieza y las pequeñas mudanzas.",
+    "introP1": `Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Suiza, es responsable de esta web. Su identidad jurídica completa figura en el aviso legal. Contacto: kai@krakenpfm.ch, ${businessHoursLongLabel('es')}. Esta declaración describe el uso de datos personales para esta web, la limpieza y las pequeñas mudanzas.`,
     "collectTitle": "Datos que recopilamos y su finalidad",
     "collectP1": "Utilizamos la información necesaria para preparar presupuestos, gestionar solicitudes y realizar limpiezas y pequeñas mudanzas:",
     "collectItems": [
@@ -149,7 +150,7 @@ const documents = {
     "badge": "Os seus dados pessoais",
     "subtitle": "Como tratamos os pedidos de limpeza e pequenas mudanças",
     "introTitle": "Introdução",
-    "introP1": "A Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Suíça, é responsável por este site. A identificação jurídica completa consta do aviso legal. Contacto: kai@krakenpfm.ch, de segunda a domingo, 09:00–19:00 (Europe/Zurich). Esta declaração descreve a utilização de dados pessoais para este site, a limpeza e as pequenas mudanças.",
+    "introP1": `A Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Suíça, é responsável por este site. A identificação jurídica completa consta do aviso legal. Contacto: kai@krakenpfm.ch, ${businessHoursLongLabel('pt')}. Esta declaração descreve a utilização de dados pessoais para este site, a limpeza e as pequenas mudanças.`,
     "collectTitle": "Dados que Recolhemos & Finalidade",
     "collectP1": "Utilizamos as informações necessárias para preparar orçamentos, tratar pedidos e realizar limpezas e pequenas mudanças:",
     "collectItems": [
@@ -196,7 +197,7 @@ const documents = {
     "badge": "I suoi dati personali",
     "subtitle": "Come gestiamo le richieste di pulizia e trasloco",
     "introTitle": "Introduzione",
-    "introP1": "Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Svizzera, è responsabile di questo sito. La sua identità giuridica completa è riportata nelle note legali. Contatto: kai@krakenpfm.ch, da lunedì a domenica, 09:00–19:00 (Europe/Zurich). Questa informativa descrive l’uso dei dati personali per questo sito, le pulizie e i piccoli traslochi.",
+    "introP1": `Kraken PFM, Seewadelstrasse 3, 8203 Schaffhausen, Svizzera, è responsabile di questo sito. La sua identità giuridica completa è riportata nelle note legali. Contatto: kai@krakenpfm.ch, ${businessHoursLongLabel('it')}. Questa informativa descrive l’uso dei dati personali per questo sito, le pulizie e i piccoli traslochi.`,
     "collectTitle": "Dati Raccolti e Finalità",
     "collectP1": "Utilizziamo le informazioni necessarie per preparare preventivi, gestire richieste ed eseguire pulizie e piccoli traslochi:",
     "collectItems": [
@@ -243,7 +244,7 @@ const documents = {
     "badge": "Vos données personnelles",
     "subtitle": "Le traitement des demandes de nettoyage et de déménagement",
     "introTitle": "Introduction",
-    "introP1": "Kraken PFM, Seewadelstrasse 3, 8203 Schaffhouse, Suisse, est responsable de ce site. Son identité juridique complète figure dans les mentions légales. Contact : kai@krakenpfm.ch, du lundi au dimanche, 09:00–19:00 (Europe/Zurich). Cette déclaration décrit l’utilisation des données personnelles pour ce site, les nettoyages et les petits déménagements.",
+    "introP1": `Kraken PFM, Seewadelstrasse 3, 8203 Schaffhouse, Suisse, est responsable de ce site. Son identité juridique complète figure dans les mentions légales. Contact : kai@krakenpfm.ch, ${businessHoursLongLabel('fr')}. Cette déclaration décrit l’utilisation des données personnelles pour ce site, les nettoyages et les petits déménagements.`,
     "collectTitle": "Données collectées & Finalités",
     "collectP1": "Nous utilisons les informations nécessaires pour préparer les devis, traiter les demandes et réaliser les nettoyages et petits déménagements :",
     "collectItems": [
