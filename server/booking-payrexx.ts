@@ -2,6 +2,15 @@ import { BookingError } from './booking-store.ts';
 import { normalizeEmailLanguage } from '../integrations/email-collection/language.mjs';
 import { usesFullPrepayment } from '../src/booking/fullPrepayment.ts';
 
+const paymentPurposes:Record<string,{full:string;extra:string}>={
+  de:{full:'Gesamter Betrag',extra:'Zusätzlicher Aufwand'},
+  en:{full:'Full amount',extra:'Additional work'},
+  es:{full:'Importe total',extra:'Trabajo adicional'},
+  fr:{full:'Montant total',extra:'Travail supplémentaire'},
+  it:{full:'Importo totale',extra:'Lavoro aggiuntivo'},
+  pt:{full:'Valor total',extra:'Trabalho adicional'},
+};
+
 export interface PayrexxConfig { instance:string; secret:string; mode:'live'|'test'; origin:string; }
 /** The reference/amount/mode below come from the persisted booking, never the browser. */
 export function createPayrexxAdapter(config:PayrexxConfig, fetcher:typeof fetch=fetch) {
@@ -34,7 +43,7 @@ export function createPayrexxAdapter(config:PayrexxConfig, fetcher:typeof fetch=
       let presentationLanguage:string;
       try{presentationLanguage=normalizeEmailLanguage(checkoutLanguage);}catch{throw new BookingError('INVALID_LANGUAGE');}
       const back=`${config.origin}/quote?booking=${booking.bookingId}&lang=${presentationLanguage}#access=${token}`;
-      const purpose=usesFullPrepayment(booking)?booking.payment.paymentKind==='extra'?'Zusätzlicher Aufwand':'Gesamter Betrag':'15%';
+      const purpose=usesFullPrepayment(booking)?paymentPurposes[presentationLanguage][booking.payment.paymentKind==='extra'?'extra':'full']:'15%';
       const gateway=await request('POST','Gateway/',{amount:booking.payment.amountDueNowCents,currency:'CHF',vatRate:0,referenceId:booking.checkout.reference,purpose:`Kraken PFM · ${booking.reference} · ${purpose}`,language:presentationLanguage,validity:minutes,successRedirectUrl:back,failedRedirectUrl:back,cancelRedirectUrl:back});
       const url=new URL(gateway.link);
       // Never send a customer to a URL supplied by a browser or unexpected provider host.

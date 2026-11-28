@@ -135,3 +135,20 @@ test('a provider refund child linked to a different original transaction cannot 
  const adapter=createPayrexxAdapter({instance:'isolated',secret:'not-real',mode:'test',origin:'https://kraken.example'},async()=>Response.json({status:'success',data:[{id:1,invoices:[{referenceId:'isolated-r1',originalAmount:10000,refundedAmount:2500,currencyAlpha3:'CHF',transactions:[{id:4712,status:'partially-refunded',amount:-2500,originalTransactionId:9999,mode:'TEST',referenceId:'isolated-r1'}]}]}]}));
  await assert.rejects(adapter.verify(booking),{code:'PAYMENT_MISMATCH'});
 });
+
+test('Payrexx full and extra purposes use the normalized checkout language in all six locales while v2 retains15%',async()=>{
+ const cases=[['de-CH','de','Gesamter Betrag','Zusätzlicher Aufwand'],['en-GB','en','Full amount','Additional work'],['es-ES','es','Importe total','Trabajo adicional'],['fr-CH','fr','Montant total','Travail supplémentaire'],['it-CH','it','Importo totale','Lavoro aggiuntivo'],['pt-BR','pt','Valor total','Trabalho adicional']];
+ for(const [selected,language,full,extra]of cases){
+  const requests:any[]=[];
+  const adapter=createPayrexxAdapter({instance:'isolated',secret:'not-real',mode:'test',origin:'https://kraken.example'},async(_url,options)=>{assert.equal(options?.method,'POST');requests.push(JSON.parse(String(options.body)));return Response.json({status:'success',data:[{id:requests.length,link:'https://isolated.payrexx.com/checkout'}]});});
+  const booking:any={termsVersion:BOOKING_TERMS_VERSION,bookingId:'isolated-purpose',reference:'K-2026-ISOLATED',language:'de',checkout:{reference:'isolated-purpose-r1'},payment:{amountDueNowCents:18000}};
+  const original=clone(booking);
+  await adapter.create(booking,'isolated-token',60,selected);
+  await adapter.create({...booking,checkout:{reference:'isolated-purpose-extra-r1'},payment:{amountDueNowCents:4500,paymentKind:'extra'}},'isolated-token',60,selected);
+  await adapter.create({...booking,termsVersion:'kraken-agb-2026-11-26-v2',payment:{amountDueNowCents:2025}},'isolated-token',60,selected);
+  assert.deepEqual(requests.map(body=>body.purpose),[`Kraken PFM · ${booking.reference} · ${full}`,`Kraken PFM · ${booking.reference} · ${extra}`,`Kraken PFM · ${booking.reference} · 15%`]);
+  assert.deepEqual(requests.map(body=>body.amount),[18000,4500,2025]);assert.deepEqual(requests.map(body=>body.referenceId),['isolated-purpose-r1','isolated-purpose-extra-r1','isolated-purpose-r1']);
+  assert.ok(requests.every(body=>body.language===language&&body.currency==='CHF'));
+  assert.deepEqual(booking,original,'checkout presentation cannot mutate the stored financial or language snapshot');
+ }
+});
