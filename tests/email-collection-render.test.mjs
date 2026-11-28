@@ -103,7 +103,7 @@ test('stored language wins over later render data and regional input is normaliz
   notification.renderData.language = 'de';
   const email = prepareCollectionEnvelope(notification, links, origin);
   assert.equal(email.language, 'es');
-  assert.match(email.subject, /Anticipo recibido/);
+  assert.match(email.subject, /Pago recibido/);
   assert.ok(email.text.includes(links.primary));
   for (const invalid of [undefined, null, { language: 'es', source: 'selected', version: 2 }, { language: 'nl', source: 'selected', version: 1 }]) {
     assert.throws(() => prepareCollectionEnvelope({ ...notification, languageSnapshot: invalid }, links, origin));

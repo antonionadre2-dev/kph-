@@ -35,7 +35,7 @@ test('the published schedule is every day and all public interfaces read it in t
   }
 });
 
-test('all 144 public language pages and the React schema expose the same seven-day opening specification', () => {
+test('all 150 public language pages and the React schema expose the same seven-day opening specification', () => {
   const expected = businessOpeningHoursSpecification();
   let checked = 0;
   for (const pathname of INDEXABLE_PATHS) for (const language of languages) {
@@ -44,7 +44,7 @@ test('all 144 public language pages and the React schema expose the same seven-d
     assert.deepEqual(business.openingHoursSpecification, expected, pathname + ':' + language);
     checked++;
   }
-  assert.equal(checked, 144);
+  assert.equal(checked, 150);
   const markup = renderToStaticMarkup(React.createElement(LocalBusinessSchema));
   const json = JSON.parse(markup.replace(/^<script[^>]*>/, '').replace(/<\/script>$/, ''));
   assert.deepEqual(json.openingHoursSpecification, expected);

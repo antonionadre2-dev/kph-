@@ -1,7 +1,7 @@
 type PaymentView = {
   canCheckout?: boolean;
   scheduling: { status: string; holdExpiresAt?: string };
-  payment: { status: string; checkoutExpiresAt?: string };
+  payment: { status: string; model?: string; checkoutExpiresAt?: string; checkoutAvailableUntil?: string };
 };
 
 const settled = ['paid', 'test_paid', 'refunded', 'partially_refunded', 'chargeback', 'disputed', 'reconciliation_required'];
@@ -10,8 +10,9 @@ const settled = ['paid', 'test_paid', 'refunded', 'partially_refunded', 'chargeb
 export function paymentUiState(booking: PaymentView | null | undefined, now = Date.now()) {
   const checkoutExpiry = booking?.payment.status === 'pending' ? Date.parse(booking.payment.checkoutExpiresAt || '') : NaN;
   // An in-flight payment must remain a provider-verification case, even after a hold expires.
-  const holdExpiry = booking?.scheduling.status === 'held' && !settled.includes(booking.payment.status)
-    ? Date.parse(booking.scheduling.holdExpiresAt || '') : NaN;
+  const full = booking?.payment.model === 'full_prepayment';
+  const holdExpiry = booking && !settled.includes(booking.payment.status) && (full || booking.scheduling.status === 'held')
+    ? Date.parse((full ? booking.payment.checkoutAvailableUntil : booking.scheduling.holdExpiresAt) || '') : NaN;
   const checkoutHasExpired = Number.isFinite(checkoutExpiry) && checkoutExpiry <= now;
   const expiredHold = Number.isFinite(holdExpiry) && holdExpiry <= now;
   const holdHasExpired = booking?.payment.status !== 'pending' && expiredHold;

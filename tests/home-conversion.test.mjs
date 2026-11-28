@@ -43,7 +43,7 @@ test('the first homepage action sells the calculated move-out package with the r
     const html=render(language),main=html.slice(html.indexOf('<main'));
     assert.match(main, /<h1 id="hero-title">/);
     assert.ok(main.includes('<h1 id="hero-title">'+homeText(language,'Umzugsreinigung Zürich')+'</h1>'));
-    assert.ok(main.includes(homeText(language,'Ihr Zuhause in guten Armen.')));
+    assert.ok(main.includes(homeText(language,'Für Ihr Zuhause in Schaffhausen, Winterthur und Zürich.')));
     const amount=new Intl.NumberFormat(language==='de'?'de-CH':language,{style:'currency',currency:offer.quote.currency,currencyDisplay:'code',minimumFractionDigits:0,maximumFractionDigits:0}).format(offer.minimumCents/100);
     assert.ok(main.includes(publicPriceText(language,'from',{price:amount})));
     const action=main.match(/<a[^>]*class="[^"]*hero-primary-action[^"]*"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/);
@@ -61,7 +61,7 @@ test('the first homepage action sells the calculated move-out package with the r
     assert.ok(marketing.length>0);
     assert.doesNotMatch(marketing.replace(/<style\b[^>]*>[\s\S]*?<\/style>/g,'').replace(/<[^>]+>/g,''), /100\s*%/);
     assert.ok(main.includes(escapeMarkup(getKaiFact('cancellation',language).answer)));
-    assert.ok(main.includes(escapeMarkup(getKaiFact('guarantee',language).answer)));
+    assert.ok(main.includes(escapeMarkup(publicPolicyContent(language).guaranteeScope)));
     assert.doesNotMatch(main, /AggregateRating|itemtype="[^"]*Review/);
   }
 });

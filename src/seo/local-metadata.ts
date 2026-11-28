@@ -1,6 +1,7 @@
 import { normalizeHomeLanguage } from '../../components/home/homeTranslations.ts';
 import { getRegionalPageMetadata } from './regional-metadata.ts';
 import { getContactCopy } from '../contact/contact-copy.ts';
+import { getMovingPageCopy } from '../home/moving-copy.ts';
 
 type Copy = { title: string; description: string; h1?: string };
 type Language = 'de' | 'en' | 'es' | 'pt' | 'it' | 'fr';
@@ -53,6 +54,7 @@ const HERO = '/home-approved/assets/services-hero-v5.webp';
 const PAGE_IMAGES: Record<string, { path: string; width: string; height: string }> = {
   '/': { path: HERO, width: '1254', height: '1254' },
   '/leistungen': { path: HERO, width: '1254', height: '1254' },
+  '/kleine-umzuege': { path: '/transit-quality/transit-overview-v1.webp', width: '1254', height: '1254' },
   '/about': { path: '/about-approved/assets/kai-rheinfall-awakening.webp', width: '1672', height: '941' },
   '/kontakt': { path: '/home-approved/assets/logo.webp', width: '1024', height: '1024' },
   '/quote': { path: HERO, width: '1254', height: '1254' },
@@ -66,7 +68,7 @@ export function getApprovedPageMetadata(pathname: string, language: string) {
   const path = pathname.split(/[?#]/)[0].replace(/\/$/, '') || '/';
   const locale = normalizeHomeLanguage(language);
   const contact = path === '/kontakt' ? getContactCopy(locale) : null;
-  const copy: Copy | null = contact ? { ...contact.meta, h1: contact.hero.title } : PAGE_COPY[path]?.[locale] || getRegionalPageMetadata(path, locale);
+  const copy: Copy | null = contact ? { ...contact.meta, h1: contact.hero.title } : path === '/kleine-umzuege' ? getMovingPageCopy(locale) : PAGE_COPY[path]?.[locale] || getRegionalPageMetadata(path, locale);
   const image = PAGE_IMAGES[path];
   if (!copy || !image) return null;
   return {

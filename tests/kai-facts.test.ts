@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { getTermsDocument } from '../src/legal/terms-document.ts';
 import { getLegacyTermsTranslation } from '../components/legal/terms-legacy.ts';
 import { publicPolicyContent } from '../src/kai/policyContent.ts';
+import { kaiPolicySummary } from '../src/kai/policy-summaries.ts';
 import { bookingText } from '../src/booking/uiCopy.ts';
 import { getKaiFact, getKaiFaqs, KAI_CONTACT, KAI_FACT_TOPICS } from '../src/kai/facts.ts';
 import { getHomeFaqs, getServicePageFaqs } from '../src/seo/page-faqs.ts';
@@ -32,19 +33,25 @@ test('Kai and FAQs reuse the actual six-language legal guarantee and cancellatio
   for (const language of languages) {
     const policy=publicPolicyContent(language);
     assert.equal(getKaiFact('guarantee',language).answer,policy.guarantee,language);
-    assert.equal(getKaiFact('cancellation',language).answer,`${policy.cancellation} ${policy.rescheduling}`,language);
+    assert.equal(getKaiFact('cancellation',language).answer,kaiPolicySummary('cancellation',language),language);
     const faqs = getHomeFaqs(language);
-    for (const topic of KAI_FACT_TOPICS.filter(topic=>topic!=='insurance')) assert.ok(faqs.some(faq => faq.answer === getKaiFact(topic, language).answer), `${language}: ${topic}`);
+    assert.equal(faqs.length, 5);
+    for (const topic of ['payment', 'cancellation'] as const) assert.ok(faqs.some(faq => faq.answer === getKaiFact(topic, language).answer), `${language}: ${topic}`);
+    assert.ok(faqs.some(faq => faq.answer === policy.guaranteeScope && faq.termsSection === 9), language);
   }
 });
 
-test('payment facts take the actual methods and deposit sentence from the terms, without a duplicate policy', () => {
+test('payment facts use the current authoritative full-prepayment policy without duplicating clauses', () => {
   for (const language of languages) {
     const policy=publicPolicyContent(language);
     const answer=getKaiFact('payment',language).answer;
-    assert.equal(answer,`${policy.payment} ${policy.deposit}`);
-    assert.ok(answer.includes('Payrexx'));
-    assert.match(answer, /15\s?%/);
+    assert.equal(answer,kaiPolicySummary('payment',language));
+    assert.match(policy.prepayment,/48/);
+    assert.match(policy.cancellation,/48/);
+    assert.match(getKaiFact('cancellation',language).answer,/50.*100/);
+    assert.ok(answer.length < 300);
+    assert.match(answer, /48/);
+    assert.doesNotMatch(answer, /15\s?%|Anzahlung|Restbetrag/);
   }
 });
 
@@ -63,7 +70,7 @@ test('unknown insurance, exact team, availability and duration always offer pers
       assert.ok(result.answer.length > 20);
       assert.doesNotMatch(result.answer, /10[’'., ]?000[’'., ]?000|10\s*(?:Mio|million|millones)|\b24\/7\b/);
     }
-    assert.equal(getKaiFact('insurance',language).answer,publicPolicyContent(language).insurance);
+    assert.equal(getKaiFact('insurance',language).answer,getKaiFact('duration',language).answer);
     assert.ok(getTermsDocument(language).sections.some(section=>section.number===12));
   }
   assert.equal(getKaiFact('duration', 'de').answer, 'Das klären wir gern persönlich.');

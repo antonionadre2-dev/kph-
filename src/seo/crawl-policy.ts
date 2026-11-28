@@ -54,7 +54,7 @@ export function renderRobotsTxt(origin: string): string {
     'User-agent: OAI-SearchBot',
     'User-agent: ChatGPT-User',
     'Allow: /',
-    ...['', '/en', '/es', '/pt', '/it', '/fr'].flatMap(locale => PRIVATE_PATH_PREFIXES.map(prefix => `Disallow: ${locale}${prefix}`)),
+    ...['', '/en', '/es', '/pt', '/it', '/fr'].flatMap(locale => PRIVATE_PATH_PREFIXES.filter(prefix => !['/commercial-quote', '/recovery'].includes(prefix)).map(prefix => `Disallow: ${locale}${prefix}`)),
     ...[...PRIVATE_QUERY_KEYS].map(key => `Disallow: /*?*${key}=`),
     '',
     `Sitemap: ${origin.replace(/\/$/, '')}/sitemap.xml`,

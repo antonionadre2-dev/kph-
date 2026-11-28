@@ -33,7 +33,7 @@ export function normalizeContactLanguage(language: unknown): ContactLanguage {
 
 const copy: Record<ContactLanguage, ContactCopy> = {
   de: {
-    meta: { title: 'Kontakt | Reinigung und kleine Umzüge | Kraken PFM', description: `Kontaktieren Sie Kraken für Reinigung und kleine Umzüge in Zürich, Winterthur und Schaffhausen. ${businessHoursSentence('de')} Per Formular, WhatsApp oder Telefon.` },
+    meta: { title: 'Kontakt | Reinigung und kleine Umzüge | Kraken PFM', description: `Kontakt für Reinigung und kleine Umzüge in Zürich, Winterthur und Schaffhausen. ${businessHoursLabel('de')}. Formular, WhatsApp, Telefon.` },
     hero: { eyebrow: 'KONTAKT ZU KRAKEN', title: 'Wir kommen zu Ihnen.', intro: 'Reinigung und kleine Umzüge. Persönlich für Sie da.', calculate: 'Service berechnen', whatsapp: 'WhatsApp', call: 'Anrufen', hours: businessHoursLabel('de') },
     map: { eyebrow: 'UNSER EINSATZGEBIET', title: 'In Ihrer Nähe. Bei Ihnen zu Hause.', subtitle: 'Zürich · Winterthur · Schaffhausen', note: 'Wohnen Sie in der Umgebung? Nennen Sie uns Ihre Postleitzahl.', regionsLabel: 'Mehr zu unseren Einsatzgebieten', accessibleLabel: 'Regionalkarte mit Zürich im Südwesten, Winterthur weiter nordöstlich und Schaffhausen im Norden. Die Markierungen zeigen Einsatzregionen, keine genauen Gebietsgrenzen.' },
     person: { eyebrow: 'Ihr persönlicher Kontakt', name: 'Antonio Gomes', initials: 'AG', role: 'Inhaber von Kraken', phoneLabel: 'Telefon', emailLabel: 'E-Mail', hoursLabel: 'Kontaktzeiten' },
@@ -62,7 +62,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   en: {
-    meta: { title: 'Contact | Cleaning and small moves | Kraken PFM', description: `Contact Kraken for cleaning and small moves in Zurich, Winterthur and Schaffhausen. ${businessHoursSentence('en')} By form, WhatsApp or telephone.` },
+    meta: { title: 'Contact | Cleaning and small moves | Kraken PFM', description: `Contact for cleaning and small moves in Zurich, Winterthur and Schaffhausen. ${businessHoursLabel('en')}. Form, WhatsApp or phone.` },
     hero: { eyebrow: 'CONTACT KRAKEN', title: 'We come to you.', intro: 'Cleaning and small moves. Personal help for your home.', calculate: 'Calculate your service', whatsapp: 'WhatsApp', call: 'Call us', hours: businessHoursLabel('en') },
     map: { eyebrow: 'WHERE WE WORK', title: 'Close to you. At your home.', subtitle: 'Zurich · Winterthur · Schaffhausen', note: 'Do you live nearby? Please tell us your postcode.', regionsLabel: 'Explore our service regions', accessibleLabel: 'Regional map showing Zurich in the southwest, Winterthur further northeast and Schaffhausen to the north. Markers indicate service regions, not exact coverage boundaries.' },
     person: { eyebrow: 'Your personal contact', name: 'Antonio Gomes', initials: 'AG', role: 'Owner of Kraken', phoneLabel: 'Telephone', emailLabel: 'Email', hoursLabel: 'Contact hours' },
@@ -91,7 +91,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   es: {
-    meta: { title: 'Contacto | Limpieza y pequeñas mudanzas | Kraken PFM', description: `Contacte con Kraken para limpieza y pequeñas mudanzas en Zúrich, Winterthur y Schaffhausen. ${businessHoursSentence('es')} Por formulario, WhatsApp o teléfono.` },
+    meta: { title: 'Contacto | Limpieza y pequeñas mudanzas | Kraken PFM', description: `Contacte para limpieza y pequeñas mudanzas en Zúrich, Winterthur y Schaffhausen. ${businessHoursLabel('es')}. Formulario, WhatsApp o teléfono.` },
     hero: { eyebrow: 'CONTACTE CON KRAKEN', title: 'Nos desplazamos a su hogar.', intro: 'Limpieza y pequeñas mudanzas. Atención personal para usted.', calculate: 'Calcular su servicio', whatsapp: 'WhatsApp', call: 'Llamar', hours: businessHoursLabel('es') },
     map: { eyebrow: 'DÓNDE TRABAJAMOS', title: 'Cerca de usted. En su hogar.', subtitle: 'Zúrich · Winterthur · Schaffhausen', note: '¿Vive en los alrededores? Indíquenos su código postal.', regionsLabel: 'Conocer nuestras regiones de servicio', accessibleLabel: 'Mapa regional con Zúrich al suroeste, Winterthur más al noreste y Schaffhausen al norte. Los marcadores indican regiones de servicio, sin delimitar una cobertura exacta.' },
     person: { eyebrow: 'Su persona de contacto', name: 'Antonio Gomes', initials: 'AG', role: 'Propietario de Kraken', phoneLabel: 'Teléfono', emailLabel: 'Correo electrónico', hoursLabel: 'Horario de contacto' },
@@ -120,7 +120,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   fr: {
-    meta: { title: 'Contact | Nettoyage et petits déménagements | Kraken PFM', description: `Contactez Kraken pour le nettoyage et les petits déménagements à Zurich, Winterthur et Schaffhouse. ${businessHoursSentence('fr')} Par formulaire, WhatsApp ou téléphone.` },
+    meta: { title: 'Contact | Nettoyage et petits déménagements | Kraken PFM', description: `Nettoyage et petits déménagements à Zurich, Winterthour et Schaffhouse. ${businessHoursLabel('fr')}. Formulaire, WhatsApp ou téléphone.` },
     hero: { eyebrow: 'CONTACTER KRAKEN', title: 'Nous venons chez vous.', intro: 'Nettoyage et petits déménagements. Un contact personnel à votre écoute.', calculate: 'Calculer votre prestation', whatsapp: 'WhatsApp', call: 'Appeler', hours: businessHoursLabel('fr') },
     map: { eyebrow: 'NOTRE ZONE D’INTERVENTION', title: 'Près de chez vous. À votre domicile.', subtitle: 'Zurich · Winterthur · Schaffhouse', note: 'Vous habitez aux alentours ? Indiquez-nous votre code postal.', regionsLabel: 'Découvrir nos régions d’intervention', accessibleLabel: 'Carte régionale avec Zurich au sud-ouest, Winterthur plus au nord-est et Schaffhouse au nord. Les repères indiquent les régions d’intervention, sans délimiter une couverture précise.' },
     person: { eyebrow: 'Votre interlocuteur personnel', name: 'Antonio Gomes', initials: 'AG', role: 'Propriétaire de Kraken', phoneLabel: 'Téléphone', emailLabel: 'E-mail', hoursLabel: 'Horaires de contact' },
@@ -149,7 +149,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   it: {
-    meta: { title: 'Contatti | Pulizie e piccoli traslochi | Kraken PFM', description: `Contatti Kraken per pulizie e piccoli traslochi a Zurigo, Winterthur e Sciaffusa. ${businessHoursSentence('it')} Tramite modulo, WhatsApp o telefono.` },
+    meta: { title: 'Contatti | Pulizie e piccoli traslochi | Kraken PFM', description: `Contatti per pulizie e piccoli traslochi a Zurigo, Winterthur e Sciaffusa. ${businessHoursLabel('it')}. Modulo, WhatsApp o telefono.` },
     hero: { eyebrow: 'CONTATTI KRAKEN', title: 'Veniamo a casa sua.', intro: 'Pulizie e piccoli traslochi. Un contatto personale per le sue esigenze.', calculate: 'Calcoli il suo servizio', whatsapp: 'WhatsApp', call: 'Chiami', hours: businessHoursLabel('it') },
     map: { eyebrow: 'DOVE LAVORIAMO', title: 'Vicino a lei. A casa sua.', subtitle: 'Zurigo · Winterthur · Sciaffusa', note: 'Abita nei dintorni? Ci indichi il suo codice postale.', regionsLabel: 'Scopra le nostre regioni di servizio', accessibleLabel: 'Mappa regionale con Zurigo a sud-ovest, Winterthur più a nord-est e Sciaffusa a nord. I segnaposto indicano le regioni di servizio, senza delimitare una copertura esatta.' },
     person: { eyebrow: 'Il suo referente personale', name: 'Antonio Gomes', initials: 'AG', role: 'Titolare di Kraken', phoneLabel: 'Telefono', emailLabel: 'E-mail', hoursLabel: 'Orari di contatto' },
@@ -178,7 +178,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   pt: {
-    meta: { title: 'Contacto | Limpeza e pequenas mudanças | Kraken PFM', description: `Contacte a Kraken para limpeza e pequenas mudanças em Zurique, Winterthur e Schaffhausen. ${businessHoursSentence('pt')} Por formulário, WhatsApp ou telefone.` },
+    meta: { title: 'Contacto | Limpeza e pequenas mudanças | Kraken PFM', description: `Limpezas e pequenas mudanças em Zurique, Winterthur e Schaffhausen. ${businessHoursLabel('pt')}. Formulário, WhatsApp ou telefone.` },
     hero: { eyebrow: 'CONTACTE A KRAKEN', title: 'Vamos até sua casa.', intro: 'Limpeza e pequenas mudanças. Um contacto pessoal para si.', calculate: 'Calcular o seu serviço', whatsapp: 'WhatsApp', call: 'Ligar', hours: businessHoursLabel('pt') },
     map: { eyebrow: 'ONDE TRABALHAMOS', title: 'Perto de si. Em sua casa.', subtitle: 'Zurique · Winterthur · Schaffhausen', note: 'Mora nos arredores? Indique-nos o seu código postal.', regionsLabel: 'Conhecer as nossas regiões de serviço', accessibleLabel: 'Mapa regional com Zurique a sudoeste, Winterthur mais a nordeste e Schaffhausen a norte. Os marcadores indicam regiões de serviço, sem delimitar uma cobertura exata.' },
     person: { eyebrow: 'O seu contacto pessoal', name: 'Antonio Gomes', initials: 'AG', role: 'Proprietário da Kraken', phoneLabel: 'Telefone', emailLabel: 'Email', hoursLabel: 'Horário de contacto' },

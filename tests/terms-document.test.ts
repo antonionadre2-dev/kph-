@@ -8,15 +8,29 @@ import { CURRENT_TERMS_VERSION, TERMS_LANGUAGES, getTermsDocument, getTermsClaus
 import { getTermsPolicy, TERMS_POLICY_SOURCE_HASHES, TERMS_POLICY_VERSION } from '../src/legal/terms-policy.ts';
 import { PUBLIC_POLICY_CONTENT, END_OF_TENANCY_INCLUDED } from '../src/kai/policyContent.ts';
 
-const source = new URL('../src/legal/versions/kraken-agb-2026-11-26-v2/', import.meta.url);
+const source = new URL('../src/legal/versions/kraken-agb-2026-11-28-v3/', import.meta.url);
 const normalize = (text: string) => text.replace(/^#{1,2}\s+/gm, '').replace(/^- /gm, '').replace(/\s+/g, ' ').trim();
 const numberTokens = (text: string) => text.match(/\b\d+(?:[.']\d+)*/g) || [];
 
+test('v3 clause4 preserves the exact newly supplied German payment terms and the new refund remedy',()=>{
+  const supplied=`4.1 Der gesamte Preis ist vor dem Einsatz zu bezahlen. Nach der Auftragsbestätigung erhalten Sie den Zahlungslink. Der Betrag ist innert 3 Tagen nach der Bestätigung zahlbar, spätestens 48 Stunden vor Arbeitsbeginn; bei kurzfristigen Aufträgen sofort nach der Bestätigung. Sie zahlen online über Payrexx, per Banküberweisung oder QR-Rechnung; massgebend ist der Zahlungseingang.
+4.2 Geht die Zahlung nicht rechtzeitig ein, kann Kraken den Termin nach einer Erinnerung wieder freigeben. Ohne Zahlungseingang beginnt Kraken nicht mit der Arbeit.
+4.3 Bei Arbeiten nach Aufwand zahlen Sie den im Rechner ausgewiesenen Richtpreis im Voraus. Mehraufwand stellt Kraken nach dem Einsatz in Rechnung, zahlbar innert 7 Tagen. Dauert der Einsatz kürzer als geschätzt, erstattet Kraken die Differenz bis zur Mindestdauer.
+4.4 Regelmässige Reinigungen werden monatlich im Voraus bezahlt.
+4.5 Bei Zahlungsverzug mit nachträglich gestellten Rechnungen schulden Sie 5 % Verzugszins pro Jahr. Die erste Erinnerung ist kostenlos; die zweite Mahnung kostet CHF 20, die dritte CHF 50. Notwendige Inkassokosten gehen zu Ihren Lasten.
+4.6 Rückerstattungen erfolgen innert 10 Tagen auf dem ursprünglichen Zahlungsweg.`;
+  assert.equal(normalize(getTermsClause('de',4)),normalize(supplied));
+  assert.equal(getTermsDocument('de').sections[3].title,'4. Zahlung vor dem Einsatz');
+  assert.equal(getTermsClause('de',9,9),'9.9 Kann Kraken die Nachreinigung nicht innert der vereinbarten Frist ausführen, erstattet Kraken den Preisanteil der beanstandeten Arbeiten.');
+  assert.doesNotMatch(termsDocumentText(getTermsDocument('de')),/Anzahlung|Restbetrag|15\s*%/);
+});
+
 test('the complete German document is literally the supplied AGB_DE, apart from markup and whitespace', async () => {
-  const original = await readFile(new URL('de.md', source), 'utf8');
+  const archived = new URL('../src/legal/versions/kraken-agb-2026-11-26-v2/', import.meta.url);
+  const original = await readFile(new URL('de.md', archived), 'utf8');
   // SHA of the owner's INICIO_AGB_DE..FIN_AGB_DE block, with a terminal newline.
   assert.equal(createHash('sha256').update(original).digest('hex'), '20a0f536da4c7f7a0605cf67c5aaa520a20c245c8315944b2661584eb5e07cac');
-  assert.equal(normalize(termsDocumentText(getTermsDocument('de'))), normalize(original));
+  assert.equal(normalize(termsDocumentText(JSON.parse(await readFile(new URL('de.json', archived), 'utf8')))), normalize(original));
   assert.doesNotMatch(termsDocumentText(getTermsDocument('de')), /INICIO_AGB_DE|FIN_AGB_DE/);
 });
 
@@ -48,8 +62,8 @@ test('subclause extraction retains associated lists and unnumbered exceptions', 
   assert.match(cancellation, /bis 48 Stunden vorher: kostenlos/);
   assert.match(cancellation, /weniger als 48 und bis 12 Stunden vorher: 50 %/);
   assert.match(cancellation, /weniger als 12 Stunden vorher.*100 %/);
-  assert.match(cancellation, /Mindestauftrag als vereinbarter Preis/);
-  assert.match(cancellation, /Anzahlung wird angerechnet/);
+  assert.match(cancellation, /bestätigte Richtpreis als vereinbarter Preis/);
+  assert.match(cancellation, /Der bezahlte Betrag wird angerechnet/);
   assert.doesNotMatch(cancellation, /Verschiebung/);
   assert.match(getTermsClause('de', 7, 3), /bis 24 Stunden.*Ersatztermin/);
   assert.throws(() => getTermsClause('de', 18), RangeError);
@@ -64,7 +78,8 @@ test('shared guarantees and payment summaries come from the exact immutable clau
     assert.equal(policy.guarantee, termsSectionText(doc.sections[8], { stripNumbering: true }));
     assert.equal(policy.guaranteeScope, plain(getTermsClause(language, 9, 1)));
     assert.equal(policy.deposit, plain(getTermsClause(language, 4, 1)));
-    assert.equal(policy.payment, plain(getTermsClause(language, 4, 2)));
+    assert.equal(policy.prepayment, plain(getTermsClause(language, 4, 1)));
+    assert.equal(policy.payment, [1,2,3,4,6].map(number=>plain(getTermsClause(language,4,number))).join('\n\n'));
     assert.equal(policy.materials, plain(getTermsClause(language, 6, 3)));
     assert.equal(policy.preparation, termsSectionText(doc.sections[5], { stripNumbering: true }));
     assert.equal(policy.rescheduling, plain(getTermsClause(language, 7, 3)));

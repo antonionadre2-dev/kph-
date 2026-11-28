@@ -10,7 +10,7 @@ import './design-system.css';
 import './conversion-home.css';
 
 /** The approved navigation is shared by the home and the services page. */
-export default function ApprovedHeader({ servicesPage = false, page, accountControls }: { onNavigate: (path: string) => void; servicesPage?: boolean; page?: 'home' | 'services' | 'about' | 'contact' | 'calculator' | 'local' | 'legal'; accountControls?: React.ReactNode }) {
+export default function ApprovedHeader({ servicesPage = false, page, accountControls }: { onNavigate: (path: string) => void; servicesPage?: boolean; page?: 'home' | 'services' | 'moving' | 'about' | 'contact' | 'calculator' | 'local' | 'legal'; accountControls?: React.ReactNode }) {
   const { language } = useTranslation();
   const t = (source: string) => homeText(normalizeHomeLanguage(language), source);
   const [open, setOpen] = useState(false);
@@ -33,7 +33,7 @@ export default function ApprovedHeader({ servicesPage = false, page, accountCont
   }, [open]);
   const links = <>
     <a href={href('/leistungen')} aria-current={currentPage === 'services' ? 'page' : undefined}>{t('Leistungen')}</a>
-    <a href={href('/#umzug')}>{t('Kleine Umzüge')}</a>
+    <a href={href('/kleine-umzuege')} aria-current={currentPage === 'moving' ? 'page' : undefined}>{t('Kleine Umzüge')}</a>
     <a href={href('/about')} aria-current={currentPage === 'about' ? 'page' : undefined}>{t('Über Kraken')}</a>
     <a href={href('/kontakt')} aria-current={currentPage === 'contact' ? 'page' : undefined}>{t('Kontakt')}</a>
     {accountControls}

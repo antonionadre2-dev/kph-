@@ -45,15 +45,15 @@ test('historical sitemap and router inventory has no unhandled URL or redirect c
   for (const removed of ['/commercial', '/services/zurich/gardening', '/fr/services/winterthur/property-managers', '/reinigung-zurich-gutter-cleaning']) {
     assert.equal(getRouteDisposition(removed).status, 410, removed);
   }
-  for (const unconfirmed of ['/quote-demo', '/commercial-quote']) {
+  for (const unconfirmed of ['/quote-demo']) {
     assert.equal(getRouteDisposition(unconfirmed).status, 200);
     assert.equal(getPageSeo(unconfirmed).indexable, false);
   }
 });
 
-test('144 current URLs are 200 canonical, language-prefixed, reciprocal and free of legacy parameters', () => {
-  assert.equal(PUBLIC_BASE_PATHS.length, 24);
-  const urls = getSitemapUrls(); assert.equal(urls.length, 144);
+test('150 current URLs are 200 canonical, language-prefixed, reciprocal and free of legacy parameters', () => {
+  assert.equal(PUBLIC_BASE_PATHS.length, 25);
+  const urls = getSitemapUrls(); assert.equal(urls.length, 150);
   for (const url of urls) {
     assert.equal(new URL(url).search, '');
     assert.equal(getRouteDisposition(url).status, 200, url);
@@ -88,7 +88,7 @@ test('service offers use calculator amounts and genuine visible FAQs, excluding 
     const provisional = pricingConfig.moving.fixed.tiers.find(tier => tier.priceType === 'from')!;
     const requestOnly = calculatePrice({ ...defaultSelection('moving'), mode: 'fixed', rooms: provisional.rooms, distanceKm: pricingConfig.moving.fixed.maxDistanceKm });
     assert.equal(requestOnly.totalCents, null);
-    assert.equal(requestOnly.depositBasisCents, null);
+    assert.equal(requestOnly.minimumChargeCents, null);
     assert.equal(offers.some(offer => offer.price === (provisional.priceCents / 100).toFixed(2)), false);
     assert.doesNotMatch(JSON.stringify(moving), /AggregateRating|Review|ratingValue/);
   }

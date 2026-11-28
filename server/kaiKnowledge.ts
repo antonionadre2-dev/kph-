@@ -1,6 +1,7 @@
 import { homeText, normalizeHomeLanguage, type HomeLanguage } from '../components/home/homeTranslations.ts';
 import type { KaiField, KaiService } from '../src/kai/types.ts';
 import { getKaiFact, KAI_CONTACT, KAI_FACT_TOPICS } from '../src/kai/facts.ts';
+import { serviceName } from '../src/booking/serviceNames.ts';
 export { getKaiFact, getKaiFaqs, KAI_CONTACT, KAI_FACT_TOPICS } from '../src/kai/facts.ts';
 export type { KaiFact, KaiFactTopic } from '../src/kai/facts.ts';
 
@@ -25,10 +26,12 @@ export const KAI_KNOWLEDGE = Object.freeze({
   preparation: 'Describe the work and access in the calculator. Use the shared facts for conditions and only the calculator pricing function for money. Never promise availability, discounts, reservations or a vehicle fit.',
 });
 
+const kaiServiceList = (language: HomeLanguage) => ['windows', 'end', 'regular', 'deep', 'moving'].map(service => serviceName(language, service)).join(', ');
+
 const copy = {
   de: {
     acknowledged: 'Ich habe Ihre Angaben für den Entwurf übernommen.',
-    choose: 'Welche Unterstützung wünschen Sie: Fensterreinigung, Umzugsreinigung, regelmässige Reinigung, Grundreinigung oder einen kleinen Umzug?',
+    choose: `Welche Unterstützung wünschen Sie? ${kaiServiceList('de')}`,
     multiple: 'Ich habe beide Anliegen notiert. Mit welchem Service möchten Sie im Rechner beginnen?',
     ready: 'Sie können den Entwurf jetzt prüfen und im Rechner ergänzen.',
     price: 'Die Kosten berechnen Sie im Kraken-Rechner. Ich kann Ihre Angaben für den Übergang vorbereiten.',
@@ -37,12 +40,12 @@ const copy = {
     contact: 'Sie erreichen Kraken unter kai@krakenpfm.ch oder +41 77 450 57 05. Antonio kann die nächsten Schritte persönlich mit Ihnen klären.',
     includes: 'Den genauen Umfang und die Vorbereitung stimmen wir im Rechner und in Ihrer persönlichen Bestätigung ab.',
     deferred: 'Kein Problem. Diese Angabe können Sie später ergänzen.',
-    scope: 'Für diese Beratung stehen Fensterreinigung, Umzugsreinigung, regelmässige Reinigung, Grundreinigung und kleine Umzüge zur Auswahl.',
+    scope: `Für diese Beratung stehen folgende Services zur Auswahl: ${kaiServiceList('de')}`,
     later: 'Später ergänzen', unknown: 'Das weiss ich noch nicht',
   },
   en: {
     acknowledged: 'I have added your details to the draft.',
-    choose: 'What do you need help with: window cleaning, move-out cleaning, regular cleaning, deep cleaning or a small move?',
+    choose: `What service would you like help with? ${kaiServiceList('en')}`,
     multiple: 'I have noted both needs. Which service would you like to start with in the calculator?',
     ready: 'You can review the draft now and complete it in the calculator.',
     price: 'Use the Kraken calculator for costs. I can prepare your details so you can continue there.',
@@ -51,12 +54,12 @@ const copy = {
     contact: 'Contact Kraken at kai@krakenpfm.ch or +41 77 450 57 05. Antonio can discuss the next steps with you personally.',
     includes: 'The exact scope and preparation are agreed in the calculator and your personal confirmation.',
     deferred: 'No problem. You can add that detail later.',
-    scope: 'This guide covers window cleaning, move-out cleaning, regular cleaning, deep cleaning and small moves.',
+    scope: `This guide covers the following services: ${kaiServiceList('en')}`,
     later: 'Complete later', unknown: 'I do not know yet',
   },
   es: {
     acknowledged: 'He añadido sus datos al borrador.',
-    choose: '¿Necesita limpieza de ventanas, de fin de alquiler, periódica, a fondo o una pequeña mudanza?',
+    choose: `¿Qué servicio necesita? ${kaiServiceList('es')}`,
     multiple: 'He anotado ambas necesidades. ¿Por qué servicio desea empezar en el calculador?',
     ready: 'Puede revisar el borrador y completar los detalles en el calculador.',
     price: 'Puede calcular los costes en el calculador de Kraken. Puedo preparar sus datos para que continúe allí.',
@@ -65,12 +68,12 @@ const copy = {
     contact: 'Puede contactar con Kraken en kai@krakenpfm.ch o en el +41 77 450 57 05. Antonio le explicará personalmente los siguientes pasos.',
     includes: 'El alcance exacto y la preparación se acuerdan en el calculador y en su confirmación personal.',
     deferred: 'No hay problema. Puede completar ese dato después.',
-    scope: 'Esta guía incluye limpieza de ventanas, de fin de alquiler, periódica, a fondo y pequeñas mudanzas.',
+    scope: `Esta guía incluye los siguientes servicios: ${kaiServiceList('es')}`,
     later: 'Completar después', unknown: 'Todavía no lo sé',
   },
   pt: {
     acknowledged: 'Acrescentei os seus dados ao rascunho.',
-    choose: 'Precisa de limpeza de janelas, de fim de arrendamento, regular, a fundo ou de uma pequena mudança?',
+    choose: `De que serviço precisa? ${kaiServiceList('pt')}`,
     multiple: 'Anotei as duas necessidades. Por que serviço pretende começar no simulador?',
     ready: 'Pode rever o rascunho e completar os detalhes no simulador.',
     price: 'Pode calcular os custos no simulador Kraken. Posso preparar os seus dados para continuar por lá.',
@@ -79,12 +82,12 @@ const copy = {
     contact: 'Pode contactar a Kraken em kai@krakenpfm.ch ou pelo +41 77 450 57 05. Antonio pode combinar pessoalmente os próximos passos.',
     includes: 'O âmbito exato e a preparação são combinados no simulador e na sua confirmação pessoal.',
     deferred: 'Não há problema. Pode completar esse dado mais tarde.',
-    scope: 'Esta ajuda abrange limpeza de janelas, de fim de arrendamento, regular, a fundo e pequenas mudanças.',
+    scope: `Esta ajuda abrange os seguintes serviços: ${kaiServiceList('pt')}`,
     later: 'Completar mais tarde', unknown: 'Ainda não sei',
   },
   it: {
     acknowledged: 'Ho aggiunto i suoi dati alla bozza.',
-    choose: 'Ha bisogno di pulizia dei vetri, di fine locazione, regolare, approfondita o di un piccolo trasloco?',
+    choose: `Di quale servizio ha bisogno? ${kaiServiceList('it')}`,
     multiple: 'Ho annotato entrambe le esigenze. Da quale servizio desidera iniziare nel calcolatore?',
     ready: 'Può rivedere la bozza e completare i dettagli nel calcolatore.',
     price: 'Può calcolare i costi nel calcolatore Kraken. Posso preparare i suoi dati per proseguire da lì.',
@@ -93,12 +96,12 @@ const copy = {
     contact: 'Può contattare Kraken a kai@krakenpfm.ch o al +41 77 450 57 05. Antonio potrà concordare personalmente i prossimi passi.',
     includes: 'Il contenuto esatto del servizio e la preparazione vengono concordati nel calcolatore e nella conferma personale.',
     deferred: 'Nessun problema. Può aggiungere questo dato più tardi.',
-    scope: 'Questa guida comprende pulizia dei vetri, di fine locazione, regolare, approfondita e piccoli traslochi.',
+    scope: `Questa guida comprende i seguenti servizi: ${kaiServiceList('it')}`,
     later: 'Completare più tardi', unknown: 'Non lo so ancora',
   },
   fr: {
     acknowledged: 'J’ai ajouté vos informations au brouillon.',
-    choose: 'Avez-vous besoin d’un nettoyage des vitres, de fin de bail, régulier, en profondeur ou d’un petit déménagement ?',
+    choose: `De quelle prestation avez-vous besoin ? ${kaiServiceList('fr')}`,
     multiple: 'J’ai noté les deux besoins. Par quelle prestation souhaitez-vous commencer dans le calculateur ?',
     ready: 'Vous pouvez vérifier le brouillon et compléter les détails dans le calculateur.',
     price: 'Vous pouvez calculer les coûts dans le calculateur Kraken. Je peux préparer vos informations pour poursuivre là-bas.',
@@ -107,7 +110,7 @@ const copy = {
     contact: 'Contactez Kraken à kai@krakenpfm.ch ou au +41 77 450 57 05. Antonio pourra convenir personnellement des prochaines étapes avec vous.',
     includes: 'Le périmètre exact et la préparation sont convenus dans le calculateur et dans votre confirmation personnelle.',
     deferred: 'Aucun problème. Vous pourrez compléter cette information plus tard.',
-    scope: 'Cette aide concerne le nettoyage des vitres, de fin de bail, régulier, en profondeur et les petits déménagements.',
+    scope: `Cette aide concerne les prestations suivantes : ${kaiServiceList('fr')}`,
     later: 'Compléter plus tard', unknown: 'Je ne sais pas encore',
   },
 } as const;
@@ -139,6 +142,5 @@ export function kaiQuestion(language: HomeLanguage, field: KaiField): string {
   return row?.[languageOrder.indexOf(language)] || kaiCopy(language).ready;
 }
 export function kaiServiceName(language: HomeLanguage, service: KaiService): string {
-  const sources: Record<KaiService, string> = { windows: 'Fensterreinigung', end: 'Umzugsreinigung', regular: 'Regelmässige Reinigung', deep: 'Grundreinigung', moving: 'Kleiner Umzug' };
-  return homeText(language, sources[service]);
+  return serviceName(language, service);
 }

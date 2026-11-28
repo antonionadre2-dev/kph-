@@ -45,9 +45,10 @@ function memoryStore() {
     async mutateWithMail(id, transform, makeJob) {
       const next = transform(clone(records.get(id))), job = makeJob(next);
       records.set(id, clone(next));
-      if (job && !mail.has(job.id)) mail.set(job.id, clone(job));
+      for (const item of (Array.isArray(job)?job:[job]).filter(Boolean)) if (!mail.has(item.id)) mail.set(item.id, clone(item));
       return clone(next);
     },
+    async prepareMail(id,message) {const job=mail.get(id);if(!job||job.status!=='sending')return null;job.prepared??=clone(message);return clone(job.prepared);},
     async addMail(job) {
       if (mail.has(job.id)) return false;
       mail.set(job.id, clone(job));
@@ -76,7 +77,7 @@ function memoryStore() {
 }
 
 function request(key = 'synthetic_request_123456', email = 'client@example.test') {
-  const selection = defaultSelection('regular');
+  const selection = {...defaultSelection('regular'),frequency:'once'};
   return {
     selection, customer: { name: 'Synthetic Customer', email, phone: '+41770000000', address: 'Teststrasse 1', postalCode: '8200', city: 'Schaffhausen' },
     requestedDate: '2026-11-25', requestedTime: '10:00', notes: '', language: 'es',
@@ -146,7 +147,7 @@ test('paid reconciliation awaits only its receipt and repeated reconciliation ca
   const booking = await service.create(request());
   const other = await service.create(request('synthetic_unrelated_123456', 'other@example.test'));
   await service.confirmAppointment(booking.bookingId, { operatorId: 'synthetic-operator', holdExpiresAt: '2026-11-24T14:00:00Z' });
-  await service.checkout(booking.bookingId, booking.publicToken, { acceptedQuoteRevision: 1, termsAccepted: true, termsVersion: BOOKING_TERMS_VERSION, language: 'es' });
+  await service.checkout(booking.bookingId, booking.publicToken, { acceptedQuoteRevision: 1, termsAccepted: true, termsVersion: BOOKING_TERMS_VERSION, acceptedTotalDueCents: booking.payment.totalDueCents, language: 'es' });
   const reconciled = await service.reconcile(booking.bookingId);
   assert.equal(reconciled.email.receipt, 'sent');
   assert.equal(reconciled.payment.status, 'paid');
@@ -254,7 +255,7 @@ test('a signed Payrexx webhook acknowledges durable payment before lifecycle-pin
   }});
   const runtime=await handlers.initialize(),booking=await runtime.service.create(request());
   await runtime.service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
-  await runtime.service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,language:'es'});
+  await runtime.service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,acceptedTotalDueCents:booking.payment.totalDueCents,language:'es'});
   const app=express();app.post('/webhook',express.raw({type:'application/json'}),handlers.webhook);
   const server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.on('listening',resolve));
   const raw=JSON.stringify({transaction:{referenceId:gatewayRequest.referenceId}});
@@ -291,7 +292,7 @@ test('missing Vercel context or failed lifecycle registration falls back to awai
       const {service,store}=fixture(async()=>{providerEntered();await released;return{id:'accepted'};},payment);
       const booking=await service.create(request());
       await service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
-      await service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,language:'es'});
+      await service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,acceptedTotalDueCents:booking.payment.totalDueCents,language:'es'});
       const pending=service.reconcile(booking.bookingId,{scheduleEmails:scheduler}).then(value=>{completed=true;return value;});
       await entered;assert.equal(completed,false,'An unpinned email task must remain awaited');
       releaseProvider();assert.equal((await pending).email.receipt,'sent');
@@ -312,7 +313,7 @@ test('webhook deferral cannot run when payment verification is malformed',async 
   }});
   const runtime=await handlers.initialize(),booking=await runtime.service.create(request());
   await runtime.service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
-  await runtime.service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,language:'es'});
+  await runtime.service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,acceptedTotalDueCents:booking.payment.totalDueCents,language:'es'});
   const raw=Buffer.from(JSON.stringify({transaction:{referenceId:gatewayRequest.referenceId}}));
   let responseBody,responseStatus=200;
   const res={set(){return this;},status(value){responseStatus=value;return this;},json(value){responseBody=value;return this;}};
@@ -328,7 +329,7 @@ test('a lifecycle-pinned provider failure retains paid state and quarantines its
   const {service,store}=fixture(async()=>{throw new Error('Synthetic private provider error');},payment);
   const booking=await service.create(request());
   await service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:'2026-11-24T14:00:00Z'});
-  await service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,language:'es'});
+  await service.checkout(booking.bookingId,booking.publicToken,{acceptedQuoteRevision:1,termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,acceptedTotalDueCents:booking.payment.totalDueCents,language:'es'});
   const result=await service.reconcile(booking.bookingId,{scheduleEmails:work=>{pinned.push(work);return true;}});
   assert.equal(result.payment.status,'paid');assert.equal(pinned.length,1);
   await Promise.all(pinned);
@@ -348,14 +349,14 @@ test('temporary private connection checks run only from Vercel config GET and ne
   ].entries()){
     const store=memoryStore();setStore(store);let calls=0;logs.length=0;
     const handlers=createBookingHandlers({env:environment({VERCEL:scenario.vercel,PAYREXX_INSTANCE:`probe-test-${index}`,PAYREXX_API_SECRET:'PRIVATE_API_KEY_CANARY',PAYREXX_MODE:'live',PAYREXX_WEBHOOK_SECRET:'synthetic-webhook-secret',PAYREXX_CONNECTION_CHECK_UNTIL:scenario.flag}),clock:()=>now,fetcher:async(url,init)=>{
-      calls++;assert.equal(init.method,'GET');assert.equal(new URL(url).origin,'https://api.payrexx.com');
+      if(String(url).includes('api.resend.com'))return Response.json({name:'not_found'},{status:403});calls++;assert.equal(init.method,'GET');assert.equal(new URL(url).origin,'https://api.payrexx.com');
       if(scenario.status!==200)return Response.json({private:'PRIVATE_PROVIDER_BODY_CANARY'},{status:scenario.status});
       return Response.json({status:'success',data:url.includes('/PaymentProvider/')?[{id:11,activePaymentMethods:['visa']}]:[{id:'visa',options_by_psp:{11:{currencies:['CHF'],payment_types:['one-time'],mode:'live'}}}]});
     }});
     const runtime=await handlers.initialize();assert.equal(calls,0,'Initialization and webhooks do not wait for a deployment diagnostic');
     const response=await invoke(handlers,'/api/booking/config');
     assert.equal(response.statusCode,200);assert.equal(calls,scenario.expectedCalls);
-    assert.deepEqual(response.body,{available:true,paymentReady:true,emailReady:true,mode:'live',termsVersion:BOOKING_TERMS_VERSION,termsDocuments:currentTermsDocuments(),depositPercent:15});
+    assert.deepEqual(response.body,{available:true,paymentReady:true,emailReady:true,mode:'live',termsVersion:BOOKING_TERMS_VERSION,termsDocuments:currentTermsDocuments(),paymentModel:'full_prepayment',scheduledRemindersReady:false});
     await invoke(handlers,'/api/booking/config');assert.equal(calls,scenario.expectedCalls,'One private probe per runtime/window');
     assert.equal(runtime.paymentReady,true,'A diagnostic failure must not disable booking requests');
     const checks=logs.filter(([prefix])=>prefix==='[booking:payrexx-connection-check]');
@@ -536,7 +537,7 @@ test('a verified payment stays paid when receipt persistence or its final lookup
       if (failure === 'finishMail') store.finishMail = async () => { throw new Error('PRIVATE_RECEIPT_FINISH_CANARY'); };
       const booking = await service.create(request());
       await service.confirmAppointment(booking.bookingId, { operatorId: 'synthetic-operator', holdExpiresAt: '2026-11-24T14:00:00Z' });
-      await service.checkout(booking.bookingId, booking.publicToken, { acceptedQuoteRevision: 1, termsAccepted: true, termsVersion: BOOKING_TERMS_VERSION, language: 'es' });
+      await service.checkout(booking.bookingId, booking.publicToken, { acceptedQuoteRevision: 1, termsAccepted: true, termsVersion: BOOKING_TERMS_VERSION, acceptedTotalDueCents: booking.payment.totalDueCents, language: 'es' });
       const result = await service.reconcile(booking.bookingId);
       assert.equal(result.payment.status, 'paid');
       assert.equal(result.payment.amountPaidCents, result.payment.amountDueNowCents);

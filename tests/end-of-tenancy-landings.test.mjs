@@ -81,7 +81,8 @@ test('18 city/language landings have unique visible copy, all FAQ answers, curre
 
 test('Zurich addresses access, Verwaltung, official districts and request-only surrounding municipalities', () => {
   const html = render('zurich', 'de');
-  for (const keyword of ['Umzugsreinigung Zürich', 'Endreinigung', 'Wohnungsabgabe', 'Verwaltung', 'Festpreis', 'Reinigungsfirma', 'Kosten', 'Lift', 'Kloten', 'Opfikon', 'Uster']) assert.ok(html.includes(keyword), keyword);
+  assert.ok(html.includes('<h1 id="eot-title">Was kostet eine Umzugsreinigung in Zürich?</h1>'));
+  for (const keyword of ['Endreinigung', 'Wohnungsabgabe', 'Verwaltung', 'Festpreis', 'Reinigungsfirma', 'Kosten', 'Lift', 'Kloten', 'Opfikon', 'Uster']) assert.ok(html.includes(keyword), keyword);
   for (let district = 1; district <= 12; district++) assert.ok(html.includes(`Kreis ${district}</li>`));
   assert.ok(html.includes('href="https://www.stadt-zuerich.ch/kreise-und-quartiere"'));
   assert.ok(html.includes('Die Einsatzmöglichkeit und Ihren Termin bestätigen wir nach Prüfung Ihrer Angaben.'));

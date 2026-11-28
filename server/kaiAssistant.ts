@@ -6,7 +6,7 @@ import {
 } from '../src/kai/types.ts';
 import { getKaiFact, kaiCopy, kaiQuestion, kaiServiceName, type KaiFactTopic } from './kaiKnowledge.ts';
 import { extractDraft, validKaiDate } from './kaiExtraction.ts';
-import { commercialKai, complaintKai, discountKai, humanKai, kaiMessageLanguage, outsideKaiArea, questionKai } from './kaiIntents.ts';
+import { cancellationKai, commercialKai, complaintKai, discountKai, humanKai, kaiMessageLanguage, outsideKaiArea, questionKai } from './kaiIntents.ts';
 import { calculateKaiQuote } from './kaiPricing.ts';
 import { kaiReplies } from './kaiReplies.ts';
 import { createGeminiProvider } from './kaiGemini.ts';
@@ -116,11 +116,11 @@ export function extractKaiDraft(request: KaiAssistantRequest, now = new Date()):
 }
 
 function factTopic(text: string): KaiFactTopic | undefined {
+  if (cancellationKai(text)) return 'cancellation';
   if (/\bvat\b|\biva\b|\btva\b|mwst|mehrwertsteuer/.test(text)) return 'vat';
   if (/garant|garanz|handover guarantee|abnahme/.test(text)) return 'guarantee';
-  if (/versicherung|insured|insurance|seguro|assicur|assur/.test(text)) return 'insurance';
-  if (/storn|cancel|annul|disdire|annull/.test(text)) return 'cancellation';
-  if (/anzahl|zahl|payment|deposit|pagar|pagamento|pago|anticipo|acconto|sinal|acompte|paiement|payrexx/.test(text)) return 'payment';
+  if (/versicher|insured|insurance|segurad|seguro|assicur|assur/.test(text)) return 'insurance';
+  if (/anzahl|zahl|payment|deposit|\bpay\b|upfront|in advance|pagar|pagamento|pago|anticipo|acconto|sinal|acompte|paiement|payer|payez|payrexx/.test(text)) return 'payment';
   if (/wie lange|dauer|duration|how long|cuanto (?:tiempo|dura)|quanto (?:tempo|dura)|combien de temps/.test(text)) return 'duration';
   if (/verfugbar|termin.*frei|available|availability|disponib|disponiv|disponibil|frei.*termin/.test(text)) return 'availability';
   if (/wer kommt|wer reinigt|who (?:comes|cleans)|quien (?:viene|limpia)|quem (?:vem|limpa)|chi (?:viene|pulisce)|qui (?:vient|nettoie)|team|equipo|equipe/.test(text)) return 'team';
@@ -151,6 +151,11 @@ function guidedResponse(request: KaiAssistantRequest, draft: KaiDraft): KaiAssis
     : outsideKaiArea(request.message) ? replies.outside : '';
   if (immediate) return { message: immediate, draft, missing, suggestions: [], actions: ['contact'], mode:'guided', contactCard:true };
   const fact = topic ? getKaiFact(topic, request.language, draft.service) : undefined;
+  if (fact && ['payment', 'cancellation', 'insurance'].includes(topic!)) return {
+    message: fact.answer, draft, missing, suggestions: [],
+    actions: fact.contact ? ['contact'] : ['continue', 'contact'], mode: 'guided',
+    ...(fact.contact ? {contactCard: true} : {}),
+  };
   // French «garantie de remise» describes handover, not a discount request.
   let answer = discountKai(request.message) && topic !== 'guarantee' ? replies.discount : fact?.answer || '';
   if (topic === 'availability' && fact && answer === fact.answer) answer = `${fact.answer} ${businessHoursSentence(request.language)}`;
@@ -165,7 +170,7 @@ function guidedResponse(request: KaiAssistantRequest, draft: KaiDraft): KaiAssis
   const followup = ambiguous ? moveNeedsChoice ? replies.movingChoice : draft.services.length > 1 ? copy.multiple : answer ? replies.short : copy.choose
     : missing[0] ? kaiQuestion(request.language, missing[0]) : copy.ready;
   return {
-    message: [answer || (Object.keys(draft.fields).length ? copy.acknowledged : ''), followup].filter(Boolean).join(' '),
+    message: [answer || (Object.keys(draft.fields).length ? copy.acknowledged : ''), followup].filter(Boolean).join(price ? '\n\n' : ' '),
     draft, missing,
     suggestions: answer ? [] : ambiguous ? (draft.services.length ? draft.services : [...KAI_SERVICES]).map(key => kaiServiceName(request.language, key))
       : missing.length ? [copy.unknown, copy.later] : [],
@@ -241,7 +246,7 @@ function validatedProviderResponse(value: unknown, request: KaiAssistantRequest,
   const missing = missingKaiFields(draft);
   const acknowledgement = value.message.split(/(?<=[.!?])\s+/).filter(sentence => !questionKai(sentence)).join(' ').trim();
   const followup = draft.service ? missing[0] ? kaiQuestion(request.language,missing[0]) : kaiCopy(request.language).ready : kaiReplies[request.language].short;
-  return { message: [price?.message, acknowledgement, followup].filter(Boolean).join(' '), ...(price ? {quote:price.quote} : {}), draft, missing, suggestions: [],
+  return { message: [price?.message, acknowledgement, followup].filter(Boolean).join(price ? '\n\n' : ' '), ...(price ? {quote:price.quote} : {}), draft, missing, suggestions: [],
     actions: draft.service ? ['continue', 'contact'] : ['choose_service', 'continue', 'contact'], mode: 'ai' };
 }
 

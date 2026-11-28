@@ -20,3 +20,10 @@ export function depositPaymentDeadline(confirmedAt: number, appointmentStart: nu
   if (!Number.isFinite(instant)) throw new RangeError('INVALID_PAYMENT_DEADLINE');
   return Math.min(instant + new Date(confirmedAt).getUTCMilliseconds(), appointmentStart);
 }
+
+/** Current agreements: three Zurich calendar days, at least 48 hours before work; short notice is due immediately. */
+export function fullPaymentDeadline(confirmedAt: number, appointmentStart: number): number {
+  const threeDays = depositPaymentDeadline(confirmedAt, Math.max(appointmentStart, confirmedAt + 7 * day));
+  if (!Number.isFinite(appointmentStart) || appointmentStart <= confirmedAt) throw new RangeError('INVALID_PAYMENT_DEADLINE');
+  return Math.max(confirmedAt, Math.min(threeDays, appointmentStart - 48 * hour));
+}

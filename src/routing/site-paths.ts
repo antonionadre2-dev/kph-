@@ -18,6 +18,7 @@ const ALIASES: Record<string, string> = {
   '/index.html': '/',
   '/about': '/ueber-uns', '/ueber-kraken': '/ueber-uns', '/our-story': '/ueber-uns', '/quote': '/offerte', '/consultation': '/offerte',
   '/services': '/leistungen', '/contact': '/kontakt', '/contacto': '/kontakt', '/imprint': '/impressum',
+  '/agb': '/terms', '/datenschutz': '/gdpr',
   '/reinigung/uhwiesen': '/reinigung/laufen-uhwiesen',
 };
 

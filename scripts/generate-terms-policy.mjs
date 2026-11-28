@@ -2,9 +2,10 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { CURRENT_TERMS_VERSION } from '../src/legal/terms-version.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const version = 'kraken-agb-2026-11-26-v2';
+const version = CURRENT_TERMS_VERSION;
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
 // Facts expressly supplied by the owner in this update, rather than insurance claims.
 const owner = {
@@ -35,8 +36,9 @@ for (const language of languages) {
     return value;
   };
   policies[language] = {
+    prepayment: clause(section(4), 1),
     deposit: clause(section(4), 1),
-    payment: clause(section(4), 2),
+    payment: [clause(section(4), 1), clause(section(4), 2), clause(section(4), 3), clause(section(4), 4), clause(section(4), 6)].join('\n\n'),
     cancellation: [clause(section(7), 1), clause(section(7), 2), clause(section(7), 4)].join('\n\n'),
     rescheduling: clause(section(7), 3),
     guaranteeScope: clause(section(9), 1),

@@ -12,6 +12,7 @@ import { getRegionalPage, getRegionalHubCopy } from '../src/seo/regional-content
 import './end-of-tenancy-landing.css';
 import { responsiveImage } from '../src/media/images';
 import { calculatorCta } from '../src/home/cta';
+import CityServicePlanning from './CityServicePlanning';
 
 /** The same semantic article is rendered at build/server time and after navigation. */
 export const EndOfTenancyLanding: React.FC<{ cityId: string; language: string }> = ({ cityId, language }) => {
@@ -45,6 +46,7 @@ export const EndOfTenancyLanding: React.FC<{ cityId: string; language: string }>
     </div>
     <section className="kr-eot-guarantee" aria-labelledby="eot-guarantee-title"><div className="kr-eot-container"><h2 id="eot-guarantee-title">{text('guaranteeTitle')}</h2><blockquote data-guarantee-source="terms-section-9">{policy.guarantee}</blockquote><a href={href('/terms#agb-9')}>{text('terms')}</a></div></section>
     <div className="kr-eot-container">
+      <CityServicePlanning cityId={city} serviceId="end-of-tenancy" language={locale} className="kr-eot-section" />
       <section className="kr-eot-section" aria-labelledby="eot-local-title"><h2 id="eot-local-title">{text('localTitle')} · {name}</h2><div className="kr-eot-local-plan">{planning.map(step => <article key={step.title}><h3>{step.title}</h3><p>{step.body}</p></article>)}</div></section>
       <section className="kr-eot-section" aria-labelledby="eot-zones-title"><h2 id="eot-zones-title">{text('zonesTitle')}</h2><p>{text(city === 'zuerich' ? 'zonesZurich' : 'zonesOther')}</p>{city === 'zuerich' && <><ul className="kr-eot-districts" aria-label="Zürich">{Array.from({ length: 12 }, (_, index) => <li key={index}>{text('district')} {index + 1}</li>)}</ul><a href="https://www.stadt-zuerich.ch/kreise-und-quartiere">{text('districts')}</a></>}<h3 className="kr-eot-resource-heading">{text('resources')}</h3><div className="kr-eot-resources">{region.localResources.map(resource => <article key={resource.sourceId}><h4><a href={resource.url}>{resource.label}</a></h4><p>{resource.description}</p></article>)}</div></section>
       <section className="kr-eot-section" aria-labelledby="eot-faq-title"><h2 id="eot-faq-title">{text('faq')}</h2><div className="kr-eot-faqs">{metadata.faqs.map(faq => <details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}{faq.termsSection && <>{' '}<a href={href(`/terms#agb-${faq.termsSection}`)}>{text('terms')}</a></>}</p></details>)}</div></section>

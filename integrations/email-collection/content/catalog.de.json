@@ -94,7 +94,7 @@
       "Offene Fragen klären wir persönlich",
       "Sie erhalten eine separate Bestätigung"
     ],
-    "note": "Für Rückfragen genügt Ihre Referenz {{bookingReference}}.",
+    "note": "Jetzt wird noch nichts belastet. Sie zahlen erst nach unserer Terminbestätigung.",
     "tone": "calm",
     "visual": "service",
     "signature": "Antonio & Ihr Kraken Team",
@@ -135,7 +135,9 @@
     "headline": "Ihre Offerte. Klar bis ins Detail.",
     "intro": "Wir haben Ihre Offerte für {{serviceName}} in {{city}} vorbereitet. Sie sehen den vereinbarten Leistungsumfang und den Gesamtpreis zusammen an einem Ort.",
     "body": [
-      "Prüfen Sie die Details in Ruhe. Falls etwas geändert werden soll, sprechen Sie uns bitte vor der Annahme an."
+      "Prüfen Sie die Details in Ruhe. Falls etwas geändert werden soll, sprechen Sie uns bitte vor der Annahme an.",
+      "Nach unserer Terminbestätigung zahlen Sie den gesamten bestätigten Betrag vor dem Einsatz. Zahlbar innert 3 Tagen, spätestens 48 Stunden vor Arbeitsbeginn; bei kurzfristiger Bestätigung sofort. Sichere Zahlung über Payrexx (Schweiz).",
+      "Volle Rückerstattung bei Stornierung bis 48 Stunden vor dem Einsatz. Zwischen 48 und 12 Stunden vorher werden 50 %, danach 100 % berechnet."
     ],
     "cta": "Offerte prüfen",
     "secondary": "Kraken kontaktieren",
@@ -161,7 +163,9 @@
     "headline": "Wir freuen uns auf Ihren Termin.",
     "intro": "Ihr Termin für {{serviceName}} in {{city}} ist bestätigt: {{appointmentDate}} um {{appointmentTime}}. Die vereinbarten Details finden Sie unten.",
     "body": [
-      "Bitte prüfen Sie Adresse und Zugangshinweise. Falls sich etwas ändert, kontaktieren Sie uns frühzeitig, damit wir gemeinsam planen können."
+      "Bitte prüfen Sie Adresse und Zugangshinweise. Falls sich etwas ändert, kontaktieren Sie uns frühzeitig, damit wir gemeinsam planen können.",
+      "Nach unserer Terminbestätigung zahlen Sie den gesamten bestätigten Betrag vor dem Einsatz. Zahlbar innert 3 Tagen, spätestens 48 Stunden vor Arbeitsbeginn; bei kurzfristiger Bestätigung sofort. Sichere Zahlung über Payrexx (Schweiz).",
+      "Volle Rückerstattung bei Stornierung bis 48 Stunden vor dem Einsatz. Zwischen 48 und 12 Stunden vorher werden 50 %, danach 100 % berechnet."
     ],
     "cta": "Meine Buchung ansehen",
     "secondary": "Kraken kontaktieren",
@@ -222,7 +226,7 @@
       "Termin und Adresse kontrollieren",
       "Aktuellen Leistungsumfang und Preis ansehen"
     ],
-    "note": "Die Zahlungsübersicht zeigt, ob durch die Änderung ein Restbetrag oder eine Rückerstattung entsteht.",
+    "note": "Die Zahlungsübersicht zeigt, ob durch die Änderung eine zusätzliche Zahlung oder eine Rückerstattung entsteht.",
     "tone": "success",
     "visual": "calendar",
     "signature": "Antonio & Ihr Kraken Team",
@@ -288,7 +292,9 @@
     "headline": "Ihre Zahlung ist vorbereitet.",
     "intro": "Für Ihre Buchung {{bookingReference}} ist {{amountFormatted}} zur Zahlung bereit. Prüfen Sie die Zahlungsübersicht und öffnen Sie den persönlichen Zahlungslink.",
     "body": [
-      "Über den Link sehen Sie den Betrag und die verfügbaren Zahlungsmethoden. Geben Sie Zahlungsdaten ausschliesslich auf der geöffneten Zahlungsseite ein."
+      "Über den Link sehen Sie den Betrag und die verfügbaren Zahlungsmethoden. Geben Sie Zahlungsdaten ausschliesslich auf der geöffneten Zahlungsseite ein.",
+      "Nach unserer Terminbestätigung zahlen Sie den gesamten bestätigten Betrag vor dem Einsatz. Zahlbar innert 3 Tagen, spätestens 48 Stunden vor Arbeitsbeginn; bei kurzfristiger Bestätigung sofort. Sichere Zahlung über Payrexx (Schweiz).",
+      "Volle Rückerstattung bei Stornierung bis 48 Stunden vor dem Einsatz. Zwischen 48 und 12 Stunden vorher werden 50 %, danach 100 % berechnet."
     ],
     "cta": "Zahlung öffnen",
     "secondary": "Kraken kontaktieren",
@@ -307,21 +313,20 @@
   },
   "deposit_received": {
     "stage": "Zahlen",
-    "title": "Anzahlung eingegangen",
-    "subject": "Anzahlung erhalten: {{amountFormatted}} · {{bookingReference}}",
-    "preheader": "Vielen Dank. Ihr Zahlungsbeleg und der verbleibende Betrag sind bereit.",
+    "title": "Zahlung eingegangen",
+    "subject": "Zahlung erhalten: {{amountFormatted}} · {{bookingReference}}",
+    "preheader": "Zahlung eingegangen",
     "eyebrow": "Zahlung bestätigt",
-    "headline": "Danke. Ihre Anzahlung ist da.",
-    "intro": "Wir haben Ihre Anzahlung von {{amountFormatted}} für {{serviceName}} erhalten. Sie wird auf den vereinbarten Gesamtbetrag angerechnet.",
+    "headline": "Zahlung eingegangen",
+    "intro": "Wir haben Ihre Zahlung von {{amountFormatted}} für {{serviceName}} erhalten. Sie wird dem vereinbarten Gesamtbetrag zugeordnet.",
     "body": [
-      "Den bezahlten Betrag, den Restbetrag und Ihren Zahlungsbeleg finden Sie in der Übersicht. Den Terminstatus sehen Sie separat in Ihrer Buchung."
+      "Den bezahlten und den noch offenen Betrag sowie Ihren Zahlungsbeleg finden Sie in der Übersicht. Der Terminstatus wird separat angezeigt."
     ],
     "cta": "Zahlungsbeleg ansehen",
     "secondary": "Kraken kontaktieren",
     "nextTitle": "Für Sie übersichtlich",
     "next": [
-      "Anzahlung im Zahlungsbeleg prüfen",
-      "Terminstatus und Vorbereitung in Ihrer Buchung ansehen"
+      "Zahlungsbeleg prüfen"
     ],
     "note": "Eine Zahlung allein ersetzt keine separate Terminbestätigung.",
     "tone": "success",
@@ -337,7 +342,7 @@
     "preheader": "Ihr Auftrag ist vollständig bezahlt. Hier ist Ihr Zahlungsbeleg.",
     "eyebrow": "Alles bezahlt",
     "headline": "Vielen Dank für Ihre Zahlung.",
-    "intro": "Die Zahlung von {{amountFormatted}} ist eingegangen. Für den aktuell vereinbarten Umfang Ihrer Buchung {{bookingReference}} ist kein Restbetrag mehr offen.",
+    "intro": "Die Zahlung von {{amountFormatted}} ist eingegangen. Der aktuell vereinbarte Umfang Ihrer Buchung {{bookingReference}} ist vollständig bezahlt.",
     "body": [
       "Ihr Zahlungsbeleg enthält die gebuchten Leistungen und die Zahlung. Den aktuellen Terminstatus finden Sie in Ihrer Buchung."
     ],
@@ -407,21 +412,21 @@
   },
   "balance_due": {
     "stage": "Zahlen",
-    "title": "Restzahlung",
-    "subject": "Restbetrag zu Ihrer Buchung {{bookingReference}}",
-    "preheader": "Bereits geleistete Zahlungen sind berücksichtigt.",
+    "title": "Zusätzliche Zahlung",
+    "subject": "Zusätzliche Zahlung · {{bookingReference}}",
+    "preheader": "Prüfen Sie die nach dem Einsatz erfassten Leistungen. Die zusätzliche Rechnung ist innert 7 Tagen zahlbar.",
     "eyebrow": "Eine klare Schlussübersicht",
-    "headline": "Hier ist Ihr verbleibender Betrag.",
-    "intro": "Für {{serviceName}} ist noch {{balanceFormatted}} offen. Ihre bereits eingegangenen Zahlungen sind in der Übersicht abgezogen.",
+    "headline": "Die zusätzliche Rechnung ist bereit.",
+    "intro": "Für den abgestimmten Mehraufwand Ihrer Buchung {{bookingReference}} sind {{amountFormatted}} zu bezahlen.",
     "body": [
-      "Prüfen Sie die Schlussübersicht mit den vereinbarten Leistungen. Falls etwas nicht stimmt, melden Sie sich bitte vor der Zahlung bei uns."
+      "Prüfen Sie die nach dem Einsatz erfassten Leistungen. Die zusätzliche Rechnung ist innert 7 Tagen zahlbar."
     ],
-    "cta": "Restbetrag prüfen und bezahlen",
+    "cta": "Rechnung prüfen und bezahlen",
     "secondary": "Kraken kontaktieren",
     "nextTitle": "Alles an einem Ort",
     "next": [
-      "Leistungen und geleistete Zahlungen prüfen",
-      "Offenen Betrag über den Zahlungslink begleichen"
+      "Zahlungsbeleg prüfen",
+      "Rechnung prüfen und bezahlen"
     ],
     "note": "Es wird keine zusätzliche MwSt. berechnet.",
     "tone": "action",
@@ -439,7 +444,7 @@
     "headline": "Ihre Rückerstattung ist veranlasst.",
     "intro": "Für Ihre Buchung {{bookingReference}} wurde eine Rückerstattung von {{amountFormatted}} über den Zahlungsanbieter veranlasst.",
     "body": [
-      "Wann der Betrag bei Ihnen erscheint, hängt von der verwendeten Zahlungsmethode und Ihrer Bank ab. Die Rückerstattungsdetails finden Sie über den Link."
+      "Rückerstattungen erfolgen innert 10 Tagen auf dem ursprünglichen Zahlungsweg. Der Zeitpunkt der Gutschrift hängt auch von Ihrer Bank ab."
     ],
     "cta": "Rückerstattung ansehen",
     "secondary": "Kraken kontaktieren",
@@ -574,7 +579,7 @@
       "Termin und Zugang prüfen",
       "Besondere Wünsche vorab mitteilen"
     ],
-    "note": "Es gelten die für diesen Besuch bestätigten Leistungen und Preise.",
+    "note": "Regelmässige Reinigungen werden monatlich im Voraus bezahlt. Der Monatsbetrag umfasst die bestätigten Besuche des Abrechnungszeitraums.",
     "tone": "calm",
     "visual": "regular",
     "signature": "Antonio & Ihr Kraken Team",
@@ -599,7 +604,7 @@
       "Betroffene Termine prüfen",
       "Leistungen und Rhythmus kontrollieren"
     ],
-    "note": "Änderungen an Leistungen oder Preisen werden Ihnen ausdrücklich angezeigt.",
+    "note": "Regelmässige Reinigungen werden monatlich im Voraus bezahlt. Der Monatsbetrag umfasst die bestätigten Besuche des Abrechnungszeitraums.",
     "tone": "success",
     "visual": "regular",
     "signature": "Antonio & Ihr Kraken Team",

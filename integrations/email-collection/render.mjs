@@ -3,6 +3,7 @@ import { preparation } from './preparation.mjs';
 import { emailArtwork } from './artwork.mjs';
 import { normalizeEmailLanguage } from './language.mjs';
 import { businessHoursSentence } from '../../src/config/business-hours.mjs';
+import { paymentMessages } from './payment-copy.mjs';
 
 export const defaultBrand = Object.freeze({
   name:'Kraken PFM', descriptor:'Properties & Facilities Management',
@@ -57,8 +58,13 @@ export function renderEmail(id, data, options={}) {
   const preview=options.mode!=='production';
   const language=normalizeEmailLanguage(preview ? (data.language ?? 'de') : data.language);
   const l=labels[language];
-  const template=options.catalogs?.[language]?.[id];
+  let template=options.catalogs?.[language]?.[id];
   if(!l || !template) throw new Error('Unknown language or email template.');
+  if(id==='payment_requested' && data.paymentModel==='full_prepayment' && (data.paymentReminder===true || data.extraPayment===true)){
+    if(data.paymentReminder===true && data.extraPayment===true)throw new Error('A payment message cannot be both a reminder and an additional invoice.');
+    const copy=paymentMessages[language],extra=data.extraPayment===true,title=extra?copy.extra:copy.reminder;
+    template={...template,title,subject:title+' · {{bookingReference}}',preheader:title,eyebrow:title,headline:title,intro:extra?copy.extraIntro:copy.reminderIntro,body:[extra?copy.extraBody:copy.reminderBody],next:[]};
+  }
   const brand={...defaultBrand,...options.brand};
   if(!data.customer || typeof data.customer!=='object' || Array.isArray(data.customer)) throw new Error('Customer data is required.');
   const firstName=data.customer.firstName==null?'':data.customer.firstName;
@@ -109,9 +115,12 @@ export function renderEmail(id, data, options={}) {
   const price=data.pricing;
   if(price) {
     if(price.priceType!==undefined&&!['fixed','estimate'].includes(price.priceType))throw new Error('Unsupported price type.');
-    for(const key of ['totalRappen','paidRappen','transactionRappen','vatRappen','refundRappen']) if(price[key]!==undefined) chf(price[key],language);
+    for(const key of ['totalRappen','paidRappen','transactionRappen','vatRappen','refundRappen','refundedRappen','refundCreditRappen']) if(price[key]!==undefined) chf(price[key],language);
     if(price.currency!=='CHF') throw new Error('This collection currently supports CHF only.');
-    if(price.paidRappen>price.totalRappen) throw new Error('Overpayment requires a specific reviewed message.');
+    if((price.refundedRappen||0)>price.paidRappen)throw new Error('Refunded amount exceeds received payments.');
+    const credit=Math.max(0,price.paidRappen-(price.refundedRappen||0)-price.totalRappen);
+    if(credit && !(data.paymentModel==='full_prepayment' && price.refundCreditRappen===credit)) throw new Error('Overpayment requires a specific reviewed message.');
+    if(price.refundCreditRappen!==undefined && price.refundCreditRappen!==credit)throw new Error('Inconsistent refund credit.');
     if(brand.vatStatus!=='not_registered' || price.vatRappen!==0) throw new Error('Update the VAT copy and renderer before using another tax status.');
   }
   if(!preview) {
@@ -149,7 +158,7 @@ export function renderEmail(id, data, options={}) {
     appointmentDate:parts.date,appointmentTime:parts.time,bookingReference:data.reference,
     amountFormatted:price?chf(id==='refund_issued'?price.refundRappen:price.transactionRappen??price.totalRappen,language):'',
     totalFormatted:price?chf(price.totalRappen,language):'', paidFormatted:price?chf(price.paidRappen,language):'',
-    balanceFormatted:price?chf(price.totalRappen-price.paidRappen,language):'',
+    balanceFormatted:price?chf(Math.max(0,price.totalRappen-price.paidRappen+(price.refundedRappen||0)),language):'',
     expiresAtFormatted:expiry.date?`${expiry.date}, ${expiry.time}`:''
   };
   const t=Object.fromEntries(Object.entries(template).map(([key,val])=>[key,Array.isArray(val)?val.map(v=>replaceTokens(optionalCopy(v),values)):typeof val==='string'?replaceTokens(optionalCopy(val),values):val]));
@@ -205,6 +214,10 @@ export function renderEmail(id, data, options={}) {
   if(extras.length && showService) fields.push([l.extras,extras.join(' · ')]);
   if(serviceScope && showService) fields.push([l.scope,serviceScope]);
   if(data.customerNote && showService) fields.push([l.clientNote,data.customerNote]);
+  if(data.paymentDueAt && ['payment_requested','booking_confirmed','booking_updated','balance_due'].includes(id)){
+    const due=dateParts(data.paymentDueAt,language);
+    fields.push([l.paymentDeadline,`${due.date} · ${due.time} (${l.timezone})`]);
+  }
   if(id==='magic_link' && expiry.date) fields.push([l.until,`${expiry.date} · ${expiry.time} (${l.timezone})`]);
   if(['deposit_received','payment_received','refund_issued'].includes(id) && data.paymentDetails){
     if(data.paymentDetails.receiptNumber) fields.push([l.receiptNumber,data.paymentDetails.receiptNumber]);
@@ -226,8 +239,10 @@ export function renderEmail(id, data, options={}) {
       if(['payment_requested','payment_pending','payment_failed'].includes(id)) summaryRows.push([l.requestedPayment,chf(price.transactionRappen,language),'strong']);
       if(['deposit_received','payment_received','payment_requested','payment_pending','payment_failed','balance_due'].includes(id)) {
         summaryRows.push([l.paid,chf(price.paidRappen,language)]);
-        summaryRows.push([price.priceType==='estimate'?l.estimatedRemaining:l.remaining,chf(price.totalRappen-price.paidRappen,language),'strong']);
+        if(price.refundedRappen)summaryRows.push([l.refund,chf(price.refundedRappen,language)]);
+        summaryRows.push([price.priceType==='estimate'?l.estimatedRemaining:l.remaining,chf(Math.max(0,price.totalRappen-price.paidRappen+(price.refundedRappen||0)),language),'strong']);
       }
+      if(price.refundCreditRappen)summaryRows.push([paymentMessages[language].credit,chf(price.refundCreditRappen,language),'strong']);
     }
   }
   const financeBlock=summaryRows.length?`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#f3f7fa" style="background-color:#f3f7fa;border-radius:16px;">
@@ -235,8 +250,8 @@ export function renderEmail(id, data, options={}) {
     <tr><td colspan="2" style="padding:0 22px 20px;font-size:13px;color:#476176;">${escapeHtml(l.vatNote)}</td></tr>
   </table>`:'';
   const miniList=(title,items,numbered=false)=>`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td colspan="2" style="padding:0 0 12px;font-size:16px;font-weight:700;color:#002d5b;line-height:1.5;">${escapeHtml(title)}</td></tr>${items.map((item,i)=>`<tr><td width="28" valign="top" style="padding:4px 8px 10px 0;font-size:14px;font-weight:700;color:#23805e;line-height:1.6;">${numbered?String(i+1).padStart(2,'0'):'✓'}</td><td style="padding:4px 0 10px;font-size:16px;line-height:1.6;color:#38566f;">${escapeHtml(item)}</td></tr>`).join('')}</table>`;
-  const legalBlock=termsSummary?`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #dce7ef;border-radius:16px;"><tr><td style="padding:20px 22px;"><h2 style="margin:0 0 12px;font-size:19px;line-height:1.4;color:#002d5b;">${escapeHtml(termsSummary.title)}</h2>${p(termsSummary.state,'font-weight:700;')}${termsSummary.notice?p(termsSummary.notice):''}${termsSummary.rows.map(row=>p(row.label+': '+row.value,'white-space:pre-line;')).join('')}${termsSummary.sections.map(section=>`<h3 style="margin:18px 0 8px;font-size:16px;line-height:1.4;color:#002d5b;">${escapeHtml(section.label)}</h3>${p(section.text,'white-space:pre-line;')}<p style="font-size:14px;line-height:1.5;"><a href="${link(legalUrl(section.href))}" style="color:#355c79;text-decoration:underline;">${escapeHtml(section.label)} · ${section.clause}</a></p>`).join('')}<p style="margin:18px 0 0;font-size:14px;line-height:1.6;">${termsSummary.links.map(item=>`<a href="${link(legalUrl(item.href))}" style="color:#355c79;text-decoration:underline;">${escapeHtml(item.label)}</a>`).join(' · ')}</p></td></tr></table>`:'';
-  const legalText=termsSummary?[termsSummary.title,termsSummary.state,termsSummary.notice||'',...termsSummary.rows.map(row=>`${row.label}: ${row.value}`),...termsSummary.sections.flatMap(section=>[section.label,section.text,legalUrl(section.href)]),...termsSummary.links.map(item=>`${item.label}: ${legalUrl(item.href)}`)]:[];
+  const legalBlock=termsSummary?`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #dce7ef;border-radius:16px;"><tr><td style="padding:20px 22px;"><h2 style="margin:0 0 12px;font-size:19px;line-height:1.4;color:#002d5b;">${escapeHtml(termsSummary.title)}</h2>${p(termsSummary.state,'font-weight:700;')}${termsSummary.notice?p(termsSummary.notice):''}${termsSummary.rows.map(row=>p((row.label?row.label+': ':'')+row.value,'white-space:pre-line;')).join('')}${termsSummary.sections.map(section=>`<h3 style="margin:18px 0 8px;font-size:16px;line-height:1.4;color:#002d5b;">${escapeHtml(section.label)}</h3>${p(section.text,'white-space:pre-line;')}<p style="font-size:14px;line-height:1.5;"><a href="${link(legalUrl(section.href))}" style="color:#355c79;text-decoration:underline;">${escapeHtml(section.label)} · ${section.clause}</a></p>`).join('')}<p style="margin:18px 0 0;font-size:14px;line-height:1.6;">${termsSummary.links.map(item=>`<a href="${link(legalUrl(item.href))}" style="color:#355c79;text-decoration:underline;">${escapeHtml(item.label)}</a>`).join(' · ')}</p></td></tr></table>`:'';
+  const legalText=termsSummary?[termsSummary.title,termsSummary.state,termsSummary.notice||'',...termsSummary.rows.map(row=>`${row.label?row.label+': ':''}${row.value}`),...termsSummary.sections.flatMap(section=>[section.label,section.text,legalUrl(section.href)]),...termsSummary.links.map(item=>`${item.label}: ${legalUrl(item.href)}`)]:[];
   const button=`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td align="center" bgcolor="#002d5b" style="background-color:#002d5b;border-radius:12px;text-align:center;padding:0 18px;"><a href="${link(cta)}" style="display:block;padding:17px 8px;font-size:16px;line-height:1.5;font-weight:700;color:#ffffff;text-decoration:none;text-align:center;">${escapeHtml(t.cta)}</a></td></tr></table>`;
   const personalSignature=t.signature.includes('Antonio');
   const signature=`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td width="80" valign="middle" style="padding:0 18px 0 0;"><img src="${asset('kraken-logo.png')}" alt="Kraken" width="72" style="display:block;width:72px;height:auto;border:0;"></td><td valign="middle"><p style="margin:0 0 4px;font-size:17px;font-weight:700;color:#002d5b;">${escapeHtml(t.signature)}</p><p style="margin:0;font-size:14px;line-height:1.5;color:#61778a;">${escapeHtml(personalSignature?l.signatureRole:l.teamRole)}</p></td></tr></table>`;

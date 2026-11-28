@@ -1,9 +1,9 @@
-import de from './versions/kraken-agb-2026-11-26-v2/de.json' with { type: 'json' };
-import en from './versions/kraken-agb-2026-11-26-v2/en.json' with { type: 'json' };
-import es from './versions/kraken-agb-2026-11-26-v2/es.json' with { type: 'json' };
-import pt from './versions/kraken-agb-2026-11-26-v2/pt.json' with { type: 'json' };
-import it from './versions/kraken-agb-2026-11-26-v2/it.json' with { type: 'json' };
-import fr from './versions/kraken-agb-2026-11-26-v2/fr.json' with { type: 'json' };
+import de from './versions/kraken-agb-2026-11-28-v3/de.json' with { type: 'json' };
+import en from './versions/kraken-agb-2026-11-28-v3/en.json' with { type: 'json' };
+import es from './versions/kraken-agb-2026-11-28-v3/es.json' with { type: 'json' };
+import pt from './versions/kraken-agb-2026-11-28-v3/pt.json' with { type: 'json' };
+import it from './versions/kraken-agb-2026-11-28-v3/it.json' with { type: 'json' };
+import fr from './versions/kraken-agb-2026-11-28-v3/fr.json' with { type: 'json' };
 
 import { CURRENT_TERMS_VERSION } from './terms-version.ts';
 export { CURRENT_TERMS_VERSION, TERMS_EFFECTIVE_DATE } from './terms-version.ts';

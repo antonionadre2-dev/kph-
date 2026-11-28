@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '../i18n';
-import { normalizeHomeLanguage } from './home/homeTranslations';
+import { homeText, normalizeHomeLanguage } from './home/homeTranslations';
+import { publicHref } from '../src/routing/site-paths';
 import { openHomeCalculator } from '../src/home/calculator';
 import { bindVisualViewport } from '../src/viewport.js';
 import { KAI_FIELDS, KAI_SERVICES, KAI_SERVICE_FIELDS, emptyKaiDraft, type KaiDraft, type KaiField, type KaiMessage, type KaiService, type KaiAssistantResponse } from '../src/kai/types';
@@ -302,6 +303,7 @@ export default function KaiAssistant({ currentPage, onNavigate }: { currentPage:
             <a href="https://wa.me/41774505705" target="_blank" rel="noopener noreferrer">WhatsApp</a>
             <a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a>
           </section>}
+          {quote && draft.service === 'end' && !contactCard && <p><a href={publicHref('/terms#agb-9', chatLocale)} target="_blank" rel="noopener noreferrer">{homeText(chatLocale, 'AGB ansehen')}</a></p>}
           {quote && draft.service && !contactCard && <button type="button" className="kai-primary kai-price-continue" disabled={busy} onClick={continueToCalculator}>{kt('chooseDate')}</button>}
           {busy && typingVisible && <p className="kai-working" role="status"><span className="kai-visually-hidden">{kt('busy')}</span><span className="kai-typing-dots" aria-hidden="true"><span /><span /><span /></span></p>}
         {error && <div className="kai-error" role="alert"><p>{kt('error')}</p><button type="button" disabled={busy} onClick={() => send(lastMessage.current, true)}>{kt('retry')}</button></div>}

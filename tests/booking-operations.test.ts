@@ -30,7 +30,7 @@ function transactionalStore(){
  }};
  return{values,store:createFirestoreBookingStore(db),get reads(){return reads;}};
 }
-function input(){const selection=defaultSelection('regular');return{selection,customer:{name:'Synthetic Customer',email:'client@example.test',phone:'+41770000000',address:'Teststrasse 1',postalCode:'8200',city:'Schaffhausen'},requestedDate:'2026-11-28',requestedTime:'10:00',notes:'Synthetic customer scope',language:'es',termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,pricingVersion:PRICING_VERSION,acceptedTotalCents:calculatePrice(selection).totalCents,idempotencyKey:'synthetic_idempotency_123456'};}
+function input(){const selection={...defaultSelection('regular'),frequency:'once' as const};return{selection,customer:{name:'Synthetic Customer',email:'client@example.test',phone:'+41770000000',address:'Teststrasse 1',postalCode:'8200',city:'Schaffhausen'},requestedDate:'2026-11-28',requestedTime:'10:00',notes:'Synthetic customer scope',language:'es',termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,pricingVersion:PRICING_VERSION,acceptedTotalCents:calculatePrice(selection).totalCents,idempotencyKey:'synthetic_idempotency_123456'};}
 async function fixture(){const db=transactionalStore(),sent:any[]=[];let gatewayCalls=0;
  const service=createBookingService({store:db.store,tokenSecret:secret,origin,mode:'test',payment:{async create(){gatewayCalls++;throw Error('Gateway must not be called by the operator');}},sendEmail:async(message:any)=>{sent.push(clone(message));return{id:'synthetic-mail-accepted'};},sender:'sender@example.test',clock:()=>now});
  const booking=await service.create(input());
@@ -75,8 +75,8 @@ test('confirm requires same origin, capture, explicit availability, current revi
 test('operator approval changes the real store and canCheckout, queues one approved personal payment email, and never opens a gateway',async()=>{
  const f=await fixture(),path=`${base}/${f.booking.bookingId}/confirm`,body={expectedRevision:1,availabilityChecked:true,holdExpiresAt:new Date(now+3600000).toISOString()};
  const result=await invoke(f.handler,path,{method:'POST',body});assert.equal(result.statusCode,200);
- const record=await f.db.store.get(f.booking.bookingId);assert.equal(record.scheduling.status,'held');assert.equal(record.confirmedBy,'verified-operator');assert.equal(result.body.booking.canCheckout,true);assert.equal(record.revision,2);
- assert.equal(record.quote.totalCents,f.booking.quote.totalCents);assert.equal(record.payment.amountDueNowCents,f.booking.payment.amountDueNowCents);assert.equal(record.payment.status,'not_started');assert.equal(f.gatewayCalls,0);
+ const record=await f.db.store.get(f.booking.bookingId);assert.equal(record.scheduling.status,'confirmed');assert.equal(record.confirmedBy,'verified-operator');assert.equal(result.body.booking.canCheckout,true);assert.equal(record.revision,2);
+ assert.equal(record.quote.totalCents,f.booking.quote.totalCents);assert.equal(record.payment.amountDueNowCents,f.booking.payment.amountDueNowCents);assert.equal(record.payment.status,'awaiting_payment');assert.equal(f.gatewayCalls,0);
  assert.equal(f.sent.length,1);assert.equal(f.sent[0].to,input().customer.email);assert.match(f.sent[0].html,/<html[^>]*lang="es"/);
  const job=(await f.db.store.listMailForBooking(record.bookingId)).find(j=>j.kind==='payment_ready');assert.equal(job.notification.templateId,'payment_requested');assert.equal(job.status,'sent');assert.equal(job.prepared.idempotencyKey,`kraken-booking:${job.id}`);
  assert.equal(job.notification.renderData.pricing.totalRappen,record.quote.totalCents);assert.equal(job.notification.renderData.pricing.transactionRappen,record.payment.amountDueNowCents);
@@ -89,11 +89,11 @@ test('current terms operator confirmation needs no browser hold and emails the s
  const result=await invoke(f.handler,path,{method:'POST',body:{expectedRevision:1,availabilityChecked:true}});
  assert.equal(result.statusCode,200);
  const record=await f.db.store.get(f.booking.bookingId);
- assert.equal(record.payment.depositDueAt,'2026-11-28T09:00:00.000Z');
- assert.equal(record.scheduling.holdExpiresAt,record.payment.depositDueAt);
+ assert.equal(record.payment.paymentDueAt,'2026-11-26T10:00:00.000Z');
+ assert.equal(record.payment.checkoutAvailableUntil,'2026-11-28T09:00:00.000Z');
  assert.equal(record.confirmedAt,now);assert.equal(f.gatewayCalls,0);
- assert.equal(f.sent.length,1);assert.match(f.sent[0].text,/28 de noviembre de 2026.*10:00.*Europe\/Zurich/);
- assert.equal(result.body.booking.payment.depositDueAt,record.payment.depositDueAt);
+ assert.equal(f.sent.length,1);assert.match(f.sent[0].text,/26 de noviembre de 2026.*11:00/);
+ assert.equal(result.body.booking.payment.paymentDueAt,record.payment.paymentDueAt);
 });
 test('operator lookup uses exact reference in POST body and unavailable mail/payment cannot imply approval',async()=>{
  const f=await fixture();const result=await invoke(f.handler,base+'/search',{method:'POST',body:{reference:f.booking.reference.toLowerCase()}});
@@ -143,4 +143,21 @@ test('anonymous access pins before any lookup and acknowledges before provider; 
  let pinned:Promise<unknown>|null=null,release!:()=>void,started=false;
  const result=await pinnedAccessRequest({schedule:work=>{pinned=work;return true;},request:async queued=>{assert.ok(pinned);await queued('exact-durable-job');return{status:'accepted'};},dispatch:async id=>{assert.equal(id,'exact-durable-job');started=true;await new Promise<void>(resolve=>{release=resolve;});}});
  assert.deepEqual(result,{status:'accepted'});assert.ok(started);release();await pinned;
+});
+
+test('financial operator actions retain strict identity/origin/capture/body gates and bind the authenticated actor',async()=>{
+ const paths:any={
+  'quote/approve':{expectedRevision:1,totalCents:20000,scopeNotes:'Written reviewed service scope',scopeLanguage:'es'},
+  'work/settle':{expectedRevision:1,actualHours:3},'payment/extra':{expectedRevision:1},cancel:{expectedRevision:1},
+  refund:{expectedRevision:1,amountCents:1000,idempotencyKey:'isolated_route_refund_1234'},
+ };
+ for(const [action,body]of Object.entries(paths)){
+  const f=await fixture(),path=`${base}/${f.booking.bookingId}/${action}`;let calls=0,passed:any;
+  const method:any={'quote/approve':'approveManualQuote','work/settle':'settleWork','payment/extra':'createExtraPayment',cancel:'cancel',refund:'refund'};
+  (f.service as any)[method[action]]=async(_id:string,input:any)=>{calls++;passed=input;};
+  assert.equal((await invoke(f.handler,path,{method:'POST',body,headers:{Origin:'https://attacker.example'}})).statusCode,403);assert.equal(calls,0);
+  f.setCapture(false);assert.equal((await invoke(f.handler,path,{method:'POST',body})).statusCode,403);assert.equal(calls,0);f.setCapture(true);
+  assert.equal((await invoke(f.handler,path,{method:'POST',body:{...(body as any),operatorId:'attacker'}})).body.code,'INVALID_BODY');assert.equal(calls,0);
+  const result=await invoke(f.handler,path,{method:'POST',body});assert.equal(result.statusCode,200);assert.equal(calls,1);assert.deepEqual(passed,{...(body as any),operatorId:'verified-operator'});assert.equal(f.gatewayCalls,0);
+ }
 });

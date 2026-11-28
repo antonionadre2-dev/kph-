@@ -4,6 +4,12 @@ import es from './content/catalog.es.json' with { type: 'json' };
 import fr from './content/catalog.fr.json' with { type: 'json' };
 import it from './content/catalog.it.json' with { type: 'json' };
 import pt from './content/catalog.pt.json' with { type: 'json' };
+import legacyDe from './content/legacy-v2/catalog.de.json' with { type: 'json' };
+import legacyEn from './content/legacy-v2/catalog.en.json' with { type: 'json' };
+import legacyEs from './content/legacy-v2/catalog.es.json' with { type: 'json' };
+import legacyFr from './content/legacy-v2/catalog.fr.json' with { type: 'json' };
+import legacyIt from './content/legacy-v2/catalog.it.json' with { type: 'json' };
+import legacyPt from './content/legacy-v2/catalog.pt.json' with { type: 'json' };
 import { defaultBrand, renderEmail } from './render.mjs';
 import { languageForBackgroundEmail, normalizeEmailLanguage } from './language.mjs';
 import { prepareServerEmail } from './server-email.mjs';
@@ -13,8 +19,10 @@ export { renderEmail, prepareServerEmail };
 export { labels, localeTags, serviceNames } from './labels.mjs';
 export { preparation } from './preparation.mjs';
 export { emailArtwork } from './artwork.mjs';
-export const TEMPLATE_REVISION = '1.2.0';
+export const TEMPLATE_REVISION = '2.0.0';
+export const LEGACY_TEMPLATE_REVISION = '1.2.0';
 export const catalogs = Object.freeze({ de, en, es, fr, it, pt });
+export const legacyCatalogs = Object.freeze({de:legacyDe,en:legacyEn,es:legacyEs,fr:legacyFr,it:legacyIt,pt:legacyPt});
 
 function siteOrigin(value) {
   const url = new URL(value);
@@ -43,14 +51,14 @@ export function brandForLanguage(language, origin = 'https://krakenpfm.ch') {
 /** Called with a trusted persisted outbox snapshot, never browser render data. */
 export function prepareCollectionEnvelope(notificationSnapshot, links, origin = 'https://krakenpfm.ch') {
   const language = languageForBackgroundEmail(notificationSnapshot?.languageSnapshot);
-  if (notificationSnapshot.templateRevision !== TEMPLATE_REVISION) throw new TypeError('Unsupported persisted email template revision.');
+  if (![TEMPLATE_REVISION, LEGACY_TEMPLATE_REVISION].includes(notificationSnapshot.templateRevision)) throw new TypeError('Unsupported persisted email template revision.');
   const base = siteOrigin(origin);
   const envelope = prepareServerEmail({
     templateId: notificationSnapshot.templateId,
     notificationSnapshot,
     links,
   }, {
-    catalogs,
+    catalogs: notificationSnapshot.templateRevision === LEGACY_TEMPLATE_REVISION ? legacyCatalogs : catalogs,
     brand: brandForLanguage(language, base),
     assetBaseUrl: `${base}/kraken-emails/assets`,
   });

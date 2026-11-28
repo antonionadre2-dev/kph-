@@ -85,13 +85,17 @@ export function createFirestoreBookingStore(db:Firestore) {
     async addMail(job:any) {
       return db.runTransaction(async tx=>{const ref=outbox.doc(digest(job.id));if((await tx.get(ref)).exists)return false;tx.create(ref,clean(job));return true;});
     },
+    /** Internal outbox CAS for provider scheduling/cancellation; never accepts browser fields. */
+    async mutateMail(id:string,transform:(current:any)=>any) {
+      return db.runTransaction(async tx=>{const ref=outbox.doc(digest(id)),current=(await tx.get(ref)).data();if(!current)return null;const next=transform(current);if(next)tx.set(ref,clean(next));return next||current;});
+    },
     async getMail(id:string) {
       return (await outbox.doc(digest(id)).get()).data()||null;
     },
     async prepareMail(id:string,message:any,preparedAt:number,expiresAt?:number) {
       return db.runTransaction(async tx=>{
         const ref=outbox.doc(digest(id)),current=(await tx.get(ref)).data();
-        if(!current||current.status!=='sending')return null;
+        if(!current||!['sending','scheduling'].includes(current.status))return null;
         if(current.prepared)return current.prepared;
         const prepared=clean(message);
         tx.update(ref,{prepared,preparedAt,...(expiresAt?{preparedExpiresAt:expiresAt}:{})});

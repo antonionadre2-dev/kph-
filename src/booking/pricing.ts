@@ -64,7 +64,10 @@ export interface PriceQuote {
   totalCents: number | null;
   priceType:'fixed'|'estimate'|'from'|'personal';
   /** Minimum confirmed order for hourly work, including booked extras and travel; null forbids payment. */
-  depositBasisCents:number|null;
+  minimumChargeCents:number|null;
+  totalPayableCents:number|null;
+  /** Historical persisted quotes only; current calculations never emit this field. */
+  depositBasisCents?:number|null;
   /** A non-binding minimum for request-only cases, never a payable total. */
   fromPriceCents?:number;
   taxStatus: 'not_registered';
@@ -151,7 +154,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
   let bookedPersonHours: number | undefined;
   let materialsCents = 0;
   let priceType:PriceQuote['priceType']='fixed';
-  let depositBasisCents:number|undefined;
+  let minimumChargeCents:number|undefined;
   let fromPriceCents:number|undefined;
   const add = (id: string, label: string, quantity: number, unit: PriceUnit, unitPriceCents: number, params?: PriceLine['params'], totalOverride?: number) => {
     if (quantity <= 0) return;
@@ -182,7 +185,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
       bookedPersonHours = cleaningHours + ironingHours;
       // Materials, fixed extras and explicitly ordered ironing remain in the minimum scope.
       // Cleaning travel is already included in the tariff; do not add a second travel fee.
-      depositBasisCents = knownSubtotal() - (cleaningHours - minimumHours) * rateCents;
+      minimumChargeCents = knownSubtotal() - (cleaningHours - minimumHours) * rateCents;
       priceType = 'estimate';
       break;
     }
@@ -227,12 +230,12 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
       add('eot-storage', 'Kellerabteil / Estrich', count(s.storageRooms, 'storageRooms'), 'unit', pricingConfig.endOfTenancy.extras.storageCents);
       add('eot-garage', 'Garagenbox', count(s.garages, 'garages'), 'unit', pricingConfig.endOfTenancy.extras.garageCents);
       add('eot-carpet', 'Teppich-Shampoonierung – pro Zimmer', count(s.carpetRooms, 'carpetRooms'), 'unit', pricingConfig.endOfTenancy.extras.carpetRoomCents);
-      if (mode === 'hourly') depositBasisCents = knownSubtotal() - hourlyLabourAboveMinimumCents;
+      if (mode === 'hourly') minimumChargeCents = knownSubtotal() - hourlyLabourAboveMinimumCents;
       if (flag(s.heavySoiling, 'heavySoiling')) {
         const basisCents = knownSubtotal();
         const surchargeCents = Math.floor((basisCents * pricingConfig.endOfTenancy.extras.heavySoilingPercent + 50) / 100);
         if (surchargeCents > 0) add('eot-heavy-soiling', `Starke Verschmutzung – ${pricingConfig.endOfTenancy.extras.heavySoilingPercent} % auf Reinigung und Extras`, 1, 'package', surchargeCents, { percentage: pricingConfig.endOfTenancy.extras.heavySoilingPercent, basisCents });
-        if (depositBasisCents !== undefined) depositBasisCents += Math.floor((depositBasisCents * pricingConfig.endOfTenancy.extras.heavySoilingPercent + 50) / 100);
+        if (minimumChargeCents !== undefined) minimumChargeCents += Math.floor((minimumChargeCents * pricingConfig.endOfTenancy.extras.heavySoilingPercent + 50) / 100);
       }
       break;
     }
@@ -261,7 +264,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
       add('construction-film', 'Schutzfolien & Aufkleber entfernen – pro Fenster', count(s.filmWindows, 'filmWindows'), 'unit', pricingConfig.construction.extras.filmWindowCents);
       add('construction-slat-blinds', 'Storen – pro Fenster', count(s.slatBlinds, 'slatBlinds'), 'unit', pricingConfig.construction.extras.slatBlindsCents);
       if (flag(s.extraArea, 'extraArea')) manualReviewReasons.push(notice('construction_extra_area_quote_required', `Terrasse / Wintergarten / Garage: CHF ${pricingConfig.construction.extras.extraAreaFromCents/100}–${pricingConfig.construction.extras.extraAreaToCents/100} zusätzlich. Der genaue Umfang und Preis werden vor der Zahlung bestätigt.`));
-      if (mode === 'hourly') depositBasisCents = knownSubtotal() - hourlyLabourAboveMinimumCents;
+      if (mode === 'hourly') minimumChargeCents = knownSubtotal() - hourlyLabourAboveMinimumCents;
       break;
     }
     case 'windows': {
@@ -317,7 +320,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
         add('moving-hourly',`${team} ${team===1?'Person':'Personen'} + Lieferwagen – Richtpreis`,estimatedHours,'hour',profile.hourlyRateCents,{team,estimatedHours,minimumHours:profile.minimumHours});
         add('moving-helper','Zusätzliche Helfer – geschätzte Arbeitszeit',estimatedHours*additionalHelpers,'hour',pricingConfig.moving.hourly.additionalHelperRateCents,{helpers:additionalHelpers,estimatedHours,minimumHours:profile.minimumHours});
         add('moving-travel','Anfahrtspauschale pro Auftrag',1,'visit',pricingConfig.moving.travelCents);
-        depositBasisCents=profile.minimumHours*(profile.hourlyRateCents+additionalHelpers*pricingConfig.moving.hourly.additionalHelperRateCents)+pricingConfig.moving.travelCents;
+        minimumChargeCents=profile.minimumHours*(profile.hourlyRateCents+additionalHelpers*pricingConfig.moving.hourly.additionalHelperRateCents)+pricingConfig.moving.travelCents;
         priceType='estimate';
         notices.push(notice('moving_hourly_estimate',`Richtpreis nach geschätzter Dauer. Mindestdauer ${profile.minimumHours} Stunden, danach Abrechnung in ${pricingConfig.moving.hourly.billingMinutes}-Minuten-Schritten. Anfahrt enthalten. Eine Person: Kunde hilft tragen.`));
         if(disposalM3||boxes)manualReviewReasons.push(notice('moving_hourly_extras_review','Entsorgung oder bereitgestellte Kartons beim Stundenumzug: persönliche Offerte für diese Zusatzleistungen.'));
@@ -351,7 +354,7 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
         if(cleaningQuote.totalCents!==null){
           const discount=pricingConfig.moving.combo.find(tier=>rooms<=tier.rooms)!.discountCents;
           add('moving-combo','Kombi-Rabatt',1,'package',-discount,{sameAddress:true,rooms});
-          if(depositBasisCents!==undefined)depositBasisCents+=cleaningQuote.totalCents-discount;
+          if(minimumChargeCents!==undefined)minimumChargeCents+=cleaningQuote.totalCents-discount;
           if(fromPriceCents!==undefined)fromPriceCents=knownSubtotal();
         }else fromPriceCents=undefined;
       }else if(sameAddress)fail('invalid_combo','cleaning','Für den Kombi-Rabatt muss eine passende Reinigung ausdrücklich ausgewählt werden.');
@@ -362,10 +365,10 @@ export function calculatePrice(selection: BookingSelection): PriceQuote {
   const subtotalCents = knownSubtotal();
   if (!Number.isSafeInteger(subtotalCents) || subtotalCents < 0) fail('invalid_total', 'total', 'Der Preis konnte nicht sicher berechnet werden.');
   const totalCents = manualReviewReasons.length ? null : subtotalCents;
-  if (depositBasisCents !== undefined && (!Number.isSafeInteger(depositBasisCents) || depositBasisCents < 0 || depositBasisCents > subtotalCents)) fail('invalid_total', 'total', 'Die Anzahlung konnte nicht sicher berechnet werden.');
+  if (minimumChargeCents !== undefined && (!Number.isSafeInteger(minimumChargeCents) || minimumChargeCents < 0 || minimumChargeCents > subtotalCents)) fail('invalid_total', 'total', 'Der Mindestbetrag konnte nicht sicher berechnet werden.');
   return {
     pricingVersion: PRICING_VERSION, currency: pricingConfig.currency, service, lines, subtotalCents, totalCents,
-    priceType:manualReviewReasons.length?(fromPriceCents!==undefined?'from':'personal'):priceType,depositBasisCents:totalCents===null?null:depositBasisCents??totalCents,...(fromPriceCents!==undefined?{fromPriceCents}:{}),
+    totalPayableCents:totalCents,priceType:manualReviewReasons.length?(fromPriceCents!==undefined?'from':'personal'):priceType,minimumChargeCents:totalCents===null?null:minimumChargeCents??totalCents,...(fromPriceCents!==undefined?{fromPriceCents}:{}),
     taxStatus: 'not_registered', vatCents: 0,
     vatComparisonCents:null,
     manualReviewReasons, notices,
@@ -385,4 +388,10 @@ export function defaultSelection<S extends BookingService>(service: S): Selectio
   };
   const valid = choice(service, 'service', ['regular', 'endOfTenancy', 'construction', 'windows', 'moving'] as const);
   return { ...selections[valid] } as SelectionFor<S>;
+}
+
+/** Historical calculation contract, used only to verify old accepted financial snapshots. */
+export function calculateLegacyPrice(selection:BookingSelection) {
+  const {minimumChargeCents,totalPayableCents,...quote}=calculatePrice(selection);
+  return {...quote,depositBasisCents:minimumChargeCents};
 }

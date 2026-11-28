@@ -2,6 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import ts from 'typescript';
+import { serviceName } from '../src/booking/serviceNames.ts';
+import { whyTranslationRows } from '../components/home/whyTranslations.ts';
 import {
   homeLanguages, homeText, homeTranslations, homeTranslationSources, normalizeHomeLanguage,
 } from '../components/home/homeTranslations';
@@ -17,7 +19,8 @@ test('all six homepage dictionaries cover every source without duplicates or bla
     assert.deepEqual(Object.keys(homeTranslations[code]).sort(), [...homeTranslationSources].sort());
     for (const source of homeTranslationSources) {
       assert.ok(homeTranslations[code][source].trim(), code + ': ' + source);
-      if (code === 'de') assert.equal(homeTranslations[code][source], source);
+      // Stable legacy lookup keys may resolve to the single current service name.
+      if (code === 'de') assert.equal(homeTranslations[code][source], source === 'Kleiner Umzug' ? serviceName(code, 'moving') : source);
     }
   }
 });
@@ -56,7 +59,7 @@ test('regional aliases work and invalid or prototype-like locale/source values f
 });
 
 test('the integrated page, selector and runtime branches only request covered translation sources', () => {
-  const known = new Set<string>(homeTranslationSources);
+  const known = new Set<string>([...homeTranslationSources, ...whyTranslationRows.map(row => row[0])]);
   const sources: { file: string; text: string; line: number }[] = [];
   const untranslated: { file: string; text: string; line: number }[] = [];
   const fixedBrandData = new Set([
@@ -67,7 +70,7 @@ test('the integrated page, selector and runtime branches only request covered tr
   ]);
   const runtimeMaps = new Set(['seasonNames', 'weatherNames', 'phaseNames', 'holidayNames', 'descriptions', 'imageDescriptions']);
   const files = [
-    'ApprovedHome.tsx', 'ApprovedHeader.tsx', 'TransitSection.tsx', 'HomeLanguageSelector.tsx', '../Footer.tsx', 'app.js', 'scene.js', 'van.js',
+    'ApprovedHome.tsx', 'ApprovedHeader.tsx', 'MovingServicesPage.tsx', 'WhyKrakenSection.tsx', 'TransitSection.tsx', 'HomeLanguageSelector.tsx', '../Footer.tsx', 'app.js', 'scene.js', 'van.js',
   ];
   for (const file of files) {
     const parsed = ts.createSourceFile(file, readFileSync(new URL('../components/home/' + file, import.meta.url), 'utf8'),

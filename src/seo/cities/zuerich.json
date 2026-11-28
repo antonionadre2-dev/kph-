@@ -1,0 +1,92 @@
+{
+  "id": "zuerich",
+  "name": {
+    "de": "Zürich",
+    "en": "Zurich",
+    "es": "Zúrich",
+    "pt": "Zurique",
+    "it": "Zurigo",
+    "fr": "Zurich"
+  },
+  "sources": [
+    {
+      "id": "districts",
+      "url": "https://data.stadt-zuerich.ch/dataset/geo_statistische_zonen",
+      "label": {
+        "de": "Kreise und Quartiere",
+        "en": "Districts and neighbourhoods",
+        "es": "Distritos y barrios",
+        "pt": "Distritos e bairros",
+        "it": "Distretti e quartieri",
+        "fr": "Arrondissements et quartiers"
+      },
+      "verifiedAt": "2026-11-28"
+    },
+    {
+      "id": "parking",
+      "url": "https://www.stadt-zuerich.ch/de/stadtleben/notfall/standorte-der-stadtpolizei/parkplatzreservation.html",
+      "label": {
+        "de": "Parkplatzreservation",
+        "en": "Parking reservations",
+        "es": "Reserva de plazas de aparcamiento",
+        "pt": "Reserva de estacionamento",
+        "it": "Prenotazione dei parcheggi",
+        "fr": "Réservation de places de stationnement"
+      },
+      "verifiedAt": "2026-11-28"
+    }
+  ],
+  "facts": [
+    {
+      "id": "districts",
+      "sourceId": "districts",
+      "text": {
+        "de": "Zürich ist in zwölf Stadtkreise und 34 statistische Quartiere gegliedert.",
+        "en": "Zurich is divided into 12 districts and 34 statistical neighbourhoods.",
+        "es": "Zúrich se divide en 12 distritos y 34 barrios estadísticos.",
+        "pt": "Zurique divide-se em 12 distritos e 34 bairros estatísticos.",
+        "it": "Zurigo è suddivisa in 12 distretti e 34 quartieri statistici.",
+        "fr": "Zurich comprend 12 arrondissements et 34 quartiers statistiques."
+      }
+    },
+    {
+      "id": "parking",
+      "sourceId": "parking",
+      "text": {
+        "de": "Die Stadt nennt für Parkplatzreservationen mindestens sieben Arbeitstage Vorlauf in der Blauen und drei in der Weissen Zone.",
+        "en": "For parking reservations, the city specifies at least seven working days in blue zones and three in white zones.",
+        "es": "La ciudad indica al menos siete días laborables para reservar en zona azul y tres en zona blanca.",
+        "pt": "A cidade indica pelo menos sete dias úteis para reservas na zona azul e três na zona branca.",
+        "it": "La città indica almeno sette giorni lavorativi per prenotare nella zona blu e tre nella zona bianca.",
+        "fr": "La ville indique au moins sept jours ouvrables pour une réservation en zone bleue et trois en zone blanche."
+      }
+    }
+  ],
+  "services": {
+    "window-cleaning": [
+      "districts",
+      "parking"
+    ],
+    "daily-cleaning": [
+      "districts",
+      "parking"
+    ],
+    "deep-cleaning": [
+      "parking",
+      "districts"
+    ],
+    "end-of-tenancy": [
+      "parking",
+      "districts"
+    ],
+    "moving-furniture": [
+      "parking",
+      "districts"
+    ]
+  },
+  "pendingOwner": [
+    "Reale Referenzen und freigegebene Fotos für diese Stadt liefern.",
+    "Konkrete Einsatzadressen, Zugänge und Termine persönlich bestätigen.",
+    "Festlegen, wer notwendige Park-/Zufahrtsbewilligungen beantragt und Kosten trägt."
+  ]
+}

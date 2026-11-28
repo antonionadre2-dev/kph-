@@ -35,7 +35,7 @@ export function calculateKaiQuote(draft:KaiDraft):{message:string;quote:NonNulla
       const from=rooms===undefined||area===undefined;
       const quantity=[rooms!==undefined?rooms+' '+({de:'Zimmer',en:'rooms',es:'habitaciones',pt:'divisões',it:'locali',fr:'pièces'}[draft.language]):'',area!==undefined?area+' m²':''].filter(Boolean).join(', ');
       return {quote:{amountCents:price.totalCents,currency:'CHF',priceType:from?'from':'fixed'},
-        message:[quantity?quantity+':':'',from?copy.from:'',formatKaiMoney(price.totalCents),publicPolicyContent(draft.language).guaranteeScope,copy.vat,copy.review].filter(Boolean).join(' ')};
+        message:[quantity, [from?copy.from:'',formatKaiMoney(price.totalCents)].filter(Boolean).join(' '),publicPolicyContent(draft.language).guaranteeScope.split(/(?<=\.)\s+/)[0],copy.vat,copy.review].filter(Boolean).join('\n')};
     }
     if(draft.service==='regular'||draft.service==='deep'){
       const frequency=foldKai(fields.frequency||'');
@@ -47,19 +47,19 @@ export function calculateKaiQuote(draft:KaiDraft):{message:string;quote:NonNulla
       if(price.totalCents===null)return null;
       const from=hours===undefined||!fields.frequency&&kind!=='deep';
       return {quote:{amountCents:price.totalCents,currency:'CHF',priceType:from?'from':'fixed'},
-        message:[from?copy.from:'',formatKaiMoney(price.totalCents),copy.estimate,copy.vat,copy.review].filter(Boolean).join(' ')};
+        message:[[from?copy.from:'',formatKaiMoney(price.totalCents)].filter(Boolean).join(' '),copy.estimate,copy.vat,copy.review].filter(Boolean).join('\n')};
     }
     // A count does not establish window types or safe access. Show only the calculator's minimum.
     if(draft.service==='windows'){
       const price=calculatePrice(withKai({...defaultSelection('windows'),standard:1,double:0,balconyDoors:0,roof:0},draft));
       if(price.totalCents===null)return null;
-      return {quote:{amountCents:price.totalCents,currency:'CHF',priceType:'from'},message:copy.from+' '+formatKaiMoney(price.totalCents)+'. '+copy.vat+' '+copy.review};
+      return {quote:{amountCents:price.totalCents,currency:'CHF',priceType:'from'},message:[copy.from+' '+formatKaiMoney(price.totalCents),copy.vat,copy.review].join('\n')};
     }
     if(draft.service==='moving'){
       const price=calculatePrice(withKai(defaultSelection('moving'),draft));
-      const amount=price.depositBasisCents??price.totalCents;
+      const amount=price.totalCents;
       if(amount===null)return null;
-      return {quote:{amountCents:amount,currency:'CHF',priceType:'from'},message:copy.from+' '+formatKaiMoney(amount)+'. '+copy.vat+' '+copy.review};
+      return {quote:{amountCents:amount,currency:'CHF',priceType:'from'},message:[copy.from+' '+formatKaiMoney(amount),copy.vat,copy.review].join('\n')};
     }
   }catch{/* Invalid or review-only inputs are clarified, never rounded into a payable quote. */}
   return null;

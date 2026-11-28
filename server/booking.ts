@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import type { Request, Response, RequestHandler } from 'express';
 import { calculatePrice, defaultSelection, PRICING_VERSION } from '../src/booking/pricing.ts';
 import { BOOKING_TERMS_VERSION, checkoutTermsMatch } from '../src/booking/terms.ts';
-import { depositPaymentDeadline, usesTermsPaymentDeadline } from '../src/booking/paymentDeadline.ts';
+import { depositPaymentDeadline, fullPaymentDeadline, usesTermsPaymentDeadline } from '../src/booking/paymentDeadline.ts';
 import {createTermsAcceptance,currentTermsDocuments,termsMetadata} from '../src/legal/terms-registry.ts';
 import { createFirestoreBookingStore, BookingError, digest, type BookingStore } from './booking-store.ts';
 import { createPayrexxAdapter } from './booking-payrexx.ts';
@@ -22,6 +22,9 @@ import { createBookingAccessRecovery, issueBookingBrowserCookie, redeemBookingBr
 import { pinnedAccessRequest } from './booking-access-dispatch.ts';
 import { applyVerifiedSuppression, suppressionScope } from './booking-email-suppression.ts';
 import { customerAccountAccessJob, firebaseCustomerAccessLink } from './customer-account-access.ts';
+import { usesFullPrepayment, isMonthlySelection, monthlyBillingPeriod, settledHourlyQuote, cancellationRefundQuote, minimumBillableHours } from '../src/booking/fullPrepayment.ts';
+import { createBookingReminders } from './booking-reminders.ts';
+import { bookingAreaReview } from '../src/booking/serviceArea.ts';
 import firebaseConfig from '../firebase-applet-config.json' with {type:'json'};
 
 export { BOOKING_TERMS_VERSION };
@@ -84,9 +87,10 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
   const token=(id:string)=>crypto.createHmac('sha256',tokenSecret).update(`booking:${id}`).digest('base64url');
   let recoveryService=recovery;
   let createCustomerAccessLink:((email:string,language:string)=>Promise<string>)|null=null;
-  const checkoutDeadline=(record:any)=>Math.min(Date.parse(record.scheduling.holdExpiresAt),usesTermsPaymentDeadline(record)?Date.parse(record.payment.depositDueAt):Infinity);
-  const canCheckout=(record:any)=>Boolean(payment && ['confirmed','held'].includes(record.scheduling.status) && checkoutDeadline(record)>clock() && record.quote.totalCents>0 && !record.quote.manualReviewReasons.length && !['paid','test_paid','refunded','partially_refunded','chargeback','disputed','reconciliation_required'].includes(record.payment.status) && !['cancelled','expired','completed'].includes(record.status));
-  const view=(record:any,includeToken=false)=>({bookingId:record.bookingId,reference:record.reference,...(includeToken?{publicToken:token(record.bookingId)}:{}),status:record.status,language:record.language,languageSnapshot:record.languageSnapshot,quote:record.quote,quoteRevision:record.quoteRevision,canCheckout:canCheckout(record),customer:record.customer,notes:record.notes,scopeNotes:record.scopeNotes,termsVersion:record.termsVersion,termsAcceptance:record.termsAcceptance,confirmedAt:record.confirmedAt,selection:record.selection,scheduling:record.scheduling,payment:record.payment,email:record.email});
+  const checkoutDeadline=(record:any)=>usesFullPrepayment(record)?Date.parse(record.payment.checkoutAvailableUntil||bookingAppointmentStart(record)||''):Math.min(Date.parse(record.scheduling.holdExpiresAt),usesTermsPaymentDeadline(record)?Date.parse(record.payment.depositDueAt):Infinity);
+  const canCheckout=(record:any)=>Boolean(payment && ['confirmed','held'].includes(record.scheduling.status) && checkoutDeadline(record)>clock() && (usesFullPrepayment(record)?record.payment.totalDueCents:record.quote.totalCents)>0 && !record.quote.manualReviewReasons.length && !['paid','test_paid','refunded','partially_refunded','chargeback','disputed','reconciliation_required'].includes(record.payment.status) && !['cancelled','expired','completed'].includes(record.status));
+  const cancellationQuote=(record:any)=>{if(!usesFullPrepayment(record))return undefined;try{return cancellationRefundQuote(record,Date.parse(bookingAppointmentStart(record)!),record.cancelledAt||clock());}catch{return null;}};
+  const view=(record:any,includeToken=false)=>({bookingId:record.bookingId,reference:record.reference,...(includeToken?{publicToken:token(record.bookingId)}:{}),status:record.status,language:record.language,languageSnapshot:record.languageSnapshot,quote:record.quote,quoteRevision:record.quoteRevision,canCheckout:canCheckout(record),customer:record.customer,notes:record.notes,scopeNotes:record.scopeNotes,termsVersion:record.termsVersion,termsAcceptance:record.termsAcceptance,confirmedAt:record.confirmedAt,selection:record.selection,scheduling:record.scheduling,payment:{...record.payment,...(record.payment.reminder&&['scheduling','cancelling'].includes(record.payment.reminder.status)&&record.payment.reminder.updatedAt+60000<=clock()?{reminder:{...record.payment.reminder,status:record.payment.reminder.status==='scheduling'?'schedule_unknown':'cancel_unknown'}}:{})},email:record.email,...(usesFullPrepayment(record)?{coverageReview:record.coverageReview,reviewReasons:record.reviewReasons||[],manualReviewRequired:record.coverageReview==='outside'&&!record.coverageReviewedAt,canStart:['paid','test_paid'].includes(record.payment.status)&&!['cancelled','expired','completed'].includes(record.status),canSettleWork:['paid','test_paid'].includes(record.payment.status)&&record.quote.priceType==='estimate'&&!record.workSettlement&&!['cancelled','expired','completed'].includes(record.status)&&minimumBillableHours(record.selection)!==null,workSettlement:record.workSettlement||null,cancellationQuote:cancellationQuote(record)}:{})});
   async function authenticated(id:string,access:string) {if(!safeId.test(id)||!timingEqual(access,token(id)))throw new BookingError('BOOKING_NOT_FOUND',404);const record=await store.get(id);if(!record || record.tokenRevoked)throw new BookingError('BOOKING_NOT_FOUND',404);return record;}
   function mailJob(record:any,kind:string,templateId:string,eventId:string,id?:string,extra:any={}) {
     let notification,notificationError;
@@ -96,7 +100,8 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
   function eligibleNotification(record:any,job:any) {
     if(job.kind==='customer_access')return job.expiresAt>clock();
     if(!record)return false;
-    if(job.kind==='payment_ready')return canCheckout(record);
+    if(['payment_ready','payment_reminder'].includes(job.kind))return canCheckout(record)&&(!job.paymentDueAt||job.paymentDueAt===record.payment.paymentDueAt);
+    if(job.kind==='extra_payment_ready')return usesFullPrepayment(record)&&record.payment.extraPayment?.status==='pending'&&!['cancelled','expired'].includes(record.status);
     if(job.kind==='receipt')return ['paid','test_paid'].includes(record.payment.status);
     if(job.kind!=='notification')return true;
     const template=job.notification?.templateId;
@@ -110,7 +115,9 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
     if(template==='appointment_reminder'&&Date.parse(job.notification?.renderData?.appointment?.start||'')<=clock())return false;
     return true;
   }
+  const reminders=createBookingReminders({store,sendEmail,origin,token,eligible:eligibleNotification,clock});
   const service={
+    remindersReady:reminders.ready,schedulePaymentReminders:reminders.schedule,cancelPaymentReminders:reminders.cancel,
     token,view,authenticated,canCheckout,
     async browserAccess(id:string){
       if(!safeId.test(id))return null;
@@ -130,7 +137,10 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       }
       const id=crypto.randomBytes(18).toString('base64url'), total=value.quote.totalCents;
       const now=clock();
-      const record={bookingId:id,reference:`K-${new Date(now).getUTCFullYear()}-${id.slice(0,8).toUpperCase()}`,status:'awaiting_confirmation',mode,createdAt:now,revision:1,selection:value.selection,quote:value.quote,quoteRevision:1,customer:value.customer,notes:value.notes,language:value.language,languageSnapshot:selectedEmailSnapshot(value.language),termsVersion:BOOKING_TERMS_VERSION,termsAcceptedAt:now,termsAcceptance:createTermsAcceptance(value.language,now),scheduling:{status:'requested',date:value.requestedDate,time:value.requestedTime,timeZone:'Europe/Zurich'},payment:{status:'not_started',depositPercent:DEPOSIT_PERCENT,amountDueNowCents:total===null?0:Math.round(value.quote.depositBasisCents*DEPOSIT_PERCENT/100),amountPaidCents:0,remainingBalanceCents:total??0},email:{request:'queued'},...(value.recovery?{recoveryId:value.recovery.id}:{})};
+      const full=usesFullPrepayment({termsVersion:BOOKING_TERMS_VERSION}),monthly=full&&isMonthlySelection(value.selection);
+      const fullPayment={model:'full_prepayment',billingMode:monthly?'monthly':'single',status:'not_started',totalDueCents:monthly?null:total,amountDueNowCents:monthly?0:total??0,amountPaidCents:0,outstandingCents:monthly?0:total??0,refundedCents:0};
+      const coverageReview=bookingAreaReview(value.customer.postalCode,value.customer.city);
+      const record={bookingId:id,reference:`K-${new Date(now).getUTCFullYear()}-${id.slice(0,8).toUpperCase()}`,status:'awaiting_confirmation',mode,createdAt:now,revision:1,selection:value.selection,quote:value.quote,quoteRevision:1,customer:value.customer,notes:value.notes,language:value.language,languageSnapshot:selectedEmailSnapshot(value.language),termsVersion:BOOKING_TERMS_VERSION,termsAcceptedAt:now,termsAcceptance:createTermsAcceptance(value.language,now),scheduling:{status:'requested',date:value.requestedDate,time:value.requestedTime,timeZone:'Europe/Zurich'},payment:full?fullPayment:{status:'not_started',depositPercent:DEPOSIT_PERCENT,amountDueNowCents:total===null?0:Math.round((value.quote.depositBasisCents??value.quote.minimumChargeCents??total)*DEPOSIT_PERCENT/100),amountPaidCents:0,remainingBalanceCents:total??0},coverageReview,reviewReasons:coverageReview==='outside'?['outside_service_area']:[],email:{request:'queued'},...(value.recovery?{recoveryId:value.recovery.id}:{})};
       const fingerprint=digest(canonical({...value,recovery:value.recovery||null}));
       const saved=await store.create(value.idempotencyKey,fingerprint,record,mailJob(record,'request','request_received',`${id}:requested:1`,`${id}:request:1`));
       if(value.recovery)await recoveryService.linkBooking({...value.recovery,email:value.customer.email,bookingId:saved.bookingId});
@@ -141,6 +151,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       if(record.checkout?.gatewayId && !['refunded','chargeback','disputed','reconciliation_required'].includes(record.payment.status) && clock()-(record.lastVerifiedAt||0)>=2500) {
         try {record=await service.reconcile(id);}catch{/* A provider outage never becomes a successful payment. */}
       }
+      if(record.payment.extraPayment?.gatewayId&&!['paid','test_paid','refunded','partially_refunded','reconciliation_required'].includes(record.payment.extraPayment.status)&&clock()-(record.payment.extraPayment.lastVerifiedAt||0)>=2500){try{record=await service.reconcileExtra(id);}catch{}}
       return view(record);
     },
     async checkout(id:string,access:string,input:any) {
@@ -151,6 +162,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       const claimed=await store.mutate(id,current=>{
         if(!checkoutTermsMatch(input.termsVersion,current.termsVersion))throw new BookingError('TERMS_REQUIRED');
         if(input.acceptedQuoteRevision!==current.quoteRevision)throw new BookingError('PRICE_CHANGED',409);
+        if(usesFullPrepayment(current)&&input.acceptedTotalDueCents!==current.payment.totalDueCents)throw new BookingError('PRICE_CHANGED',409);
         if(!['live','test'].includes(mode)||current.mode!==mode)throw new BookingError('PAYMENT_MODE_CHANGED',409);
         if(!canCheckout(current))throw new BookingError('CHECKOUT_NOT_AVAILABLE',409);
         if(current.checkout?.link && current.checkout.expiresAt>clock())return current;
@@ -159,7 +171,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         if(current.checkout?.expiresAt<=clock())throw new BookingError('CHECKOUT_EXPIRED',409);
         // Current terms provide one gateway for the entire remaining payment window.
         // Reusing that gateway avoids manufacturing another potentially payable attempt.
-        const expiresAt=Math.min(checkoutDeadline(current),usesTermsPaymentDeadline(current)?Infinity:clock()+30*60000);
+        const expiresAt=Math.min(checkoutDeadline(current),usesTermsPaymentDeadline(current)||usesFullPrepayment(current)?Infinity:clock()+30*60000);
         if(expiresAt-clock()<60000)throw new BookingError('CHECKOUT_NOT_AVAILABLE',409);
         return {...current,checkout:{status:'creating',reference:`${id}-r${current.quoteRevision}`,expiresAt,createdAt:clock()},revision:current.revision+1};
       });
@@ -192,21 +204,23 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         const terminal=['refunded','partially_refunded','chargeback','disputed','reconciliation_required'];
         const lateSettlement=['paid','test_paid'].includes(verified.status)&&!['paid','test_paid','refunded','partially_refunded','chargeback','disputed'].includes(previous)&&(['cancelled','expired'].includes(record.status)||['cancelled','needs_reschedule'].includes(record.scheduling.status));
         const staleResult=(terminal.includes(previous)&&!terminal.includes(verified.status))||(['paid','test_paid'].includes(previous)&&['pending','failed','cancelled','expired'].includes(verified.status));
-        const status=lateSettlement?'reconciliation_required':staleResult?previous:verified.status;
+        const refundedCents=usesFullPrepayment(record)?Math.max(record.payment.refundedCents||0,Number.isSafeInteger(verified.refundedCents)?verified.refundedCents:0):undefined;
+        const refundStatus=usesFullPrepayment(record)&&(refundedCents||0)>0?((refundedCents||0)>=Math.max(record.payment.amountPaidCents||0,record.payment.amountDueNowCents)?'refunded':'partially_refunded'):null;
+        const status=refundStatus||(lateSettlement?'reconciliation_required':staleResult?previous:verified.status);
         const paid=['paid','test_paid'].includes(status);
         const reviewedSettlement=status==='reconciliation_required'&&['paid','test_paid'].includes(verified.status);
-        const amount=paid||reviewedSettlement?record.payment.amountDueNowCents:record.payment.amountPaidCents;
-        return {...record,lastVerifiedAt:clock(),revision:record.payment.status===status?record.revision:record.revision+1,payment:{...record.payment,status,transactionId:staleResult&&!reviewedSettlement?record.payment.transactionId:verified.transactionId,amountPaidCents:amount,remainingBalanceCents:Math.max(0,(record.quote.totalCents||0)-amount),...(reviewedSettlement?{verifiedPaymentStatus:verified.status,settlementNeedsReview:true}:{})},...(paid?{scheduling:{...record.scheduling,status:'confirmed'},email:{...record.email,...(!emailCollectionEnabled||paymentNotificationsEnabled?{receipt:record.email.receipt||'queued'}:{})}}:{})};
+        const amount=paid||reviewedSettlement||(usesFullPrepayment(record)&&['paid','test_paid','refunded','partially_refunded'].includes(verified.status))?(usesFullPrepayment(record)?Math.max(record.payment.amountPaidCents||0,record.payment.amountDueNowCents):record.payment.amountDueNowCents):record.payment.amountPaidCents;
+        return {...record,lastVerifiedAt:clock(),revision:record.payment.status===status?record.revision:record.revision+1,payment:{...record.payment,status,transactionId:staleResult&&!reviewedSettlement?record.payment.transactionId:verified.transactionId,amountPaidCents:amount,...(usesFullPrepayment(record)?{refundedCents}:{}),...(usesFullPrepayment(record)?{outstandingCents:Math.max(0,(record.status==='cancelled'?(cancellationQuote(record)?.retainedCents||0):(record.workSettlement?.finalTotalCents??record.payment.totalDueCents??0))-amount+(refundedCents||0))}:{remainingBalanceCents:Math.max(0,(record.quote.totalCents||0)-amount)}),...(reviewedSettlement?{verifiedPaymentStatus:verified.status,settlementNeedsReview:true}:{})},...(paid?{scheduling:{...record.scheduling,status:usesFullPrepayment(record)&&['cancelled','completed'].includes(record.status)?record.scheduling.status:'confirmed'},email:{...record.email,...(usesFullPrepayment(record)||!emailCollectionEnabled||paymentNotificationsEnabled?{receipt:record.email.receipt||'queued'}:{})}}:{})};
       },record=>{
         if(['paid','test_paid'].includes(record.payment.status)){
-          const jobs=(!emailCollectionEnabled||paymentNotificationsEnabled)?[mailJob(record,'receipt',record.payment.remainingBalanceCents>0?'deposit_received':'payment_received',`${id}:settled:${record.checkout.reference}`,`${id}:receipt:${record.checkout.reference}`)]:[];
+          const jobs=(usesFullPrepayment(record)||!emailCollectionEnabled||paymentNotificationsEnabled)?[mailJob(record,'receipt',!usesFullPrepayment(record)&&record.payment.remainingBalanceCents>0?'deposit_received':'payment_received',`${id}:settled:${record.checkout.reference}`,`${id}:receipt:${record.checkout.reference}`)]:[];
           if(emailCollectionEnabled){
             jobs.push(mailJob(record,'notification','booking_confirmed',`${id}:appointment:${record.checkout.reference}`));
             const reminder=mailJob(record,'notification','appointment_reminder',`${id}:appointment-reminder:${record.checkout.reference}`);
             const appointment=Date.parse(reminder.notification?.renderData?.appointment?.start||'');
             if(appointment>clock()+24*3600000)jobs.push({...reminder,dueAt:appointment-24*3600000});
           }
-          return emailCollectionEnabled?jobs:jobs[0];
+          return emailCollectionEnabled||usesFullPrepayment(record)?jobs:jobs[0];
         }
         if(emailCollectionEnabled&&record.payment.status==='failed')return mailJob(record,'notification','payment_failed',`${id}:failed:${record.checkout.reference}`);
         // A gateway wait is not a settled payment. Notify only after a verified, sustained wait.
@@ -215,6 +229,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         return null;
       });
       if(['paid','test_paid'].includes(next.payment.status)) {
+        if(usesFullPrepayment(next))try{await reminders.cancel(id);}catch{}
         if(next.recoveryId && recoveryService)await recoveryService.stopDraft(next.recoveryId,'paid');
       }
       if(recoveryService)await recoveryService.recordBookingEvent({bookingId:id,revision:next.revision,status:next.scheduling.status==='confirmed'?'confirmed':next.status,mode:next.mode,paymentStatus:next.payment.status,service:next.quote.service,region:['Zürich','Schaffhausen','Winterthur'].find(region=>next.customer.city.toLowerCase()===region.toLowerCase()),occurredAt:new Date(next.confirmedAt||clock()).toISOString(),draftId:next.recoveryId});
@@ -241,31 +256,154 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       return next;
     },
     /** Server-only operation. Invoke after an authorized person actually checks availability. */
-    async confirmAppointment(id:string,{holdExpiresAt,operatorId,expectedRevision,notifyPaymentReady=false}:{holdExpiresAt?:string;operatorId:string;expectedRevision?:number;notifyPaymentReady?:boolean}) {
+    async confirmAppointment(id:string,{holdExpiresAt,operatorId,expectedRevision,notifyPaymentReady=false,billingPeriod}:{holdExpiresAt?:string;operatorId:string;expectedRevision?:number;notifyPaymentReady?:boolean;billingPeriod?:any}) {
       if(!operatorId || (holdExpiresAt!==undefined&&(!Number.isFinite(Date.parse(holdExpiresAt)) || Date.parse(holdExpiresAt)<=clock() || Date.parse(holdExpiresAt)>clock()+7*86400000)))throw new BookingError('INVALID_HOLD');
-      return store.mutateWithMail(id,record=>{
+      const saved=await store.mutateWithMail(id,record=>{
         if(expectedRevision!==undefined&&record.revision!==expectedRevision)throw new BookingError('BOOKING_CHANGED',409);
         const confirmedAt=clock(),start=validateAppointment(record.scheduling.date,record.scheduling.time,confirmedAt);
         if(['cancelled','expired','completed'].includes(record.status)||record.quote.totalCents===null||record.quote.manualReviewReasons.length)throw new BookingError('MANUAL_REVIEW_REQUIRED',409);
         if(record.checkout)throw new BookingError('CHECKOUT_ALREADY_STARTED',409);
+        if(usesFullPrepayment(record)){
+          if(record.confirmedAt)throw new BookingError('BOOKING_ALREADY_CONFIRMED',409);
+          let monthly;
+          if(isMonthlySelection(record.selection)){
+            try{monthly=monthlyBillingPeriod(billingPeriod,record.quote.totalCents,record.scheduling.date);}catch{throw new BookingError('BILLING_PERIOD_REQUIRED');}
+          }else if(billingPeriod!==undefined)throw new BookingError('INVALID_BILLING_PERIOD');
+          const total=monthly?.totalCents??record.quote.totalCents;
+          const due=new Date(fullPaymentDeadline(confirmedAt,start)).toISOString();
+          return {...record,status:'confirmed',mode,confirmedAt,confirmedBy:operatorId,revision:record.revision+1,
+            ...(record.coverageReview==='outside'?{coverageReviewedAt:confirmedAt,coverageReviewedBy:operatorId}:{}),
+            payment:{...record.payment,status:'awaiting_payment',totalDueCents:total,initialChargeCents:total,amountDueNowCents:total,outstandingCents:total,paymentDueAt:due,checkoutAvailableUntil:new Date(start).toISOString(),...(monthly?{billingPeriod:{...monthly,confirmedAt,confirmedBy:operatorId}}:{})},
+            ...(notifyPaymentReady?{email:{...record.email,payment_ready:'queued'}}:{}),scheduling:{...record.scheduling,status:'confirmed'}};
+        }
         const currentTerms=usesTermsPaymentDeadline(record);
         if(!currentTerms&&holdExpiresAt===undefined)throw new BookingError('INVALID_HOLD');
         const deadline=currentTerms?new Date(depositPaymentDeadline(confirmedAt,start)).toISOString():holdExpiresAt!;
         return {...record,status:'confirmed',mode,confirmedAt,confirmedBy:operatorId,revision:record.revision+1,...(currentTerms?{payment:{...record.payment,depositDueAt:deadline}}:{}),...(notifyPaymentReady?{email:{...record.email,payment_ready:'queued'}}:{}),scheduling:{...record.scheduling,status:'held',holdExpiresAt:deadline}};
-      },record=>notifyPaymentReady?mailJob(record,'payment_ready','payment_requested',`${id}:availability:${record.revision}`,`${id}:payment-ready:${record.revision}`):null);
+      },record=>{
+        const jobs:any[]=[];
+        if(notifyPaymentReady)jobs.push(mailJob(record,'payment_ready','payment_requested',`${id}:availability:${record.revision}`,`${id}:payment-ready:${record.revision}`,usesFullPrepayment(record)?{paymentDueAt:record.payment.paymentDueAt}:{}));
+        if(usesFullPrepayment(record)){
+          const reminderAt=Date.parse(record.payment.paymentDueAt)-24*3600000;
+          if(reminderAt>clock())jobs.push({...mailJob(record,'payment_reminder','payment_requested',`${id}:payment-reminder:${record.revision}`,`${id}:payment-reminder:${record.revision}`,{paymentDueAt:record.payment.paymentDueAt,paymentReminder:true,pricing:{currency:'CHF',priceType:record.quote.priceType==='estimate'?'estimate':'fixed',totalRappen:record.payment.totalDueCents,paidRappen:record.payment.amountPaidCents,vatRappen:0,transactionRappen:record.payment.outstandingCents}}),dueAt:reminderAt,paymentDueAt:record.payment.paymentDueAt});
+        }
+        return jobs;
+      });
+      if(usesFullPrepayment(saved))try{await reminders.schedule(id);}catch{}
+      return await store.get(id)||saved;
     },
     /** Private commercial approval; the customer must accept the resulting revision in checkout. */
-    async approveManualQuote(id:string,{totalCents,scopeNotes,scopeLanguage,operatorId}:{totalCents:number;scopeNotes:string;scopeLanguage?:string;operatorId:string}) {
+    async approveManualQuote(id:string,{totalCents,scopeNotes,scopeLanguage,operatorId,expectedRevision}:{totalCents:number;scopeNotes:string;scopeLanguage?:string;operatorId:string;expectedRevision?:number}) {
       if(!operatorId || !Number.isSafeInteger(totalCents)||totalCents<=0||totalCents>100000000)throw new BookingError('INVALID_APPROVED_PRICE');
       const scope=string(scopeNotes,4000,'INVALID_SCOPE',10);
       if(emailCollectionEnabled&&!scopeLanguage)throw new BookingError('SCOPE_LANGUAGE_REQUIRED');
       const reviewedLanguage=scopeLanguage?language(scopeLanguage):undefined;
       return store.mutateWithMail(id,record=>{
+        if(expectedRevision!==undefined&&record.revision!==expectedRevision)throw new BookingError('BOOKING_CHANGED',409);
         if(record.checkout || !record.quote.manualReviewReasons.length || ['cancelled','expired','completed'].includes(record.status))throw new BookingError('MANUAL_QUOTE_NOT_AVAILABLE',409);
         if(emailCollectionEnabled&&reviewedLanguage!==record.language)throw new BookingError('SCOPE_LANGUAGE_MISMATCH');
-        const {fromPriceCents,...previousQuote}=record.quote;
-        return {...record,originalQuote:record.quote,scopeNotes:scope,...(reviewedLanguage?{scopeContentLanguage:reviewedLanguage}:{}),quote:{...previousQuote,lines:[{id:'approved-manual-quote',label:scope,labelKey:'approvedManualQuote',quantity:1,unit:'package',unitPriceCents:totalCents,totalCents}],subtotalCents:totalCents,totalCents,priceType:'fixed',depositBasisCents:totalCents,vatComparisonCents:null,manualReviewReasons:[]},quoteRevision:record.quoteRevision+1,revision:record.revision+1,priceApprovedBy:operatorId,priceApprovedAt:clock(),payment:{...record.payment,amountDueNowCents:Math.round(totalCents*DEPOSIT_PERCENT/100),remainingBalanceCents:totalCents}};
+        if(usesFullPrepayment(record)&&totalCents<(record.quote.fromPriceCents||0))throw new BookingError('INVALID_APPROVED_PRICE');
+        const {fromPriceCents,depositBasisCents,minimumChargeCents,totalPayableCents,...previousQuote}=record.quote;
+        return {...record,originalQuote:record.quote,scopeNotes:scope,...(reviewedLanguage?{scopeContentLanguage:reviewedLanguage}:{}),quote:{...previousQuote,lines:[{id:'approved-manual-quote',label:scope,labelKey:'approvedManualQuote',quantity:1,unit:'package',unitPriceCents:totalCents,totalCents}],subtotalCents:totalCents,totalCents,priceType:'fixed',...(usesFullPrepayment(record)?{minimumChargeCents:totalCents,totalPayableCents:totalCents}:{depositBasisCents:totalCents}),vatComparisonCents:null,manualReviewReasons:[]},quoteRevision:record.quoteRevision+1,revision:record.revision+1,priceApprovedBy:operatorId,priceApprovedAt:clock(),payment:{...record.payment,...(usesFullPrepayment(record)?{totalDueCents:totalCents,amountDueNowCents:totalCents,outstandingCents:totalCents}:{amountDueNowCents:Math.round(totalCents*DEPOSIT_PERCENT/100),remainingBalanceCents:totalCents})}};
       },record=>emailCollectionEnabled?mailJob(record,'notification','quote_ready',`${id}:quote:${record.quoteRevision}`):null);
+    },
+    /** Staff records actual billable work; the tariff and minimum stay server-owned. */
+    async settleWork(id:string,{actualHours,expectedRevision,operatorId}:{actualHours:number;expectedRevision:number;operatorId:string}) {
+      return store.mutate(id,record=>{
+        if(!usesFullPrepayment(record))throw new BookingError('LEGACY_BOOKING_REVIEW_REQUIRED',409);
+        if(record.workSettlement){if(record.workSettlement.actualHours===actualHours)return record;throw new BookingError('WORK_ALREADY_SETTLED',409);}
+        if(!operatorId||record.revision!==expectedRevision)throw new BookingError('BOOKING_CHANGED',409);
+        if(!['paid','test_paid'].includes(record.payment.status)||record.quote.priceType!=='estimate'||['cancelled','expired'].includes(record.status))throw new BookingError('WORK_SETTLEMENT_NOT_AVAILABLE',409);
+        let result;try{result=settledHourlyQuote(record.selection,actualHours,record.payment.billingPeriod?.visits||1);}catch{throw new BookingError('INVALID_ACTUAL_HOURS');}
+        const netPaid=record.payment.amountPaidCents-(record.payment.refundedCents||0);
+        const workSettlement={...result,extraDueCents:Math.max(0,result.finalTotalCents-netPaid),refundDueCents:Math.max(0,netPaid-result.finalTotalCents),scope:record.payment.billingMode==='monthly'?'billing_period':'single_visit',settledAt:clock(),settledBy:operatorId};
+        return {...record,status:'completed',scheduling:{...record.scheduling,status:'completed'},revision:record.revision+1,workSettlement,payment:{...record.payment,outstandingCents:workSettlement.extraDueCents}};
+      });
+    },
+    /** One durable additional gateway per settled scope; ambiguous creation never starts another charge. */
+    async createExtraPayment(id:string,{expectedRevision,operatorId}:{expectedRevision:number;operatorId:string}) {
+      if(!payment)throw new BookingError('PAYMENT_NOT_CONFIGURED',503);
+      const attempt=crypto.randomUUID();
+      const claimed=await store.mutate(id,record=>{
+        if(!usesFullPrepayment(record)||!operatorId)throw new BookingError('EXTRA_PAYMENT_NOT_AVAILABLE',409);
+        if(record.payment.extraPayment){if(record.payment.extraPayment.link)return record;throw new BookingError('PAYMENT_RECONCILIATION_REQUIRED',409);}
+        if(record.revision!==expectedRevision)throw new BookingError('BOOKING_CHANGED',409);
+        if(!record.workSettlement?.extraDueCents||!['paid','test_paid'].includes(record.payment.status)||record.status!=='completed')throw new BookingError('EXTRA_PAYMENT_NOT_AVAILABLE',409);
+        const extraPayment={amountCents:record.workSettlement.extraDueCents,status:'creating',reference:`${id}-extra-r${record.revision}`,createdAt:clock(),dueAt:new Date(clock()+7*86400000).toISOString(),attempt,createdBy:operatorId};
+        return {...record,revision:record.revision+1,payment:{...record.payment,extraPayment}};
+      });
+      if(claimed.payment.extraPayment.link)return claimed;
+      const extra=claimed.payment.extraPayment;
+      if(extra.attempt!==attempt)throw new BookingError('PAYMENT_RECONCILIATION_REQUIRED',409);
+      const providerRecord={...claimed,checkout:{reference:extra.reference,expiresAt:Date.parse(extra.dueAt)},payment:{...claimed.payment,amountDueNowCents:extra.amountCents,paymentKind:'extra'}};
+      try{
+        const gateway=await payment.create(providerRecord,token(id),Math.floor((Date.parse(extra.dueAt)-clock())/60000),claimed.language);
+        const saved=await store.mutateWithMail(id,current=>{
+          if(current.payment.extraPayment?.attempt!==attempt)throw new BookingError('PAYMENT_MISMATCH',409);
+          return {...current,revision:current.revision+1,payment:{...current.payment,extraPayment:{...current.payment.extraPayment,gatewayId:gateway.id,link:gateway.link,status:'pending'}}};
+        },record=>mailJob(record,'extra_payment_ready','payment_requested',extra.reference,`${id}:extra-payment:${extra.reference}`,{extraPayment:true,paymentDueAt:extra.dueAt,pricing:{currency:'CHF',priceType:'fixed',totalRappen:record.workSettlement.finalTotalCents,paidRappen:record.payment.amountPaidCents,vatRappen:0,transactionRappen:extra.amountCents}}));
+        try{await service.runDue({jobId:`${id}:extra-payment:${extra.reference}`,limit:1});}catch{}
+        return saved;
+      }catch{
+        await store.mutate(id,current=>current.payment.extraPayment?.attempt===attempt&&current.payment.extraPayment.status==='creating'?{...current,payment:{...current.payment,extraPayment:{...current.payment.extraPayment,status:'unknown'}}}:current);
+        throw new BookingError('PAYMENT_RECONCILIATION_REQUIRED',503);
+      }
+    },
+    async reconcileExtra(id:string) {
+      const record=await store.get(id),extra=record?.payment.extraPayment;
+      if(!usesFullPrepayment(record)||!extra?.gatewayId||!payment)throw new BookingError('PAYMENT_NOT_STARTED',409);
+      const result=await payment.verify({...record,checkout:{reference:extra.reference,gatewayId:extra.gatewayId},payment:{...record.payment,amountDueNowCents:extra.amountCents}});
+      const saved=await store.mutateWithMail(id,current=>{
+        if(current.payment.extraPayment?.reference!==extra.reference)throw new BookingError('PAYMENT_MISMATCH',409);
+        if(['paid','test_paid'].includes(current.payment.extraPayment.status))return current;
+        const paid=['paid','test_paid'].includes(result.status),amount=current.payment.amountPaidCents+(paid?extra.amountCents:0);
+        return {...current,revision:current.revision+1,payment:{...current.payment,amountPaidCents:amount,outstandingCents:Math.max(0,current.workSettlement.finalTotalCents-amount+(current.payment.refundedCents||0)),extraPayment:{...current.payment.extraPayment,status:result.status,transactionId:result.transactionId,lastVerifiedAt:clock()}}};
+      },current=>['paid','test_paid'].includes(current.payment.extraPayment.status)?mailJob(current,'receipt','payment_received',extra.reference,`${id}:extra-receipt:${extra.reference}`,{pricing:{currency:'CHF',priceType:'fixed',totalRappen:current.workSettlement.finalTotalCents,paidRappen:current.payment.amountPaidCents,vatRappen:0,transactionRappen:extra.amountCents},paymentStatus:'settled'}):null);
+      if(['paid','test_paid'].includes(saved.payment.extraPayment.status))try{await service.runDue({jobId:`${id}:extra-receipt:${extra.reference}`,limit:1});}catch{}
+      return saved;
+    },
+    async cancel(id:string,{expectedRevision,operatorId}:{expectedRevision:number;operatorId:string}) {
+      const saved=await store.mutateWithMail(id,record=>{
+        if(!usesFullPrepayment(record))throw new BookingError('LEGACY_BOOKING_REVIEW_REQUIRED',409);
+        if(record.status==='cancelled')return record;
+        if(!operatorId||record.revision!==expectedRevision)throw new BookingError('BOOKING_CHANGED',409);
+        if(record.status==='completed')throw new BookingError('BOOKING_ALREADY_COMPLETED',409);
+        return {...record,status:'cancelled',cancelledAt:clock(),cancelledBy:operatorId,revision:record.revision+1,scheduling:{...record.scheduling,status:'cancelled'}};
+      },record=>mailJob(record,'notification','cancellation_confirmed',`${id}:cancelled:${record.cancelledAt}`));
+      try{await reminders.cancel(id);}catch{}
+      if(saved.recoveryId&&recoveryService)await recoveryService.stopDraft(saved.recoveryId,'cancelled');
+      return saved;
+    },
+    /** A refund is recorded only after an authenticated provider read proves its cumulative amount. */
+    async refund(id:string,{expectedRevision,amountCents,idempotencyKey,operatorId}:{expectedRevision:number;amountCents:number;idempotencyKey:string;operatorId:string}) {
+      if(!payment?.refund||!payment?.verifyRefund)throw new BookingError('REFUND_NOT_CONFIGURED',503);
+      if(!Number.isSafeInteger(amountCents)||amountCents<=0||typeof idempotencyKey!=='string'||!/^[A-Za-z0-9_-]{16,128}$/.test(idempotencyKey)||!operatorId)throw new BookingError('INVALID_REFUND');
+      const attempt=crypto.randomUUID();
+      const claimed=await store.mutate(id,record=>{
+        if(!usesFullPrepayment(record))throw new BookingError('LEGACY_BOOKING_REVIEW_REQUIRED',409);
+        const previous=(record.payment.refunds||[]).find((job:any)=>job.idempotencyKey===idempotencyKey);
+        if(previous){if(previous.amountCents!==amountCents)throw new BookingError('IDEMPOTENCY_CONFLICT',409);return record;}
+        if(record.revision!==expectedRevision)throw new BookingError('BOOKING_CHANGED',409);
+        if((record.payment.refunds||[]).some((job:any)=>['creating','pending','unknown'].includes(job.status)))throw new BookingError('REFUND_RECONCILIATION_REQUIRED',409);
+        const available=record.status==='cancelled'?cancellationQuote(record)?.refundCents:record.workSettlement?Math.max(0,record.payment.amountPaidCents-(record.payment.refundedCents||0)-record.workSettlement.finalTotalCents):0;
+        if(!available||amountCents>available||!record.payment.transactionId)throw new BookingError('INVALID_REFUND_AMOUNT',409);
+        const job={idempotencyKey,amountCents,status:'creating',attempt,createdAt:clock(),createdBy:operatorId,targetRefundedCents:(record.payment.refundedCents||0)+amountCents};
+        return {...record,revision:record.revision+1,payment:{...record.payment,refunds:[...(record.payment.refunds||[]),job]}};
+      });
+      const operation=claimed.payment.refunds.find((job:any)=>job.idempotencyKey===idempotencyKey);
+      if(operation.status==='verified')return claimed;
+      try{
+        if(operation.attempt===attempt)await payment.refund(claimed,amountCents);
+        const verified=await payment.verifyRefund(claimed,operation.targetRefundedCents);
+        if(!verified.verified)return await store.mutate(id,current=>({...current,payment:{...current.payment,refunds:current.payment.refunds.map((job:any)=>job.idempotencyKey===idempotencyKey?{...job,status:'pending'}:job)}}));
+        return await store.mutateWithMail(id,current=>{
+          const refundedCents=Math.max(current.payment.refundedCents||0,verified.refundedCents);
+          return {...current,revision:current.revision+1,payment:{...current.payment,refundedCents,status:refundedCents>=current.payment.amountPaidCents?'refunded':'partially_refunded',outstandingCents:Math.max(0,(current.status==='cancelled'?(cancellationQuote(current)?.retainedCents||0):((current.workSettlement?.finalTotalCents??current.payment.totalDueCents)||0))-(current.payment.amountPaidCents-refundedCents)),refunds:current.payment.refunds.map((job:any)=>job.idempotencyKey===idempotencyKey?{...job,status:'verified',verifiedAt:clock(),providerId:verified.id}:job)}};
+        },record=>mailJob(record,'notification','refund_issued',`${id}:refund:${idempotencyKey}`,undefined,{paymentStatus:'refund_accepted',pricing:{currency:'CHF',totalRappen:record.payment.totalDueCents||record.quote.totalCents,paidRappen:record.payment.amountPaidCents,vatRappen:0,refundRappen:amountCents}}));
+      }catch{
+        await store.mutate(id,current=>({...current,payment:{...current.payment,refunds:current.payment.refunds.map((job:any)=>job.idempotencyKey===idempotencyKey&&job.status!=='verified'?{...job,status:'unknown'}:job)}}));
+        throw new BookingError('REFUND_RECONCILIATION_REQUIRED',503);
+      }
     },
     async changeEmailLanguage(id:string,access:string,input:any) {
       const record=await authenticated(id,access);
@@ -281,7 +419,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
     },
     async resolveBookingForRecovery(id:string,email:string) {
       const record=await store.get(id);if(!record || record.customer.email!==email)return null;
-      return {bookingId:id,publicToken:token(id),email,mode:record.mode,status:record.status,canCheckout:canCheckout(record),paymentStatus:record.payment.status,holdExpiresAt:record.scheduling.holdExpiresAt};
+      return {bookingId:id,publicToken:token(id),email,mode:record.mode,status:record.status,canCheckout:canCheckout(record),paymentStatus:record.payment.status,holdExpiresAt:usesFullPrepayment(record)?record.payment.checkoutAvailableUntil:record.scheduling.holdExpiresAt};
     },
     async runDue({jobId,limit=20,deadlineAt=Infinity}:{jobId?:string;limit?:number;deadlineAt?:number}={}) {
       if(!sendEmail)return {sent:0,unknown:0,disabled:true};
@@ -293,10 +431,11 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
       for(const pending of pendingJobs.slice(0,batch)) {
         if(performance.now()+15000>=deadlineAt)break;
         const job=await store.claimMail(pending.id,clock());if(!job)continue;
-        if(!emailCollectionEnabled&&job.kind!=='payment_ready'&&job.accessProvider!=='firebase'&&(job.kind==='notification'||job.prepared?.notificationId)){await store.finishMail(job.id,'cancelled',null);continue;}
-        if(emailCollectionEnabled&&!paymentNotificationsEnabled&&job.kind==='receipt'){await store.finishMail(job.id,'cancelled',null);continue;}
-        if(job.kind==='customer_access' && ((!job.message&&job.accessProvider!=='firebase') || job.expiresAt<=clock())) {await store.finishMail(job.id,'cancelled',null);continue;}
         const record=job.bookingId?await store.get(job.bookingId):null;
+        const fullFinancial=usesFullPrepayment(record)&&(['payment_ready','payment_reminder','extra_payment_ready','receipt'].includes(job.kind)||['refund_issued','payment_requested','payment_pending','payment_failed','booking_confirmed','appointment_reminder'].includes(job.notification?.templateId));
+        if(!fullFinancial&&!emailCollectionEnabled&&job.kind!=='payment_ready'&&job.accessProvider!=='firebase'&&(job.kind==='notification'||job.prepared?.notificationId)){await store.finishMail(job.id,'cancelled',null);continue;}
+        if(!fullFinancial&&emailCollectionEnabled&&!paymentNotificationsEnabled&&job.kind==='receipt'){await store.finishMail(job.id,'cancelled',null);continue;}
+        if(job.kind==='customer_access' && ((!job.message&&job.accessProvider!=='firebase') || job.expiresAt<=clock())) {await store.finishMail(job.id,'cancelled',null);continue;}
         if(!eligibleNotification(record,job)){await store.finishMail(job.id,'cancelled',null);continue;}
         const recipient=job.email||record.customer.email;
         if(await store.isEmailSuppressed(recipient)) {await store.finishMail(job.id,'cancelled',null);if(record&&job.kind!=='customer_access')await store.mutate(record.bookingId,current=>({...current,email:{...current.email,[job.kind]:'failed'}}));continue;}
@@ -304,9 +443,9 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
         try {
           let message=job.prepared;
           if(!message) {
-            if(emailCollectionEnabled||job.kind==='payment_ready'||job.accessProvider==='firebase') {
+            if(fullFinancial||emailCollectionEnabled||job.kind==='payment_ready'||job.accessProvider==='firebase') {
               if(!job.notification)throw Object.assign(new Error('EMAIL_SNAPSHOT_REVIEW_REQUIRED'),{definitelyNotSent:true});
-              let links=job.kind==='customer_access'?job.authorisedLinks:bookingEmailLinks(record,job.notification,origin,token(record.bookingId));
+              let links=job.kind==='customer_access'?job.authorisedLinks:job.kind==='extra_payment_ready'?{primary:record.payment.extraPayment.link,secondary:bookingEmailLinks(record,job.notification,origin,token(record.bookingId)).primary}:bookingEmailLinks(record,job.notification,origin,token(record.bookingId));
               if(job.accessProvider==='firebase') {
                 if(!createCustomerAccessLink||job.notification.templateId!=='magic_link'||job.notification.renderData.accessType!=='firebase_email_link')throw Object.assign(new Error('EMAIL_PREPARATION_FAILED'),{definitelyNotSent:true});
                 const locale=languageForBackgroundEmail(job.notification.languageSnapshot);
@@ -321,7 +460,7 @@ export function createBookingService({store,tokenSecret,origin,mode='unconfigure
               message={from:sender,to:job.email||record.customer.email,...rendered,idempotencyKey:`kraken-booking:${job.id}`};
             }
             if(typeof store.prepareMail==='function')message=await store.prepareMail(job.id,message,clock(),job.expiresAt);
-            else if(emailCollectionEnabled||job.accessProvider==='firebase')throw Object.assign(new Error('EMAIL_PREPARATION_STORE_REQUIRED'),{definitelyNotSent:true});
+            else if(fullFinancial||emailCollectionEnabled||job.accessProvider==='firebase')throw Object.assign(new Error('EMAIL_PREPARATION_STORE_REQUIRED'),{definitelyNotSent:true});
             if(!message)continue;
           }
           if(job.preparedExpiresAt&&job.preparedExpiresAt<=clock()){await store.finishMail(job.id,'cancelled',null);continue;}
@@ -396,8 +535,8 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       const paymentReady=Boolean(env.PAYREXX_INSTANCE&&env.PAYREXX_API_SECRET&&webhookReady&&mode!=='unconfigured'&&origin.startsWith('https://'));
       const payment=paymentReady?createPayrexxAdapter({instance:env.PAYREXX_INSTANCE!,secret:env.PAYREXX_API_SECRET!,mode:mode as 'live'|'test',origin},fetcher):null;
       const emailReady=Boolean(env.RESEND_API_KEY&&env.BOOKING_EMAIL_FROM&&origin.startsWith('https://'));
-      const providerEmail=emailReady?createResendEmailAdapter(env.RESEND_API_KEY!,fetcher):null;
-      const sendEmail=providerEmail?async(message:any)=>{if(await store.isEmailSuppressed(message.to)){const error:any=new BookingError('EMAIL_SUPPRESSED');error.definitelyNotSent=true;throw error;}return providerEmail(message);}:null;
+      const providerEmail=emailReady?createResendEmailAdapter(env.RESEND_API_KEY!,fetcher,clock):null;
+      const sendEmail=providerEmail?Object.assign(async(message:any)=>{if(await store.isEmailSuppressed(message.to)){const error:any=new BookingError('EMAIL_SUPPRESSED');error.definitelyNotSent=true;throw error;}return providerEmail(message);},{schedule:async(message:any,scheduledAt:string)=>{if(await store.isEmailSuppressed(message.to))throw new BookingError('EMAIL_SUPPRESSED');return providerEmail.schedule(message,scheduledAt);},cancel:providerEmail.cancel,canSchedule:providerEmail.canSchedule}):null;
       const emailCollection=collectionConfiguration(env,origin);
       const service=createBookingService({store,tokenSecret:secret,origin,mode,payment,sendEmail,sender:env.BOOKING_EMAIL_FROM,clock,emailCollectionEnabled:emailCollection.enabled,paymentNotificationsEnabled:env.BOOKING_EMAIL_COLLECTION_PAYMENTS_ENABLED==='true'});
       const remindersEnabled=env.BOOKING_RECOVERY_REMINDERS_ENABLED==='true'&&(env.RESEND_WEBHOOK_SECRET||'').length>=32&&Boolean(suppressionScope(env));
@@ -480,7 +619,7 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
           const signature=crypto.createHmac('sha256',runtime.secret).update(value).digest('base64url');
           res.cookie('kraken_capture',`${value}.${signature}`,{httpOnly:true,sameSite:'strict',secure:runtime.origin.startsWith('https://'),path:'/',maxAge:3600000});
         }
-        return res.json({available:Boolean(runtime.service),paymentReady:runtime.paymentReady,emailReady:runtime.emailReady,mode:runtime.mode,termsVersion:BOOKING_TERMS_VERSION,termsDocuments:currentTermsDocuments(),depositPercent:DEPOSIT_PERCENT});
+        return res.json({available:Boolean(runtime.service),paymentReady:runtime.paymentReady,emailReady:runtime.emailReady,mode:runtime.mode,termsVersion:BOOKING_TERMS_VERSION,termsDocuments:currentTermsDocuments(),paymentModel:'full_prepayment',scheduledRemindersReady:runtime.service?await runtime.service.remindersReady():false});
       }
       if(req.path.startsWith('/api/recovery/')||req.path==='/api/bookings/activity'||req.path==='/recovery/unsubscribe') {
         const headers=new Headers();for(const [key,value]of Object.entries(req.headers))if(typeof value==='string')headers.set(key,value);
@@ -575,9 +714,9 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       if(!runtime.service||!runtime.paymentReady||!env.PAYREXX_WEBHOOK_SECRET)throw new BookingError('PAYMENT_NOT_CONFIGURED',503);
       const payload=verifyPayrexxWebhook(req.body,req.get('X-Webhook-Signature')||'',env.PAYREXX_WEBHOOK_SECRET);
       const reference=payload.transaction?.referenceId||payload.transaction?.invoice?.referenceId;
-      const id=/^([A-Za-z0-9_-]{24})-r\d+$/.exec(reference||'')?.[1];
-      if(!id)throw new BookingError('UNKNOWN_REFERENCE',404);
-      await runtime.service.reconcile(id,{scheduleEmails:schedulePaymentEmails});
+      const match=/^([A-Za-z0-9_-]{24})-(r\d+|extra-r\d+)$/.exec(reference||'');
+      if(!match)throw new BookingError('UNKNOWN_REFERENCE',404);
+      if(match[2].startsWith('extra-'))await runtime.service.reconcileExtra(match[1]);else await runtime.service.reconcile(match[1],{scheduleEmails:schedulePaymentEmails});
       return res.json({received:true});
     }catch(cause){return res.status(cause instanceof BookingError?cause.status:503).json({code:cause instanceof BookingError?cause.code:'PAYMENT_VERIFICATION_UNAVAILABLE'});}
   };

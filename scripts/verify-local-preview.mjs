@@ -25,7 +25,7 @@ const security = response => {
 const sitemap = await call('/sitemap.xml');
 assert.equal(sitemap.status, 200);
 const locations = [...sitemap.body.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
-assert.equal(locations.length, 144);
+assert.equal(locations.length, 150);
 assert.equal(new Set(locations).size, locations.length);
 for (const url of locations) {
   const path = new URL(url).pathname;
@@ -57,10 +57,13 @@ for (const language of ['', '/en', '/es', '/pt', '/it', '/fr']) for (const page 
   const response = await call(language + page); assert.equal(response.status, 200); security(response);
   assert.equal((response.body.match(/<h1\b/g) || []).length, 1);
 }
-for (const path of ['/es/login', '/fr/register', '/dashboard', '/offerte?booking=opaque', '/en/customer-access', '/quote-demo', '/commercial-quote']) {
+for (const path of ['/es/login', '/fr/register', '/dashboard', '/offerte?booking=opaque', '/en/customer-access', '/quote-demo']) {
   const response = await call(path); assert.equal(response.status, 200, path);
   assert.equal(response.headers['x-robots-tag'], 'noindex, follow');
   assert.match(response.body, /name="robots" content="noindex, follow"/);
+}
+for (const prefix of ['', '/de', '/en', '/es', '/pt', '/it', '/fr']) {
+  const response = await call(prefix + '/commercial-quote'); assert.equal(response.status, 404, prefix + '/commercial-quote');
 }
 const forbidden = await call('/api/health', { Origin: 'https://other.example' }); assert.equal(forbidden.status, 403);
 const allowed = await call('/api/health', { Origin: 'https://krakenpfm.ch' }); assert.equal(allowed.headers['access-control-allow-origin'], 'https://krakenpfm.ch');

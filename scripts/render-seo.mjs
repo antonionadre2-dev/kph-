@@ -40,11 +40,13 @@ export async function renderSeoHtml(root) {
         import {publicHref} from './src/routing/site-paths.ts';
         import {HERO_DAY,HERO_DESKTOP_MEDIA,heroImage} from './src/home/hero-media.ts';
         import {getContactCopy} from './src/contact/contact-copy.ts';
+        import MovingServicesPage from './components/home/MovingServicesPage.tsx';
         export const routes=[...INDEXABLE_PATHS,...LEGAL_DOCUMENT_PATHS]; export const filename=seoFragmentName;
         const noop=()=>{};
         const wrap=(language,child)=>renderToStaticMarkup(<I18nProvider initialLanguage={language}>{child}</I18nProvider>);
         export const header=(language,page='local')=>wrap(language,<div className="kraken-home"><ApprovedHeader onNavigate={noop} page={page} contactQuoteLabel={page==='contact'?getContactCopy(language).hero.calculate:undefined}/></div>);
         export const footer=(language,contactPage=false)=>wrap(language,<Footer onNavigate={noop} contactPage={contactPage}/>);
+        export const moving=language=>wrap(language,<><MovingServicesPage onNavigate={noop}/><Footer onNavigate={noop}/></>);
         export const home=language=>{
           const image=heroImage(HERO_DAY).source;
           const preload=image?renderToStaticMarkup(<link id="hero-room-preload" rel="preload" as="image" media={HERO_DESKTOP_MEDIA} type={image.type} imageSrcSet={image.srcSet} imageSizes={image.sizes} fetchPriority="high"/>):'';
@@ -68,6 +70,9 @@ export async function renderSeoHtml(root) {
       for (const pathname of render.routes) {
         let body, styles = baseStyles;
         if (pathname === '/') body = render.home(language);
+        else if (pathname === '/kleine-umzuege') {
+          styles += stylesFor('components/home/MovingServicesPage.tsx'); body = render.moving(language);
+        }
         else if (['/leistungen', '/ueber-uns', '/kontakt'].includes(pathname)) {
           const kind = ({ '/leistungen': 'services', '/ueber-uns': 'about', '/kontakt': 'contact' })[pathname];
           const fragment = readFileSync(path.join(root, `dist/${kind}-content-${language}.html`), 'utf8');

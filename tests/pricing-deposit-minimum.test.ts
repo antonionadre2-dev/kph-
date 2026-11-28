@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculatePrice, defaultSelection, type BookingSelection, type RegularFrequency } from '../src/booking/pricing.ts';
+import { calculateLegacyPrice as calculatePrice, defaultSelection, type BookingSelection, type RegularFrequency } from '../src/booking/pricing.ts';
 
 const deposit = (selection:BookingSelection) => {
   const quote = calculatePrice(selection);

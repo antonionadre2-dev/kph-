@@ -1,7 +1,8 @@
 import crypto from 'node:crypto';
 import { bookingLineLabel, bookingText } from '../src/booking/uiCopy.ts';
-import { catalogs, TEMPLATE_REVISION, languageForBackgroundEmail, normalizeEmailLanguage, snapshotEmailLanguage, prepareCollectionEnvelope } from '../integrations/email-collection/index.mjs';
-import { bookingTermsPresentation } from '../src/booking/termsPresentation.ts';
+import { catalogs, TEMPLATE_REVISION, LEGACY_TEMPLATE_REVISION, languageForBackgroundEmail, normalizeEmailLanguage, snapshotEmailLanguage, prepareCollectionEnvelope } from '../integrations/email-collection/index.mjs';
+import { bookingTermsPresentation, termsPresentationText } from '../src/booking/termsPresentation.ts';
+import { CURRENT_TERMS_VERSION } from '../src/legal/terms-version.ts';
 
 const clone=<T>(value:T):T=>JSON.parse(JSON.stringify(value));
 const hash=(value:string)=>crypto.createHash('sha256').update(value).digest('hex');
@@ -28,9 +29,12 @@ function selectionData(selection:any,quote:any) {
   return {service:emailService(selection),...(selection?.rooms?{rooms:selection.rooms}:{}),...(selection?.areaM2?{areaM2:selection.areaM2}:{}),extras,
     ...(selection?.service==='regular'?{frequency:languageMap(language=>bookingText(language,selection.frequency))}:{})};
 }
-function financialData(quote:any,payment:any={}):any {
-  if(!Number.isSafeInteger(quote?.totalCents)||quote.totalCents<0)return {};
-  return {pricing:{currency:'CHF',priceType:quote.priceType==='estimate'?'estimate':'fixed',totalRappen:quote.totalCents,paidRappen:payment.amountPaidCents||0,vatRappen:0,
+function financialData(quote:any,payment:any={},settlement:any=null):any {
+  const total=settlement?.finalTotalCents ?? payment.totalDueCents ?? quote?.totalPayableCents ?? quote?.totalCents;
+  if(!Number.isSafeInteger(total)||total<0)return {};
+  const paid=payment.amountPaidCents||0, refunded=payment.refundedCents||0;
+  return {pricing:{currency:'CHF',priceType:quote.priceType==='estimate'?'estimate':'fixed',totalRappen:total,paidRappen:paid,vatRappen:0,
+    ...(payment.model==='full_prepayment'?{refundedRappen:refunded,...(paid-refunded>total?{refundCreditRappen:paid-refunded-total}:{})}:{}),
     ...(Number.isSafeInteger(payment.transactionRappen)?{transactionRappen:payment.transactionRappen}:{}),
     ...(Number.isSafeInteger(payment.refundRappen)?{refundRappen:payment.refundRappen}:{})}};
 }
@@ -52,22 +56,30 @@ export function notificationForBooking(record:any,templateId:string,eventId:stri
   const scope=record.scopeNotes?{serviceScope:record.scopeNotes,localizedContentLanguage:record.scopeContentLanguage}:{};
   const receipt=['deposit_received','payment_received'].includes(templateId);
   const payment={...record.payment,...(receipt||['payment_requested','payment_pending','payment_failed'].includes(templateId)?{transactionRappen:record.payment.amountDueNowCents}:{})};
-  const data={...selectionData(record.selection,record.quote),...financialData(record.quote,payment),...scope,testMode:record.mode==='test',
+  const terms=bookingTermsPresentation(locale,{booking:record});
+  // After-work invoices and refunds must not repeat the original upfront amount
+  // as a new demand. Keep the accepted immutable contract accessible instead.
+  const legalSummary=extra.extraPayment===true||templateId==='refund_issued'||record.status==='cancelled'
+    ? {...terms,state:record.termsVersion?`${termsPresentationText(locale,'accepted')}: ${record.termsVersion}`:terms.state,rows:[],sections:[]} : terms;
+  const data={...selectionData(record.selection,record.quote),...financialData(record.quote,payment,record.workSettlement),...scope,testMode:record.mode==='test',
+    paymentModel:record.payment?.model,paymentBillingMode:record.payment?.billingMode,paymentDueAt:record.payment?.paymentDueAt,
     reference:record.reference,customer:{...(record.customer.name?{firstName:record.customer.name}:{})},
     city:record.customer.city,
     ...(!accountTemplates.has(templateId)?{address:`${record.customer.address}, ${record.customer.postalCode} ${record.customer.city}`} : {}),
     ...(start?{appointment:{start,status:status==='confirmed'?'confirmed':['cancelled','completed'].includes(status)?status:'requested'}}:{}),
     ...(receipt?{paymentStatus:'settled',paymentDetails:{reference:record.payment.transactionId||record.checkout?.reference}}:{}),
-    ...(templateId==='payment_requested'?{pricing:{...financialData(record.quote,payment).pricing,transactionRappen:record.payment.amountDueNowCents}}:{}),
+    ...(templateId==='payment_requested'?{pricing:{...financialData(record.quote,payment,record.workSettlement).pricing,transactionRappen:record.payment.amountDueNowCents}}:{}),
     ...(templateId==='payment_pending'?{paymentStatus:'pending'}:{}),...(templateId==='payment_failed'?{paymentStatus:'failed'}:{}),
     ...(templateId==='quote_ready'?{quoteApproved:Boolean(record.priceApprovedBy&&record.priceApprovedAt)}:{}),
     // Customer notes remain their own words. Door/access codes are kept in the secure portal.
     ...extra,
     // Persist the exact language and legal version shown for this business event.
-    ...(!accountTemplates.has(templateId)?{termsSummary:bookingTermsPresentation(locale,{booking:record})}:{})};
+    ...(!accountTemplates.has(templateId)?{termsSummary:legalSummary}:{})};
   // A stored free-text offer cannot be silently relabelled as translated.
   if(record.scopeNotes&&normalizeEmailLanguage(record.scopeContentLanguage)!==locale)throw new Error('STAFF_SCOPE_LANGUAGE_REQUIRED');
-  return createCustomerNotification({templateId,eventId,entityId:record.bookingId,email:record.customer.email,languageSnapshot:record.languageSnapshot,renderData:data});
+  const notification=createCustomerNotification({templateId,eventId,entityId:record.bookingId,email:record.customer.email,languageSnapshot:record.languageSnapshot,renderData:data});
+  if(record.termsVersion!==CURRENT_TERMS_VERSION)notification.templateRevision=LEGACY_TEMPLATE_REVISION;
+  return notification;
 }
 
 export function notificationForRecovery(draft:any,kind:string) {

@@ -82,7 +82,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/offerte', language =
       </span>
       <div>
       <h3>{t("Auch für kleine Aufträge.")}</h3>
-      <p>{' '}{t("Einzelne Fenster, Wohnungen bis 5.5 Zimmer und kleine Umzüge sind willkommen.")}{' '}</p>
+      <p>{' '}{t("Einzelne Fenster, Wohnungen bis 5.5 Zimmer und kleine Umzüge sind willkommen. Beschreiben Sie, welche Bereiche Sie entlasten möchten und ob eine einmalige oder wiederkehrende Unterstützung gesucht ist. Wählen Sie dafür die passende Leistung im Rechner; besondere Anforderungen klären wir persönlich.")}{' '}</p>
       </div>
       </article>
       <article className="why-promise">
@@ -93,7 +93,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/offerte', language =
       </span>
       <div>
       <h3>{t("Vorher klar vereinbart.")}</h3>
-      <p>{' '}{t("Umfang und Preis besprechen wir vorab – ohne versteckte Zuschläge.")}{' '}</p>
+      <p>{' '}{t("Umfang und Preis besprechen wir vorab – ohne versteckte Zuschläge. Im Rechner sehen Sie die gewählten Arbeiten und Extras einzeln. Geben Sie Zustand, zusätzliche Räume und Besonderheiten möglichst genau an, damit die angefragte Leistung und die spätere Bestätigung übereinstimmen.")}{' '}</p>
       </div>
       </article>
       <article className="why-promise">
@@ -105,7 +105,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/offerte', language =
       </span>
       <div>
       <h3>{t("Einfach starten. Gut begleitet.")}</h3>
-      <p>{' '}{t("Beginnen Sie im Rechner. Fragen und besondere Wünsche klären wir persönlich.")}{' '}</p>
+      <p>{' '}{t("Beginnen Sie im Rechner. Fragen und besondere Wünsche klären wir persönlich. Für eine Anfrage brauchen Sie kein Kundenkonto. Wenn Zugang, Schlüsselübergabe oder Termin noch offen sind, schreiben Sie diese Punkte in die Nachricht; der Wunschtermin wird erst von Kraken bestätigt.")}{' '}</p>
       </div>
       </article>
       </div>
@@ -124,7 +124,7 @@ export default function WhyKrakenSection({ t, quoteHref = '/offerte', language =
       </svg>
       </span>
       </summary>
-      <p>{policy.guarantee}{' '}<a href={publicHref('/terms#agb-9',language)}>{t("AGB ansehen")}</a></p>
+      <p>{policy.guaranteeScope}{' '}<a href={publicHref('/terms#agb-9',language)}>{t("AGB ansehen")}</a></p>
       </details>
 
       </div>

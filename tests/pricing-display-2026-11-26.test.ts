@@ -22,10 +22,15 @@ test('extra-area cap and moving price lines have complete customer translations'
  assert.match(bookingLineLabel('es',capped),/^Superficie adicional:/);
 });
 test('one-off regular cleaning is not relabelled as deep cleaning',()=>{
- const regular=calculatePrice({...defaultSelection('regular'),frequency:'once'}).lines[0];
+ const regular=calculatePrice({...defaultSelection('regular'),cleaningKind:'regular',frequency:'once'}).lines[0];
  const deep=calculatePrice({...defaultSelection('regular'),cleaningKind:'deep',frequency:'once',hours:3}).lines[0];
- assert.equal(bookingLineLabel('es',regular),'Limpieza regular');
- assert.equal(bookingLineLabel('es',deep),'Limpieza profunda');
+ const {cleaningKind,...legacyDefaults}=defaultSelection('regular');
+ const legacy=calculatePrice({...legacyDefaults,frequency:'once',hours:3}).lines[0];
+ assert.equal(regular.params.cleaningKind,'regular');assert.equal(deep.params.cleaningKind,'deep');assert.equal(legacy.params.cleaningKind,'deep');
+ assert.equal(bookingLineLabel('es',regular),'Limpieza periódica');
+ assert.equal(bookingLineLabel('es',deep),'Limpieza a fondo');
+ assert.equal(bookingLineLabel('es',legacy),'Limpieza a fondo');
+ for(const language of languages)assert.notEqual(bookingLineLabel(language,regular),bookingLineLabel(language,deep));
 });
 test('saving moving and combined cleaning preserves quantities while excluding injected prices and contact fields',()=>{
  const selection={...defaultSelection('moving'),mode:'fixed',distanceKm:10,rooms:2.5,cleaning:{...defaultSelection('endOfTenancy'),areaM2:70,address:'private address',totalCents:1},sameAddress:true,totalCents:1,customerEmail:'private@example.com'};
@@ -42,8 +47,8 @@ test('saved emails never render a hypothetical tax comparison, including legacy 
   assert.doesNotMatch(message.html+message.text,/8[,.]1|27[,.]95|hypothet|Nettopreis/i);
  }
 });
-test('all six current legal documents display VAT status, the deposit clause and a readable date',()=>{
- for(const language of languages){const terms=getTermsTranslation(language);assert.match(terms.sections[2].content,/100['.,]000/);assert.match(terms.lastUpdated,/2026/);assert.doesNotMatch(terms.lastUpdated,/pricing-moving|kraken-agb/);assert.match(terms.sections[3].content,/15\s*%/);}
+test('all six current legal documents display VAT status, the full-payment clauses and a readable date',()=>{
+ for(const language of languages){const terms=getTermsTranslation(language);assert.match(terms.sections[2].content,/100['.,]000/);assert.match(terms.lastUpdated,/2026/);assert.doesNotMatch(terms.lastUpdated,/pricing-moving|kraken-agb/);assert.match(terms.sections[3].content,/4\.1[\s\S]*4\.6/);assert.doesNotMatch(terms.sections[3].content,/15\s*%|Anzahlung|Restbetrag/);assert.match(terms.sections[3].content,/Payrexx/);}
 });
 test('collection price summaries distinguish hourly estimates and omit VAT amounts/comparisons',()=>{
  for(const language of languages){

@@ -52,10 +52,10 @@ test('prebuilt preparation repairs absent generated bundles, validates hashes an
     assert.equal(result.htmlBundleReferences, 2);
     assert.equal(result.generatedBundles, 2);
     assert.equal(result.sha256Verified, 22);
-    assert.equal(result.seoPageFragments, 144);
+    assert.equal(result.seoPageFragments, 150);
     assert.equal(result.legalDocumentFragments, 18);
     assert.equal(result.seoShellFragments, 6);
-    assert.equal(result.runtimeHtmlFilesVerified, 193);
+    assert.equal(result.runtimeHtmlFilesVerified, 199);
     assert.equal(result.missing, 0);
     assert.equal(readFileSync(path.join(root, '.vercel/output/static/assets/index-a1b2.js'), 'utf8'), 'BUILT_JS');
     for (const filename of ['untracked-private.json', '.env.production', 'archive.zip', 'error.log', 'stats.html', 'server.cjs', 'assets/index-a1b2.js.map', 'seo-page-home-de.html', 'seo-shell-de.html', 'about-content-de.html']) {

@@ -18,7 +18,7 @@ export function MovingTariffTable({ language }: { language: string }) {
     <div className="kr-tariff-scroll"><table><caption>{text('hourlyTitle')} · {text('vat')}</caption><thead><tr><th scope="col">{text('team')}</th><th scope="col">{text('rate')}</th><th scope="col">{text('minimum')}</th></tr></thead><tbody>
       {tariffs.hourly.map(row => <tr key={row.team}><th scope="row">{text(row.team === 1 ? 'oneMover' : 'twoMovers')}</th><td>{money(row.hourlyRateCents)}/h</td><td>{text('hours', { hours: number(row.minimumHours) })}<br />{text('minimumOrder', { price: money(row.quote.totalCents!) })}</td></tr>)}
     </tbody></table></div>
-    <p>{text('hourlyRules', { travel: money(tariffs.travelCents), minutes: number(tariffs.billingMinutes), deposit: number(15) })}</p>
+    <p>{text('hourlyRules', { travel: money(tariffs.travelCents), minutes: number(tariffs.billingMinutes) })}</p>
     <div className="kr-tariff-scroll"><table><caption>{text('fixedTitle')} · {text('vat')}</caption><thead><tr><th scope="col">{text('scope')}</th><th scope="col">{text('price')}</th></tr></thead><tbody>
       {tariffs.fixed.map((row, index) => {
         const rooms = text('roomBand', { min: number(Math.floor(row.rooms)), max: number(row.rooms) });

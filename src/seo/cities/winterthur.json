@@ -1,0 +1,90 @@
+{
+  "id": "winterthur",
+  "name": {
+    "de": "Winterthur",
+    "en": "Winterthur",
+    "es": "Winterthur",
+    "pt": "Winterthur",
+    "it": "Winterthur",
+    "fr": "Winterthour"
+  },
+  "sources": [
+    {
+      "id": "districts",
+      "url": "https://stadt.winterthur.ch/themen/arbeit-steuern-wirtschaft/daten-statistik/bevoelkerung-und-soziales",
+      "label": {
+        "de": "Bevölkerung und Quartiere",
+        "en": "Population and neighbourhoods",
+        "es": "Población y barrios",
+        "pt": "População e bairros",
+        "it": "Popolazione e quartieri",
+        "fr": "Population et quartiers"
+      },
+      "verifiedAt": "2026-11-28"
+    },
+    {
+      "id": "parking",
+      "url": "https://stadt.winterthur.ch/services/bewilligungsformulare-veranstaltungen",
+      "label": {
+        "de": "Parkfelder für Umzüge",
+        "en": "Parking spaces for moves",
+        "es": "Aparcamiento para mudanzas",
+        "pt": "Estacionamento para mudanças",
+        "it": "Parcheggi per traslochi",
+        "fr": "Stationnement pour déménagements"
+      },
+      "verifiedAt": "2026-11-28"
+    }
+  ],
+  "facts": [
+    {
+      "id": "districts",
+      "sourceId": "districts",
+      "text": {
+        "de": "Winterthur ist in 42 Quartiere unterteilt. Die genaue Quartierangabe hilft bei der Zuordnung Ihrer Adresse.",
+        "en": "Winterthur is divided into 42 neighbourhoods. Giving your neighbourhood helps identify the exact address.",
+        "es": "Winterthur se divide en 42 barrios. Indicar el barrio ayuda a identificar la dirección exacta.",
+        "pt": "Winterthur divide-se em 42 bairros. Indicar o bairro ajuda a identificar a morada exata.",
+        "it": "Winterthur è suddivisa in 42 quartieri. Indicare il quartiere aiuta a identificare l’indirizzo esatto.",
+        "fr": "Winterthour est divisée en 42 quartiers. Préciser le quartier aide à identifier l’adresse exacte."
+      }
+    },
+    {
+      "id": "parking",
+      "sourceId": "parking",
+      "text": {
+        "de": "Für Umzüge können markierte Parkfelder beantragt werden; die städtische Signalisation stellt die Parkverbotstafeln auf.",
+        "en": "Marked parking spaces can be requested for moves; the city signage team places the no-parking signs.",
+        "es": "Para una mudanza se pueden solicitar plazas señalizadas; el servicio municipal coloca las señales de prohibición.",
+        "pt": "Para mudanças podem pedir-se lugares marcados; o serviço municipal coloca os sinais de proibição de estacionamento.",
+        "it": "Per i traslochi si possono richiedere posti segnati; il servizio comunale colloca i cartelli di divieto di sosta.",
+        "fr": "Des places marquées peuvent être demandées pour un déménagement ; le service municipal pose les panneaux d’interdiction de stationner."
+      }
+    }
+  ],
+  "services": {
+    "window-cleaning": [
+      "districts"
+    ],
+    "daily-cleaning": [
+      "districts"
+    ],
+    "deep-cleaning": [
+      "districts",
+      "parking"
+    ],
+    "end-of-tenancy": [
+      "parking",
+      "districts"
+    ],
+    "moving-furniture": [
+      "parking",
+      "districts"
+    ]
+  },
+  "pendingOwner": [
+    "Reale Referenzen und freigegebene Fotos für diese Stadt liefern.",
+    "Konkrete Einsatzadressen, Zugänge und Termine persönlich bestätigen.",
+    "Festlegen, wer notwendige Park-/Zufahrtsbewilligungen beantragt und Kosten trägt."
+  ]
+}

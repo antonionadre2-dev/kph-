@@ -1,6 +1,6 @@
 import type { RequestHandler, Request } from 'express';
 import { isStaffIdentity } from '../src/auth/access.ts';
-import { BookingError } from './booking-store.ts';
+import { BookingError, digest } from './booking-store.ts';
 import { operatorMailView } from './booking-mail-safety.ts';
 
 const base='/api/booking/operator/requests';
@@ -32,27 +32,48 @@ export function createBookingOperatorHandler({getRuntime,getAuth,validCapture,cl
       const details=async(id:string)=>{
         const record=await runtime.store.get(id);if(!record)throw new BookingError('BOOKING_NOT_FOUND',404);
         const [jobs,suppressed]=await Promise.all([runtime.store.listMailForBooking(id),runtime.store.isEmailSuppressed(record.customer.email)]);
-        return {booking:view(record),emails:jobs.map((job:any)=>operatorMailView(job,record,suppressed)),emailReady:runtime.emailReady};
+        return {booking:view(record),emails:jobs.map((job:any)=>operatorMailView(job,record,suppressed)),emailReady:runtime.emailReady,scheduledRemindersReady:await runtime.service.remindersReady()};
       };
-      if(req.path===base&&req.method==='GET')return res.json({bookings:(await runtime.store.listForOperator()).map(view),emailReady:runtime.emailReady,paymentReady:runtime.paymentReady});
+      if(req.path===base&&req.method==='GET')return res.json({bookings:(await runtime.store.listForOperator()).map(view),emailReady:runtime.emailReady,paymentReady:runtime.paymentReady,scheduledRemindersReady:await runtime.service.remindersReady()});
       if(req.path===base+'/search'&&req.method==='POST'){
         bodyOnly(req.body,['reference']);
         const reference=typeof req.body.reference==='string'?req.body.reference.trim().toUpperCase():'';
         if(!/^K-\d{4}-[A-Z0-9_-]{8}$/.test(reference))throw new BookingError('INVALID_REFERENCE');
-        return res.json({bookings:(await runtime.store.listForOperator(reference)).map(view),emailReady:runtime.emailReady,paymentReady:runtime.paymentReady});
+        return res.json({bookings:(await runtime.store.listForOperator(reference)).map(view),emailReady:runtime.emailReady,paymentReady:runtime.paymentReady,scheduledRemindersReady:await runtime.service.remindersReady()});
       }
-      const match=new RegExp('^'+base+'/([A-Za-z0-9_-]{1,128})(/(?:confirm|email/retry))?$').exec(req.path);
+      const match=new RegExp('^'+base+'/([A-Za-z0-9_-]{1,128})(/(?:confirm|quote/approve|work/settle|payment/extra|cancel|refund|email/retry))?$').exec(req.path);
       if(!match||!idPattern.test(match[1]))throw new BookingError('NOT_FOUND',404);
       const id=match[1];
       if(req.method==='GET'&&!match[2])return res.json(await details(id));
       if(req.method==='POST'&&match[2]==='/confirm'){
-        bodyOnly(req.body,['expectedRevision','holdExpiresAt','availabilityChecked']);
+        bodyOnly(req.body,['expectedRevision','holdExpiresAt','availabilityChecked','billingPeriod']);
         if(req.body.availabilityChecked!==true)throw new BookingError('AVAILABILITY_REVIEW_REQUIRED');
         if(!Number.isSafeInteger(req.body.expectedRevision)||req.body.expectedRevision<1)throw new BookingError('BOOKING_CHANGED',409);
         if(!runtime.paymentReady)throw new BookingError('PAYMENT_NOT_CONFIGURED',503);
         if(!runtime.emailReady)throw new BookingError('EMAIL_NOT_CONFIGURED',503);
-        const saved=await runtime.service.confirmAppointment(id,{expectedRevision:req.body.expectedRevision,holdExpiresAt:req.body.holdExpiresAt,operatorId:actor,notifyPaymentReady:true});
+        const saved=await runtime.service.confirmAppointment(id,{expectedRevision:req.body.expectedRevision,holdExpiresAt:req.body.holdExpiresAt,billingPeriod:req.body.billingPeriod,operatorId:actor,notifyPaymentReady:true});
         try{await runtime.service.runDue({jobId:`${id}:payment-ready:${saved.revision}`,limit:1});}catch{/* The durable hold and outbox remain authoritative. */}
+        return res.json(await details(id));
+      }
+      if(req.method==='POST'&&['/quote/approve','/work/settle','/payment/extra','/cancel','/refund'].includes(match[2])){
+        const action=match[2],allowed:Record<string,string[]>={
+          '/quote/approve':['expectedRevision','totalCents','scopeNotes','scopeLanguage'],
+          '/work/settle':['expectedRevision','actualHours'],
+          '/payment/extra':['expectedRevision'], '/cancel':['expectedRevision'],
+          '/refund':['expectedRevision','amountCents','idempotencyKey'],
+        };
+        bodyOnly(req.body,allowed[action]);
+        if(!Number.isSafeInteger(req.body.expectedRevision)||req.body.expectedRevision<1)throw new BookingError('BOOKING_CHANGED',409);
+        if(['/payment/extra','/refund'].includes(action)&&!runtime.paymentReady)throw new BookingError('PAYMENT_NOT_CONFIGURED',503);
+        const common={...req.body,operatorId:actor};
+        let saved:any;
+        if(action==='/quote/approve')saved=await runtime.service.approveManualQuote(id,common);
+        if(action==='/work/settle')saved=await runtime.service.settleWork(id,common);
+        if(action==='/payment/extra')saved=await runtime.service.createExtraPayment(id,common);
+        if(action==='/cancel')saved=await runtime.service.cancel(id,common);
+        if(action==='/refund')saved=await runtime.service.refund(id,common);
+        const event=saved&&(action==='/quote/approve'?['quote_ready',`${id}:quote:${saved.quoteRevision}`]:action==='/cancel'?['cancellation_confirmed',`${id}:cancelled:${saved.cancelledAt}`]:action==='/refund'?['refund_issued',`${id}:refund:${req.body.idempotencyKey}`]:null);
+        if(event&&runtime.emailReady)try{await runtime.service.runDue({jobId:`${id}:${event[0]}:${digest(event[1]).slice(0,24)}`,limit:1});}catch{/* Financial state and the durable exact outbox job remain authoritative. */}
         return res.json(await details(id));
       }
       if(req.method==='POST'&&match[2]==='/email/retry'){

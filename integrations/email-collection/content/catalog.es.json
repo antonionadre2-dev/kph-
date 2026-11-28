@@ -63,7 +63,7 @@
     ],
     "cta": "Ver mi selección",
     "secondary": "Contactar con Kraken",
-    "nextTitle": "Usted decides",
+    "nextTitle": "Usted decide",
     "next": [
       "Continúe o ajuste su selección",
       "Hable con nosotros si tiene dudas"
@@ -94,7 +94,7 @@
       "Resolvemos con usted cualquier duda",
       "Recibe una confirmación por separado"
     ],
-    "note": "Para cualquier consulta, indique la referencia {{bookingReference}}.",
+    "note": "Ahora no se cobra nada. Solo pagará después de que confirmemos su cita.",
     "tone": "calm",
     "visual": "service",
     "signature": "Antonio y el equipo de Kraken",
@@ -135,7 +135,9 @@
     "headline": "Su presupuesto. Todo claro.",
     "intro": "Hemos preparado su presupuesto para {{serviceName}} en {{city}}. Encontrará el alcance acordado del servicio y el precio total en un mismo lugar.",
     "body": [
-      "Revise los detalles con calma. Si necesita algún cambio, coméntenoslo antes de aceptar."
+      "Revise los detalles con calma. Si necesita algún cambio, coméntenoslo antes de aceptar.",
+      "Tras confirmar su cita, pagará el importe confirmado completo antes del servicio. El plazo es de 3 días y, como máximo, 48 horas antes del inicio; las confirmaciones de última hora se pagan de inmediato. Pago seguro mediante Payrexx (Suiza).",
+      "Reembolso completo al cancelar al menos 48 horas antes del servicio. Entre 48 y 12 horas se cobra el 50 %; con menos de 12 horas, el 100 %."
     ],
     "cta": "Revisar mi presupuesto",
     "secondary": "Contactar con Kraken",
@@ -161,7 +163,9 @@
     "headline": "Su cita está confirmada.",
     "intro": "Su cita para {{serviceName}} en {{city}} está confirmada para el {{appointmentDate}} a las {{appointmentTime}}. Estos son los detalles acordados.",
     "body": [
-      "Compruebe la dirección y las indicaciones de acceso. Si algo cambia, avísenos con antelación para poder organizarnos con usted."
+      "Compruebe la dirección y las indicaciones de acceso. Si algo cambia, avísenos con antelación para poder organizarnos con usted.",
+      "Tras confirmar su cita, pagará el importe confirmado completo antes del servicio. El plazo es de 3 días y, como máximo, 48 horas antes del inicio; las confirmaciones de última hora se pagan de inmediato. Pago seguro mediante Payrexx (Suiza).",
+      "Reembolso completo al cancelar al menos 48 horas antes del servicio. Entre 48 y 12 horas se cobra el 50 %; con menos de 12 horas, el 100 %."
     ],
     "cta": "Ver mi reserva",
     "secondary": "Contactar con Kraken",
@@ -222,7 +226,7 @@
       "Compruebe la cita y la dirección",
       "Revise el alcance y el precio actualizados"
     ],
-    "note": "El resumen de pagos muestra si el cambio genera un importe pendiente o un reembolso.",
+    "note": "El resumen de pagos muestra si el cambio requiere un pago adicional o un reembolso.",
     "tone": "success",
     "visual": "calendar",
     "signature": "Antonio y el equipo de Kraken",
@@ -288,7 +292,9 @@
     "headline": "Su pago está preparado.",
     "intro": "Tiene un pago de {{amountFormatted}} preparado para la reserva {{bookingReference}}. Revise el resumen y abra su enlace personal de pago.",
     "body": [
-      "En el enlace verás el importe y los métodos de pago disponibles. Introduzca sus datos de pago únicamente en la página de pago que se abra."
+      "En el enlace verás el importe y los métodos de pago disponibles. Introduzca sus datos de pago únicamente en la página de pago que se abra.",
+      "Tras confirmar su cita, pagará el importe confirmado completo antes del servicio. El plazo es de 3 días y, como máximo, 48 horas antes del inicio; las confirmaciones de última hora se pagan de inmediato. Pago seguro mediante Payrexx (Suiza).",
+      "Reembolso completo al cancelar al menos 48 horas antes del servicio. Entre 48 y 12 horas se cobra el 50 %; con menos de 12 horas, el 100 %."
     ],
     "cta": "Abrir mi pago",
     "secondary": "Contactar con Kraken",
@@ -307,21 +313,20 @@
   },
   "deposit_received": {
     "stage": "Pagos",
-    "title": "Anticipo recibido",
-    "subject": "Anticipo recibido: {{amountFormatted}} · {{bookingReference}}",
-    "preheader": "Gracias. Ya puede consultar el recibo y el importe restante.",
+    "title": "Pago recibido",
+    "subject": "Pago recibido: {{amountFormatted}} · {{bookingReference}}",
+    "preheader": "Pago recibido",
     "eyebrow": "Pago confirmado",
-    "headline": "Gracias. Hemos recibido su anticipo.",
-    "intro": "Hemos recibido su anticipo de {{amountFormatted}} para {{serviceName}}. Se descontará del importe total acordado.",
+    "headline": "Pago recibido",
+    "intro": "Hemos recibido su pago de {{amountFormatted}} para {{serviceName}}. Se aplica al importe total acordado.",
     "body": [
-      "En el resumen encontrará el importe abonado, el saldo pendiente y su recibo. El estado de la cita aparece por separado en su reserva."
+      "El recibo, el importe pagado y cualquier cantidad pendiente aparecen en el resumen. El estado de la cita se indica por separado."
     ],
     "cta": "Ver mi recibo",
     "secondary": "Contactar con Kraken",
     "nextTitle": "Todo claro para usted",
     "next": [
-      "Compruebe el anticipo en su recibo",
-      "Consulte el estado de la cita y la preparación en su reserva"
+      "Revisar el recibo"
     ],
     "note": "El pago no sustituye a una confirmación de cita por separado.",
     "tone": "success",
@@ -337,7 +342,7 @@
     "preheader": "Su servicio está totalmente pagado. Aquí tiene su recibo.",
     "eyebrow": "Todo pagado",
     "headline": "Gracias por su pago.",
-    "intro": "Hemos recibido el pago de {{amountFormatted}}. No queda ningún importe pendiente por el alcance actualmente acordado de su reserva {{bookingReference}}.",
+    "intro": "Hemos recibido {{amountFormatted}}. El alcance actualmente acordado para la reserva {{bookingReference}} está pagado por completo.",
     "body": [
       "Su recibo incluye los servicios contratados y el pago. Puede consultar el estado actual de la cita en su reserva."
     ],
@@ -407,21 +412,21 @@
   },
   "balance_due": {
     "stage": "Pagos",
-    "title": "Pago del saldo pendiente",
-    "subject": "Importe pendiente de su reserva {{bookingReference}}",
-    "preheader": "Los pagos ya recibidos están descontados.",
+    "title": "Pago adicional",
+    "subject": "Pago adicional · {{bookingReference}}",
+    "preheader": "Revise los trabajos registrados tras el servicio. La factura adicional se paga en un plazo de 7 días.",
     "eyebrow": "Un resumen final claro",
-    "headline": "Este es su importe pendiente.",
-    "intro": "Quedan {{balanceFormatted}} pendientes por {{serviceName}}. Los pagos que ya hemos recibido están descontados en el resumen.",
+    "headline": "Su factura adicional está preparada.",
+    "intro": "Debe abonar {{amountFormatted}} por el trabajo adicional acordado para la reserva {{bookingReference}}.",
     "body": [
-      "Revise el resumen final de los servicios acordados. Si algo no coincide, contacte con nosotros antes de pagar."
+      "Revise los trabajos registrados tras el servicio. La factura adicional se paga en un plazo de 7 días."
     ],
-    "cta": "Revisar y pagar el saldo",
+    "cta": "Revisar y pagar la factura",
     "secondary": "Contactar con Kraken",
     "nextTitle": "Todo en un mismo lugar",
     "next": [
-      "Compruebe los servicios y los pagos realizados",
-      "Abone el saldo pendiente desde el enlace de pago"
+      "Revisar el recibo",
+      "Revisar y pagar la factura"
     ],
     "note": "No se añada IVA adicional.",
     "tone": "action",
@@ -439,7 +444,7 @@
     "headline": "Hemos tramitado su reembolso.",
     "intro": "Se ha tramitado un reembolso de {{amountFormatted}} a través del proveedor de pagos para la reserva {{bookingReference}}.",
     "body": [
-      "El momento en que aparezca en su cuenta depende del método de pago y de su banco. Puede consultar los detalles del reembolso en el enlace."
+      "Los reembolsos se realizan en un plazo de 10 días al medio de pago original. Su banco también puede influir en cuándo aparece el abono."
     ],
     "cta": "Ver mi reembolso",
     "secondary": "Contactar con Kraken",
@@ -574,7 +579,7 @@
       "Compruebe la cita y el acceso",
       "Comunique con antelación sus peticiones especiales"
     ],
-    "note": "Se aplican los servicios y precios confirmados para esta visita.",
+    "note": "La limpieza periódica se paga mensualmente por adelantado. El importe mensual incluye las visitas confirmadas del periodo de facturación.",
     "tone": "calm",
     "visual": "regular",
     "signature": "Antonio y el equipo de Kraken",
@@ -599,7 +604,7 @@
       "Revise las citas afectadas",
       "Compruebe los servicios y la frecuencia"
     ],
-    "note": "Cualquier cambio en los servicios o los precios se muestra de forma explícita.",
+    "note": "La limpieza periódica se paga mensualmente por adelantado. El importe mensual incluye las visitas confirmadas del periodo de facturación.",
     "tone": "success",
     "visual": "regular",
     "signature": "Antonio y el equipo de Kraken",
