@@ -3,6 +3,7 @@ import { useTranslation } from '../../i18n';
 import { openHomeCalculator, type HomeService } from '../../src/home/calculator';
 import { homeLanguages, homeText, normalizeHomeLanguage } from './homeTranslations';
 import ApprovedHeader from './ApprovedHeader';
+import KrakenServiceIcon from '../KrakenServiceIcon';
 import TransitSection from './TransitSection';
 import WhyKrakenSection from './WhyKrakenSection';
 import PublicPriceGuide from '../PublicPriceGuide';
@@ -182,9 +183,9 @@ function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
           <div className="scene-holiday" aria-hidden="true"></div>
           <div className="scene-kai" id="sceneKai" data-task="moving" aria-hidden="true"><div className="scene-kai-sprite"></div></div>
         </div>
-        <button className="scene-hotspot hotspot-window" type="button" data-service="windows" data-hotspot="windows" aria-label={t("Fensterreinigung auswählen")}><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#window"></use></svg><span>{t("Fenster")}</span><span className="hotspot-dot" aria-hidden="true"></span></button>
-        <button className="scene-hotspot hotspot-floor" type="button" data-service="deep" data-hotspot="floor" aria-label={t("Grundreinigung auswählen")}><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#deep"></use></svg><span>{t("Böden & mehr")}</span><span className="hotspot-dot" aria-hidden="true"></span></button>
-        <button className="scene-hotspot hotspot-move" type="button" data-service="moving" data-hotspot="moving" aria-label={t("Kleinen Umzug auswählen")}><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving"></use></svg><span>{t("Kleiner Umzug")}</span><span className="hotspot-dot" aria-hidden="true"></span></button>
+        <button className="scene-hotspot hotspot-window" type="button" data-service="windows" data-hotspot="windows" aria-label={t("Fensterreinigung auswählen")}><KrakenServiceIcon name="windows" className="icon brand-service-icon" size={38} /><span>{t("Fenster")}</span><span className="hotspot-dot" aria-hidden="true"></span></button>
+        <button className="scene-hotspot hotspot-floor" type="button" data-service="deep" data-hotspot="floor" aria-label={t("Grundreinigung auswählen")}><KrakenServiceIcon name="deep" className="icon brand-service-icon" size={38} /><span>{t("Böden & mehr")}</span><span className="hotspot-dot" aria-hidden="true"></span></button>
+        <button className="scene-hotspot hotspot-move" type="button" data-service="moving" data-hotspot="moving" aria-label={t("Kleinen Umzug auswählen")}><KrakenServiceIcon name="moving" className="icon brand-service-icon" size={38} /><span>{t("Kleiner Umzug")}</span><span className="hotspot-dot" aria-hidden="true"></span></button>
         </div>
         <dialog className="scene-dialog" id="sceneDialog" aria-labelledby="sceneDialogTitle" aria-describedby="scenePreviewExplanation">
           <div className="scene-dialog-inner">
@@ -209,12 +210,12 @@ function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
       <div className="booking-dock" id="anfrage">
         <p className="sr-only" id="serviceGroupLabel">{t("Welche Unterstützung wünschen Sie?")}</p>
         <div className="service-picker" role="group" aria-labelledby="serviceGroupLabel" aria-describedby="serviceHint">
-          <button className="service-option" type="button" data-service="end" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#end"></use></svg><span>{t("Umzugsreinigung")}</span></button>
-          <button className="service-option" type="button" data-service="windows" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#window"></use></svg><span>{t("Fensterreinigung")}</span></button>
-          <button className="service-option" type="button" data-service="regular" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#regular"></use></svg><span>{t("Regelmässige Reinigung")}</span></button>
-          <button className="service-option" type="button" data-service="deep" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#deep"></use></svg><span>{t("Grundreinigung")}</span></button>
-          <button className="service-option" type="button" data-service="moving" aria-pressed="false"><svg className="icon brand-service-icon" viewBox="0 0 32 32"><use href="/home-approved/assets/kraken-icons.svg#moving"></use></svg><span>{t("Kleine Umzüge")}</span></button>
-          <a className="service-option service-option-link" href={publicHref('/quote?service=construction',homeLanguage)}><img className="icon brand-service-icon" src="/calculator-approved/assets/kraken-emoji-construction.svg" width="38" height="38" alt="" aria-hidden="true" loading="lazy" /><span>{t("Baureinigung")}</span></a>
+          <button className="service-option" type="button" data-service="end" aria-pressed="false"><KrakenServiceIcon name="endOfTenancy" className="icon brand-service-icon" size={38} /><span>{t("Umzugsreinigung")}</span></button>
+          <button className="service-option" type="button" data-service="windows" aria-pressed="false"><KrakenServiceIcon name="windows" className="icon brand-service-icon" size={38} /><span>{t("Fensterreinigung")}</span></button>
+          <button className="service-option" type="button" data-service="regular" aria-pressed="false"><KrakenServiceIcon name="regular" className="icon brand-service-icon" size={38} /><span>{t("Regelmässige Reinigung")}</span></button>
+          <button className="service-option" type="button" data-service="deep" aria-pressed="false"><KrakenServiceIcon name="deep" className="icon brand-service-icon" size={38} /><span>{t("Grundreinigung")}</span></button>
+          <button className="service-option" type="button" data-service="moving" aria-pressed="false"><KrakenServiceIcon name="moving" className="icon brand-service-icon" size={38} /><span>{t("Kleine Umzüge")}</span></button>
+          <a className="service-option service-option-link" href={publicHref('/quote?service=construction',homeLanguage)}><KrakenServiceIcon name="construction" className="icon brand-service-icon" size={38} /><span>{t("Baureinigung")}</span></a>
         </div>
         <p className="service-hint" id="serviceHint" aria-live="polite">{t("Was dürfen wir Ihnen abnehmen? Wählen Sie Ihren Service.")}</p>
         <div className="booking-form calculator-entry">
