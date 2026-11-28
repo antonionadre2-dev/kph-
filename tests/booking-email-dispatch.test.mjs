@@ -48,7 +48,9 @@ function memoryStore() {
       for (const item of (Array.isArray(job)?job:[job]).filter(Boolean)) if (!mail.has(item.id)) mail.set(item.id, clone(item));
       return clone(next);
     },
-    async prepareMail(id,message) {const job=mail.get(id);if(!job||job.status!=='sending')return null;job.prepared??=clone(message);return clone(job.prepared);},
+    async listMailForBooking(id) {return [...mail.values()].filter(job=>job.bookingId===id).map(clone);},
+    async mutateMail(id,transform) {const current=mail.get(id);if(!current)return null;const next=transform(clone(current));mail.set(id,clone(next));return clone(next);},
+    async prepareMail(id,message) {const job=mail.get(id);if(!job||!['sending','scheduling'].includes(job.status))return null;job.prepared??=clone(message);return clone(job.prepared);},
     async addMail(job) {
       if (mail.has(job.id)) return false;
       mail.set(job.id, clone(job));
@@ -777,4 +779,51 @@ test('real local HTTP: a new email-proof browser keeps its original cookie throu
   instant=cookieCreatedAt+7*86400000;
   const expired=await post('/api/booking/browser-access',{bookingId:booking.bookingId},`${capture}; ${cookie}`);assert.equal(expired.status,404);assert.equal(expired.headers.get('set-cookie'),null);assert.equal((await expired.json()).token,undefined);
   assert.equal(envelopes.length,1,'Only the one explicitly requested mocked access email was sent');
+});
+
+test('dedicated scheduler key handles only capability, scheduled send and cancellation while ordinary mail keeps its sending key',async t=>{
+ t.mock.method(console,'info',()=>{});
+ const {createBookingHandlers,setStore}=await handlersBundle(),store=memoryStore();setStore(store);
+ const normalKey='synthetic-limited-sender',schedulerKey='synthetic-dedicated-scheduler',providerId='10000000-0000-4000-8000-000000000007',calls=[];
+ let entered,release;const started=new Promise(resolve=>{entered=resolve;}),pending=new Promise(resolve=>{release=resolve;});
+ const handlers=createBookingHandlers({env:environment({RESEND_API_KEY:normalKey,RESEND_SCHEDULING_API_KEY:schedulerKey,PAYREXX_INSTANCE:'synthetic',PAYREXX_API_SECRET:'synthetic-payrexx-key',PAYREXX_MODE:'live',PAYREXX_WEBHOOK_SECRET:'synthetic-webhook-secret'}),clock:()=>now,fetcher:async(url,init)=>{
+  const payload=init.body?JSON.parse(String(init.body)):null;calls.push({url,method:init.method,payload,key:init.headers.Authorization});
+  if(url==='https://api.resend.com/api-keys'){assert.equal(init.headers.Authorization,`Bearer ${schedulerKey}`);return Response.json({object:'list',data:[{id:'PRIVATE_KEY_METADATA_CANARY',name:'PRIVATE_KEY_METADATA_CANARY'}]});}
+  if(url===`https://api.resend.com/emails/${providerId}/cancel`){assert.equal(init.headers.Authorization,`Bearer ${schedulerKey}`);return Response.json({object:'email',id:providerId});}
+  assert.equal(url,'https://api.resend.com/emails');
+  if(payload.scheduled_at){assert.equal(init.headers.Authorization,`Bearer ${schedulerKey}`);entered();await pending;return Response.json({id:providerId});}
+  assert.equal(init.headers.Authorization,`Bearer ${normalKey}`);return Response.json({id:'10000000-0000-4000-8000-000000000008'});
+ }});
+ const runtime=await handlers.initialize(),booking=await runtime.service.create({...request(),requestedDate:'2026-12-10'});
+ await runtime.service.runDue({jobId:`${booking.bookingId}:request:1`,limit:1});assert.equal((await store.get(booking.bookingId)).email.request,'sent');
+ const confirming=runtime.service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-staff',expectedRevision:1});await started;
+ await runtime.service.schedulePaymentReminders(booking.bookingId);
+ const confirmed=await store.get(booking.bookingId);await runtime.service.cancel(booking.bookingId,{operatorId:'synthetic-staff',expectedRevision:confirmed.revision});
+ release();await confirming;
+ const reminder=[...store.mail.values()].find(job=>job.kind==='payment_reminder');assert.equal(reminder.status,'cancelled');assert.equal(reminder.providerId,providerId);assert.equal((await store.get(booking.bookingId)).payment.reminder.status,'cancelled');
+ const config=await invoke(handlers,'/api/booking/config');assert.equal(config.body.scheduledRemindersReady,true);assert.doesNotMatch(JSON.stringify(config.body),/synthetic-limited|synthetic-dedicated|PRIVATE_KEY_METADATA/);
+ assert.equal(calls.filter(call=>call.url.endsWith('/api-keys')).length,1);assert.equal(calls.filter(call=>call.payload?.scheduled_at).length,1);assert.equal(calls.filter(call=>call.url.endsWith('/cancel')).length,1);assert.equal(calls.filter(call=>call.url.endsWith('/emails')&&!call.payload?.scheduled_at).length,1);
+ assert.ok(calls.every(call=>call.payload?.scheduled_at||!call.url.endsWith('/emails')||call.key===`Bearer ${normalKey}`));
+});
+
+test('missing or restricted dedicated scheduling key never borrows the normal key and leaves normal delivery available',async t=>{
+ t.mock.method(console,'info',()=>{});const {createBookingHandlers,setStore}=await handlersBundle();
+ for(const schedulerKey of [undefined,'synthetic-restricted-scheduler']){
+  const store=memoryStore();setStore(store);const calls=[];
+  const handlers=createBookingHandlers({env:environment({RESEND_SCHEDULING_API_KEY:schedulerKey,PAYREXX_INSTANCE:'synthetic',PAYREXX_API_SECRET:'synthetic-payrexx-key',PAYREXX_MODE:'live',PAYREXX_WEBHOOK_SECRET:'synthetic-webhook-secret'}),clock:()=>now,fetcher:async(url,init)=>{
+   const payload=init.body?JSON.parse(String(init.body)):null;calls.push({url,key:init.headers.Authorization,payload});
+   if(url==='https://api.resend.com/api-keys'){assert.equal(init.headers.Authorization,`Bearer ${schedulerKey}`);return Response.json({name:'restricted_api_key'},{status:401});}
+   assert.equal(url,'https://api.resend.com/emails');assert.equal(init.headers.Authorization,'Bearer synthetic-resend-key');assert.equal(payload.scheduled_at,undefined);return Response.json({id:'10000000-0000-4000-8000-000000000009'});
+  }});
+  const runtime=await handlers.initialize(),booking=await runtime.service.create({...request(),requestedDate:'2026-12-10'});
+  await runtime.service.runDue({jobId:`${booking.bookingId}:request:1`,limit:1});await runtime.service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-staff',expectedRevision:1});
+  const reminder=[...store.mail.values()].find(job=>job.kind==='payment_reminder');assert.equal(reminder.status,'queued');assert.equal((await store.get(booking.bookingId)).payment.reminder.status,'unavailable');await runtime.service.runDue({jobId:reminder.id,limit:1});
+  const config=await invoke(handlers,'/api/booking/config');assert.equal(config.body.emailReady,true);assert.equal(config.body.scheduledRemindersReady,false);assert.equal(calls.filter(call=>call.url.endsWith('/api-keys')).length,schedulerKey?1:0);assert.equal(calls.filter(call=>call.url.endsWith('/emails')).length,1);assert.equal(calls.filter(call=>call.payload?.scheduled_at||call.url.endsWith('/cancel')).length,0);
+ }
+});
+
+test('a scheduling key alone cannot enable or replace ordinary email delivery',async t=>{
+ t.mock.method(console,'info',()=>{});const {createBookingHandlers,setStore}=await handlersBundle();setStore(memoryStore());let calls=0;
+ const handlers=createBookingHandlers({env:environment({RESEND_API_KEY:undefined,RESEND_SCHEDULING_API_KEY:'synthetic-dedicated-scheduler'}),clock:()=>now,fetcher:async()=>{calls++;throw Error('No provider calls without the ordinary sending configuration');}});
+ const config=await invoke(handlers,'/api/booking/config');assert.equal(config.body.emailReady,false);assert.equal(config.body.scheduledRemindersReady,false);assert.equal(calls,0);
 });
