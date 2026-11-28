@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { IMPRESSUM_LANGUAGES, getImpressumDocument, impressumLanguage } from '../src/legal/impressum-document.ts';
 import { getGDPRTranslation } from '../components/legal/privacy.ts';
+import { businessHoursLongLabel } from '../src/config/business-hours.mjs';
 
 const sha256 = (value: string | Uint8Array) => createHash('sha256').update(value).digest('hex');
 // The supplied descriptor permits only these six literal changes to liabilityP1.
@@ -91,9 +92,35 @@ test('unknown locale inputs cannot select object prototypes, and document data c
   assert.equal(getImpressumDocument('de').common.owner, 'Antonio Nadre Gomes Mendes');
 });
 
-test('privacy changes consist solely of the six exact insurance-reference removals supplied by the owner', async () => {
+test('privacy changes allow only the six exact insurance removals and the shared contact hours in introP1', async () => {
   const current = await readFile(new URL('../components/legal/privacy.ts', import.meta.url), 'utf8');
-  let restored = current;
+  // Normalize only the subsequently authorized hours refactor: one exact import
+  // and one helper interpolation in each locale's introP1. The existing whole-file
+  // hashes still guard every surrounding word, paragraph, import and clause.
+  const hoursImport = "import { businessHoursLongLabel } from '../../src/config/business-hours.mjs';\n";
+  assert.ok(current.startsWith(hoursImport), 'shared-hours import is the only new leading import');
+  assert.equal(current.split(hoursImport).length - 1, 1);
+  let hoursRestored = current.replace(hoursImport, '');
+  const previousHours = {
+    de: 'Montag bis Sonntag, 09:00–19:00 Uhr (Europe/Zurich)',
+    en: 'Monday to Sunday, 09:00–19:00 (Europe/Zurich)',
+    es: 'de lunes a domingo, 09:00–19:00 (Europe/Zurich)',
+    pt: 'de segunda a domingo, 09:00–19:00 (Europe/Zurich)',
+    it: 'da lunedì a domenica, 09:00–19:00 (Europe/Zurich)',
+    fr: 'du lundi au dimanche, 09:00–19:00 (Europe/Zurich)',
+  } as const;
+  const introPrefix = '    "introP1": ';
+  for (const [language, before] of Object.entries(previousHours)) {
+    const interpolation = `\${businessHoursLongLabel('${language}')}`;
+    assert.equal(current.split(interpolation).length - 1, 1, language + ': exactly one shared-hours interpolation');
+    const line = current.split('\n').find(value => value.includes(interpolation))!;
+    assert.ok(line.startsWith(introPrefix + '`') && line.endsWith('`,'), language + ': helper is confined to introP1');
+    const content = line.slice(introPrefix.length + 1, -2).replace(interpolation, before);
+    assert.equal(content.includes('${'), false, language + ': no other interpolation was introduced');
+    hoursRestored = hoursRestored.replace(line, introPrefix + JSON.stringify(content) + ',');
+    assert.ok(getGDPRTranslation(language).introP1.includes(businessHoursLongLabel(language)), language + ': rendered hours use the shared configuration');
+  }
+  let restored = hoursRestored;
   for (const [language, change] of Object.entries(privacyChanges)) {
     assert.equal(getGDPRTranslation(language).liabilityP1, change.after);
     assert.equal(current.split(change.after).length - 1, 1, language + ': exactly one corrected literal');
@@ -101,8 +128,8 @@ test('privacy changes consist solely of the six exact insurance-reference remova
     assert.equal(change.before.replace(change.removed, ''), change.after, language + ': no other sentence rewrite');
     restored = restored.replace(change.after, change.before);
   }
-  // Original editable privacy.ts at f9346d1. Reversing the six authorized changes
-  // must reproduce the entire file, proving every other paragraph stayed intact.
+  // Original editable privacy.ts at f9346d1. Reversing only the explicitly
+  // permitted changes must reproduce the original bytes in their entirety.
   assert.equal(sha256(restored), '09e8cb47f8162bc6165f26d1eecf51cd993c7d3ed9a5b280512b2d1732343b10');
-  assert.equal(sha256(current), 'ba06fcf944b452c792c5a581d5a29738fbb8bcc3da92c7bd587cef7222528314');
+  assert.equal(sha256(hoursRestored), 'ba06fcf944b452c792c5a581d5a29738fbb8bcc3da92c7bd587cef7222528314');
 });

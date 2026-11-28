@@ -2,6 +2,7 @@ import { labels, localeTags, serviceNames } from './labels.mjs';
 import { preparation } from './preparation.mjs';
 import { emailArtwork } from './artwork.mjs';
 import { normalizeEmailLanguage } from './language.mjs';
+import { businessHoursSentence } from '../../src/config/business-hours.mjs';
 
 export const defaultBrand = Object.freeze({
   name:'Kraken PFM', descriptor:'Properties & Facilities Management',
@@ -143,6 +144,7 @@ export function renderEmail(id, data, options={}) {
   const parts=dateParts(data.appointment?.start,language);
   const expiry=dateParts(data.expiresAt,language);
   const values={
+    businessHoursSentence:businessHoursSentence(language),
     firstName:knownName,serviceName:serviceNames[language][service],city:data.city,
     appointmentDate:parts.date,appointmentTime:parts.time,bookingReference:data.reference,
     amountFormatted:price?chf(id==='refund_issued'?price.refundRappen:price.transactionRappen??price.totalRappen,language):'',

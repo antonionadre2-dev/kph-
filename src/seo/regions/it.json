@@ -115,7 +115,7 @@
         },
         {
           "title": "Contatto personale",
-          "body": "Per domande ci può contattare dal lunedì alla domenica tra le 09:00 e le 19:00. Concordiamo separatamente con lei l’esecuzione e la data desiderata."
+          "body": "{{businessHoursSentence}} Concordiamo separatamente con lei l’esecuzione e la data desiderata."
         }
       ]
     },
@@ -276,7 +276,7 @@
         },
         {
           "title": "Raggiungibili mentre pianifica",
-          "body": "I nostri orari di contatto sono dal lunedì alla domenica, dalle 09:00 alle 19:00. In questo spazio può porre domande sullo svolgimento, sui suoi desideri e sulle date."
+          "body": "{{businessHoursSentence}} In questo spazio può porre domande sullo svolgimento, sui suoi desideri e sulle date."
         }
       ]
     },
@@ -299,7 +299,7 @@
     "faqs": [
       {
         "question": "Come posso contattare Kraken a Sciaffusa?",
-        "answer": "Ci trova al +41 77 450 57 05 o a kai@krakenpfm.ch, dal lunedì alla domenica dalle 09:00 alle 19:00. La nostra sede è in Seewadelstrasse 3, 8203 Schaffhausen. Concordi in anticipo un’eventuale visita."
+        "answer": "Ci trova al +41 77 450 57 05 o a kai@krakenpfm.ch, {{businessHours}}. La nostra sede è in Seewadelstrasse 3, 8203 Schaffhausen. Concordi in anticipo un’eventuale visita."
       },
       {
         "question": "Posso richiedere un servizio nella regione delle cascate del Reno?",
@@ -438,7 +438,7 @@
         },
         {
           "title": "Persone che può contattare",
-          "body": "Per domande siamo raggiungibili dal lunedì alla domenica dalle 09:00 alle 19:00. Concordiamo personalmente appuntamento e accesso. Winterthur è una zona servita; la nostra sede aziendale rimane a Sciaffusa."
+          "body": "{{businessHoursSentence}} Concordiamo personalmente appuntamento e accesso. Winterthur è una zona servita; la nostra sede aziendale rimane a Sciaffusa."
         }
       ]
     },

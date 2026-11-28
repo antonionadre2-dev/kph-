@@ -1,4 +1,5 @@
 import { normalizeHomeLanguage } from '../../components/home/homeTranslations.ts';
+import { interpolateBusinessHours } from '../config/business-hours.mjs';
 
 // Kept independent from full articles so global page metadata stays lightweight.
 const REGIONAL_METADATA = {
@@ -33,7 +34,7 @@ const REGIONAL_METADATA = {
       "faqs": [
         {
           "question": "Wie erreiche ich Kraken in Schaffhausen?",
-          "answer": "Sie erreichen uns unter +41 77 450 57 05 oder kai@krakenpfm.ch, Montag bis Sonntag von 09:00 bis 19:00 Uhr. Unser Standort ist Seewadelstrasse 3, 8203 Schaffhausen. Einen Besuch vereinbaren Sie bitte im Voraus."
+          "answer": "Sie erreichen uns unter +41 77 450 57 05 oder kai@krakenpfm.ch, {{businessHours}}. Unser Standort ist Seewadelstrasse 3, 8203 Schaffhausen. Einen Besuch vereinbaren Sie bitte im Voraus."
         },
         {
           "question": "Kann ich einen Auftrag aus der Rheinfallregion anfragen?",
@@ -104,7 +105,7 @@ const REGIONAL_METADATA = {
       "faqs": [
         {
           "question": "How can I contact Kraken in Schaffhausen?",
-          "answer": "You can reach us on +41 77 450 57 05 or at kai@krakenpfm.ch, Monday to Sunday, 09:00–19:00. Our base is at Seewadelstrasse 3, 8203 Schaffhausen. Please arrange a visit in advance."
+          "answer": "You can reach us on +41 77 450 57 05 or at kai@krakenpfm.ch, {{businessHours}}. Our base is at Seewadelstrasse 3, 8203 Schaffhausen. Please arrange a visit in advance."
         },
         {
           "question": "Can I request a job in the Rhine Falls area?",
@@ -175,7 +176,7 @@ const REGIONAL_METADATA = {
       "faqs": [
         {
           "question": "¿Cómo puedo contactar con Kraken en Schaffhausen?",
-          "answer": "Puede llamarnos al +41 77 450 57 05 o escribir a kai@krakenpfm.ch de lunes a domingo, de 09:00 a 19:00. Nuestra sede está en Seewadelstrasse 3, 8203 Schaffhausen. Acuerde una cita antes de venir."
+          "answer": "Puede llamarnos al +41 77 450 57 05 o escribir a kai@krakenpfm.ch, {{businessHours}}. Nuestra sede está en Seewadelstrasse 3, 8203 Schaffhausen. Acuerde una cita antes de venir."
         },
         {
           "question": "¿Puedo solicitar un servicio en la región del Rheinfall?",
@@ -246,7 +247,7 @@ const REGIONAL_METADATA = {
       "faqs": [
         {
           "question": "Como posso contactar a Kraken em Schaffhausen?",
-          "answer": "Pode contactar-nos pelo +41 77 450 57 05 ou por kai@krakenpfm.ch, de segunda a domingo, das 09:00 às 19:00. A nossa sede fica em Seewadelstrasse 3, 8203 Schaffhausen. Combine uma visita com antecedência."
+          "answer": "Pode contactar-nos pelo +41 77 450 57 05 ou por kai@krakenpfm.ch, {{businessHours}}. A nossa sede fica em Seewadelstrasse 3, 8203 Schaffhausen. Combine uma visita com antecedência."
         },
         {
           "question": "Posso pedir um serviço na região das Cataratas do Reno?",
@@ -317,7 +318,7 @@ const REGIONAL_METADATA = {
       "faqs": [
         {
           "question": "Come posso contattare Kraken a Sciaffusa?",
-          "answer": "Ci trova al +41 77 450 57 05 o a kai@krakenpfm.ch, dal lunedì alla domenica dalle 09:00 alle 19:00. La nostra sede è in Seewadelstrasse 3, 8203 Schaffhausen. Concordi in anticipo un’eventuale visita."
+          "answer": "Ci trova al +41 77 450 57 05 o a kai@krakenpfm.ch, {{businessHours}}. La nostra sede è in Seewadelstrasse 3, 8203 Schaffhausen. Concordi in anticipo un’eventuale visita."
         },
         {
           "question": "Posso richiedere un servizio nella regione delle cascate del Reno?",
@@ -388,7 +389,7 @@ const REGIONAL_METADATA = {
       "faqs": [
         {
           "question": "Comment joindre Kraken à Schaffhouse ?",
-          "answer": "Appelez le +41 77 450 57 05 ou écrivez à kai@krakenpfm.ch, du lundi au dimanche de 09:00 à 19:00. Notre siège est Seewadelstrasse 3, 8203 Schaffhouse. Merci de prendre rendez-vous avant une visite."
+          "answer": "Appelez le +41 77 450 57 05 ou écrivez à kai@krakenpfm.ch, {{businessHours}}. Notre siège est Seewadelstrasse 3, 8203 Schaffhouse. Merci de prendre rendez-vous avant une visite."
         },
         {
           "question": "Puis-je demander une prestation dans la région des chutes du Rhin ?",
@@ -429,6 +430,13 @@ const REGIONAL_METADATA = {
     }
   }
 };
+
+// Resolve authored tokens once while keeping FAQ object identity stable.
+for (const [language, entries] of Object.entries(REGIONAL_METADATA)) {
+  for (const page of Object.values(entries)) {
+    for (const faq of page.faqs) faq.answer = interpolateBusinessHours(faq.answer, language);
+  }
+}
 
 export function getRegionalPageMetadata(pathname: string, language: string) {
   const path = pathname.split(/[?#]/)[0].replace(/\/$/, '') || '/';

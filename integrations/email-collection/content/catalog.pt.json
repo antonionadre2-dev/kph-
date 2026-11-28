@@ -640,7 +640,7 @@
     "headline": "Obrigado por entrar em contacto.",
     "intro": "Recebemos a sua mensagem e vamos tratar do assunto. Os dados que enviou ajudam-nos a compreender o que precisa.",
     "body": [
-      "O nosso apoio ao cliente está disponível de segunda-feira a domingo, das 09:00 às 19:00. Para acrescentar alguma informação, basta responder a este email."
+      "{{businessHoursSentence}} Para acrescentar alguma informação, basta responder a este email."
     ],
     "cta": "Ver a minha mensagem",
     "secondary": "Contactar a Kraken",

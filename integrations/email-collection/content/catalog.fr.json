@@ -640,7 +640,7 @@
     "headline": "Merci de nous avoir écrit.",
     "intro": "Nous avons reçu votre message et allons nous occuper de votre demande. Vos informations nous aident à comprendre directement votre besoin.",
     "body": [
-      "Notre service client est joignable du lundi au dimanche, de 09:00 à 19:00. Pour ajouter une précision, répondez simplement à cet e-mail."
+      "{{businessHoursSentence}} Pour ajouter une précision, répondez simplement à cet e-mail."
     ],
     "cta": "Voir mon message",
     "secondary": "Contacter Kraken",

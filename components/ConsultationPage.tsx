@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from '../i18n';
+import { businessHoursLongLabel } from '../src/config/business-hours.mjs';
 import { 
     InfoIcon, 
     XMarkIcon, 
@@ -9313,7 +9314,7 @@ const ConsultationPage: React.FC<ConsultationPageProps> = ({ onNavigate, cart, s
                                 footerQ3: "¿Qué pasa después de pagar?",
                                 footerA3: "Recibirás una confirmación por correo al instante y prepararemos tu paquete para el envío postal a tu dirección.",
                                 footerQ4: "¿Necesitas ayuda?",
-                                footerA4: "Soporte activo vía WhatsApp o email las 24 horas del día para solucionar cualquier duda.",
+                                footerA4: `Soporte vía WhatsApp o email para solucionar cualquier duda: ${businessHoursLongLabel('es')}.`,
                             },
                             en: {
                                 title: onlyComics ? "💳 Full Payment Required for Comic Order" : "💳 Secure Deposit Payment Required",
@@ -9342,7 +9343,7 @@ const ConsultationPage: React.FC<ConsultationPageProps> = ({ onNavigate, cart, s
                                 footerQ3: "What happens after paying?",
                                 footerA3: "You'll receive an instant email confirmation and we will prepare your comic package for postal shipping.",
                                 footerQ4: "Need any assistance?",
-                                footerA4: "Our customer support team is available 24/7 via WhatsApp or email to answer any reservation or payment questions.",
+                                footerA4: `Our customer support team is available via WhatsApp or email to answer any reservation or payment questions: ${businessHoursLongLabel('en')}.`,
                             },
                             de: {
                                 title: onlyComics ? "💳 Vollständige Zahlung für Comic erforderlich" : "💳 Sichere Anzahlung erforderlich",
@@ -9371,7 +9372,7 @@ const ConsultationPage: React.FC<ConsultationPageProps> = ({ onNavigate, cart, s
                                 footerQ3: "Was passiert nach der Zahlung?",
                                 footerA3: "Sie erhalten sofort eine Bestätigung per E-Mail und wir bereiten Ihr Comic-Paket für den Postversand vor.",
                                 footerQ4: "Benötigen Sie Hilfe?",
-                                footerA4: "Unser Kundensupport ist rund um die Uhr per WhatsApp oder E-Mail erreichbar.",
+                                footerA4: `Unser Kundensupport ist per WhatsApp oder E-Mail erreichbar: ${businessHoursLongLabel('de')}.`,
                             },
                             fr: {
                                 title: onlyComics ? "💳 Paiement complet requis pour la bande dessinée" : "💳 Acompte sécurisé requis",
@@ -9400,7 +9401,7 @@ const ConsultationPage: React.FC<ConsultationPageProps> = ({ onNavigate, cart, s
                                 footerQ3: "Que se passe-t-il après le paiement ?",
                                 footerA3: "Vous recevrez une confirmation instantanée par e-mail et nous préparerons votre colis pour l'envoi postal.",
                                 footerQ4: "Besoin d'assistance ?",
-                                footerA4: "Notre équipe de support est disponible 24/7 via WhatsApp ou e-mail.",
+                                footerA4: `Notre équipe de support est disponible via WhatsApp ou e-mail : ${businessHoursLongLabel('fr')}.`,
                             }
                         };
                         

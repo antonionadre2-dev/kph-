@@ -5,6 +5,7 @@ import pt from './regions/pt.json';
 import it from './regions/it.json';
 import fr from './regions/fr.json';
 import { normalizeHomeLanguage } from '../../components/home/homeTranslations.ts';
+import { businessHoursLongLabel, interpolateBusinessHours } from '../config/business-hours.mjs';
 
 export interface RegionalPage {
   id: string; city: string; slug: string;
@@ -21,7 +22,14 @@ export interface RegionalPage {
   closing: { title: string; body: string; ctaLabel: string };
 }
 
-const PAGES: Record<string, RegionalPage[]> = { de, en, es, pt, it, fr };
+/** Expand authored hour tokens once; repeated lookups retain stable page objects. */
+function resolveBusinessHours<T>(value: T, language: string): T {
+  if (typeof value === 'string') return interpolateBusinessHours(value, language) as T;
+  if (Array.isArray(value)) return value.map(item => resolveBusinessHours(item, language)) as T;
+  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, resolveBusinessHours(item, language)])) as T;
+  return value;
+}
+const PAGES: Record<string, RegionalPage[]> = Object.fromEntries(Object.entries({ de, en, es, pt, it, fr }).map(([language, pages]) => [language, resolveBusinessHours(pages, language)]));
 export function getRegionalPage(regionId: string, language: string): RegionalPage | null {
   return PAGES[normalizeHomeLanguage(language)].find(page => page.id === regionId) || null;
 }
@@ -42,7 +50,7 @@ const UI = {
     quote: 'Meinen Auftrag berechnen', details: 'Leistungsdetails ansehen', discover: 'Leistung auswählen',
     planningLabel: 'Meine Vorbereitung', progress: 'Punkte vorbereitet', checklistNote: 'Ihre Häkchen sind nur eine persönliche Merkhilfe auf dieser Seite. Sie werden nicht gesendet und bestätigen keine Buchung.',
     source: 'Offizielle Information', sourceNote: 'Die verlinkten Informationen stammen von der jeweiligen Stadt. Prüfen Sie dort die aktuellen Bedingungen; Kraken erteilt keine Bewilligungen und übernimmt keine amtlichen Meldungen.',
-    nearby: 'Auch in Ihrer Nähe', contactTitle: 'Persönlich erreichbar', contact: 'Kontakt und Adresse', hours: 'Montag–Sonntag, 09:00–19:00 Uhr (Europe/Zurich)', appointment: 'Besuche am Standort nach Vereinbarung.',
+    nearby: 'Auch in Ihrer Nähe', contactTitle: 'Persönlich erreichbar', contact: 'Kontakt und Adresse', hours: businessHoursLongLabel('de'), appointment: 'Besuche am Standort nach Vereinbarung.',
     scope: 'Leistungen für Privathaushalte: Fensterreinigung, Umzugsreinigung, regelmässige Reinigung, Grundreinigung, Baureinigung und kleine Umzüge für Wohnungen bis 5.5 Zimmer. Den passenden Umfang klären wir anhand Ihrer Angaben.',
     prep: 'Zugang, Umfang und Termin vorab klären.', overview: 'Alle Einsatzgebiete', art: 'Illustration einer Kraken-Reinigungsszene',
   },
@@ -55,7 +63,7 @@ const UI = {
     quote: 'Calculate my service', details: 'View service details', discover: 'Choose a service',
     planningLabel: 'My preparation', progress: 'items prepared', checklistNote: 'Your ticks are only a personal reminder on this page. They are not sent and do not confirm a booking.',
     source: 'Official information', sourceNote: 'The linked information is provided by the relevant city. Check its current conditions there; Kraken does not issue permits or submit official notifications.',
-    nearby: 'Also near you', contactTitle: 'Here to help personally', contact: 'Contact and address', hours: 'Monday–Sunday, 09:00–19:00 (Europe/Zurich)', appointment: 'Visits to our base by appointment.',
+    nearby: 'Also near you', contactTitle: 'Here to help personally', contact: 'Contact and address', hours: businessHoursLongLabel('en'), appointment: 'Visits to our base by appointment.',
     scope: 'Services for private households: window cleaning, end-of-tenancy cleaning, regular cleaning, deep cleaning, post-construction cleaning and small moves for homes with up to 5.5 rooms. We agree the right scope based on your details.',
     prep: 'Agree access, scope and date in advance.', overview: 'All service areas', art: 'Illustration of a Kraken cleaning scene',
   },
@@ -68,7 +76,7 @@ const UI = {
     quote: 'Calcular mi encargo', details: 'Ver detalles del servicio', discover: 'Elegir un servicio',
     planningLabel: 'Mi preparación', progress: 'puntos preparados', checklistNote: 'Las casillas son solo un recordatorio personal en esta página. No se envían ni confirman una reserva.',
     source: 'Información oficial', sourceNote: 'La información enlazada procede de cada ayuntamiento. Consulte allí las condiciones vigentes; Kraken no expide permisos ni realiza trámites oficiales.',
-    nearby: 'También cerca de usted', contactTitle: 'Atención personal', contact: 'Contacto y dirección', hours: 'Lunes–domingo, 09:00–19:00 (Europe/Zurich)', appointment: 'Visitas a la sede con cita previa.',
+    nearby: 'También cerca de usted', contactTitle: 'Atención personal', contact: 'Contacto y dirección', hours: businessHoursLongLabel('es'), appointment: 'Visitas a la sede con cita previa.',
     scope: 'Servicios para hogares particulares: limpieza de ventanas, de fin de alquiler, periódica, a fondo, de fin de obra y pequeñas mudanzas de viviendas de hasta 5,5 habitaciones. Acordamos el alcance adecuado según sus datos.',
     prep: 'Acordar los accesos, el alcance y la fecha.', overview: 'Todas las zonas de servicio', art: 'Ilustración de una escena de limpieza de Kraken',
   },
@@ -81,7 +89,7 @@ const UI = {
     quote: 'Calcular o meu serviço', details: 'Ver detalhes do serviço', discover: 'Escolher um serviço',
     planningLabel: 'A minha preparação', progress: 'pontos preparados', checklistNote: 'As marcações são apenas um lembrete pessoal nesta página. Não são enviadas nem confirmam uma reserva.',
     source: 'Informação oficial', sourceNote: 'As informações ligadas são fornecidas pelo município respetivo. Consulte aí as condições atuais; a Kraken não emite autorizações nem trata de comunicações oficiais.',
-    nearby: 'Também perto de si', contactTitle: 'Contacto pessoal', contact: 'Contacto e morada', hours: 'Segunda–domingo, 09:00–19:00 (Europe/Zurich)', appointment: 'Visitas à sede mediante marcação.',
+    nearby: 'Também perto de si', contactTitle: 'Contacto pessoal', contact: 'Contacto e morada', hours: businessHoursLongLabel('pt'), appointment: 'Visitas à sede mediante marcação.',
     scope: 'Serviços para casas particulares: limpeza de janelas, de fim de arrendamento, regular, profunda, pós-obra e pequenas mudanças de casas com até 5,5 divisões. Acordamos a dimensão adequada com base nos seus dados.',
     prep: 'Acordar previamente os acessos, o âmbito e a data.', overview: 'Todas as zonas de serviço', art: 'Ilustração de uma cena de limpeza da Kraken',
   },
@@ -94,7 +102,7 @@ const UI = {
     quote: 'Calcolare il mio servizio', details: 'Vedere i dettagli del servizio', discover: 'Scegliere un servizio',
     planningLabel: 'La mia preparazione', progress: 'punti preparati', checklistNote: 'Le spunte sono soltanto un promemoria personale su questa pagina. Non vengono inviate e non confermano una prenotazione.',
     source: 'Informazioni ufficiali', sourceNote: 'Le informazioni collegate provengono dal rispettivo comune. Verifichi lì le condizioni attuali; Kraken non rilascia autorizzazioni e non effettua comunicazioni ufficiali.',
-    nearby: 'Anche vicino a lei', contactTitle: 'Contatto personale', contact: 'Contatto e indirizzo', hours: 'Lunedì–domenica, 09:00–19:00 (Europe/Zurich)', appointment: 'Visite alla sede su appuntamento.',
+    nearby: 'Anche vicino a lei', contactTitle: 'Contatto personale', contact: 'Contatto e indirizzo', hours: businessHoursLongLabel('it'), appointment: 'Visite alla sede su appuntamento.',
     scope: 'Servizi per abitazioni private: pulizia di finestre, di fine locazione, regolare, a fondo, di fine cantiere e piccoli traslochi di alloggi fino a 5,5 locali. Concordiamo la portata adatta in base alle sue indicazioni.',
     prep: 'Concordare in anticipo accessi, portata e data.', overview: 'Tutte le zone servite', art: 'Illustrazione di una scena di pulizia di Kraken',
   },
@@ -107,7 +115,7 @@ const UI = {
     quote: 'Calculer ma prestation', details: 'Voir les détails de la prestation', discover: 'Choisir une prestation',
     planningLabel: 'Ma préparation', progress: 'points préparés', checklistNote: 'Les cases cochées sont uniquement un pense-bête personnel sur cette page. Elles ne sont pas envoyées et ne confirment aucune réservation.',
     source: 'Information officielle', sourceNote: 'Les informations liées proviennent de la ville concernée. Consultez ses conditions actuelles ; Kraken ne délivre pas d’autorisations et n’effectue pas de démarches officielles.',
-    nearby: 'Également près de chez vous', contactTitle: 'Un contact personnel', contact: 'Contact et adresse', hours: 'Lundi–dimanche, 09:00–19:00 (Europe/Zurich)', appointment: 'Visites à notre base sur rendez-vous.',
+    nearby: 'Également près de chez vous', contactTitle: 'Un contact personnel', contact: 'Contact et adresse', hours: businessHoursLongLabel('fr'), appointment: 'Visites à notre base sur rendez-vous.',
     scope: 'Prestations pour les particuliers : nettoyage des vitres, de fin de bail, régulier, en profondeur, de fin de chantier et petits déménagements de logements jusqu’à 5,5 pièces. Nous convenons de l’étendue adaptée à vos indications.',
     prep: 'Convenir des accès, de l’étendue et de la date.', overview: 'Toutes les zones desservies', art: 'Illustration d’une scène de nettoyage de Kraken',
   },

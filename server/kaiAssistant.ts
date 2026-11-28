@@ -10,6 +10,7 @@ import { commercialKai, complaintKai, discountKai, humanKai, kaiMessageLanguage,
 import { calculateKaiQuote } from './kaiPricing.ts';
 import { kaiReplies } from './kaiReplies.ts';
 import { createGeminiProvider } from './kaiGemini.ts';
+import { businessHoursSentence } from '../src/config/business-hours.mjs';
 
 export const KAI_DEFAULT_MODEL = 'gemini-3.5-flash-lite';
 const LANGUAGES = ['de', 'en', 'es', 'pt', 'it', 'fr'];
@@ -127,18 +128,32 @@ function factTopic(text: string): KaiFactTopic | undefined {
   if (/prepar|vorbereit|material|reinigungsmittel|gerate|products|equipment|productos|produtos|attrezz|materiel/.test(text)) return 'preparation';
   if (/include|inclu|compris|enthalt/.test(text)) return 'included';
 }
+const businessHoursQuestions = [
+  /offnungszeiten|geschaftszeiten|kontaktzeiten|sprechzeiten|wann.{0,30}(?:erreichbar|geoffnet|offnet|schliesst)/,
+  /(?:opening|business|contact|customer (?:service|support)) hours|what are your hours|what time (?:are you open|do you (?:open|close))|when (?:are you|do you) (?:open|close)|when can i (?:call|contact|reach)/,
+  /horario (?:de (?:atencion|apertura|contacto|atendimento|funcionamento)|comercial)|(?:cual|qual) (?:es |e )?(?:su|vuestro|el|o vosso|o seu|o) horario|que horario.{0,15}(?:tienen|teneis)|a que horas?.{0,20}(?:atienden|abren|cierran|atendem|abrem|fecham)/,
+  /(?:orario|orari) (?:di (?:apertura|assistenza|contatto)|commerciali)|quali sono (?:i vostri|gli) orari|qual e (?:il vostro|il suo) orario|a che ora.{0,20}(?:aprite|chiudete|siete aperti|posso chiamare)/,
+  /horaires? (?:d.?ouverture|de (?:contact|service|permanence))|quels sont vos horaires|a quelle heure.{0,20}(?:ouvrez|fermez)|quand.{0,15}(?:vous joindre|puis.je (?:appeler|vous joindre))/,
+  /(?:habt ihr|haben sie|seid ihr|sind sie) (?:jetzt )?geoffnet|are you (?:currently )?open|(?:estais|estan|estao|esta) (?:ahora |agora )?abiert[oa]s?|(?:estao|esta) (?:agora )?abert[oa]s?|siete (?:ora )?aperti|etes.vous (?:actuellement )?ouverts?/,
+  /^[¿\s]*(?:horario|horarios|horaires|orari)[?¿\s]*$/,
+];
+const businessHoursQuestion = (text: string) => businessHoursQuestions.some(pattern => pattern.test(text));
+
 function guidedResponse(request: KaiAssistantRequest, draft: KaiDraft): KaiAssistantResponse {
   const copy = kaiCopy(request.language), replies = kaiReplies[request.language], text = fold(request.message);
   const missing = missingKaiFields(draft);
+  const topic = factTopic(text);
+  if (!topic && businessHoursQuestion(text)) return { message: businessHoursSentence(request.language), draft, missing, suggestions: [], actions: ['contact'], mode: 'guided', contactCard: true };
   const immediate = /baureinigung|post.?construction|fin de obra|pos.?obra|fine cantiere|fin de chantier/.test(text) ? replies.human
     : complaintKai(request.message) ? replies.apology
     : humanKai(request.message) ? replies.human
     : commercialKai(request.message) ? replies.privateOnly
     : outsideKaiArea(request.message) ? replies.outside : '';
   if (immediate) return { message: immediate, draft, missing, suggestions: [], actions: ['contact'], mode:'guided', contactCard:true };
-  const topic = factTopic(text), fact = topic ? getKaiFact(topic, request.language, draft.service) : undefined;
+  const fact = topic ? getKaiFact(topic, request.language, draft.service) : undefined;
   // French «garantie de remise» describes handover, not a discount request.
   let answer = discountKai(request.message) && topic !== 'guarantee' ? replies.discount : fact?.answer || '';
+  if (topic === 'availability' && fact && answer === fact.answer) answer = `${fact.answer} ${businessHoursSentence(request.language)}`;
   if (!answer && /ford|transit|van\b|furgon|fahrzeug|laderaum|capacity|dimensions|masse|medidas|dimensioni|cabe|fit\b/.test(text)) answer = copy.vehicle;
   if (!answer && /wetter|weather|clima|politic|bitcoin|competitor|konkurrent|competidor|concorrent|concurrent|capital of|hauptstadt/.test(text)) answer = replies.offtopic;
   if (!answer && deferredPattern.test(text)) answer = copy.deferred;

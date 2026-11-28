@@ -1,4 +1,6 @@
 /** Public contact copy. UI and FAQ structured data consume this same source. */
+import { businessHoursLabel, businessHoursSentence } from '../config/business-hours.mjs';
+
 export const CONTACT_LANGUAGES = ['de', 'en', 'es', 'fr', 'it', 'pt'] as const;
 export type ContactLanguage = typeof CONTACT_LANGUAGES[number];
 export const CONTACT_FORM_KEYS = [
@@ -31,8 +33,8 @@ export function normalizeContactLanguage(language: unknown): ContactLanguage {
 
 const copy: Record<ContactLanguage, ContactCopy> = {
   de: {
-    meta: { title: 'Kontakt | Reinigung und kleine Umzüge | Kraken PFM', description: 'Kontaktieren Sie Kraken für Reinigung und kleine Umzüge in Zürich, Winterthur und Schaffhausen. Mo–So 09:00–19:00 Uhr per Formular, WhatsApp oder Telefon.' },
-    hero: { eyebrow: 'KONTAKT ZU KRAKEN', title: 'Wir kommen zu Ihnen.', intro: 'Reinigung und kleine Umzüge. Persönlich für Sie da.', calculate: 'Service berechnen', whatsapp: 'WhatsApp', call: 'Anrufen', hours: 'Mo–So · 09:00–19:00 Uhr' },
+    meta: { title: 'Kontakt | Reinigung und kleine Umzüge | Kraken PFM', description: `Kontaktieren Sie Kraken für Reinigung und kleine Umzüge in Zürich, Winterthur und Schaffhausen. ${businessHoursSentence('de')} Per Formular, WhatsApp oder Telefon.` },
+    hero: { eyebrow: 'KONTAKT ZU KRAKEN', title: 'Wir kommen zu Ihnen.', intro: 'Reinigung und kleine Umzüge. Persönlich für Sie da.', calculate: 'Service berechnen', whatsapp: 'WhatsApp', call: 'Anrufen', hours: businessHoursLabel('de') },
     map: { eyebrow: 'UNSER EINSATZGEBIET', title: 'In Ihrer Nähe. Bei Ihnen zu Hause.', subtitle: 'Zürich · Winterthur · Schaffhausen', note: 'Wohnen Sie in der Umgebung? Nennen Sie uns Ihre Postleitzahl.', regionsLabel: 'Mehr zu unseren Einsatzgebieten', accessibleLabel: 'Regionalkarte mit Zürich im Südwesten, Winterthur weiter nordöstlich und Schaffhausen im Norden. Die Markierungen zeigen Einsatzregionen, keine genauen Gebietsgrenzen.' },
     person: { eyebrow: 'Ihr persönlicher Kontakt', name: 'Antonio Gomes', initials: 'AG', role: 'Inhaber von Kraken', phoneLabel: 'Telefon', emailLabel: 'E-Mail', hoursLabel: 'Kontaktzeiten' },
     faqTitle: 'Häufige Fragen zum Kontakt',
@@ -40,7 +42,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
       { question: 'Muss ich Kraken besuchen?', answer: 'Nein. Wir kommen für die vereinbarte Reinigung oder den kleinen Umzug zu Ihnen. Sie können Ihr Anliegen über das Formular, per WhatsApp, telefonisch oder per E-Mail mit uns besprechen.' },
       { question: 'Welche Dienstleistungen kann ich anfragen?', answer: 'Sie können Fensterreinigung, Umzugsreinigung, regelmässige Reinigung, Grundreinigung und kleine Umzüge anfragen. Wenn Sie noch unsicher sind, beschreiben Sie uns Ihr Anliegen.' },
       { question: 'In welchen Regionen ist Kraken tätig?', answer: 'Wir sind in Zürich, Winterthur und Schaffhausen tätig. Wenn Sie in der Umgebung wohnen, nennen Sie uns Ihre Postleitzahl. Wir prüfen den Einsatzort mit Ihnen; die Karte bestätigt keine genaue Gebietsgrenze oder Verfügbarkeit.' },
-      { question: 'Wann kann ich Kraken kontaktieren?', answer: 'Unsere Kontaktzeiten sind Montag bis Sonntag von 09:00 bis 19:00 Uhr. Eine Anfrage können Sie auch ausserhalb dieser Zeiten über das Formular oder per E-Mail hinterlassen.' },
+      { question: 'Wann kann ich Kraken kontaktieren?', answer: `${businessHoursSentence('de')} Eine Anfrage können Sie auch ausserhalb dieser Zeiten über das Formular oder per E-Mail hinterlassen.` },
       { question: 'Ist meine Anfrage bereits eine Buchung?', answer: 'Nein. Eine Kontaktanfrage bestätigt weder eine Buchung noch einen Service, eine Zahlung oder einen Termin. Wenn Ihr Anliegen konkret ist, können Sie den gewünschten Service im Rechner zusammenstellen.' },
     ],
     form: {
@@ -60,8 +62,8 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   en: {
-    meta: { title: 'Contact | Cleaning and small moves | Kraken PFM', description: 'Contact Kraken for cleaning and small moves in Zurich, Winterthur and Schaffhausen. Monday–Sunday, 09:00–19:00, by form, WhatsApp or telephone.' },
-    hero: { eyebrow: 'CONTACT KRAKEN', title: 'We come to you.', intro: 'Cleaning and small moves. Personal help for your home.', calculate: 'Calculate your service', whatsapp: 'WhatsApp', call: 'Call us', hours: 'Mon–Sun · 09:00–19:00' },
+    meta: { title: 'Contact | Cleaning and small moves | Kraken PFM', description: `Contact Kraken for cleaning and small moves in Zurich, Winterthur and Schaffhausen. ${businessHoursSentence('en')} By form, WhatsApp or telephone.` },
+    hero: { eyebrow: 'CONTACT KRAKEN', title: 'We come to you.', intro: 'Cleaning and small moves. Personal help for your home.', calculate: 'Calculate your service', whatsapp: 'WhatsApp', call: 'Call us', hours: businessHoursLabel('en') },
     map: { eyebrow: 'WHERE WE WORK', title: 'Close to you. At your home.', subtitle: 'Zurich · Winterthur · Schaffhausen', note: 'Do you live nearby? Please tell us your postcode.', regionsLabel: 'Explore our service regions', accessibleLabel: 'Regional map showing Zurich in the southwest, Winterthur further northeast and Schaffhausen to the north. Markers indicate service regions, not exact coverage boundaries.' },
     person: { eyebrow: 'Your personal contact', name: 'Antonio Gomes', initials: 'AG', role: 'Owner of Kraken', phoneLabel: 'Telephone', emailLabel: 'Email', hoursLabel: 'Contact hours' },
     faqTitle: 'Questions about contacting Kraken',
@@ -69,7 +71,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
       { question: 'Do I need to visit Kraken?', answer: 'No. We come to you for the agreed cleaning or small move. You can discuss your request using the form, WhatsApp, telephone or email.' },
       { question: 'Which services can I ask about?', answer: 'You can enquire about window cleaning, end of tenancy cleaning, regular cleaning, deep cleaning and small moves. If you are unsure, please describe what you need.' },
       { question: 'Which regions does Kraken serve?', answer: 'We work in Zurich, Winterthur and Schaffhausen. If you live nearby, please provide your postcode. We will review the location with you; the map does not confirm exact coverage boundaries or availability.' },
-      { question: 'When can I contact Kraken?', answer: 'Our contact hours are Monday to Sunday, 09:00 to 19:00. You can also leave an enquiry through the form or by email outside these hours.' },
+      { question: 'When can I contact Kraken?', answer: `${businessHoursSentence('en')} You can also leave an enquiry through the form or by email outside these hours.` },
       { question: 'Does my enquiry count as a booking?', answer: 'No. A contact enquiry does not confirm a booking, service, payment or date. If you know what you need, you can put together your chosen service in the calculator.' },
     ],
     form: {
@@ -89,8 +91,8 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   es: {
-    meta: { title: 'Contacto | Limpieza y pequeñas mudanzas | Kraken PFM', description: 'Contacte con Kraken para limpieza y pequeñas mudanzas en Zúrich, Winterthur y Schaffhausen. Lunes a domingo, 09:00–19:00, por formulario, WhatsApp o teléfono.' },
-    hero: { eyebrow: 'CONTACTE CON KRAKEN', title: 'Nos desplazamos a su hogar.', intro: 'Limpieza y pequeñas mudanzas. Atención personal para usted.', calculate: 'Calcular su servicio', whatsapp: 'WhatsApp', call: 'Llamar', hours: 'Lun–dom · 09:00–19:00' },
+    meta: { title: 'Contacto | Limpieza y pequeñas mudanzas | Kraken PFM', description: `Contacte con Kraken para limpieza y pequeñas mudanzas en Zúrich, Winterthur y Schaffhausen. ${businessHoursSentence('es')} Por formulario, WhatsApp o teléfono.` },
+    hero: { eyebrow: 'CONTACTE CON KRAKEN', title: 'Nos desplazamos a su hogar.', intro: 'Limpieza y pequeñas mudanzas. Atención personal para usted.', calculate: 'Calcular su servicio', whatsapp: 'WhatsApp', call: 'Llamar', hours: businessHoursLabel('es') },
     map: { eyebrow: 'DÓNDE TRABAJAMOS', title: 'Cerca de usted. En su hogar.', subtitle: 'Zúrich · Winterthur · Schaffhausen', note: '¿Vive en los alrededores? Indíquenos su código postal.', regionsLabel: 'Conocer nuestras regiones de servicio', accessibleLabel: 'Mapa regional con Zúrich al suroeste, Winterthur más al noreste y Schaffhausen al norte. Los marcadores indican regiones de servicio, sin delimitar una cobertura exacta.' },
     person: { eyebrow: 'Su persona de contacto', name: 'Antonio Gomes', initials: 'AG', role: 'Propietario de Kraken', phoneLabel: 'Teléfono', emailLabel: 'Correo electrónico', hoursLabel: 'Horario de contacto' },
     faqTitle: 'Preguntas sobre cómo contactar con Kraken',
@@ -98,7 +100,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
       { question: '¿Tengo que visitar Kraken?', answer: 'No. Nos desplazamos a su domicilio para la limpieza o pequeña mudanza acordada. Puede explicarnos su consulta mediante el formulario, WhatsApp, teléfono o correo electrónico.' },
       { question: '¿Qué servicios puedo consultar?', answer: 'Puede consultar sobre limpieza de ventanas, limpieza de fin de alquiler, limpieza periódica, limpieza a fondo y pequeñas mudanzas. Si todavía no lo tiene claro, descríbanos qué necesita.' },
       { question: '¿En qué regiones trabaja Kraken?', answer: 'Trabajamos en Zúrich, Winterthur y Schaffhausen. Si vive en los alrededores, indíquenos su código postal. Revisaremos con usted el lugar del servicio; el mapa no confirma una cobertura exacta ni disponibilidad.' },
-      { question: '¿Cuándo puedo contactar con Kraken?', answer: 'Nuestro horario de contacto es de lunes a domingo, de 09:00 a 19:00. También puede dejar una consulta mediante el formulario o por correo electrónico fuera de ese horario.' },
+      { question: '¿Cuándo puedo contactar con Kraken?', answer: `${businessHoursSentence('es')} También puede dejar una consulta mediante el formulario o por correo electrónico fuera de ese horario.` },
       { question: '¿Mi consulta ya es una reserva?', answer: 'No. Una consulta de contacto no confirma una reserva, un servicio, un pago ni una fecha. Si ya sabe qué necesita, puede preparar el servicio que desea en el calculador.' },
     ],
     form: {
@@ -118,8 +120,8 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   fr: {
-    meta: { title: 'Contact | Nettoyage et petits déménagements | Kraken PFM', description: 'Contactez Kraken pour le nettoyage et les petits déménagements à Zurich, Winterthur et Schaffhouse. Du lundi au dimanche, 09:00–19:00, par formulaire, WhatsApp ou téléphone.' },
-    hero: { eyebrow: 'CONTACTER KRAKEN', title: 'Nous venons chez vous.', intro: 'Nettoyage et petits déménagements. Un contact personnel à votre écoute.', calculate: 'Calculer votre prestation', whatsapp: 'WhatsApp', call: 'Appeler', hours: 'Lun–dim · 09:00–19:00' },
+    meta: { title: 'Contact | Nettoyage et petits déménagements | Kraken PFM', description: `Contactez Kraken pour le nettoyage et les petits déménagements à Zurich, Winterthur et Schaffhouse. ${businessHoursSentence('fr')} Par formulaire, WhatsApp ou téléphone.` },
+    hero: { eyebrow: 'CONTACTER KRAKEN', title: 'Nous venons chez vous.', intro: 'Nettoyage et petits déménagements. Un contact personnel à votre écoute.', calculate: 'Calculer votre prestation', whatsapp: 'WhatsApp', call: 'Appeler', hours: businessHoursLabel('fr') },
     map: { eyebrow: 'NOTRE ZONE D’INTERVENTION', title: 'Près de chez vous. À votre domicile.', subtitle: 'Zurich · Winterthur · Schaffhouse', note: 'Vous habitez aux alentours ? Indiquez-nous votre code postal.', regionsLabel: 'Découvrir nos régions d’intervention', accessibleLabel: 'Carte régionale avec Zurich au sud-ouest, Winterthur plus au nord-est et Schaffhouse au nord. Les repères indiquent les régions d’intervention, sans délimiter une couverture précise.' },
     person: { eyebrow: 'Votre interlocuteur personnel', name: 'Antonio Gomes', initials: 'AG', role: 'Propriétaire de Kraken', phoneLabel: 'Téléphone', emailLabel: 'E-mail', hoursLabel: 'Horaires de contact' },
     faqTitle: 'Questions sur le contact avec Kraken',
@@ -127,7 +129,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
       { question: 'Dois-je me rendre chez Kraken ?', answer: 'Non. Nous nous déplaçons chez vous pour le nettoyage ou le petit déménagement convenu. Vous pouvez nous expliquer votre demande par le formulaire, WhatsApp, téléphone ou e-mail.' },
       { question: 'Pour quelles prestations puis-je vous contacter ?', answer: 'Vous pouvez nous contacter pour le nettoyage des vitres, le nettoyage de fin de bail, le nettoyage régulier, le nettoyage en profondeur et les petits déménagements. Si vous hésitez encore, décrivez-nous vos besoins.' },
       { question: 'Dans quelles régions Kraken intervient-il ?', answer: 'Nous intervenons à Zurich, Winterthur et Schaffhouse. Si vous habitez aux alentours, indiquez-nous votre code postal. Nous examinerons le lieu de l’intervention avec vous ; la carte ne confirme ni une couverture précise ni une disponibilité.' },
-      { question: 'Quand puis-je contacter Kraken ?', answer: 'Nos horaires de contact sont du lundi au dimanche, de 09:00 à 19:00. Vous pouvez également laisser une demande par le formulaire ou par e-mail en dehors de ces horaires.' },
+      { question: 'Quand puis-je contacter Kraken ?', answer: `${businessHoursSentence('fr')} Vous pouvez également laisser une demande par le formulaire ou par e-mail en dehors de ces horaires.` },
       { question: 'Ma demande constitue-t-elle déjà une réservation ?', answer: 'Non. Une demande de contact ne confirme ni une réservation, ni une prestation, ni un paiement, ni une date. Si vous savez ce dont vous avez besoin, vous pouvez préparer la prestation souhaitée dans le calculateur.' },
     ],
     form: {
@@ -147,8 +149,8 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   it: {
-    meta: { title: 'Contatti | Pulizie e piccoli traslochi | Kraken PFM', description: 'Contatti Kraken per pulizie e piccoli traslochi a Zurigo, Winterthur e Sciaffusa. Da lunedì a domenica, 09:00–19:00, tramite modulo, WhatsApp o telefono.' },
-    hero: { eyebrow: 'CONTATTI KRAKEN', title: 'Veniamo a casa sua.', intro: 'Pulizie e piccoli traslochi. Un contatto personale per le sue esigenze.', calculate: 'Calcoli il suo servizio', whatsapp: 'WhatsApp', call: 'Chiami', hours: 'Lun–dom · 09:00–19:00' },
+    meta: { title: 'Contatti | Pulizie e piccoli traslochi | Kraken PFM', description: `Contatti Kraken per pulizie e piccoli traslochi a Zurigo, Winterthur e Sciaffusa. ${businessHoursSentence('it')} Tramite modulo, WhatsApp o telefono.` },
+    hero: { eyebrow: 'CONTATTI KRAKEN', title: 'Veniamo a casa sua.', intro: 'Pulizie e piccoli traslochi. Un contatto personale per le sue esigenze.', calculate: 'Calcoli il suo servizio', whatsapp: 'WhatsApp', call: 'Chiami', hours: businessHoursLabel('it') },
     map: { eyebrow: 'DOVE LAVORIAMO', title: 'Vicino a lei. A casa sua.', subtitle: 'Zurigo · Winterthur · Sciaffusa', note: 'Abita nei dintorni? Ci indichi il suo codice postale.', regionsLabel: 'Scopra le nostre regioni di servizio', accessibleLabel: 'Mappa regionale con Zurigo a sud-ovest, Winterthur più a nord-est e Sciaffusa a nord. I segnaposto indicano le regioni di servizio, senza delimitare una copertura esatta.' },
     person: { eyebrow: 'Il suo referente personale', name: 'Antonio Gomes', initials: 'AG', role: 'Titolare di Kraken', phoneLabel: 'Telefono', emailLabel: 'E-mail', hoursLabel: 'Orari di contatto' },
     faqTitle: 'Domande sui contatti con Kraken',
@@ -156,7 +158,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
       { question: 'Devo recarmi da Kraken?', answer: 'No. Veniamo al suo domicilio per la pulizia o il piccolo trasloco concordato. Può presentarci la sua richiesta tramite il modulo, WhatsApp, telefono o e-mail.' },
       { question: 'Per quali servizi posso contattarvi?', answer: 'Può richiedere informazioni su pulizia dei vetri, pulizia di fine locazione, pulizia regolare, pulizia approfondita e piccoli traslochi. Se non ha ancora deciso, ci descriva le sue esigenze.' },
       { question: 'In quali regioni lavora Kraken?', answer: 'Lavoriamo a Zurigo, Winterthur e Sciaffusa. Se abita nei dintorni, ci indichi il suo codice postale. Verificheremo con lei il luogo del servizio; la mappa non conferma una copertura esatta né la disponibilità.' },
-      { question: 'Quando posso contattare Kraken?', answer: 'I nostri orari di contatto sono da lunedì a domenica, dalle 09:00 alle 19:00. Può anche lasciare una richiesta tramite il modulo o per e-mail al di fuori di questi orari.' },
+      { question: 'Quando posso contattare Kraken?', answer: `${businessHoursSentence('it')} Può anche lasciare una richiesta tramite il modulo o per e-mail al di fuori di questi orari.` },
       { question: 'La mia richiesta è già una prenotazione?', answer: 'No. Una richiesta di contatto non conferma una prenotazione, un servizio, un pagamento o una data. Se sa già di cosa ha bisogno, può preparare il servizio desiderato nel calcolatore.' },
     ],
     form: {
@@ -176,8 +178,8 @@ const copy: Record<ContactLanguage, ContactCopy> = {
     },
   },
   pt: {
-    meta: { title: 'Contacto | Limpeza e pequenas mudanças | Kraken PFM', description: 'Contacte a Kraken para limpeza e pequenas mudanças em Zurique, Winterthur e Schaffhausen. De segunda a domingo, 09:00–19:00, por formulário, WhatsApp ou telefone.' },
-    hero: { eyebrow: 'CONTACTE A KRAKEN', title: 'Vamos até sua casa.', intro: 'Limpeza e pequenas mudanças. Um contacto pessoal para si.', calculate: 'Calcular o seu serviço', whatsapp: 'WhatsApp', call: 'Ligar', hours: 'Seg–dom · 09:00–19:00' },
+    meta: { title: 'Contacto | Limpeza e pequenas mudanças | Kraken PFM', description: `Contacte a Kraken para limpeza e pequenas mudanças em Zurique, Winterthur e Schaffhausen. ${businessHoursSentence('pt')} Por formulário, WhatsApp ou telefone.` },
+    hero: { eyebrow: 'CONTACTE A KRAKEN', title: 'Vamos até sua casa.', intro: 'Limpeza e pequenas mudanças. Um contacto pessoal para si.', calculate: 'Calcular o seu serviço', whatsapp: 'WhatsApp', call: 'Ligar', hours: businessHoursLabel('pt') },
     map: { eyebrow: 'ONDE TRABALHAMOS', title: 'Perto de si. Em sua casa.', subtitle: 'Zurique · Winterthur · Schaffhausen', note: 'Mora nos arredores? Indique-nos o seu código postal.', regionsLabel: 'Conhecer as nossas regiões de serviço', accessibleLabel: 'Mapa regional com Zurique a sudoeste, Winterthur mais a nordeste e Schaffhausen a norte. Os marcadores indicam regiões de serviço, sem delimitar uma cobertura exata.' },
     person: { eyebrow: 'O seu contacto pessoal', name: 'Antonio Gomes', initials: 'AG', role: 'Proprietário da Kraken', phoneLabel: 'Telefone', emailLabel: 'Email', hoursLabel: 'Horário de contacto' },
     faqTitle: 'Perguntas sobre o contacto com a Kraken',
@@ -185,7 +187,7 @@ const copy: Record<ContactLanguage, ContactCopy> = {
       { question: 'É necessário visitar a Kraken?', answer: 'Não. Deslocamo-nos à sua casa para a limpeza ou pequena mudança acordada. Pode explicar-nos o seu pedido através do formulário, WhatsApp, telefone ou email.' },
       { question: 'Que serviços posso consultar?', answer: 'Pode consultar-nos sobre limpeza de janelas, limpeza de fim de arrendamento, limpeza regular, limpeza a fundo e pequenas mudanças. Se ainda não tiver a certeza, descreva-nos o que precisa.' },
       { question: 'Em que regiões trabalha a Kraken?', answer: 'Trabalhamos em Zurique, Winterthur e Schaffhausen. Se mora nos arredores, indique-nos o seu código postal. Analisaremos consigo o local do serviço; o mapa não confirma uma cobertura exata nem disponibilidade.' },
-      { question: 'Quando posso contactar a Kraken?', answer: 'O nosso horário de contacto é de segunda a domingo, das 09:00 às 19:00. Também pode deixar um pedido através do formulário ou por email fora deste horário.' },
+      { question: 'Quando posso contactar a Kraken?', answer: `${businessHoursSentence('pt')} Também pode deixar um pedido através do formulário ou por email fora deste horário.` },
       { question: 'O meu pedido já é uma reserva?', answer: 'Não. Um pedido de contacto não confirma uma reserva, um serviço, um pagamento nem uma data. Se já sabe o que precisa, pode preparar o serviço desejado no calculador.' },
     ],
     form: {

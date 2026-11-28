@@ -115,7 +115,7 @@
         },
         {
           "title": "Un contact personnel",
-          "body": "Pour vos questions, nous sommes joignables du lundi au dimanche de 09:00 à 19:00. Nous convenons séparément avec vous de l’intervention et de la date souhaitée."
+          "body": "{{businessHoursSentence}} Nous convenons séparément avec vous de l’intervention et de la date souhaitée."
         }
       ]
     },
@@ -276,7 +276,7 @@
         },
         {
           "title": "Joignables quand vous préparez votre projet",
-          "body": "Nous sommes joignables du lundi au dimanche de 09:00 à 19:00. Vous pouvez nous poser vos questions sur le déroulement, vos souhaits et les dates."
+          "body": "{{businessHoursSentence}} Vous pouvez nous poser vos questions sur le déroulement, vos souhaits et les dates."
         }
       ]
     },
@@ -299,7 +299,7 @@
     "faqs": [
       {
         "question": "Comment joindre Kraken à Schaffhouse ?",
-        "answer": "Appelez le +41 77 450 57 05 ou écrivez à kai@krakenpfm.ch, du lundi au dimanche de 09:00 à 19:00. Notre siège est Seewadelstrasse 3, 8203 Schaffhouse. Merci de prendre rendez-vous avant une visite."
+        "answer": "Appelez le +41 77 450 57 05 ou écrivez à kai@krakenpfm.ch, {{businessHours}}. Notre siège est Seewadelstrasse 3, 8203 Schaffhouse. Merci de prendre rendez-vous avant une visite."
       },
       {
         "question": "Puis-je demander une prestation dans la région des chutes du Rhin ?",
@@ -438,7 +438,7 @@
         },
         {
           "title": "Des personnes joignables",
-          "body": "Nous répondons à vos questions du lundi au dimanche de 09:00 à 19:00. Nous convenons personnellement de la date et des accès. Winterthour est une zone d’intervention ; notre siège reste à Schaffhouse."
+          "body": "{{businessHoursSentence}} Nous convenons personnellement de la date et des accès. Winterthour est une zone d’intervention ; notre siège reste à Schaffhouse."
         }
       ]
     },

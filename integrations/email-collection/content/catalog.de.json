@@ -640,7 +640,7 @@
     "headline": "Schön, dass Sie sich melden.",
     "intro": "Wir haben Ihre Nachricht erhalten und kümmern uns um Ihr Anliegen. Ihre Angaben helfen uns, direkt an der richtigen Stelle anzusetzen.",
     "body": [
-      "Unser Kundenservice ist Montag bis Sonntag von 09:00 bis 19:00 Uhr erreichbar. Wenn Sie etwas ergänzen möchten, antworten Sie einfach auf diese E-Mail."
+      "{{businessHoursSentence}} Wenn Sie etwas ergänzen möchten, antworten Sie einfach auf diese E-Mail."
     ],
     "cta": "Meine Nachricht ansehen",
     "secondary": "Kraken kontaktieren",

@@ -1,3 +1,4 @@
+import { BUSINESS_HOURS } from '../config/business-hours.mjs';
 /** Business details already published in the approved contact page and imprint. */
 export const SITE_IDENTITY = {
   name: 'Kraken Properties and Facilities Management Gomes Mendes',
@@ -12,7 +13,7 @@ export const SITE_IDENTITY = {
     addressRegion: 'SH',
     addressCountry: 'CH',
   },
-  openingHours: { opens: '09:00', closes: '19:00' },
+  openingHours: { opens: BUSINESS_HOURS.opens, closes: BUSINESS_HOURS.closes },
   // Official Swiss building address register 102196962, checked 25 November 2026.
   // https://api3.geo.admin.ch/rest/services/ech/MapServer/ch.swisstopo.amtliches-gebaeudeadressverzeichnis/102196962?sr=4326&geometryFormat=geojson
   geo: { latitude: 47.699447, longitude: 8.655662 },

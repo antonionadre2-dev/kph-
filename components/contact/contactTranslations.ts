@@ -1,13 +1,27 @@
 /** Contact page copy. German source strings are stable keys; translations are plain text. */
 import { normalizeHomeLanguage, type HomeLanguage } from '../home/homeTranslations.ts';
+import { BUSINESS_HOURS, businessHoursSentence, businessHoursTimeZoneLabel } from '../../src/config/business-hours.mjs';
 
 type ContactTranslationRow = readonly [de: string, en: string, es: string, pt: string, it: string, fr: string];
 const languageIndex: Readonly<Record<HomeLanguage, number>> = { de: 0, en: 1, es: 2, pt: 3, it: 4, fr: 5 };
 const same = <const Source extends string>(source: Source) => [source, source, source, source, source, source] as const;
 
+// These legacy source strings are lookup keys, not the current displayed hours.
+const legacyHoursDescriptionSource = 'Kontaktieren Sie Kraken PFM in Schaffhausen. Persönlich erreichbar von Montag bis Sonntag, 09:00–19:00 Uhr. Reinigung und kleine Umzüge im bestehenden Rechner planen.';
+const legacyHoursSource = '09:00–19:00';
+const hoursDescriptionParts: Record<HomeLanguage, readonly [string, string]> = {
+  de: ['Kontaktieren Sie Kraken PFM in Schaffhausen.', 'Reinigung und kleine Umzüge im bestehenden Rechner planen.'],
+  en: ['Contact Kraken PFM in Schaffhausen.', 'Plan cleaning and small moves in our existing calculator.'],
+  es: ['Contacte con Kraken PFM en Schaffhausen.', 'Planifique limpiezas y pequeñas mudanzas en nuestro calculador.'],
+  pt: ['Contacte a Kraken PFM em Schaffhausen.', 'Planeie limpezas e pequenas mudanças no nosso calculador.'],
+  it: ['Contatti Kraken PFM a Sciaffusa.', 'Pianifichi pulizie e piccoli traslochi nel nostro calcolatore.'],
+  fr: ['Contactez Kraken PFM à Schaffhouse.', 'Planifiez nettoyages et petits déménagements dans notre calculateur.'],
+};
+const hoursDescription = (language: HomeLanguage) => `${hoursDescriptionParts[language][0]} ${businessHoursSentence(language)} ${hoursDescriptionParts[language][1]}`;
+
 export const contactTranslationRows = [
   ['Kontakt · Kraken PFM in Schaffhausen', 'Contact · Kraken PFM in Schaffhausen', 'Contacto · Kraken PFM en Schaffhausen', 'Contacto · Kraken PFM em Schaffhausen', 'Contatti · Kraken PFM a Sciaffusa', 'Contact · Kraken PFM à Schaffhouse'],
-  ['Kontaktieren Sie Kraken PFM in Schaffhausen. Persönlich erreichbar von Montag bis Sonntag, 09:00–19:00 Uhr. Reinigung und kleine Umzüge im bestehenden Rechner planen.', 'Contact Kraken PFM in Schaffhausen. Reach us personally Monday to Sunday, 09:00–19:00. Plan cleaning and small moves in our existing calculator.', 'Contacte con Kraken PFM en Schaffhausen. Atención personal de lunes a domingo, de 09:00 a 19:00. Planifique limpiezas y pequeñas mudanzas en nuestro calculador.', 'Contacte a Kraken PFM em Schaffhausen. Atendimento pessoal de segunda-feira a domingo, das 09:00 às 19:00. Planeie limpezas e pequenas mudanças no nosso calculador.', 'Contatti Kraken PFM a Sciaffusa. Assistenza personale dal lunedì alla domenica, dalle 09:00 alle 19:00. Pianifichi pulizie e piccoli traslochi nel nostro calcolatore.', 'Contactez Kraken PFM à Schaffhouse. Nous sommes joignables du lundi au dimanche, de 09:00 à 19:00. Planifiez nettoyages et petits déménagements dans notre calculateur.'],
+  [legacyHoursDescriptionSource, hoursDescription('en'), hoursDescription('es'), hoursDescription('pt'), hoursDescription('it'), hoursDescription('fr')],
   ['KONTAKT · SCHAFFHAUSEN', 'CONTACT · SCHAFFHAUSEN', 'CONTACTO · SCHAFFHAUSEN', 'CONTACTO · SCHAFFHAUSEN', 'CONTATTI · SCIAFFUSA', 'CONTACT · SCHAFFHOUSE'],
   ['Näher dran.', 'Closer to you.', 'Más cerca de usted.', 'Mais perto de si.', 'Più vicini a lei.', 'Plus près de vous.'],
   ['Persönlich für Sie da.', 'Personally here for you.', 'Atención personal para usted.', 'Pessoalmente ao seu dispor.', 'Al suo fianco, di persona.', 'Personnellement à vos côtés.'],
@@ -134,7 +148,7 @@ export const contactTranslationRows = [
   same('Kraken'),
   same('km'),
   same('Europe/Zurich'),
-  same('09:00–19:00'),
+  same(legacyHoursSource),
   same('Seewadelstrasse 3'),
   same('8203 Schaffhausen'),
   same('+41 77 450 57 05'),
@@ -142,14 +156,20 @@ export const contactTranslationRows = [
 ] as const satisfies readonly ContactTranslationRow[];
 
 export const contactTranslationSources: readonly string[] = contactTranslationRows.map(row => row[0]);
-const translations = new Map<string, ContactTranslationRow>(contactTranslationRows.map(row => [row[0], row]));
+function translationValue(row: ContactTranslationRow, language: HomeLanguage, index: number): string {
+  if (row[0] === legacyHoursDescriptionSource) return hoursDescription(language);
+  if (row[0] === legacyHoursSource) return `${BUSINESS_HOURS.opens}–${BUSINESS_HOURS.closes}`;
+  if (row[0] === 'Europe/Zurich') return BUSINESS_HOURS.timeZone;
+  if (row[0] === 'Zeitzone: Europe/Zurich') return businessHoursTimeZoneLabel(language);
+  return row[index];
+}
 export const CONTACT_TRANSLATIONS = Object.fromEntries(
-  Object.entries(languageIndex).map(([language, index]) => [language, Object.fromEntries(contactTranslationRows.map(row => [row[0], row[index]]))]),
+  Object.entries(languageIndex).map(([language, index]) => [language, Object.fromEntries(contactTranslationRows.map(row => [row[0], translationValue(row, language as HomeLanguage, index)]))]),
 ) as Record<HomeLanguage, Readonly<Record<string, string>>>;
 
 export function contactText(language: string, source: string, params: Readonly<Record<string, string | number>> = {}): string {
   const normalized = normalizeHomeLanguage(language);
-  const text = translations.get(source)?.[languageIndex[normalized]] ?? source;
+  const text = Object.hasOwn(CONTACT_TRANSLATIONS[normalized], source) ? CONTACT_TRANSLATIONS[normalized][source] : source;
   return text.replace(/\{([a-zA-Z][a-zA-Z0-9_]*)\}/g, (match, key: string) => Object.hasOwn(params, key) ? String(params[key]) : match);
 }
 

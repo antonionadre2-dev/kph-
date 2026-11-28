@@ -9,6 +9,7 @@ import { bookingText } from "./src/booking/uiCopy.ts";
 import { customerAccessText } from "./src/booking/customerAccessCopy.ts";
 import { getLocalSeoDescriptor } from "./src/seo/local-content.ts";
 import { getApprovedPageMetadata } from "./src/seo/local-metadata.ts";
+import { getContactCopy } from "./src/contact/contact-copy.ts";
 
 export type Language = "de" | "en" | "fr" | "it" | "es" | "pt";
 
@@ -199,7 +200,7 @@ function getBaseMetadataForPath(
   if (cleanPath.replace(/\/$/, '') === "/kontakt") {
     const locale = normalizeHomeLanguage(langParam || pathLanguage(pathname) || 'de');
     const title = contactText(locale, 'Kontakt · Kraken PFM in Schaffhausen');
-    const description = contactText(locale, 'Kontaktieren Sie Kraken PFM in Schaffhausen. Persönlich erreichbar von Montag bis Sonntag, 09:00–19:00 Uhr. Reinigung und kleine Umzüge im bestehenden Rechner planen.');
+    const description = getContactCopy(locale).meta.description;
     return {
       title, description, canonical: `${BASE_URL}/kontakt`, hreflangs: [], pageType: 'kontakt',
       h1: `${contactText(locale, 'Näher dran.')} ${contactText(locale, 'Persönlich für Sie da.')}`,

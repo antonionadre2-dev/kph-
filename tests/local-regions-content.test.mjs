@@ -9,10 +9,63 @@ import { createHash } from 'node:crypto';
 import { publicHref, pathLanguage } from '../src/routing/site-paths.ts';
 import { calculatorCta } from '../src/home/cta.ts';
 import { getRegionalPageMetadata } from '../src/seo/regional-metadata.ts';
+import { getRegionalPages } from '../src/seo/regional-content.ts';
+import { businessHoursLongLabel, interpolateBusinessHours } from '../src/config/business-hours.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const languages = ['de', 'en', 'es', 'pt', 'it', 'fr'];
 const locales = Object.fromEntries(languages.map(language => [language, JSON.parse(readFileSync(path.join(root, `src/seo/regions/${language}.json`), 'utf8'))]));
+// Four authorized hour-only replacements per language; every surrounding character stays protected.
+const approvedHourReplacements = {
+  de: {
+    sentences: [
+      'Bei Fragen erreichen Sie uns von Montag bis Sonntag zwischen 09:00 und 19:00 Uhr.',
+      'Unsere Kontaktzeiten sind Montag bis Sonntag von 09:00 bis 19:00 Uhr.',
+      'Bei Fragen sind wir Montag bis Sonntag von 09:00 bis 19:00 Uhr erreichbar.',
+    ],
+    faq: ['Montag bis Sonntag von 09:00 bis 19:00 Uhr', '{{businessHours}}'],
+  },
+  en: {
+    sentences: [
+      'You can contact us with questions from Monday to Sunday, 09:00–19:00.',
+      'Our contact hours are Monday to Sunday, 09:00–19:00.',
+      'We are available for questions Monday to Sunday, 09:00–19:00.',
+    ],
+    faq: ['Monday to Sunday, 09:00–19:00', '{{businessHours}}'],
+  },
+  es: {
+    sentences: [
+      'Si tiene preguntas, puede contactar con nosotros de lunes a domingo, de 09:00 a 19:00.',
+      'Nuestro horario de contacto es de lunes a domingo, de 09:00 a 19:00.',
+      'Estamos disponibles para sus preguntas de lunes a domingo, de 09:00 a 19:00.',
+    ],
+    faq: [' de lunes a domingo, de 09:00 a 19:00', ', {{businessHours}}'],
+  },
+  pt: {
+    sentences: [
+      'Para esclarecer dúvidas, pode contactar-nos de segunda a domingo entre as 09:00 e as 19:00.',
+      'O nosso horário de contacto é de segunda a domingo, das 09:00 às 19:00.',
+      'Para dúvidas, estamos disponíveis de segunda a domingo, das 09:00 às 19:00.',
+    ],
+    faq: ['de segunda a domingo, das 09:00 às 19:00', '{{businessHours}}'],
+  },
+  it: {
+    sentences: [
+      'Per domande ci può contattare dal lunedì alla domenica tra le 09:00 e le 19:00.',
+      'I nostri orari di contatto sono dal lunedì alla domenica, dalle 09:00 alle 19:00.',
+      'Per domande siamo raggiungibili dal lunedì alla domenica dalle 09:00 alle 19:00.',
+    ],
+    faq: ['dal lunedì alla domenica dalle 09:00 alle 19:00', '{{businessHours}}'],
+  },
+  fr: {
+    sentences: [
+      'Pour vos questions, nous sommes joignables du lundi au dimanche de 09:00 à 19:00.',
+      'Nous sommes joignables du lundi au dimanche de 09:00 à 19:00.',
+      'Nous répondons à vos questions du lundi au dimanche de 09:00 à 19:00.',
+    ],
+    faq: ['du lundi au dimanche de 09:00 à 19:00', '{{businessHours}}'],
+  },
+};
 const cache = path.join(root, 'node_modules/.cache');
 mkdirSync(cache, { recursive: true });
 const temporary = mkdtempSync(path.join(cache, 'regional-content-test-'));
@@ -77,6 +130,21 @@ test('historical approved regional content stays verifiable and only authorized 
     for(const dotted of [...authorized,...(['pt','it'].includes(language)?['1.seo.description']:[])]){
       const parts=dotted.split('.');let a=original,b=current;for(const part of parts.slice(0,-1)){a=a[part];b=b[part];}a[parts.at(-1)]=b[parts.at(-1)];
     }
+    const hourEdits = [
+      ...approvedHourReplacements[language].sentences.map((oldText, index) => [`${index}.why.points.2.body`, oldText, '{{businessHoursSentence}}']),
+      ['1.faqs.0.answer', ...approvedHourReplacements[language].faq],
+    ];
+    assert.equal(hourEdits.length, 4);
+    for (const [dotted, oldText, replacement] of hourEdits) {
+      const parts = dotted.split('.');
+      let approved = original, actual = current;
+      for (const part of parts.slice(0, -1)) { approved = approved[part]; actual = actual[part]; }
+      const field = parts.at(-1);
+      assert.equal(approved[field].split(oldText).length, 2, `${language}/${dotted}: exact historical hours fragment occurs once`);
+      const expected = approved[field].replace(oldText, replacement);
+      assert.equal(actual[field], expected, `${language}/${dotted}: only the approved hours fragment may change`);
+      approved[field] = expected;
+    }
     assert.deepEqual(current,original,language+': unrelated fields or structures changed');
   }
   assert.equal(new Set(locales.de.map(page => page.intro[0])).size, 3);
@@ -85,12 +153,14 @@ test('historical approved regional content stays verifiable and only authorized 
 
 test('all 18 regional articles expose complete translated copy and matching metadata before JavaScript', () => {
   for (const language of languages) {
-    for (const [index, page] of locales[language].entries()) {
+    for (const [index, page] of getRegionalPages(language).entries()) {
+      const resolvedSource = JSON.parse(JSON.stringify(locales[language][index]), (_key, value) => typeof value === 'string' ? interpolateBusinessHours(value, language) : value);
+      assert.deepEqual(page, resolvedSource, `${language}/${page.id}: resolved page preserves all validated source fields`);
       const html = render(page.slug, language);
       assert.equal((html.match(/<h1\b/g) || []).length, 1, `${language} ${page.id}`);
       assert.ok(html.includes(escapeHtml(page.h1)));
       for (const source of publicCopy(page)) assert.ok(html.includes(escapeHtml(source)), `${language}/${page.id}: ${source}`);
-      const approved = locales.de[index];
+      const approved = getRegionalPages('de')[index];
       assert.equal(page.id, approved.id);
       assert.equal(page.slug, approved.slug);
       assert.deepEqual(page.services.map(item => item.id), approved.services.map(item => item.id));
@@ -101,7 +171,8 @@ test('all 18 regional articles expose complete translated copy and matching meta
       assert.deepEqual(metadata.faqs, page.faqs);
       assert.equal((html.match(/type="checkbox"/g) || []).length, 4);
       assert.match(html, /<progress[^>]*value="0"/);
-      assert.match(html, /Europe\/Zurich/);
+      assert.ok(html.includes(escapeHtml(businessHoursLongLabel(language))), `${language}/${page.id}: localized Zurich contact hours`);
+      assert.doesNotMatch(html, /\{\{businessHours(?:Sentence|TimeZone)?\}\}/);
       assert.doesNotMatch(html, /data-calculator|data-service=|localStorage|<iframe|<script|city=|offerCount|AggregateOffer/);
       for (const source of html.matchAll(/src="([^"]+)"/g)) assert.ok(existsSync(path.join(root, 'public', source[1])), source[1]);
     }

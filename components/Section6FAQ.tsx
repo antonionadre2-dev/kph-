@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from '../i18n';
+import { businessHoursLongLabel } from '../src/config/business-hours.mjs';
 
 interface Section6FAQProps {
   onNavigate?: (path: string) => void;
@@ -59,7 +60,7 @@ export default function Section6FAQ({ onNavigate }: Section6FAQProps) {
             },
             {
               q: 'What does the emergency and express cleaning service cover?',
-              a: 'Our emergency service assists with unexpected incidents such as water damage, event cleanup, or urgent clearouts. We are reachable 24/7 via phone and WhatsApp.'
+              a: `Our emergency service assists with unexpected incidents such as water damage, event cleanup, or urgent clearouts. We are reachable via phone and WhatsApp: ${businessHoursLongLabel('en')}.`
             },
             {
               q: 'In which languages can customer support be contacted?',
@@ -109,7 +110,7 @@ export default function Section6FAQ({ onNavigate }: Section6FAQProps) {
             },
             {
               q: 'Que couvre le service de nettoyage d\'urgence et express ?',
-              a: 'Notre service d\'urgence intervient lors d\'incidents imprévus (dégâts des eaux, événements, débarras urgent). Joignable 24/7 par téléphone et WhatsApp.'
+              a: `Notre service d'urgence intervient lors d'incidents imprévus (dégâts des eaux, événements, débarras urgent). Joignable par téléphone et WhatsApp : ${businessHoursLongLabel('fr')}.`
             },
             {
               q: 'En quelles langues le service client peut-il être contacté ?',
@@ -159,7 +160,7 @@ export default function Section6FAQ({ onNavigate }: Section6FAQProps) {
             },
             {
               q: 'Cosa copre il servizio di pulizia di emergenza ed express?',
-              a: 'Il nostro servizio d\'emergenza interviene per imprevisti come danni d\'acqua o sgomberi urgenti. Raggiungibili 24/7 via telefono e WhatsApp.'
+              a: `Il nostro servizio d'emergenza interviene per imprevisti come danni d'acqua o sgomberi urgenti. Raggiungibili via telefono e WhatsApp: ${businessHoursLongLabel('it')}.`
             },
             {
               q: 'In quali lingue è disponibile il servizio clienti?',
@@ -209,7 +210,7 @@ export default function Section6FAQ({ onNavigate }: Section6FAQProps) {
             },
             {
               q: '¿Qué cubre el servicio de limpieza urgente y exprés?',
-              a: 'Atendemos imprevistos como fugas de agua, limpiezas post-eventos o vaciados urgentes. Disponibles 24/7 por teléfono y WhatsApp.'
+              a: `Atendemos imprevistos como fugas de agua, limpiezas post-eventos o vaciados urgentes. Atención por teléfono y WhatsApp: ${businessHoursLongLabel('es')}.`
             },
             {
               q: '¿En qué idiomas atienden el servicio de atención al cliente?',
@@ -259,7 +260,7 @@ export default function Section6FAQ({ onNavigate }: Section6FAQProps) {
             },
             {
               q: 'O que cobre o serviço de limpeza de urgência e expresso?',
-              a: 'Atendemos imprevistos como fugas de água, eventos ou desocupações urgentes. Disponíveis 24/7 por telefone e WhatsApp.'
+              a: `Atendemos imprevistos como fugas de água, eventos ou desocupações urgentes. Disponíveis por telefone e WhatsApp: ${businessHoursLongLabel('pt')}.`
             },
             {
               q: 'Em que idiomas está disponível o apoio ao cliente?',
@@ -311,7 +312,7 @@ export default function Section6FAQ({ onNavigate }: Section6FAQProps) {
             },
             {
               q: 'Was deckt der Notfall- und Express-Reinigungsservice ab?',
-              a: 'Unser Notfalldienst hilft bei unvorhergesehenen Zwischenfällen wie Wasserschäden, Verschmutzungen nach Events oder dringenden Räumungen. Wir sind rund um die Uhr telefonisch und via WhatsApp erreichbar.'
+              a: `Unser Notfalldienst hilft bei unvorhergesehenen Zwischenfällen wie Wasserschäden, Verschmutzungen nach Events oder dringenden Räumungen. Wir sind telefonisch und via WhatsApp erreichbar: ${businessHoursLongLabel('de')}.`
             },
             {
               q: 'In welchen Sprachen kann der Kundenservice kontaktiert werden?',

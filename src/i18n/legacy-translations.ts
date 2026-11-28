@@ -1,4 +1,5 @@
 /** Deferred compatibility copy for authenticated legacy tools; never imported by public SEO or Home. */
+import { businessHoursLabel } from '../config/business-hours.mjs';
 export type Language = 'en' | 'de-CH' | 'de' | 'fr' | 'it' | 'es' | 'pt';
 
 // Consultation specific keys
@@ -2586,7 +2587,7 @@ const enTranslations = {
     'segment.commercial.bullet1': 'Office and common areas cleaning',
     'segment.commercial.bullet2': 'Periodic maintenance & reviews',
     'segment.commercial.bullet3': 'Comprehensive facility management',
-    'segment.commercial.bullet4': '24/7 support — one number, everything solved',
+    'segment.commercial.bullet4': `Support · ${businessHoursLabel('en')} — one number, everything solved`,
     'segment.commercial.cta': 'Let\'s talk about your portfolio ➔',
     'segment.commercial.alt': 'Commercial Property',
 
@@ -3423,7 +3424,7 @@ const esTranslations = {
     'segment.commercial.bullet1': 'Limpieza de oficinas y zonas comunes',
     'segment.commercial.bullet2': 'Mantenimiento y revisiones periódicas',
     'segment.commercial.bullet3': 'Gestión integral de instalaciones',
-    'segment.commercial.bullet4': 'Soporte 24/7 — un número, todo resuelto',
+    'segment.commercial.bullet4': `Soporte · ${businessHoursLabel('es')} — un número, todo resuelto`,
     'segment.commercial.cta': 'Hablemos de tu cartera ➔',
     'segment.commercial.alt': 'Propiedad Comercial',
 
@@ -4371,7 +4372,7 @@ const deTranslations = {
     'segment.commercial.bullet1': 'Büroreinigung',
     'segment.commercial.bullet2': 'Gebäudeunterhalt',
     'segment.commercial.bullet3': 'Facility Management',
-    'segment.commercial.bullet4': '24/7 Support',
+    'segment.commercial.bullet4': `Support · ${businessHoursLabel('de')}`,
     'segment.commercial.cta': 'BESUCH ANFORDERN',
     'segment.commercial.alt': 'Gewerbeimmobilie',
 
@@ -5288,7 +5289,7 @@ const frTranslations = {
     'segment.commercial.bullet1': 'Nettoyage de bureaux',
     'segment.commercial.bullet2': 'Maintenance de bâtiments',
     'segment.commercial.bullet3': 'Facility management',
-    'segment.commercial.bullet4': 'Support 24/7',
+    'segment.commercial.bullet4': `Support · ${businessHoursLabel('fr')}`,
     'segment.commercial.cta': 'SOUHAITER UNE VISITE',
     'segment.commercial.alt': 'Propriété Commerciale',
 
@@ -6112,7 +6113,7 @@ const itTranslations = {
     'segment.commercial.bullet1': 'Pulizia uffici',
     'segment.commercial.bullet2': 'Manutenzione edifici',
     'segment.commercial.bullet3': 'Facility management',
-    'segment.commercial.bullet4': 'Supporto 24/7',
+    'segment.commercial.bullet4': `Supporto · ${businessHoursLabel('it')}`,
     'segment.commercial.cta': 'RICHIEDI UNA VISITA',
     'segment.commercial.alt': 'Proprietà Commerciale',
 
@@ -6936,7 +6937,7 @@ const ptTranslations = {
     'segment.commercial.bullet1': 'Limpeza de escritórios',
     'segment.commercial.bullet2': 'Manutenção de edifícios',
     'segment.commercial.bullet3': 'Gestão de facilities',
-    'segment.commercial.bullet4': 'Suporte 24/7',
+    'segment.commercial.bullet4': `Suporte · ${businessHoursLabel('pt')}`,
     'segment.commercial.cta': 'SOLICITAR VISITA',
     'segment.commercial.alt': 'Propriedade Comercial',
 

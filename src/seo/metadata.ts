@@ -12,6 +12,7 @@ import { getRegionalPageMetadata } from './regional-metadata.ts';
 import { getContactCopy } from '../contact/contact-copy.ts';
 import { getTermsUiCopy } from '../legal/terms-tools.ts';
 import { getImpressumMetadata } from '../legal/impressum-metadata.ts';
+import { businessOpeningHoursSpecification } from '../config/business-hours.mjs';
 
 export { normalizeCanonicalPath } from '../../seoConfig.ts';
 
@@ -123,11 +124,7 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
     geo: { '@type': 'GeoCoordinates', ...SITE_IDENTITY.geo },
     priceRange: `${homeText(locale, 'Umzugsreinigung')}: ${publicPriceText(locale, 'from', { price: publicMoney(endMinimum.minimumCents!) })}; ${homeText(locale, 'Kleine Umzüge')}: ${publicPriceText(locale, 'from', { price: publicMoney(movingMinimum.hourlyRateCents!) })}/h, ${publicPriceText(locale, 'minimumOrder', { price: publicMoney(movingMinimum.minimumCents!) })}. ${publicPriceText(locale, 'vat')}`,
     areaServed: SITE_IDENTITY.areas.map(name => ({ '@type': 'City', name })),
-    openingHoursSpecification: [{
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-      ...SITE_IDENTITY.openingHours,
-    }],
+    openingHoursSpecification: businessOpeningHoursSpecification(),
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: homeText(locale, 'Reinigung und kleine Umzüge in Zürich, Schaffhausen und Winterthur.'),
