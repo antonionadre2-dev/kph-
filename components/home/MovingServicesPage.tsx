@@ -3,6 +3,7 @@ import { useTranslation } from '../../i18n';
 import ApprovedHeader from './ApprovedHeader';
 import TransitSection from './TransitSection';
 import { initTransit } from './van';
+import { initDeferredHomeMedia } from './deferred-media';
 import { homeText, normalizeHomeLanguage } from './homeTranslations';
 import { publicHref } from '../../src/routing/site-paths';
 import { getMovingPageCopy } from '../../src/home/moving-copy';
@@ -22,6 +23,8 @@ export default function MovingServicesPage({ onNavigate }: { onNavigate: (path: 
   currentLanguage.current = locale;
   const t = (source: string, params?: Record<string, string | number>) => homeText(locale, source, params);
   const quoteHref = publicHref('/quote?service=moving', locale);
+  // Restore Home's cargo-image loader; its returned cleanup also covers remounts.
+  useEffect(() => root.current ? initDeferredHomeMedia(root.current) : undefined, []);
   useEffect(() => root.current ? initTransit(root.current, (source: string, params?: Record<string, string | number>) => homeText(currentLanguage.current, source, params)) : undefined, []);
   useEffect(() => { root.current?.dispatchEvent(new CustomEvent('kraken:languagechange')); }, [locale]);
   return <div className="kraken-home kr-moving-page" lang={locale} ref={root}>

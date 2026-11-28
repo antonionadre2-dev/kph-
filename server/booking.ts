@@ -536,7 +536,13 @@ export function createBookingHandlers({env=process.env,fetcher=fetch,clock=Date.
       const payment=paymentReady?createPayrexxAdapter({instance:env.PAYREXX_INSTANCE!,secret:env.PAYREXX_API_SECRET!,mode:mode as 'live'|'test',origin},fetcher):null;
       const emailReady=Boolean(env.RESEND_API_KEY&&env.BOOKING_EMAIL_FROM&&origin.startsWith('https://'));
       const providerEmail=emailReady?createResendEmailAdapter(env.RESEND_API_KEY!,fetcher,clock):null;
-      const sendEmail=providerEmail?Object.assign(async(message:any)=>{if(await store.isEmailSuppressed(message.to)){const error:any=new BookingError('EMAIL_SUPPRESSED');error.definitelyNotSent=true;throw error;}return providerEmail(message);},{schedule:async(message:any,scheduledAt:string)=>{if(await store.isEmailSuppressed(message.to))throw new BookingError('EMAIL_SUPPRESSED');return providerEmail.schedule(message,scheduledAt);},cancel:providerEmail.cancel,canSchedule:providerEmail.canSchedule}):null;
+      // Full access is isolated to reminder scheduling/cancellation. Ordinary mail always uses the sending-only key.
+      const schedulingEmail=emailReady&&env.RESEND_SCHEDULING_API_KEY?.trim()?createResendEmailAdapter(env.RESEND_SCHEDULING_API_KEY,fetcher,clock):null;
+      const sendEmail=providerEmail?Object.assign(async(message:any)=>{if(await store.isEmailSuppressed(message.to)){const error:any=new BookingError('EMAIL_SUPPRESSED');error.definitelyNotSent=true;throw error;}return providerEmail(message);},{
+        schedule:async(message:any,scheduledAt:string)=>{if(!schedulingEmail)throw new BookingError('EMAIL_SCHEDULE_NOT_CONFIGURED',503);if(await store.isEmailSuppressed(message.to))throw new BookingError('EMAIL_SUPPRESSED');return schedulingEmail.schedule(message,scheduledAt);},
+        cancel:async(id:string)=>{if(!schedulingEmail)throw new BookingError('EMAIL_SCHEDULE_NOT_CONFIGURED',503);return schedulingEmail.cancel(id);},
+        canSchedule:()=>schedulingEmail?schedulingEmail.canSchedule():Promise.resolve(false),
+      }):null;
       const emailCollection=collectionConfiguration(env,origin);
       const service=createBookingService({store,tokenSecret:secret,origin,mode,payment,sendEmail,sender:env.BOOKING_EMAIL_FROM,clock,emailCollectionEnabled:emailCollection.enabled,paymentNotificationsEnabled:env.BOOKING_EMAIL_COLLECTION_PAYMENTS_ENABLED==='true'});
       const remindersEnabled=env.BOOKING_RECOVERY_REMINDERS_ENABLED==='true'&&(env.RESEND_WEBHOOK_SECRET||'').length>=32&&Boolean(suppressionScope(env));
