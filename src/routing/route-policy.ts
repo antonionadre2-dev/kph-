@@ -4,11 +4,11 @@ import { parseSitePath, publicHref, pathLanguage } from './site-paths.ts';
 const CITIES = ['schaffhausen', 'zuerich', 'winterthur'];
 const SERVICES = ['umzugsreinigung', 'wohnungsreinigung', 'grundreinigung', 'kleinumzug', 'fensterreinigung'];
 export const PUBLIC_BASE_PATHS = [
-  '/', '/leistungen', '/ueber-uns', '/kontakt', '/offerte', '/einsatzgebiete',
+  '/', '/leistungen', '/kleine-umzuege', '/ueber-uns', '/kontakt', '/offerte', '/einsatzgebiete',
   '/reinigung/kanton-schaffhausen', '/reinigung/region-winterthur', '/reinigung/region-zuerich',
   ...CITIES.flatMap(city => SERVICES.map(service => `/${service}/${city}`)),
 ];
-const PRIVATE_BASE_PATHS = ['/login', '/register', '/dashboard', '/customer-access', '/quote-demo', '/commercial-quote', '/reviews', '/reviewsvip', '/review-invite', '/dejar-opinion'];
+const PRIVATE_BASE_PATHS = ['/login', '/register', '/dashboard', '/customer-access', '/quote-demo', '/reviews', '/reviewsvip', '/review-invite', '/dejar-opinion'];
 const LEGAL_PATHS = ['/impressum', '/gdpr', '/terms'];
 export const RETIRED_PAGE_PATHS = ['/commercial', '/careers', '/sustainability', '/blog', '/comic', '/comic-shop', '/hse'];
 export const RETIRED_SERVICE_SLUGS = ['gardening', 'exterior-cleaning', 'pest-control', 'waste-management', 'car-detailing', 'gutter-cleaning', 'upholstery-cleaning', 'mudanza-cajas', 'pulido-suelos', 'bar-restaurant-cleaning', 'property-managers', 'airbnb-rentals', 'turnover-cleaning', 'offices-corporate', 'retail-showrooms', 'gastronomy-restaurants', 'kitchen-deep-cleaning', 'industry-logistics'];

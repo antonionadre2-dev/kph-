@@ -94,7 +94,7 @@
       "We clarify any questions personally",
       "You receive a separate confirmation"
     ],
-    "note": "For any questions, simply quote {{bookingReference}}.",
+    "note": "Nothing is charged now. You pay only after we confirm your appointment.",
     "tone": "calm",
     "visual": "service",
     "signature": "Antonio & your Kraken team",
@@ -135,7 +135,9 @@
     "headline": "Your quote. Clear in every detail.",
     "intro": "We have prepared your quote for {{serviceName}} in {{city}}. The agreed scope of work and total price are together in one place.",
     "body": [
-      "Take your time to review the details. If anything needs changing, please speak to us before accepting."
+      "Take your time to review the details. If anything needs changing, please speak to us before accepting.",
+      "After we confirm your appointment, you pay the full confirmed amount before the service. Payment is due within 3 days and no later than 48 hours before work starts; short-notice confirmations are payable immediately. Secure payment through Payrexx (Switzerland).",
+      "Full refund for cancellations at least 48 hours before the service. Between 48 and 12 hours, 50% is charged; with less than 12 hours, 100%."
     ],
     "cta": "Review my quote",
     "secondary": "Contact Kraken",
@@ -161,7 +163,9 @@
     "headline": "We look forward to helping you.",
     "intro": "Your appointment for {{serviceName}} in {{city}} is confirmed for {{appointmentDate}} at {{appointmentTime}}. Your agreed details are below.",
     "body": [
-      "Please check the address and access instructions. If anything changes, contact us in advance so we can plan together."
+      "Please check the address and access instructions. If anything changes, contact us in advance so we can plan together.",
+      "After we confirm your appointment, you pay the full confirmed amount before the service. Payment is due within 3 days and no later than 48 hours before work starts; short-notice confirmations are payable immediately. Secure payment through Payrexx (Switzerland).",
+      "Full refund for cancellations at least 48 hours before the service. Between 48 and 12 hours, 50% is charged; with less than 12 hours, 100%."
     ],
     "cta": "View my booking",
     "secondary": "Contact Kraken",
@@ -222,7 +226,7 @@
       "Check the appointment and address",
       "Review the current scope and price"
     ],
-    "note": "The payment summary shows whether the change results in a remaining balance or a refund.",
+    "note": "The payment overview shows whether the change creates an additional charge or a refund.",
     "tone": "success",
     "visual": "calendar",
     "signature": "Antonio & your Kraken team",
@@ -288,7 +292,9 @@
     "headline": "Your payment is ready.",
     "intro": "A payment of {{amountFormatted}} is ready for booking {{bookingReference}}. Please review the payment summary and open your personal payment link.",
     "body": [
-      "The link shows the amount and available payment methods. Only enter payment details on the payment page that opens."
+      "The link shows the amount and available payment methods. Only enter payment details on the payment page that opens.",
+      "After we confirm your appointment, you pay the full confirmed amount before the service. Payment is due within 3 days and no later than 48 hours before work starts; short-notice confirmations are payable immediately. Secure payment through Payrexx (Switzerland).",
+      "Full refund for cancellations at least 48 hours before the service. Between 48 and 12 hours, 50% is charged; with less than 12 hours, 100%."
     ],
     "cta": "Open my payment",
     "secondary": "Contact Kraken",
@@ -307,21 +313,20 @@
   },
   "deposit_received": {
     "stage": "Payments",
-    "title": "Deposit received",
-    "subject": "Deposit received: {{amountFormatted}} · {{bookingReference}}",
-    "preheader": "Thank you. Your receipt and remaining balance are ready.",
+    "title": "Payment received",
+    "subject": "Payment received: {{amountFormatted}} · {{bookingReference}}",
+    "preheader": "Payment received",
     "eyebrow": "Payment confirmed",
-    "headline": "Thank you. Your deposit is received.",
-    "intro": "We have received your deposit of {{amountFormatted}} for {{serviceName}}. It will be deducted from the agreed total.",
+    "headline": "Payment received",
+    "intro": "We have received your payment of {{amountFormatted}} for {{serviceName}}. It is credited to the agreed total.",
     "body": [
-      "The amount paid, remaining balance and receipt are shown in your summary. Your appointment status is shown separately in your booking."
+      "Your receipt, the amount paid and any amount still due appear in the overview. Appointment status is shown separately."
     ],
     "cta": "View my receipt",
     "secondary": "Contact Kraken",
     "nextTitle": "Everything clearly set out",
     "next": [
-      "Check the deposit on your receipt",
-      "View appointment status and preparation in your booking"
+      "Check your receipt"
     ],
     "note": "A payment does not replace a separate appointment confirmation.",
     "tone": "success",
@@ -337,7 +342,7 @@
     "preheader": "Your booking is fully paid. Here is your receipt.",
     "eyebrow": "All paid",
     "headline": "Thank you for your payment.",
-    "intro": "Your payment of {{amountFormatted}} has been received. There is no remaining balance for the currently agreed scope of booking {{bookingReference}}.",
+    "intro": "We have received {{amountFormatted}}. The currently agreed scope of booking {{bookingReference}} is fully paid.",
     "body": [
       "Your receipt lists the booked services and payment. The current appointment status is available in your booking."
     ],
@@ -407,21 +412,21 @@
   },
   "balance_due": {
     "stage": "Payments",
-    "title": "Remaining balance",
-    "subject": "Remaining balance for booking {{bookingReference}}",
-    "preheader": "Payments already received have been taken into account.",
+    "title": "Additional payment",
+    "subject": "Additional payment · {{bookingReference}}",
+    "preheader": "Check the work recorded after the service. The additional invoice is payable within 7 days.",
     "eyebrow": "A clear final summary",
-    "headline": "Here is your remaining balance.",
-    "intro": "There is a remaining balance of {{balanceFormatted}} for {{serviceName}}. Payments already received are deducted in your summary.",
+    "headline": "Your additional invoice is ready.",
+    "intro": "{{amountFormatted}} is due for the agreed additional work on booking {{bookingReference}}.",
     "body": [
-      "Please review the final summary of the agreed services. If anything is incorrect, contact us before paying."
+      "Check the work recorded after the service. The additional invoice is payable within 7 days."
     ],
-    "cta": "Review and pay my balance",
+    "cta": "Review and pay invoice",
     "secondary": "Contact Kraken",
     "nextTitle": "Everything in one place",
     "next": [
-      "Check the services and payments already made",
-      "Pay the remaining balance through the payment link"
+      "Check your receipt",
+      "Review and pay invoice"
     ],
     "note": "No additional VAT is charged.",
     "tone": "action",
@@ -439,7 +444,7 @@
     "headline": "Your refund has been initiated.",
     "intro": "A refund of {{amountFormatted}} has been initiated through the payment provider for booking {{bookingReference}}.",
     "body": [
-      "When the amount appears in your account depends on your payment method and bank. You can view the refund details through the link."
+      "Refunds are made within 10 days to the original payment method. Your bank may also affect when the credit appears."
     ],
     "cta": "View my refund",
     "secondary": "Contact Kraken",
@@ -574,7 +579,7 @@
       "Check the appointment and access",
       "Let us know any special requests in advance"
     ],
-    "note": "The services and prices confirmed for this visit apply.",
+    "note": "Regular cleaning is paid monthly in advance. The monthly amount covers confirmed visits in the billing period.",
     "tone": "calm",
     "visual": "regular",
     "signature": "Antonio & your Kraken team",
@@ -599,7 +604,7 @@
       "Review the affected appointments",
       "Check the services and frequency"
     ],
-    "note": "Any changes to services or prices are clearly shown.",
+    "note": "Regular cleaning is paid monthly in advance. The monthly amount covers confirmed visits in the billing period.",
     "tone": "success",
     "visual": "regular",
     "signature": "Antonio & your Kraken team",

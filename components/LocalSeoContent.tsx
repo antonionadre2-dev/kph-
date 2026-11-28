@@ -10,6 +10,7 @@ import { localText } from '../src/seo/local-translations';
 import { LocalRegionalContent } from './LocalRegionalContent';
 import { EndOfTenancyLanding } from './EndOfTenancyLanding';
 import { SelectedServicePrice } from './SelectedServicePrice';
+import CityServicePlanning from './CityServicePlanning';
 import { calculatorCta } from '../src/home/cta';
 import { businessHoursLongLabel } from '../src/config/business-hours.mjs';
 import './local-seo.css';
@@ -118,6 +119,7 @@ function LegacyLocalSeoContent({ route, language }: LocalSeoContentProps) {
         </section>
 
         {isConfirmedService && <SelectedServicePrice service={service.calculatorService as 'regular' | 'windows' | 'end' | 'deep' | 'moving'} language={language} />}
+        {isConfirmedService && <CityServicePlanning cityId={city.id} serviceId={service.id} language={language} />}
 
         <section className="local-seo-section local-seo-price-plan" aria-labelledby="local-price-plan-title">
           <h2 id="local-price-plan-title">{t('Umfang, Preis und Termin planen')}</h2>

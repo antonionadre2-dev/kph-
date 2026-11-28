@@ -1,3 +1,4 @@
+import { seedStoredV2 } from './helpers/legacy-booking.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createBookingService, validateBookingRequest, BOOKING_TERMS_VERSION } from '../server/booking.ts';
@@ -97,7 +98,7 @@ function durableStore() {
 }
 
 function request(language: any = 'es', overrides: any = {}) {
-  const selection = defaultSelection('regular');
+  const selection = {...defaultSelection('regular'),frequency:'once' as const};
   return {
     selection, language,
     customer: { name: 'Synthetic Customer', email: 'client@example.test', phone: '+41770000000', address: 'Teststrasse 1', postalCode: '8200', city: 'Schaffhausen' },
@@ -137,10 +138,10 @@ function scenario(options: { send?: (message: any) => Promise<any> } = {}) {
   });
   return { store, sent, calls, worker, advance(ms: number) { time += ms; }, setProvider(status: string) { providerStatus = status; } };
 }
-const checkoutInput = (language = 'de') => ({ language, acceptedQuoteRevision: 1, termsAccepted: true, termsVersion: BOOKING_TERMS_VERSION });
+const checkoutInput = (booking:any, language = 'de') => ({ language, acceptedQuoteRevision: booking.quoteRevision, termsAccepted: true, termsVersion: booking.termsVersion, ...(booking.payment.model==='full_prepayment'?{acceptedTotalDueCents:booking.payment.totalDueCents}:{}) });
 const jobsOf = (store: ReturnType<typeof durableStore>, templateId: string) => [...store.mail.values()].filter(job => job.notification?.templateId === templateId);
 
-test('all six selections persist through request, a fresh worker and the verified deposit notification', async () => {
+test('all six selections persist through request, a fresh worker and the verified full-payment notification', async () => {
   for (const language of supported) {
     const f = scenario(), service = f.worker();
     const booking = await service.create(request(language));
@@ -160,11 +161,11 @@ test('all six selections persist through request, a fresh worker and the verifie
     assert.ok(f.sent[0].html.includes(`<html lang="${language}">`));
     assert.ok(f.sent[0].text.includes(`lang=${language}`));
     await service.confirmAppointment(booking.bookingId, { operatorId: 'synthetic-operator', holdExpiresAt: '2026-11-25T15:00:00Z' });
-    await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput(language === 'de' ? 'es' : 'de'));
+    await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput(booking,language === 'de' ? 'es' : 'de'));
     f.setProvider('paid');
     await f.worker().reconcile(booking.bookingId);
     await f.worker().runDue();
-    const receipts = jobsOf(f.store, 'deposit_received');
+    const receipts = jobsOf(f.store, 'payment_received');
     assert.equal(receipts.length, 1);
     assert.equal(receipts[0].prepared.language, language);
     assert.ok(receipts[0].prepared.text.includes(`lang=${language}`));
@@ -182,9 +183,9 @@ test('German first visit followed by a Spanish choice survives checkout locale, 
   assert.deepEqual(otherDevice.languageSnapshot, { language: 'es', source: 'selected', version: 1 });
   assert.equal(jobsOf(f.store, 'booking_confirmed').length, 0);
   await browserSession.confirmAppointment(booking.bookingId, { operatorId: 'synthetic-operator', holdExpiresAt: '2026-11-25T15:00:00Z' });
-  assert.equal((await f.store.get(booking.bookingId)).scheduling.status, 'held');
+  assert.equal((await f.store.get(booking.bookingId)).scheduling.status, 'confirmed');
   assert.equal(jobsOf(f.store, 'booking_confirmed').length, 0);
-  await browserSession.checkout(booking.bookingId, booking.publicToken!, checkoutInput('fr'));
+  await browserSession.checkout(booking.bookingId, booking.publicToken!, checkoutInput(booking,'fr'));
   assert.equal((await f.store.get(booking.bookingId)).language, 'es');
   assert.equal(jobsOf(f.store, 'deposit_received').length, 0, 'a success-page visit cannot verify a payment');
   assert.equal(jobsOf(f.store, 'payment_received').length, 0);
@@ -195,26 +196,26 @@ test('German first visit followed by a Spanish choice survives checkout locale, 
   const serverCallback = f.worker();
   await serverCallback.reconcile(booking.bookingId);
   await serverCallback.runDue();
-  const receipt = jobsOf(f.store, 'deposit_received');
+  const receipt = jobsOf(f.store, 'payment_received');
   assert.equal(receipt.length, 1);
-  assert.equal(jobsOf(f.store, 'payment_received').length, 0, 'the15% deposit is not a fully paid service');
+  assert.equal(jobsOf(f.store, 'deposit_received').length, 0, 'a new v3 full payment never creates a legacy deposit receipt');
   assert.equal(jobsOf(f.store, 'booking_confirmed').length, 1);
   assert.equal(receipt[0].status, 'sent');
   assert.equal(receipt[0].prepared.language, 'es');
-  assert.match(receipt[0].prepared.subject, /Anticipo recibido/);
-  assert.ok(receipt[0].prepared.text.includes('Saldo orientativo pendiente'));
+  assert.match(receipt[0].prepared.subject, /Pago confirmado/);
+  assert.ok(receipt[0].prepared.text.includes('pagado por completo'));assert.equal(receipt[0].notification.renderData.pricing.paidRappen,receipt[0].notification.renderData.pricing.totalRappen);
   assert.equal(receipt[0].notification.renderData.pricing.priceType, 'estimate');
   assert.ok(receipt[0].prepared.text.includes('lang=es'));
   assert.ok(f.sent.every(message => message.language === 'es'));
   const record = await f.store.get(booking.bookingId);
   assert.equal(record.payment.amountPaidCents, record.payment.amountDueNowCents);
-  assert.ok(record.payment.remainingBalanceCents > 0);
+  assert.equal(record.payment.outstandingCents,0);assert.equal(Object.hasOwn(record.payment,'remainingBalanceCents'),false);
   const count = f.sent.length, jobs = f.store.mail.size;
   await f.worker().reconcile(booking.bookingId);
   await f.worker().runDue();
   assert.equal(f.sent.length, count);
   assert.equal(f.store.mail.size, jobs);
-  assert.equal(jobsOf(f.store, 'deposit_received').length, 1);
+  assert.equal(jobsOf(f.store, 'payment_received').length, 1);
   assert.equal(f.calls.gateways, 1);
 });
 
@@ -231,15 +232,18 @@ test('missing and invalid new languages fail, while supported regional tags norm
   }
 });
 
-test('collection rollout leaves payment receipts with the existing provider by default', async () => {
+test('persisted v2 collection rollout leaves payment receipts with the existing provider by default', async () => {
   const f = scenario(), service = f.worker(true, 'default');
   const booking = await service.create(request('es'));
+  // This rollout regression deliberately loads a stored v2 agreement; public creation remains v3.
+  seedStoredV2(f.store.records.get(booking.bookingId));
+  const historical=await f.store.get(booking.bookingId),originalPayment=clone(historical.payment),originalAcceptance=clone(historical.termsAcceptance);
   await service.confirmAppointment(booking.bookingId, { operatorId: 'synthetic-operator', holdExpiresAt: '2026-11-25T15:00:00Z' });
-  await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput('de'));
+  await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput(historical,'de'));
   f.setProvider('paid');
   await f.worker(true, 'default').reconcile(booking.bookingId);
   await f.worker(true, 'default').runDue();
-  assert.equal((await f.store.get(booking.bookingId)).payment.status, 'paid');
+  const saved=await f.store.get(booking.bookingId);assert.equal(saved.payment.status,'paid');assert.equal(saved.payment.amountDueNowCents,originalPayment.amountDueNowCents);assert.equal(saved.payment.remainingBalanceCents,saved.quote.totalCents-originalPayment.amountDueNowCents);assert.deepEqual(saved.termsAcceptance,originalAcceptance);
   assert.equal(jobsOf(f.store, 'deposit_received').length, 0);
   assert.equal(jobsOf(f.store, 'payment_received').length, 0);
   assert.equal(f.sent.filter(message => ['deposit_received', 'payment_received'].includes(message.templateId)).length, 0);
@@ -258,7 +262,7 @@ test('a retry after a definite429 rejection reuses the entire prepared envelope 
   const service = f.worker(), booking = await service.create(request('es'));
   await service.runDue();
   await service.confirmAppointment(booking.bookingId, { operatorId: 'synthetic-operator', holdExpiresAt: '2026-11-25T15:00:00Z' });
-  await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput('de'));
+  await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput(booking,'de'));
   await service.runDue();
   const originalJob = jobsOf(f.store, 'payment_requested')[0], prepared = clone(originalJob.prepared);
   assert.equal(originalJob.status, 'queued');
@@ -293,7 +297,7 @@ test('an explicit authenticated preference changes only unattempted notification
   assert.deepEqual(f.store.mail.get(first.id), emitted);
   assert.equal((await f.store.get(booking.bookingId)).language, 'fr');
   await service.confirmAppointment(booking.bookingId, { operatorId: 'synthetic-operator', holdExpiresAt: '2026-11-25T15:00:00Z' });
-  await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput('de'));
+  await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput(booking,'de'));
   assert.equal(jobsOf(f.store, 'payment_requested')[0].notification.languageSnapshot.language, 'fr');
 });
 
@@ -340,8 +344,8 @@ test('a concurrent verified paid or refund result during preparation cancels the
   for (const race of ['pending-paid', 'receipt-refunded']) {
     const f = scenario(), service = f.worker(), booking = await service.create(request('es'));
     await service.confirmAppointment(booking.bookingId, { operatorId: 'synthetic-operator', holdExpiresAt: '2026-11-25T15:00:00Z' });
-    await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput('de'));
-    const target = race === 'pending-paid' ? 'payment_pending' : 'deposit_received';
+    await service.checkout(booking.bookingId, booking.publicToken!, checkoutInput(booking,'de'));
+    const target = race === 'pending-paid' ? 'payment_pending' : 'payment_received';
     const originalPrepare = f.store.prepareMail.bind(f.store);
     let raced = false;
     f.store.prepareMail = async (id: string, envelope: any, preparedAt: number, expiresAt?: number) => {
@@ -388,4 +392,16 @@ test('collection rollout quarantines incompatible legacy snapshots without remot
     assert.equal(f.store.mail.get(id)!.failure.definitelyNotSent,true,missing);
     assert.ok(['EMAIL_SNAPSHOT_REVIEW_REQUIRED','EMAIL_PREPARATION_FAILED'].includes(f.store.mail.get(id)!.failure.code));
   }
+});
+
+test('new v3 full-payment receipt bypasses the legacy rollout flag and remains idempotent',async()=>{
+ const f=scenario(),service=f.worker(true,'default'),booking=await service.create(request('es'));
+ await service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator'});
+ await service.checkout(booking.bookingId,booking.publicToken!,checkoutInput(booking,'de'));
+ f.setProvider('paid');await f.worker(true,'default').reconcile(booking.bookingId);
+ const saved=await f.store.get(booking.bookingId),receipt=jobsOf(f.store,'payment_received');
+ assert.equal(saved.payment.model,'full_prepayment');assert.equal(saved.payment.amountPaidCents,saved.payment.totalDueCents);assert.equal(saved.payment.outstandingCents,0);assert.equal(saved.email.receipt,'sent');assert.equal(receipt.length,1);assert.equal(receipt[0].status,'sent');assert.equal(receipt[0].prepared.language,'es');assert.equal(jobsOf(f.store,'deposit_received').length,0);
+ const sent=clone(f.sent.filter(message=>message.templateId==='payment_received'));assert.equal(sent.length,1);
+ await f.worker(true,'default').reconcile(booking.bookingId);await f.worker(true,'default').runDue();
+ assert.deepEqual(f.sent.filter(message=>message.templateId==='payment_received'),sent);assert.equal(jobsOf(f.store,'payment_received').length,1);assert.equal(f.calls.gateways,1);
 });

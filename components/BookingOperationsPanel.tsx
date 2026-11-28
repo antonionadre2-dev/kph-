@@ -1,62 +1,133 @@
-import React,{useEffect,useMemo,useRef,useState} from 'react';
-import {useAuth} from './Auth';
-import {auth} from './firebase';
-import {useTranslation} from '../i18n';
-import {normalizeHomeLanguage} from './home/homeTranslations';
-import {bookingText,bookingLineLabel} from '../src/booking/uiCopy';
-import {createOperatorClient} from '../src/booking/operator-client';
-import {usesTermsPaymentDeadline} from '../src/booking/paymentDeadline';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useAuth } from './Auth';
+import { auth } from './firebase';
+import { useTranslation } from '../i18n';
+import { normalizeHomeLanguage } from './home/homeTranslations';
+import { bookingText, bookingLineLabel } from '../src/booking/uiCopy';
+import { serviceName } from '../src/booking/serviceNames';
+import { createOperatorClient } from '../src/booking/operator-client';
+import { usesTermsPaymentDeadline } from '../src/booking/paymentDeadline';
+import { operatorCopy } from '../src/booking/operatorCopy';
+import { operatorAmountCents, proposedOperatorRefund, safeOperatorPaymentLink, operatorScopeLanguage } from '../src/booking/operatorUi';
 import './booking-operations.css';
 
-const copy={
- de:{termsDeadline:'Zahlungsfrist gemäss AGB',deadlineDescription:'3 Kalendertage nach der Bestätigung, spätestens vor Arbeitsbeginn. Die Frist wird vom Server festgelegt.',depositDue:'Anzahlung spätestens',title:'Anfragen aus dem Rechner',intro:'Hier werden die tatsächlichen Kundenanfragen verwaltet. Eine Freigabe prüft Verfügbarkeit und gibt die Anzahlung frei; sie erfasst keine Zahlung.',refresh:'Aktualisieren',search:'Referenz suchen',reference:'Referenz',empty:'Keine passenden Anfragen.',loading:'Wird geladen…',error:'Aktion nicht abgeschlossen. Aktuellen Stand neu laden.',select:'Anfrage öffnen',customer:'Kunde und Leistungsumfang',requested:'Gewünschter Termin',total:'Gesamtbetrag',deposit:'Anzahlung',remaining:'Offener Gesamtbetrag',review:'Ich habe Leistungsumfang, Adresse, Zugang und tatsächliche Verfügbarkeit für diesen Termin geprüft.',hold:'Zahlungsfreigabe gültig für',confirm:'Verfügbarkeit bestätigen und Zahlungslink senden',ready:'Zahlung kann vom Kunden gestartet werden.',notReady:'Zahlung ist noch nicht freigegeben.',mail:'E-Mail-Versand',retry:'Sicher erneut versuchen',noMail:'Keine Versandaufträge.',pending:'Zustand wird serverseitig geprüft.',done:'Serverstand aktualisiert.',minutes:'30 Minuten',hours:'2 Stunden',day:'24 Stunden',week:'7 Tage',savedLanguage:'E-Mail-Sprache',status:'Status',blocked:'Erneuter Versand gesperrt',provider:'Annahme beim Anbieter ist keine Zustellbestätigung.',unavailable:'Zahlung oder E-Mail ist nicht konfiguriert. Keine Zahlung wurde ausgelöst.'},
- en:{termsDeadline:'Payment deadline under the terms',deadlineDescription:'3 calendar days after confirmation, no later than the start of work. The server sets the deadline.',depositDue:'Deposit due no later than',title:'Calculator requests',intro:'Manage the actual customer requests here. Approval verifies availability and enables the deposit; it does not take a payment.',refresh:'Refresh',search:'Find reference',reference:'Reference',empty:'No matching requests.',loading:'Loading…',error:'The action did not complete. Reload the current status.',select:'Open request',customer:'Customer and scope',requested:'Requested appointment',total:'Total',deposit:'Deposit',remaining:'Total outstanding',review:'I checked the scope, address, access and actual availability for this appointment.',hold:'Payment approval valid for',confirm:'Confirm availability and send payment link',ready:'The customer can start payment.',notReady:'Payment has not been enabled.',mail:'Email dispatch',retry:'Retry safely',noMail:'No email jobs.',pending:'The server is checking the status.',done:'Server status updated.',minutes:'30 minutes',hours:'2 hours',day:'24 hours',week:'7 days',savedLanguage:'Email language',status:'Status',blocked:'Retry blocked',provider:'Provider acceptance does not confirm delivery.',unavailable:'Payment or email is not configured. No payment was initiated.'},
- es:{termsDeadline:'Plazo de pago según las condiciones',deadlineDescription:'3 días naturales desde la confirmación, como máximo antes del inicio del trabajo. El servidor fija el vencimiento.',depositDue:'Anticipo a más tardar',title:'Solicitudes del calculador',intro:'Aquí se gestionan las solicitudes reales de los clientes. La aprobación comprueba la disponibilidad y habilita el anticipo; no realiza ningún cobro.',refresh:'Actualizar',search:'Buscar referencia',reference:'Referencia',empty:'No hay solicitudes coincidentes.',loading:'Cargando…',error:'La acción no se completó. Vuelva a cargar el estado actual.',select:'Abrir solicitud',customer:'Cliente y alcance',requested:'Fecha solicitada',total:'Total',deposit:'Anticipo',remaining:'Total pendiente',review:'He comprobado el alcance, la dirección, el acceso y la disponibilidad real para esta fecha.',hold:'Autorización de pago válida durante',confirm:'Confirmar disponibilidad y enviar enlace de pago',ready:'El cliente ya puede iniciar el pago.',notReady:'El pago aún no está habilitado.',mail:'Envío de correos',retry:'Reintentar con seguridad',noMail:'No hay correos en la cola.',pending:'El servidor está comprobando el estado.',done:'Estado del servidor actualizado.',minutes:'30 minutos',hours:'2 horas',day:'24 horas',week:'7 días',savedLanguage:'Idioma de los correos',status:'Estado',blocked:'Reintento bloqueado',provider:'La aceptación del proveedor no confirma la entrega.',unavailable:'El pago o el correo no están configurados. No se ha iniciado ningún cobro.'},
- fr:{termsDeadline:'Échéance selon les conditions',deadlineDescription:'3 jours calendaires après la confirmation, au plus tard avant le début des travaux. Le serveur fixe l’échéance.',depositDue:'Acompte au plus tard',title:'Demandes du calculateur',intro:'Gérez ici les demandes réelles des clients. La validation vérifie la disponibilité et autorise l’acompte ; elle ne prélève aucun paiement.',refresh:'Actualiser',search:'Chercher une référence',reference:'Référence',empty:'Aucune demande correspondante.',loading:'Chargement…',error:'L’action n’a pas abouti. Rechargez le statut actuel.',select:'Ouvrir la demande',customer:'Client et prestations',requested:'Date souhaitée',total:'Total',deposit:'Acompte',remaining:'Solde total',review:'J’ai vérifié les prestations, l’adresse, l’accès et la disponibilité réelle à cette date.',hold:'Autorisation de paiement valable pendant',confirm:'Confirmer la disponibilité et envoyer le lien de paiement',ready:'Le client peut démarrer le paiement.',notReady:'Le paiement n’est pas encore autorisé.',mail:'Envoi des emails',retry:'Réessayer en sécurité',noMail:'Aucun email en attente.',pending:'Le serveur vérifie le statut.',done:'Statut du serveur actualisé.',minutes:'30 minutes',hours:'2 heures',day:'24 heures',week:'7 jours',savedLanguage:'Langue des emails',status:'Statut',blocked:'Nouvel envoi bloqué',provider:'L’acceptation par le prestataire ne confirme pas la livraison.',unavailable:'Paiement ou email non configuré. Aucun paiement n’a été lancé.'},
- it:{termsDeadline:'Scadenza secondo le condizioni',deadlineDescription:'3 giorni di calendario dalla conferma, al più tardi prima dell’inizio dei lavori. Il server stabilisce la scadenza.',depositDue:'Acconto entro',title:'Richieste del calcolatore',intro:'Qui si gestiscono le richieste effettive dei clienti. L’approvazione verifica la disponibilità e abilita l’acconto; non effettua alcun addebito.',refresh:'Aggiorna',search:'Cerca riferimento',reference:'Riferimento',empty:'Nessuna richiesta corrispondente.',loading:'Caricamento…',error:'L’azione non è stata completata. Ricarichi lo stato attuale.',select:'Apri richiesta',customer:'Cliente e prestazioni',requested:'Data richiesta',total:'Totale',deposit:'Acconto',remaining:'Totale residuo',review:'Ho verificato le prestazioni, l’indirizzo, l’accesso e la disponibilità effettiva per questa data.',hold:'Autorizzazione al pagamento valida per',confirm:'Conferma disponibilità e invia link di pagamento',ready:'Il cliente può avviare il pagamento.',notReady:'Il pagamento non è ancora abilitato.',mail:'Invio email',retry:'Riprova in sicurezza',noMail:'Nessuna email in coda.',pending:'Il server sta verificando lo stato.',done:'Stato del server aggiornato.',minutes:'30 minuti',hours:'2 ore',day:'24 ore',week:'7 giorni',savedLanguage:'Lingua delle email',status:'Stato',blocked:'Nuovo invio bloccato',provider:'L’accettazione del fornitore non conferma la consegna.',unavailable:'Pagamento o email non configurati. Nessun pagamento è stato avviato.'},
- pt:{termsDeadline:'Prazo segundo as condições',deadlineDescription:'3 dias de calendário após a confirmação, o mais tardar antes do início dos trabalhos. O servidor define o vencimento.',depositDue:'Sinal o mais tardar',title:'Pedidos do calculador',intro:'Aqui são geridos os pedidos reais dos clientes. A aprovação verifica a disponibilidade e permite o sinal; não efetua nenhuma cobrança.',refresh:'Atualizar',search:'Procurar referência',reference:'Referência',empty:'Nenhum pedido correspondente.',loading:'A carregar…',error:'A ação não foi concluída. Recarregue o estado atual.',select:'Abrir pedido',customer:'Cliente e serviços',requested:'Data pretendida',total:'Total',deposit:'Sinal',remaining:'Total em falta',review:'Verifiquei os serviços, a morada, o acesso e a disponibilidade real para esta data.',hold:'Autorização de pagamento válida durante',confirm:'Confirmar disponibilidade e enviar ligação de pagamento',ready:'O cliente pode iniciar o pagamento.',notReady:'O pagamento ainda não está disponível.',mail:'Envio de emails',retry:'Tentar novamente em segurança',noMail:'Nenhum email na fila.',pending:'O servidor está a verificar o estado.',done:'Estado do servidor atualizado.',minutes:'30 minutos',hours:'2 horas',day:'24 horas',week:'7 dias',savedLanguage:'Idioma dos emails',status:'Estado',blocked:'Novo envio bloqueado',provider:'A aceitação pelo fornecedor não confirma a entrega.',unavailable:'Pagamento ou email não configurados. Nenhum pagamento foi iniciado.'}
-};
-export function BookingOperationsPanel(){
- const {user}=useAuth(),{language}=useTranslation(),lang=normalizeHomeLanguage(language),t=copy[lang];
- const scope=user?.staff===true&&user.uid?user.uid:'';
- const active=useRef(scope);active.current=scope;
- const generation=useRef(0),controller=useRef<AbortController|null>(null);
- const [visibleScope,setVisibleScope]=useState(''),[rows,setRows]=useState<any[]>([]),[detail,setDetail]=useState<any>(null),[reference,setReference]=useState(''),[checked,setChecked]=useState(false),[holdMinutes,setHoldMinutes]=useState('120'),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[failure,setFailure]=useState(''),[ready,setReady]=useState({payment:false,email:false});
- const api=useMemo(()=>createOperatorClient({uid:scope,currentUser:()=>auth.currentUser}),[scope]);
- async function run(path:string,body?:unknown,detailResult=false){
-  const own=scope,version=++generation.current;controller.current?.abort();const abort=new AbortController();controller.current=abort;setBusy(true);setFailure('');setMessage('');
-  try{const result=await api(path,body,abort.signal);if(active.current!==own||generation.current!==version)return;
-   if(detailResult){setDetail(result);setChecked(false);setRows(previous=>previous.map(row=>row.bookingId===result.booking.bookingId?result.booking:row));}
-   else{setRows(result.bookings);setDetail(null);setChecked(false);setReady({payment:result.paymentReady===true,email:result.emailReady===true});}
-   setMessage(t.done);
-  }catch(error){if(!abort.signal.aborted&&active.current===own&&generation.current===version)setFailure(error instanceof Error&&/^[A-Z_]{3,80}$/.test(error.message)?error.message:'BOOKING_OPERATOR_UNAVAILABLE');}
-  finally{if(active.current===own&&generation.current===version)setBusy(false);}
- }
- useEffect(()=>{setRows([]);setDetail(null);setReference('');setChecked(false);setFailure('');setMessage('');setReady({payment:false,email:false});setVisibleScope(scope);if(scope)void run('/api/booking/operator/requests');return()=>{++generation.current;controller.current?.abort();};},[scope,api]);
- if(!scope||visibleScope!==scope)return null;
- const booking=detail?.booking,currentTerms=usesTermsPaymentDeadline(booking);
- const depositDueAt=Date.parse(booking?.payment?.depositDueAt||'');
- const money=(cents:number|null)=>cents===null?'—':new Intl.NumberFormat(lang,{style:'currency',currency:'CHF'}).format(cents/100);
- return <section className="booking-operations" aria-labelledby="booking-operations-title" aria-busy={busy}>
-  <h2 id="booking-operations-title">{t.title}</h2><p>{t.intro}</p>
-  <form className="booking-operations-search" onSubmit={event=>{event.preventDefault();void run('/api/booking/operator/requests/search',{reference});}} method="post" action="/api/booking/operator/requests/search">
-   <label>{t.reference}<input value={reference} onChange={event=>setReference(event.target.value)} pattern="K-[0-9]{4}-[A-Za-z0-9_-]{8}" maxLength={15} required autoComplete="off" placeholder="K-2026-XXXXXXXX"/></label><button disabled={busy} type="submit">{t.search}</button><button disabled={busy} type="button" onClick={()=>void run('/api/booking/operator/requests')}>{t.refresh}</button>
-  </form>
-  <p role="status" aria-live="polite">{busy?t.loading:message}</p>{failure&&<p role="alert" className="booking-operations-error">{t.error} <code>{failure}</code></p>}
-  {!rows.length&&!busy&&<p>{t.empty}</p>}
-  <ul className="booking-operations-list">{rows.map(row=><li key={row.bookingId}><button type="button" disabled={busy} aria-label={`${t.select}: ${row.reference}`} aria-pressed={booking?.bookingId===row.bookingId} onClick={()=>void run(`/api/booking/operator/requests/${row.bookingId}`,undefined,true)}><strong>{row.reference}</strong><span>{row.customer.name} · {bookingText(lang,row.quote.service)}</span><span>{row.scheduling.date} {row.scheduling.time} · {row.scheduling.timeZone}</span><span>{row.scheduling.status} · {row.payment.status}</span></button></li>)}</ul>
-  {booking&&<article className="booking-operations-detail"><h3>{booking.reference} · {t.customer}</h3><p>{booking.customer.name}<br/><a href={`mailto:${booking.customer.email}`}>{booking.customer.email}</a><br/>{booking.customer.phone}<br/>{booking.customer.address}, {booking.customer.postalCode} {booking.customer.city}</p>
-   <p><strong>{t.requested}:</strong> {booking.scheduling.date} {booking.scheduling.time} · {booking.scheduling.timeZone}<br/>{t.savedLanguage}: {booking.language}<br/>{t.status}: {booking.scheduling.status} · {booking.payment.status}</p>
-   <ul>{booking.quote.lines.map((line:any,index:number)=><li key={index}>{bookingLineLabel(lang,line)} · {money(line.totalCents)}</li>)}</ul>{booking.notes&&<p className="booking-operations-notes">{booking.notes}</p>}{booking.scopeNotes&&<p className="booking-operations-notes">{booking.scopeNotes}</p>}
-   <dl><dt>{t.total}</dt><dd>{money(booking.quote.totalCents)}</dd><dt>{t.deposit} ({booking.payment.depositPercent}%)</dt><dd>{money(booking.payment.amountDueNowCents)}</dd><dt>{t.remaining}</dt><dd>{money(booking.payment.remainingBalanceCents)}</dd></dl>
-   {Number.isFinite(depositDueAt)&&<p><strong>{t.depositDue}:</strong> {new Intl.DateTimeFormat(lang,{timeZone:'Europe/Zurich',dateStyle:'long',timeStyle:'short'}).format(depositDueAt)} · Europe/Zurich</p>}<p>{booking.canCheckout?t.ready:t.notReady}</p>
-   {!booking.canCheckout&&booking.scheduling.status==='requested'&&<form onSubmit={event=>{event.preventDefault();if(checked)void run(`/api/booking/operator/requests/${booking.bookingId}/confirm`,{expectedRevision:booking.revision,availabilityChecked:true,...(!currentTerms?{holdExpiresAt:new Date(Date.now()+Number(holdMinutes)*60000).toISOString()}:{})},true);}} method="post" action={`/api/booking/operator/requests/${booking.bookingId}/confirm`}>
-    {currentTerms?<p><strong>{t.termsDeadline}:</strong> {t.deadlineDescription}</p>:<label>{t.hold}<select value={holdMinutes} onChange={event=>setHoldMinutes(event.target.value)}><option value="30">{t.minutes}</option><option value="120">{t.hours}</option><option value="1440">{t.day}</option><option value="10080">{t.week}</option></select></label>}
-    <label className="booking-operations-check"><input type="checkbox" checked={checked} onChange={event=>setChecked(event.target.checked)} required/>{t.review}</label>
-    <button type="submit" disabled={busy||!checked||!ready.payment||!ready.email||booking.quote.totalCents===null||booking.quote.manualReviewReasons.length>0}>{t.confirm}</button>{(!ready.payment||!ready.email)&&<p>{t.unavailable}</p>}
-   </form>}
-   <h3>{t.mail}</h3><p>{t.provider}</p>{!detail.emails.length&&<p>{t.noMail}</p>}
-   <ul className="booking-operations-mail">{detail.emails.map((job:any)=><li key={job.id}><strong>{job.template||job.kind}</strong> <span>{job.status} · {job.attempts}</span>{job.failure&&<p><code>{job.failure.code}</code>{job.failure.httpStatus&&` · HTTP ${job.failure.httpStatus}`}{job.failure.providerName&&` · ${job.failure.providerName}`}</p>}{job.canRetry?<button type="button" disabled={busy||!detail.emailReady} onClick={()=>void run(`/api/booking/operator/requests/${booking.bookingId}/email/retry`,{jobId:job.id,expectedAttempts:job.attempts},true)}>{t.retry}</button>:job.status!=='sent'&&<p>{t.blocked}: <code>{job.blockedReason}</code></p>}</li>)}</ul>
-  </article>}
- </section>;
+const base = '/api/booking/operator/requests';
+export function BookingOperationsPanel() {
+  const { user } = useAuth(), { language } = useTranslation(), lang = normalizeHomeLanguage(language), t = operatorCopy(lang);
+  const scope = user?.staff === true && user.uid ? user.uid : '';
+  const active = useRef(scope); active.current = scope;
+  const generation = useRef(0), controller = useRef<AbortController | null>(null), mutationPending = useRef(false);
+  const refundAttempt = useRef<{ bookingId: string; amountCents: number; key: string } | null>(null);
+  const [visibleScope, setVisibleScope] = useState(''), [rows, setRows] = useState<any[]>([]), [detail, setDetail] = useState<any>(null);
+  const [reference, setReference] = useState(''), [checked, setChecked] = useState(false), [holdMinutes, setHoldMinutes] = useState('120');
+  const [busy, setBusy] = useState(false), [message, setMessage] = useState(false), [failure, setFailure] = useState('');
+  const [ready, setReady] = useState<{payment:boolean;email:boolean;scheduled:boolean|null}>({ payment: false, email: false, scheduled: null });
+  const [periodStart, setPeriodStart] = useState(''), [periodEnd, setPeriodEnd] = useState(''), [visits, setVisits] = useState('');
+  const [approvedPrice, setApprovedPrice] = useState(''), [scopeNotes, setScopeNotes] = useState(''), [scopeLanguage, setScopeLanguage] = useState(lang);
+  const [actualHours, setActualHours] = useState(''), [cancelChecked, setCancelChecked] = useState(false), [refundChecked, setRefundChecked] = useState(false);
+  const api = useMemo(() => createOperatorClient({ uid: scope, currentUser: () => auth.currentUser }), [scope]);
+  async function run(path: string, body?: unknown, detailResult = false) {
+    if (mutationPending.current) return null;
+    if (body !== undefined) mutationPending.current = true;
+    const own = scope, version = ++generation.current;
+    controller.current?.abort(); const abort = new AbortController(); controller.current = abort;
+    setBusy(true); setFailure(''); setMessage(false);
+    try {
+      const result = await api(path, body, abort.signal);
+      if (active.current !== own || generation.current !== version) return null;
+      if (typeof result.scheduledRemindersReady === 'boolean') setReady(previous => ({...previous,scheduled:result.scheduledRemindersReady}));
+      if (detailResult) {
+        setDetail(result); setChecked(false); setCancelChecked(false); setRefundChecked(false);
+        setRows(previous => previous.map(row => row.bookingId === result.booking.bookingId ? result.booking : row));
+      } else {
+        setRows(result.bookings); setDetail(null); setChecked(false);
+        setReady({ payment: result.paymentReady === true, email: result.emailReady === true, scheduled: typeof result.scheduledRemindersReady === 'boolean' ? result.scheduledRemindersReady : null });
+      }
+      setMessage(true); return result;
+    } catch (error) {
+      if (!abort.signal.aborted && active.current === own && generation.current === version) setFailure(error instanceof Error && /^[A-Z_]{3,80}$/.test(error.message) ? error.message : 'BOOKING_OPERATOR_UNAVAILABLE');
+      return null;
+    } finally {
+      if (body !== undefined) mutationPending.current = false;
+      if (active.current === own && generation.current === version) setBusy(false);
+    }
+  }
+  useEffect(() => {
+    setRows([]); setDetail(null); setReference(''); setChecked(false); setFailure(''); setMessage(false); setReady({ payment: false, email: false, scheduled: null }); setVisibleScope(scope);
+    if (scope) void run(base);
+    return () => { ++generation.current; controller.current?.abort(); };
+  }, [scope, api]);
+  useEffect(() => {
+    setApprovedPrice(''); setScopeNotes(detail?.booking?.scopeNotes || ''); setScopeLanguage(operatorScopeLanguage(detail?.booking?.language)); setActualHours('');
+    setPeriodStart(detail?.booking?.payment?.billingPeriod?.start || detail?.booking?.scheduling?.date || '');
+    setPeriodEnd(detail?.booking?.payment?.billingPeriod?.end || '');
+    setVisits(detail?.booking?.payment?.billingPeriod?.visits ? String(detail.booking.payment.billingPeriod.visits) : '');
+    setCancelChecked(false); setRefundChecked(false); refundAttempt.current = null;
+  }, [detail?.booking?.bookingId]);
+  if (!scope || visibleScope !== scope) return null;
+  const booking = detail?.booking, full = booking?.payment?.model === 'full_prepayment';
+  const fromTerms = full || usesTermsPaymentDeadline(booking), monthly = booking?.payment?.billingMode === 'monthly';
+  const dueAt = Date.parse(booking?.payment?.paymentDueAt || booking?.payment?.depositDueAt || '');
+  const money = (cents: unknown) => Number.isSafeInteger(cents) ? new Intl.NumberFormat(lang, { style: 'currency', currency: 'CHF' }).format(Number(cents) / 100) : '—';
+  const dateTime = (value: string | number) => new Intl.DateTimeFormat(lang, { timeZone: 'Europe/Zurich', dateStyle: 'long', timeStyle: 'short' }).format(new Date(value));
+  const mailState = (value: string | undefined) => ({ scheduling: t.mailScheduling, cancelling: t.mailCancelling, scheduled: t.mailScheduled, cancelled: t.mailCancelled, cancel_failed: t.mailCancelFailed, schedule_failed: t.mailScheduleFailed, unavailable: t.reminderUnavailable, schedule_unknown: t.mailUnknown, cancel_unknown: t.mailUnknown, queued: t.mailQueued, sending: t.mailSending, sent: t.mailSent, delivered: t.mailDelivered, failed: t.mailFailed, delivery_unknown: t.mailUnknown, bounced: t.mailBounced, suppressed: t.mailSuppressed }[value || ''] || value || '—');
+  const paymentState = (value: string) => ['not_started', 'awaiting_payment', 'pending'].includes(value) ? t.paymentOpen : ['paid', 'test_paid'].includes(value) ? t.paymentPaid : value;
+  const personalPrice = Boolean(booking && (booking.quote.totalCents === null || booking.quote.priceType === 'from' || booking.quote.manualReviewReasons.length));
+  const refundDue = proposedOperatorRefund(booking), extraLink = safeOperatorPaymentLink(booking?.payment?.extraPayment?.link);
+  const unsettledRefund = booking?.payment?.refunds?.some((refund: any) => ['creating', 'pending', 'unknown'].includes(refund.status));
+  async function refund() {
+    if (!booking || !refundChecked || refundDue <= 0) return;
+    if (refundAttempt.current?.bookingId !== booking.bookingId || refundAttempt.current.amountCents !== refundDue) refundAttempt.current = { bookingId: booking.bookingId, amountCents: refundDue, key: crypto.randomUUID() };
+    const result = await run(`${base}/${booking.bookingId}/refund`, { expectedRevision: booking.revision, amountCents: refundDue, idempotencyKey: refundAttempt.current.key }, true);
+    if (result?.booking?.payment?.refunds?.some((job: any) => job.idempotencyKey === refundAttempt.current?.key && job.status === 'verified')) refundAttempt.current = null;
+  }
+  return <section className="booking-operations" aria-labelledby="booking-operations-title" aria-busy={busy}>
+    <h2 id="booking-operations-title">{t.title}</h2><p>{t.intro}</p>
+    <form className="booking-operations-search" onSubmit={event => { event.preventDefault(); void run(base + '/search', { reference }); }} method="post" action={base + '/search'}>
+      <label>{t.reference}<input value={reference} onChange={event => setReference(event.target.value)} pattern="K-[0-9]{4}-[A-Za-z0-9_-]{8}" maxLength={15} required autoComplete="off" placeholder="K-2026-XXXXXXXX" /></label>
+      <button disabled={busy} type="submit">{t.search}</button><button disabled={busy} type="button" onClick={() => void run(base)}>{t.refresh}</button>
+    </form>
+    {ready.scheduled === false && <p role="status" className="booking-operations-warning">{t.reminderUnavailable}</p>}
+    <p role="status" aria-live="polite">{busy ? t.loading : message ? t.done : ''}</p>
+    {failure && <p role="alert" className="booking-operations-error">{t.error} <code>{failure}</code></p>}
+    {!rows.length && !busy && <p>{t.empty}</p>}
+    <ul className="booking-operations-list">{rows.map(row => <li key={row.bookingId}><button type="button" disabled={busy} aria-label={`${t.select}: ${row.reference}`} aria-pressed={booking?.bookingId === row.bookingId} onClick={() => void run(`${base}/${row.bookingId}`, undefined, true)}><strong>{row.reference}</strong><span>{row.customer.name} · {serviceName(lang, row.selection || row.quote.service)}</span><span>{row.scheduling.date} {row.scheduling.time} · {row.scheduling.timeZone}</span><span>{row.scheduling.status} · {paymentState(row.payment.status)}</span></button></li>)}</ul>
+    {booking && <article className="booking-operations-detail">
+      <h3>{booking.reference} · {t.customer}</h3><p>{booking.customer.name}<br /><a href={`mailto:${booking.customer.email}`}>{booking.customer.email}</a><br /><a href={`tel:${booking.customer.phone}`}>{booking.customer.phone}</a><br />{booking.customer.address}, {booking.customer.postalCode} {booking.customer.city}</p>
+      <p><strong>{t.requested}:</strong> {booking.scheduling.date} {booking.scheduling.time} · {booking.scheduling.timeZone}<br />{t.savedLanguage}: {booking.language}<br />{t.status}: {booking.scheduling.status} · {paymentState(booking.payment.status)}</p>
+      {booking.coverageReview === 'outside' && <p className="booking-operations-attention">{bookingText(lang, 'coverageOutside')} {t.coverage}</p>}
+      {!full && <p>{t.legacy} <code>{booking.termsVersion}</code></p>}
+      <ul>{booking.quote.lines.map((line: any, index: number) => <li key={index}>{bookingLineLabel(lang, line)} · {money(line.totalCents)}</li>)}</ul>
+      {booking.notes && <p className="booking-operations-notes">{booking.notes}</p>}{booking.scopeNotes && <p className="booking-operations-notes">{booking.scopeNotes}</p>}
+      <dl><dt>{monthly ? bookingText(lang, 'perVisitPrice') : t.total}</dt><dd>{money(booking.quote.totalCents)}</dd><dt>{monthly ? t.monthly : t.deposit}{!full && booking.payment.depositPercent ? ` (${booking.payment.depositPercent}%)` : ''}</dt><dd>{money(full ? booking.payment.totalDueCents : booking.payment.amountDueNowCents)}</dd><dt>{bookingText(lang, 'paidAmount')}</dt><dd>{money(booking.payment.amountPaidCents)}</dd><dt>{t.remaining}</dt><dd>{money(full ? booking.payment.outstandingCents : booking.payment.remainingBalanceCents)}</dd></dl>
+      {full && booking.payment.reminder && <p><strong>{t.reminder}:</strong> {mailState(booking.payment.reminder.status)}{Number.isFinite(Date.parse(booking.payment.reminder.dueAt)) ? ` · ${dateTime(booking.payment.reminder.dueAt)}` : ''}{['schedule_unknown','cancel_unknown'].includes(booking.payment.reminder.status) && <span className="booking-operations-warning"> {t.reminderUnknown}</span>}</p>}
+      {monthly && booking.payment.billingPeriod && <p>{t.monthly}: {booking.payment.billingPeriod.start} – {booking.payment.billingPeriod.end} · {booking.payment.billingPeriod.visits} {t.visits.toLowerCase()}</p>}
+      {Number.isFinite(dueAt) && <p><strong>{t.depositDue}:</strong> {dateTime(dueAt)} · Europe/Zurich</p>}
+      <p>{booking.canCheckout ? t.ready : t.notReady}</p>
+      {personalPrice && booking.scheduling.status === 'requested' && <form onSubmit={event => { event.preventDefault(); const totalCents = operatorAmountCents(approvedPrice); if (totalCents) void run(`${base}/${booking.bookingId}/quote/approve`, { expectedRevision: booking.revision, totalCents, scopeNotes, scopeLanguage }, true); }}>
+        <h3>{t.approvePrice}</h3><label>{t.approvedPrice}<input inputMode="decimal" value={approvedPrice} onChange={event => setApprovedPrice(event.target.value)} required pattern="(?:0|[1-9][0-9]{0,6})(?:[.,][0-9]{1,2})?" /></label><label>{t.scope}<textarea value={scopeNotes} onChange={event => setScopeNotes(event.target.value)} required minLength={10} maxLength={2000} rows={3} /></label><label>{t.scopeLanguage}<select value={scopeLanguage} onChange={event => setScopeLanguage(normalizeHomeLanguage(event.target.value))}>{['de', 'en', 'es', 'pt', 'it', 'fr'].map(value => <option key={value} value={value}>{value.toUpperCase()}</option>)}</select></label><p>{t.scopeLanguageReview.replace('{language}', operatorScopeLanguage(booking.language).toUpperCase())}</p><button type="submit" disabled={busy || !operatorAmountCents(approvedPrice) || scopeLanguage !== operatorScopeLanguage(booking.language)}>{t.approvePrice}</button>
+      </form>}
+      {!booking.canCheckout && booking.scheduling.status === 'requested' && booking.status !== 'cancelled' && <form onSubmit={event => { event.preventDefault(); if (checked) void run(`${base}/${booking.bookingId}/confirm`, { expectedRevision: booking.revision, availabilityChecked: true, ...(monthly ? { billingPeriod: { start: periodStart, end: periodEnd, visits: Number(visits) } } : {}), ...(!fromTerms ? { holdExpiresAt: new Date(Date.now() + Number(holdMinutes) * 60000).toISOString() } : {}) }, true); }} method="post" action={`${base}/${booking.bookingId}/confirm`}>
+        {fromTerms ? <p><strong>{t.termsDeadline}:</strong> {full ? t.deadlineDescription : t.legacyDeadlineDescription}</p> : <label>{t.hold}<select value={holdMinutes} onChange={event => setHoldMinutes(event.target.value)}><option value="30">{t.minutes}</option><option value="120">{t.hours}</option><option value="1440">{t.day}</option><option value="10080">{t.week}</option></select></label>}
+        {monthly && <fieldset><legend>{t.monthly}</legend><p>{t.monthlyHint}</p><div className="booking-operations-fields"><label>{t.periodStart}<input type="date" required value={periodStart} onChange={event => setPeriodStart(event.target.value)} /></label><label>{t.periodEnd}<input type="date" required min={periodStart} value={periodEnd} onChange={event => setPeriodEnd(event.target.value)} /></label><label>{t.visits}<input type="number" required min={1} max={31} step={1} value={visits} onChange={event => setVisits(event.target.value)} /></label></div></fieldset>}
+        <label className="booking-operations-check"><input type="checkbox" checked={checked} onChange={event => setChecked(event.target.checked)} required />{t.review}</label>
+        <button type="submit" disabled={busy || !checked || !ready.payment || !ready.email || personalPrice}>{t.confirm}</button>{(!ready.payment || !ready.email) && <p>{t.unavailable}</p>}
+      </form>}
+      {full && booking.canSettleWork && <form onSubmit={event => { event.preventDefault(); void run(`${base}/${booking.bookingId}/work/settle`, { expectedRevision: booking.revision, actualHours: Number(actualHours) }, true); }}>
+        <h3>{t.settlement}</h3><p>{monthly ? t.periodHours : t.singleHours}</p><label>{t.actualHours}<input type="number" required min={0} max={168} step={0.25} value={actualHours} onChange={event => setActualHours(event.target.value)} /></label><button type="submit" disabled={busy || actualHours === ''}>{t.settle}</button>
+      </form>}
+      {booking.workSettlement && <section className="booking-operations-settlement"><h3>{t.settlement}</h3><dl><dt>{t.actualHours}</dt><dd>{booking.workSettlement.actualHours}</dd><dt>{t.finalTotal}</dt><dd>{money(booking.workSettlement.finalTotalCents)}</dd><dt>{t.extraDue}</dt><dd>{money(booking.payment.outstandingCents)}</dd><dt>{t.refundDue}</dt><dd>{money(refundDue)}</dd></dl>
+        {booking.payment.outstandingCents > 0 && !extraLink && <button type="button" disabled={busy || ['creating', 'unknown'].includes(booking.payment.extraPayment?.status)} onClick={() => void run(`${base}/${booking.bookingId}/payment/extra`, { expectedRevision: booking.revision }, true)}>{t.createExtra}</button>}
+        {extraLink && booking.payment.outstandingCents > 0 && !['paid','test_paid'].includes(booking.payment.extraPayment?.status) && <p><a href={extraLink} target="_blank" rel="noopener noreferrer">{t.openExtra}</a> · {paymentState(booking.payment.extraPayment.status)}</p>}
+      </section>}
+      {full && booking.cancellationQuote && !['completed', 'expired'].includes(booking.status) && <section className="booking-operations-cancellation"><h3>{t.cancellation}</h3><dl><dt>{t.refundPercent}</dt><dd>{booking.cancellationQuote.refundPercent}%</dd><dt>{t.retained}</dt><dd>{money(booking.cancellationQuote.retainedCents)}</dd><dt>{t.refundDue}</dt><dd>{money(booking.cancellationQuote.refundCents)}</dd></dl>
+        {booking.status !== 'cancelled' && <form onSubmit={event => { event.preventDefault(); if (cancelChecked) void run(`${base}/${booking.bookingId}/cancel`, { expectedRevision: booking.revision }, true); }}><label className="booking-operations-check"><input type="checkbox" checked={cancelChecked} onChange={event => setCancelChecked(event.target.checked)} required />{t.cancelReview}</label><button type="submit" disabled={busy || !cancelChecked}>{t.cancel}</button></form>}
+      </section>}
+      {full && refundDue > 0 && <form onSubmit={event => { event.preventDefault(); void refund(); }}><h3>{t.refundDue}: {money(refundDue)}</h3><label className="booking-operations-check"><input type="checkbox" checked={refundChecked} onChange={event => setRefundChecked(event.target.checked)} required />{t.refundReview}</label><button type="submit" disabled={busy || !refundChecked || unsettledRefund}>{t.refundAction}</button>{unsettledRefund && <p>{t.refundPending}</p>}</form>}
+      {!!booking.payment.refunds?.length && <ul>{booking.payment.refunds.map((job: any) => <li key={job.idempotencyKey}>{money(job.amountCents)} · {job.status === 'verified' ? t.refundVerified : job.status === 'unknown' ? t.mailUnknown : t.refundPending}{job.verifiedAt ? ` · ${dateTime(job.verifiedAt)}` : ''}</li>)}</ul>}
+      <h3>{t.mail}</h3><dl><dt>{t.requestEmail}</dt><dd>{mailState(booking.email?.request)}</dd></dl><p>{t.provider}</p>
+      {!detail.emails.length && <p>{t.noMail}</p>}
+      <ul className="booking-operations-mail">{detail.emails.map((job: any) => <li key={job.id}><strong>{job.template || job.kind}</strong> <span>{mailState(job.status)} · {job.attempts}</span>{job.failure && <p><code>{job.failure.code}</code>{job.failure.httpStatus && ` · HTTP ${job.failure.httpStatus}`}{job.failure.providerName && ` · ${job.failure.providerName}`}</p>}{job.canRetry ? <button type="button" disabled={busy || !detail.emailReady} onClick={() => void run(`${base}/${booking.bookingId}/email/retry`, { jobId: job.id, expectedAttempts: job.attempts }, true)}>{job.kind === 'request' ? t.resendRequest : t.retry}</button> : job.status !== 'sent' && job.status !== 'delivered' && <p>{t.blocked}: <code>{job.blockedReason}</code></p>}</li>)}</ul>
+    </article>}
+  </section>;
 }

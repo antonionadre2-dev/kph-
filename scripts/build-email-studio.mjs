@@ -58,8 +58,8 @@ for (const language of emailLanguages) {
 
 // Bundle browser-safe copied modules; server transport and demo data never enter
 // the production dependency graph. The original shell remains untouched.
-const modules = [readFileSync(join(root, 'src/config/business-hours.mjs'), 'utf8'),
-  ...['language', 'labels', 'preparation', 'artwork', 'render'].map(name =>
+const modules = [readFileSync(join(root, 'src/config/business-hours.mjs'), 'utf8'), readFileSync(join(root, 'src/config/service-names.mjs'), 'utf8'),
+  ...['language', 'labels', 'preparation', 'artwork', 'payment-copy', 'render'].map(name =>
     readFileSync(join(root, 'integrations/email-collection', `${name}.mjs`), 'utf8'))];
 modules.push(readFileSync(join(root, 'reference/kraken-emails/src/demo-data.mjs'), 'utf8')
   .replace('export function demoData(', 'function referenceDemoData('));

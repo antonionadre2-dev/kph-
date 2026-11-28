@@ -1,10 +1,20 @@
 import React from 'react';
-import type { BookingSelection } from '../src/booking/pricing.ts';
+import type { BookingSelection, PriceQuote } from '../src/booking/pricing.ts';
 import { bookingTermsPresentation, termsPresentationText } from '../src/booking/termsPresentation.ts';
 
 /** Uses the same versioned clauses as the legal document; no financial state is calculated here. */
-export default function BookingTermsSummary({ language, selection, booking }: { language: string; selection?: BookingSelection | null; booking?: any }) {
-  const summary = bookingTermsPresentation(language, { selection, booking });
+export default function BookingTermsSummary({ language, selection, booking, quote, compact = false }: { language: string; selection?: BookingSelection | null; booking?: any; quote?: PriceQuote | null; compact?: boolean }) {
+  const summary = bookingTermsPresentation(language, { selection, booking, quote });
+  if (compact && !summary.legacy) {
+    const terms = summary.links.find(link => link.href.includes('/terms'));
+    return <section className="kr-calc-review-block kr-booking-terms-summary is-compact" aria-label={summary.title}>
+      <h3 className="kr-calc-sr-only">{summary.title}</h3>
+      <dl>{summary.rows.map((row, index) => <div key={index}>
+        {row.label && <dt><strong>{row.label}</strong></dt>}
+        <dd>{row.value}{index === summary.rows.length - 1 && terms && <> <a href={terms.href} target="_blank" rel="noopener noreferrer">{terms.label}</a></>}</dd>
+      </div>)}</dl>
+    </section>;
+  }
   return <section className="kr-calc-review-block kr-booking-terms-summary" aria-label={summary.title}>
     <h3>{summary.title}</h3>
     {summary.state && <p><strong>{summary.state}</strong></p>}

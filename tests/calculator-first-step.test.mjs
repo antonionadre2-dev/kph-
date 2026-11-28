@@ -91,23 +91,24 @@ test('an explicit different service is preserved and an unknown intent is not si
   assert.doesNotMatch(unsupported, /class="kr-calc-service is-selected"/);
 });
 
-test('moving renders an honest hourly estimate and minimum-based deposit in all six languages',()=>{
+test('moving renders an unchanged hourly estimate with full payment after confirmation in all six languages',()=>{
   const selected={...defaultSelection('moving'),estimatedHours:3};
   const quote=calculatePrice(selected);
-  assert.equal(quote.totalCents,34500);assert.equal(quote.depositBasisCents,25000);
+  assert.equal(quote.totalCents,34500);assert.equal(quote.minimumChargeCents,25000);assert.equal('depositBasisCents' in quote,false);
   for(const language of ['de','en','es','fr','it','pt']){
     const html=render(language,'moving',{choice:'moving',selection:selected,wizardStep:0});
     assert.match(html,/id="kr-calc-team"/);assert.match(html,/id="kr-calc-estimatedHours"/);
     assert.ok(html.includes(escaped(pricingUiText(language,'estimate'))));
     assert.ok(html.includes(escaped(pricingUiText(language,'finalPrice'))));
-    assert.ok(html.includes(escaped(pricingUiText(language,'depositMinimum',{percent:15}))));
+    assert.ok(html.includes(escaped(bookingText(language,'paymentBeforeService'))));
+    assert.doesNotMatch(html,/Anzahlung|deposit|anticipo|sinal|acconto|acompte/i);
     assert.doesNotMatch(html,/id="kr-calc-distanceKm"|kr-calc-vat-card|vatComparison/);
     const description=html.match(/<textarea[^>]*id="kr-calc-moving-details"[^>]*>/)?.[0];
     assert.ok(description);assert.doesNotMatch(description,/required/);
   }
 });
 
-test('hourly cleaning shows its minimum-based deposit instead of a fixed-price promise in six languages',()=>{
+test('hourly cleaning shows an unchanged estimate and full prepayment without promising a fixed price',()=>{
   const cases=[
     {service:'regular',selected:{...defaultSelection('regular'),hours:4},amount:1500},
     {service:'end',selected:{...defaultSelection('endOfTenancy'),mode:'hourly',hours:4},amount:2025},
@@ -117,10 +118,10 @@ test('hourly cleaning shows its minimum-based deposit instead of a fixed-price p
     const html=render(language,service,{choice:selected.service,selection:selected,wizardStep:0});
     const quote=calculatePrice(selected);
     assert.equal(quote.priceType,'estimate');
-    assert.equal(Math.round(quote.depositBasisCents*0.15),amount);
-    assert.ok(html.includes(escaped(pricingUiText(language,'cleaningDepositMinimum',{percent:15}))),`${language}/${service}`);
+    assert.equal(quote.minimumChargeCents,Math.round(amount/0.15));assert.equal('depositBasisCents' in quote,false);
+    assert.ok(html.includes(escaped(bookingText(language,'paymentBeforeService'))),`${language}/${service}`);
     assert.ok(html.includes(escaped(pricingUiText(language,'estimate'))));
-    assert.match(html,/kr-calc-deposit-preview/);
+    assert.doesNotMatch(html,/kr-calc-deposit-preview|Anzahlung|anticipo|Restbetrag/);
     if(service==='end')assert.equal(html.split(escaped(bookingText(language,'notice.hourly_no_handover_guarantee'))).length-1,1);
   }
 });
@@ -176,4 +177,13 @@ test('historical inventory-only moving drafts remain personal and never select a
   assert.ok(html.includes(`<option value="" disabled="" selected="">${escaped(pricingUiText('de','chooseMovingMode'))}</option>`));
   assert.doesNotMatch(html,/id="kr-calc-estimatedHours"|kr-calc-deposit-preview/);
   assert.match(html,/Synthetic inventory/);
+});
+
+test('a recurring cleaning quote is explicitly per visit until Kraken confirms the actual month',()=>{
+ for(const language of ['de','en','es','pt','it','fr']){
+  const html=render(language,'regular');
+  assert.ok(html.includes(escaped(bookingText(language,'perVisitPrice'))));
+  assert.ok(html.includes(escaped(bookingText(language,'monthlyPaymentNote'))));
+  assert.ok(!html.includes(escaped(bookingText(language,'monthlyTotal'))),'An unconfirmed monthly total must not be invented');
+ }
 });

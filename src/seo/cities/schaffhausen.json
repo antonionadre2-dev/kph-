@@ -1,0 +1,116 @@
+{
+  "id": "schaffhausen",
+  "name": {
+    "de": "Schaffhausen",
+    "en": "Schaffhausen",
+    "es": "Schaffhausen",
+    "pt": "Schaffhausen",
+    "it": "Sciaffusa",
+    "fr": "Schaffhouse"
+  },
+  "sources": [
+    {
+      "id": "police",
+      "url": "https://www.stadt-schaffhausen.ch/stadtpolizei/30898",
+      "label": {
+        "de": "Stadtpolizei",
+        "en": "Municipal police",
+        "es": "Policía municipal",
+        "pt": "Polícia municipal",
+        "it": "Polizia municipale",
+        "fr": "Police municipale"
+      },
+      "verifiedAt": "2026-11-28"
+    },
+    {
+      "id": "visitors",
+      "url": "https://www.stadt-schaffhausen.ch/verkehrsparkdienst/33923",
+      "label": {
+        "de": "Verkehrs- und Parkdienst",
+        "en": "Traffic and parking service",
+        "es": "Servicio de tráfico y aparcamiento",
+        "pt": "Serviço de trânsito e estacionamento",
+        "it": "Servizio traffico e parcheggi",
+        "fr": "Service de circulation et stationnement"
+      },
+      "verifiedAt": "2026-11-28"
+    },
+    {
+      "id": "address",
+      "url": "https://www.stadt-schaffhausen.ch/index.php/dienste/100114?_display-mode=a11y",
+      "label": {
+        "de": "Umzugsmeldung",
+        "en": "Reporting an address change",
+        "es": "Comunicar un cambio de domicilio",
+        "pt": "Comunicar uma mudança de morada",
+        "it": "Comunicare un cambio di indirizzo",
+        "fr": "Annoncer un changement d’adresse"
+      },
+      "verifiedAt": "2026-11-28"
+    }
+  ],
+  "facts": [
+    {
+      "id": "police",
+      "sourceId": "police",
+      "text": {
+        "de": "Die Stadtpolizei ist für Bewilligungen, die Bewirtschaftung des öffentlichen Grundes und Signalisationen zuständig.",
+        "en": "The municipal police handle permits, use of public space and signage.",
+        "es": "La policía municipal gestiona permisos, uso del espacio público y señalización.",
+        "pt": "A polícia municipal gere autorizações, utilização do espaço público e sinalização.",
+        "it": "La polizia municipale gestisce permessi, uso dello spazio pubblico e segnaletica.",
+        "fr": "La police municipale gère les autorisations, l’utilisation de l’espace public et la signalisation."
+      }
+    },
+    {
+      "id": "visitors",
+      "sourceId": "visitors",
+      "text": {
+        "de": "Bei Strassen mit entsprechender Anwohner-/Besucherregelung verlangt die Stadt eine gut sichtbare Besuchsbescheinigung im Fahrzeug.",
+        "en": "On streets with the relevant resident/visitor restriction, the city asks for a visitor certificate displayed visibly in the vehicle.",
+        "es": "En calles con la restricción correspondiente para residentes y visitantes, la ciudad pide un certificado de visita visible en el vehículo.",
+        "pt": "Nas ruas com a restrição aplicável a residentes e visitantes, a cidade pede um comprovativo de visita visível no veículo.",
+        "it": "Nelle strade con la relativa limitazione per residenti e visitatori, la città richiede un attestato di visita visibile nel veicolo.",
+        "fr": "Dans les rues soumises à la restriction correspondante pour résidents et visiteurs, la ville demande une attestation de visite visible dans le véhicule."
+      }
+    },
+    {
+      "id": "address",
+      "sourceId": "address",
+      "text": {
+        "de": "Ein Umzug innerhalb der Stadt kann persönlich, über eUmzug.ch, telefonisch oder per E-Mail gemeldet werden.",
+        "en": "A move within the city can be reported in person, through eUmzug.ch, by telephone or by email.",
+        "es": "Una mudanza dentro de la ciudad puede comunicarse en persona, por eUmzug.ch, por teléfono o por correo electrónico.",
+        "pt": "Uma mudança dentro da cidade pode ser comunicada presencialmente, por eUmzug.ch, telefone ou email.",
+        "it": "Un trasloco all’interno della città può essere comunicato di persona, tramite eUmzug.ch, per telefono o email.",
+        "fr": "Un déménagement à l’intérieur de la ville peut être annoncé en personne, sur eUmzug.ch, par téléphone ou par e-mail."
+      }
+    }
+  ],
+  "services": {
+    "window-cleaning": [
+      "police",
+      "visitors"
+    ],
+    "daily-cleaning": [
+      "visitors"
+    ],
+    "deep-cleaning": [
+      "police",
+      "visitors"
+    ],
+    "end-of-tenancy": [
+      "address",
+      "visitors"
+    ],
+    "moving-furniture": [
+      "police",
+      "address"
+    ]
+  },
+  "pendingOwner": [
+    "Reale Referenzen und freigegebene Fotos für diese Stadt liefern.",
+    "Konkrete Einsatzadressen, Zugänge und Termine persönlich bestätigen.",
+    "Festlegen, wer notwendige Park-/Zufahrtsbewilligungen beantragt und Kosten trägt."
+  ]
+}

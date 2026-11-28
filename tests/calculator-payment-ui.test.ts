@@ -65,3 +65,11 @@ test('all six languages explain the next payment step and distinguish expiry fro
   }
   assert.match(bookingText('es', 'paymentReviewRequired'), /No inicie otro pago/);
 });
+
+test('full prepayment uses service-start checkout availability, independently of an earlier payment due date',()=>{
+ const full={canCheckout:true,scheduling:{status:'confirmed',holdExpiresAt:new Date(now-1).toISOString()},payment:{model:'full_prepayment',status:'awaiting_payment',checkoutAvailableUntil:hold}};
+ assert.equal(paymentUiState(full,now).canOpenCheckout,true);
+ assert.equal(paymentUiState(full,now+60_000).canOpenCheckout,false);
+ assert.equal(paymentUiState(full,now+60_000).holdHasExpired,true);
+ assert.equal(paymentUiState({...full,canCheckout:false},now).canOpenCheckout,false);
+});

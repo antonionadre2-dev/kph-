@@ -1,0 +1,206 @@
+# Condiciones generales
+
+Fecha de vigencia: 28 de noviembre de 2026
+
+Esta traducción se facilita para su comprensión. Prevalece la versión alemana.
+
+## 1. Parte contratante y ámbito de aplicación
+
+1.1 La parte contratante es Kraken Properties and Facilities Management Gomes Mendes, empresa individual cuyo titular es Antonio Nadre Gomes Mendes, Seewadelstrasse 3, 8203 Schaffhausen, UID CHE-435.882.969 (en adelante, «Kraken»).
+
+1.2 Estas condiciones generales se aplican a la limpieza de ventanas, limpieza de fin de alquiler, limpieza periódica, limpieza a fondo, limpieza de fin de obra y pequeñas mudanzas para hogares particulares en las regiones de Zúrich, Schaffhausen y Winterthur.
+
+1.3 Se aplica la versión publicada en el sitio web en el momento de su reserva. Las modificaciones solo son válidas si Kraken las ha confirmado por escrito; basta con un correo electrónico.
+
+1.4 Prevalece la versión alemana. Las traducciones se facilitan únicamente para su comprensión.
+
+## 2. Oferta, reserva y celebración del contrato
+
+2.1 El calculador online muestra el precio correspondiente a sus datos y a los servicios seleccionados. Una solicitud o una fecha deseada todavía no constituye una reserva.
+
+2.2 El contrato se celebra cuando Kraken confirma por escrito la fecha, el alcance de los servicios y el precio (confirmación del encargo).
+
+2.3 El alcance de los servicios se determina en la confirmación del encargo. Los trabajos que no figuren en ella no forman parte del encargo.
+
+2.4 Para mudanzas con precio «desde», casas, viviendas de más de 5.5 habitaciones, así como pianos, cajas fuertes o elevadores de muebles, Kraken prepara una oferta personalizada a partir de fotografías o de una visita. No se debe realizar ningún pago hasta que se confirme el precio.
+
+## 3. Precios
+
+3.1 Todos los precios se expresan en francos suizos (CHF). Kraken no está sujeta al IVA (facturación anual inferior a CHF 100'000). No se cobra ni se desglosa IVA; los precios mostrados son precios finales.
+
+3.2 Los precios cerrados se aplican al alcance confirmado y a los datos que facilite sobre número de habitaciones, superficie, estado, acceso y bienes que se trasladarán. Los extras seleccionados se desglosan individualmente en el precio total.
+
+3.3 Si las condiciones en el lugar difieren sustancialmente de sus datos, por ejemplo por una superficie mayor, suciedad intensa, objetos que se han dejado, bienes adicionales que trasladar o falta de ascensor, Kraken le informa antes de comenzar y le indica el precio ajustado. Usted decide si Kraken trabaja al precio ajustado o realiza únicamente el alcance acordado originalmente. Si por este motivo no se realiza el encargo, deberá abonar el 50 % del precio acordado; se devolverá el resto del importe pagado.
+
+3.4 Para trabajos según el tiempo empleado (limpieza por horas, mudanzas según el tiempo empleado), el calculador muestra un precio orientativo. Se factura el tiempo de trabajo real, como mínimo la duración mínima indicada en el calculador y, a partir de ella, en tramos de 15 minutos.
+
+3.5 En las limpiezas y las mudanzas a precio cerrado, el desplazamiento habitual está incluido en el precio. En las mudanzas según el tiempo empleado, el importe fijo de desplazamiento se muestra por separado. Los gastos de aparcamiento y los permisos para zonas de parada o aparcamiento corren a su cargo, salvo acuerdo distinto.
+
+3.6 El descuento combinado por mudanza y limpieza de fin de alquiler solo se aplica si se realizan ambos servicios.
+
+## 4. Pago antes del servicio
+
+4.1 El precio completo debe pagarse antes del servicio. Recibirá el enlace de pago tras la confirmación del encargo. El importe debe abonarse en un plazo de 3 días desde la confirmación y, como máximo, 48 horas antes del inicio de los trabajos; en encargos con poca antelación, vence inmediatamente tras la confirmación. Puede pagar online mediante Payrexx, transferencia bancaria o factura QR; lo determinante es la recepción del pago.
+
+4.2 Si el pago no se recibe a tiempo, Kraken puede volver a liberar la fecha tras un recordatorio. Kraken no comienza los trabajos sin haber recibido el pago.
+
+4.3 En los trabajos según el tiempo empleado, pagará previamente el precio orientativo mostrado en el calculador. Kraken factura el trabajo adicional después del servicio, con un plazo de pago de 7 días. Si el servicio dura menos de lo estimado, Kraken devuelve la diferencia, respetando la duración mínima.
+
+4.4 La limpieza periódica se paga mensualmente por adelantado.
+
+4.5 Si se retrasa en el pago de facturas emitidas después del servicio, deberá abonar un interés de demora del 5 % anual. El primer recordatorio es gratuito; el segundo cuesta CHF 20 y el tercero CHF 50. Los gastos de cobro necesarios corren a su cargo.
+
+4.6 Las devoluciones se realizan en un plazo de 10 días por el medio de pago original.
+
+## 5. Fechas acordadas
+
+5.1 Las fechas confirmadas son vinculantes. Si la llegada se retrasa más de 30 minutos, Kraken le informa de inmediato.
+
+5.2 Si Kraken debe cancelar una fecha por un motivo importante, como enfermedad, accidente o avería del vehículo, le ofrece la primera fecha alternativa posible. Si no le conviene, puede desistir sin coste y recibirá la devolución íntegra del importe pagado. Solo existen otros derechos de reclamación en caso de dolo o negligencia grave.
+
+## 6. Su colaboración
+
+6.1 A la hora acordada, usted garantiza el acceso sin obstáculos, electricidad, agua caliente corriente, calefacción y, cuando se haya indicado, un ascensor utilizable.
+
+6.2 Para la limpieza de fin de alquiler, la vivienda debe estar vacía, las dependencias auxiliares contratadas deben ser accesibles y los frigoríficos y congeladores deben estar descongelados. Debe comunicar previamente los objetos que vayan a permanecer.
+
+6.3 La confirmación del encargo indica qué productos y equipos de limpieza aporta Kraken. Para la limpieza periódica y la limpieza a fondo, usted facilita los productos y equipos de limpieza, salvo que haya contratado «Material de Kraken».
+
+6.4 Antes del encargo, debe comunicar las superficies delicadas, los materiales especiales, los daños existentes y las instrucciones de su administración de la finca.
+
+6.5 Antes del servicio, debe guardar de forma segura el dinero en efectivo, las joyas y otros objetos de valor.
+
+6.6 Kraken guarda las llaves entregadas de forma segura y sin indicar la dirección, y las devuelve según lo acordado.
+
+6.7 Si no es posible acceder a la hora acordada, Kraken espera 15 minutos gratuitamente. El tiempo de espera adicional se factura a la tarifa por hora del calculador. Transcurridos 30 minutos sin acceso, la cita se considera no atendida (apartado 7.2).
+
+## 7. Cancelación y cambio de fecha
+
+7.1 Las cancelaciones y los cambios de fecha se realizan por escrito mediante correo electrónico a kai@krakenpfm.ch o por WhatsApp. Se tiene en cuenta el momento de recepción por Kraken.
+
+7.2 En caso de cancelación, se aplica lo siguiente, contando hasta el inicio acordado de los trabajos:
+
+- con 48 horas o más de antelación: sin coste, se devuelve íntegramente el importe pagado;
+- con menos de 48 y hasta 12 horas de antelación: 50 % del precio acordado;
+- con menos de 12 horas de antelación, en caso de no presentación o de cancelación en el lugar: 100 % del precio acordado.
+
+En los trabajos según el tiempo empleado, el precio orientativo confirmado se considera el precio acordado. Se descuenta el importe pagado; cualquier exceso se devuelve.
+
+7.3 El cambio de fecha es gratuito con 24 horas o más de antelación al inicio de los trabajos, siempre que Kraken pueda ofrecer una fecha alternativa. En caso contrario, se aplica el apartado 7.2.
+
+7.4 Si Kraken puede asignar a otro cliente la fecha liberada, la compensación se reduce en consecuencia.
+
+## 8. Limpieza periódica
+
+8.1 Los acuerdos de limpieza periódica tienen duración indefinida. Durante los dos primeros meses (periodo de prueba), ambas partes pueden resolverlos con un preaviso de 7 días y, posteriormente, con un preaviso de 30 días para el final de un mes. La resolución se comunica por escrito.
+
+8.2 Debe cancelar las citas individuales con al menos 48 horas de antelación. En caso de cancelación posterior, se aplica el apartado 7.2 a la visita afectada.
+
+8.3 Si una cita coincide con un festivo, acordamos una fecha alternativa.
+
+8.4 Kraken puede ajustar los precios una vez al año y lo comunica con al menos 60 días de antelación. Usted puede resolver el acuerdo con efecto en la fecha del ajuste.
+
+## 9. Limpieza de fin de alquiler con garantía de entrega
+
+9.1 La garantía de entrega solo se aplica a la limpieza de fin de alquiler a precio cerrado y únicamente a los trabajos de limpieza acordados en la confirmación del encargo. La limpieza por horas se realiza sin garantía de entrega.
+
+9.2 Si su administración de la finca o la parte arrendadora reclama por la limpieza en la entrega oficial de la vivienda, Kraken vuelve a limpiar gratuitamente los puntos reclamados.
+
+9.3 La garantía se aplica si se cumplen todos los requisitos siguientes:
+
+- La entrega de la vivienda se realiza en un plazo de 72 horas después de la limpieza.
+- La vivienda ha permanecido desocupada y sin uso después de la limpieza.
+- Comunica las reclamaciones por escrito en un plazo de 24 horas tras la entrega, con el acta de entrega o fotografías.
+- Kraken dispone de acceso para la limpieza correctiva.
+
+9.4 La limpieza correctiva se realiza lo antes posible, normalmente en un plazo de 48 horas desde la comunicación, de acuerdo con usted y con la administración de la finca.
+
+9.5 No están cubiertos:
+
+- el desgaste normal, los daños, las decoloraciones y las marcas de cal y óxido que no puedan eliminarse con medios habituales sin causar daños;
+- los trabajos de pintura, las reparaciones y el tapado de agujeros de tacos;
+- las estancias y los extras no contratados, por ejemplo balcón, sótano, persianas exteriores o moquetas;
+- las zonas que no fueran accesibles durante la limpieza.
+
+9.6 Kraken solo está presente en la entrega de la vivienda si se ha acordado expresamente.
+
+9.7 Si encarga a terceros corregir la limpieza sin dar a Kraken la oportunidad de realizar la limpieza correctiva, Kraken no asume esos costes.
+
+9.8 La garantía se refiere únicamente a la limpieza. No sustituye las reparaciones ni la aclaración de cuestiones de derecho de arrendamiento.
+
+9.9 Si Kraken no puede realizar la limpieza correctiva en el plazo acordado, devuelve la parte del precio correspondiente a los trabajos de limpieza objeto de la reclamación.
+
+## 10. Pequeñas mudanzas y transportes
+
+10.1 El encargo se basa en sus datos sobre los bienes que se trasladarán, las direcciones, las plantas, los ascensores, los recorridos a pie cargando y las posibilidades de parada.
+
+10.2 En las mudanzas según el tiempo empleado, el tiempo de trabajo se cuenta desde la llegada a la primera dirección hasta el final de la descarga, incluidos el trayecto entre las direcciones y los posibles tiempos de espera. La duración mínima, las tarifas por hora y el importe fijo de desplazamiento se determinan en el calculador y en la confirmación del encargo.
+
+10.3 Los precios cerrados se aplican a los bienes declarados, los accesos indicados y la distancia mencionada en el calculador. Los suplementos y extras se desglosan en la confirmación del encargo.
+
+10.4 En la oferta «1 persona + furgoneta», usted o sus ayudantes colaboran en el transporte de los bultos. Usted y sus ayudantes trabajan bajo su propia responsabilidad. Kraken no responde de los daños que usted o sus ayudantes causen.
+
+10.5 Usted embala los bienes de forma segura para el transporte en cajas cerradas y manejables. Kraken solo desmonta y monta muebles si se ha acordado. Kraken no responde del contenido de las cajas que usted haya embalado y que no presenten daños exteriores.
+
+10.6 Sin un acuerdo escrito, Kraken no transporta dinero en efectivo, joyas, valores y documentos, objetos de arte y antigüedades, sustancias peligrosas, plantas ni animales. Los pianos, las cajas fuertes y los trabajos con elevador de muebles solo se aceptan mediante una oferta personalizada.
+
+10.7 Usted garantiza una posibilidad de parada permitida en ambas direcciones. El tiempo adicional debido a la falta de un lugar de parada se factura según el tiempo empleado.
+
+10.8 Debe comunicar los daños visibles inmediatamente en la entrega; los documentamos conjuntamente. Debe comunicar los daños ocultos por escrito con fotografías en un plazo de 3 días.
+
+10.9 Kraken solo elimina los objetos cuya eliminación se haya acordado.
+
+## 11. Defectos y reclamaciones
+
+11.1 Este apartado se aplica a todos los servicios salvo la garantía de entrega (apartado 9) y los daños de transporte (apartado 10.8).
+
+11.2 Revise el trabajo inmediatamente después de su finalización. Debe comunicar los defectos visibles en un plazo de 48 horas desde la finalización y los defectos ocultos en un plazo de 48 horas desde su descubrimiento, como máximo 7 días después de la finalización. La comunicación se realiza por escrito, si es posible con fotografías.
+
+11.3 Kraken corrige gratuitamente los defectos justificados. Si la corrección no tiene éxito, puede solicitar una reducción adecuada del precio; Kraken devuelve el importe correspondiente.
+
+## 12. Responsabilidad
+
+12.1 Kraken responde de los daños causados culpablemente por Kraken o por los ayudantes a los que recurra durante la ejecución del encargo.
+
+12.2 En caso de dolo, negligencia grave y daños personales, la responsabilidad de Kraken es ilimitada.
+
+12.3 En caso de negligencia leve, la responsabilidad se limita a CHF 5'000 por siniestro y, para los bienes trasladados, además a CHF 1'000 por objeto, salvo que usted haya comunicado un valor superior por escrito antes del encargo y Kraken lo haya confirmado.
+
+12.4 Kraken no responde de:
+
+- los daños preexistentes y el desgaste normal;
+- los daños en superficies y materiales cuya sensibilidad usted no haya comunicado, siempre que se haya trabajado de manera profesional;
+- los daños causados por usted, sus ayudantes o terceros;
+- los daños consecuenciales y el lucro cesante, en la medida permitida por la ley.
+
+12.5 Debe comunicar los daños de inmediato, como máximo en un plazo de 48 horas desde la finalización de los trabajos, por escrito y con fotografías. Para los bienes trasladados se aplica el apartado 10.8.
+
+## 13. Ayudantes y rechazo de trabajos
+
+13.1 Kraken puede recurrir a ayudantes o a colaboradores especializados y sigue siendo su única parte contratante.
+
+13.2 Kraken puede rechazar o interrumpir los trabajos si en el lugar existen riesgos de seguridad o de salud no razonablemente asumibles, por ejemplo presencia de moho, plagas o accesos peligrosos. Se factura el trabajo ya realizado.
+
+## 14. Fuerza mayor
+
+Ninguna parte responde de los retrasos o incumplimientos debidos a acontecimientos fuera de su control razonable, como catástrofes naturales, huelgas, pandemias o fallos de infraestructuras. Las obligaciones quedan suspendidas mientras dure el acontecimiento. Si dura más de 30 días, ambas partes pueden desistir del contrato; se devuelven los importes ya pagados.
+
+## 15. Protección de datos y fotografías
+
+15.1 Kraken trata los datos personales de conformidad con la Ley suiza de Protección de Datos (DSG) y la política de privacidad del sitio web.
+
+15.2 Kraken puede realizar fotografías de antes y después de las zonas trabajadas y de los bienes trasladados para documentar la calidad, la garantía de entrega y los casos de daños. Las fotografías no muestran personas. Kraken solo utiliza fotografías para publicidad con su consentimiento previo.
+
+## 16. Modificación de las condiciones generales y cláusula de salvaguardia
+
+16.1 Para los encargos puntuales se aplica la versión vigente en el momento de la reserva.
+
+16.2 Para la limpieza periódica, Kraken comunica los cambios por correo electrónico con al menos 30 días de antelación. Si no está de acuerdo, puede resolver el acuerdo con efecto en la fecha del cambio. Si no lo resuelve, la nueva versión se aplica desde ese momento.
+
+16.3 Si una disposición no es válida, las demás siguen siendo válidas. La disposición no válida se sustituye por una regulación que se aproxime lo máximo posible a su finalidad económica.
+
+## 17. Derecho aplicable y jurisdicción
+
+Se aplica el derecho suizo. La jurisdicción competente es Schaffhausen. Quedan reservados los fueros obligatorios para consumidores y consumidoras.
+
+Kraken Properties and Facilities Management Gomes Mendes · Seewadelstrasse 3, 8203 Schaffhausen · kai@krakenpfm.ch · +41 77 450 57 05

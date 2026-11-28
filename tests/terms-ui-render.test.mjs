@@ -14,7 +14,7 @@ test('terms server render contains all17 fullsections, localized tools and safe 
   await build({stdin:{contents:`import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {I18nProvider} from './i18n.ts';import Terms from './components/TermsPage.tsx';export const render=language=>renderToStaticMarkup(<I18nProvider initialLanguage={language}><Terms onNavigate={()=>{}}/></I18nProvider>);`,resolveDir:root,loader:'tsx'},outfile,bundle:true,platform:'node',format:'cjs',packages:'external',loader:{'.css':'empty'},logLevel:'silent'});
   const {render}=createRequire(import.meta.url)(outfile);
   for(const locale of ['de','en','es','pt','it','fr']){
-   const source=JSON.parse(readFileSync(path.join(root,'src/legal/versions/kraken-agb-2026-11-26-v2',locale+'.json'),'utf8'));
+   const source=JSON.parse(readFileSync(path.join(root,'src/legal/versions/kraken-agb-2026-11-28-v3',locale+'.json'),'utf8'));
    const html=render(locale),article=html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/)?.[1];assert.ok(article,locale);const text=plain(article);
    assert.equal((html.match(/<h1\b/g)||[]).length,1);assert.equal(plain(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)[1]),source.title);if(locale==='de')assert.match(html,/<wbr\s*\/?>/);assert.equal((article.match(/<h2\b/g)||[]).length,17);
    for(const section of source.sections){

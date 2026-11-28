@@ -1,3 +1,4 @@
+import {seedStoredV2} from './helpers/legacy-booking.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createBookingService, validateBookingRequest, BOOKING_TERMS_VERSION } from '../server/booking.ts';
@@ -47,6 +48,9 @@ function fixture() {
     return Response.json({status:'success',data:[{id:providerRequests.length,link:`https://kraken-isolated-test.payrexx.com/isolated-checkout/${providerRequests.length}`}]});
   });
   const service=createBookingService({store:store as any,payment,tokenSecret:'synthetic-private-test-secret-32-characters',origin:'https://kraken.example',mode:'test',clock:()=>now});
+  // Only these historical deposit regressions load a persisted v2 financial/legal snapshot.
+  const createCurrent=service.create.bind(service);
+  service.create=async(input:any)=>{const booking=await createCurrent(input);const record=seedStoredV2(records.get(booking.bookingId));return service.view(record,true);};
   return {service,records,providerRequests};
 }
 
@@ -54,9 +58,9 @@ function request(selection:BookingSelection) {
   return {selection,customer:{name:'Synthetic Deposit Customer',email:'synthetic@example.test',phone:'+41770000000',address:'Testweg 1',postalCode:'8203',city:'Schaffhausen'},requestedDate:'2026-12-08',requestedTime:'10:00',notes:'Synthetic only',language:'es',termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,pricingVersion:PRICING_VERSION,acceptedTotalCents:calculatePrice(selection).totalCents,idempotencyKey:'synthetic_deposit_test_123456'};
 }
 
-async function confirmedCheckout(f:ReturnType<typeof fixture>,booking:any,termsVersion=BOOKING_TERMS_VERSION) {
+async function confirmedCheckout(f:ReturnType<typeof fixture>,booking:any,termsVersion?:string) {
   await f.service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-test-operator',holdExpiresAt:new Date(now+3*86400000).toISOString()});
-  return f.service.checkout(booking.bookingId,booking.publicToken,{termsAccepted:true,termsVersion,acceptedQuoteRevision:booking.quoteRevision,language:'es'});
+  return f.service.checkout(booking.bookingId,booking.publicToken,{termsAccepted:true,termsVersion:termsVersion??f.records.get(booking.bookingId).termsVersion,acceptedQuoteRevision:booking.quoteRevision,language:'es'});
 }
 
 test('authoritative saved hourly deposits and actual Payrexx adapter payloads use minimums, not browser-supplied amounts',async () => {
@@ -85,7 +89,7 @@ test('authoritative saved hourly deposits and actual Payrexx adapter payloads us
     assert.equal(f.records.get(booking.bookingId).payment.amountDueNowCents,due);
     assert.equal(f.records.get(booking.bookingId).payment.amountPaidCents,0,'opening a gateway does not record a payment');
     assert.deepEqual(f.records.get(booking.bookingId).termsAcceptance,acceptance);
-    assert.deepEqual(await f.service.checkout(booking.bookingId,booking.publicToken,{termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,acceptedQuoteRevision:1,language:'es'}),checkout);
+    assert.deepEqual(await f.service.checkout(booking.bookingId,booking.publicToken,{termsAccepted:true,termsVersion:f.records.get(booking.bookingId).termsVersion,acceptedQuoteRevision:1,language:'es'}),checkout);
     assert.equal(f.providerRequests.length,1,'retrying the active checkout must not create another gateway');
   }
 });

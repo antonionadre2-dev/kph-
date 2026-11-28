@@ -17,60 +17,61 @@ function fixture(language='es') {
     termsAcceptedAt:Date.parse('2026-11-27T08:00:00Z'),confirmedAt:Date.parse('2026-12-01T11:00:00Z'),
     scheduling:{status:'confirmed',date:'2026-12-05',time:'10:00'},
     customer:{name:'Synthetic Customer',email:'synthetic@example.test',address:'Testweg 1',postalCode:'8203',city:'Schaffhausen'},
-    payment:{status:'not_started',amountDueNowCents:Math.round(quote.totalCents!*.15),amountPaidCents:0,remainingBalanceCents:quote.totalCents!},
+    payment:{model:'full_prepayment',billingMode:'single',status:'not_started',totalDueCents:quote.totalCents!,amountDueNowCents:quote.totalCents!,amountPaidCents:0,outstandingCents:quote.totalCents!,paymentDueAt:'2026-12-03T09:00:00.000Z'},
   };
 }
 const asText=(value:unknown)=>JSON.stringify(value);
 
-test('calculator review uses source clauses and conditional guarantee, with separate cancellation and rescheduling',()=>{
+test('calculator review is four concise rows with the actual amount and a conditional guarantee',()=>{
   for(const language of ['de','en','es','pt','it','fr']) {
-    const fixed=bookingTermsPresentation(language,{selection:defaultSelection('endOfTenancy')});
-    assert.deepEqual(fixed.sections.map(section=>section.clause),[4,4,7,7,9]);
+    const selection=defaultSelection('endOfTenancy'), quote=calculatePrice(selection);
+    const fixed=bookingTermsPresentation(language,{selection,quote});
+    assert.equal(fixed.rows.length,4);
+    assert.match(fixed.rows[0].value,/560/);
+    assert.deepEqual(fixed.sections.map(section=>section.clause),[4,7,9]);
     assert.ok(fixed.sections.every(section=>section.href.endsWith('#agb-'+section.clause)));
-    const hourly=bookingTermsPresentation(language,{selection:{...defaultSelection('endOfTenancy'),mode:'hourly'}});
+    const hourly=bookingTermsPresentation(language,{selection:{...selection,mode:'hourly'},quote});
     assert.equal(hourly.sections.filter(section=>section.clause===9).length,0);
-    assert.doesNotMatch(asText(fixed),/pricing-moving|bestehende Anzahlung|Versicherungsnachweis|erfahrenes Team/);
+    const html=renderToStaticMarkup(React.createElement(BookingTermsSummary,{language,selection,quote,compact:true}));
+    assert.equal((html.match(/<dd/g)||[]).length,4);
+    assert.equal((html.match(/<a /g)||[]).length,1);
+    assert.ok(!html.includes(fixed.sections[0].text),'compact review does not reproduce the full clause');
+    assert.doesNotMatch(asText(fixed),/pricing-moving|Anzahlung|Restbetrag|Versicherungsnachweis|erfahrenes Team/);
   }
 });
 
-test('actual confirmation date produces a calendar-day deadline, capped before the real appointment without changing financial data',()=>{
+test('presentation displays the persisted Zurich payment deadline and never recomputes a charge',()=>{
   const record=fixture(),before=asText(record),summary=bookingTermsPresentation('es',{booking:record});
   assert.equal(asText(record),before);
-  assert.match(summary.rows.find(row=>row.label===termsPresentationText('es','depositDue'))!.value,/4 de diciembre de 2026/);
-  assert.match(summary.rows.find(row=>row.label===termsPresentationText('es','depositAmount'))!.value,/84/);
-  assert.equal(summary.rows.some(row=>row.label===termsPresentationText('es','invoiceDue')),false,'no invented invoice date');
-  record.scheduling.date='2026-12-02';
-  const early=bookingTermsPresentation('es',{booking:record});
-  assert.match(early.rows.find(row=>row.label===termsPresentationText('es','depositDue'))!.value,/2 de diciembre de 2026.*10:00.*antes/);
-  record.confirmedAt=Date.parse('2027-03-26T20:00:00Z');record.scheduling.date='2027-04-10';
-  assert.match(bookingTermsPresentation('en',{booking:record}).rows.find(row=>row.label===termsPresentationText('en','depositDue'))!.value,/29 March 2027/);
+  assert.match(summary.rows[1].value,/3 de diciembre de 2026.*10:00/);
+  assert.match(summary.rows[0].value,/560/);
+  record.payment.paymentDueAt='2027-03-29T18:00:00.000Z';
+  assert.match(bookingTermsPresentation('en',{booking:record}).rows[1].value,/29 March 2027.*20:00/);
 });
 
-test('request, confirmed order and verified payment remain distinct; paid deposits are not shown as still due',()=>{
-  const record:any=fixture();delete record.confirmedAt;record.scheduling.status='requested';record.status='awaiting_confirmation';
+test('request, confirmation and verified payment are distinct and no money is charged during request',()=>{
+  const record:any=fixture();delete record.confirmedAt;record.scheduling.status='requested';record.status='awaiting_confirmation';delete record.payment.paymentDueAt;
   const request=bookingTermsPresentation('es',{booking:record});
   assert.match(request.state,/Solicitud recibida/);
-  assert.equal(request.rows.find(row=>row.label===termsPresentationText('es','depositDue'))!.value,termsPresentationText('es','deadlinePending'));
+  assert.equal(request.rows[1].value,termsPresentationText('es','paymentSchedule'));
   record.confirmedAt=Date.parse('2026-12-01T11:00:00Z');record.scheduling.status='held';record.status='confirmed';
   assert.equal(bookingTermsPresentation('es',{booking:record}).state,termsPresentationText('es','confirmed'));
-  record.mode='live';record.payment.status='paid';record.payment.amountPaidCents=record.payment.amountDueNowCents;
+  record.mode='live';record.payment.status='paid';record.payment.amountPaidCents=record.payment.totalDueCents;
   const paid=bookingTermsPresentation('es',{booking:record});
   assert.equal(paid.state,termsPresentationText('es','paid'));
-  assert.equal(paid.rows.some(row=>row.label===termsPresentationText('es','depositDue')),false);
+  assert.equal(paid.rows[1].value,termsPresentationText('es','paidNotice'));
   record.payment.status='test_paid';
   assert.equal(bookingTermsPresentation('es',{booking:record}).state,termsPresentationText('es','testPaid'));
 });
 
-test('materials reflect the actual choice and regular cleaning has no invented payment schedule',()=>{
+test('regular cleaning shows a confirmed monthly total, never an invented four-week conversion',()=>{
   const record:any=fixture();record.selection=defaultSelection('regular');
   let summary=bookingTermsPresentation('es',{booking:record});
-  assert.equal(summary.rows.find(row=>row.label===termsPresentationText('es','materials'))!.value,termsPresentationText('es','materialsClient'));
-  assert.equal(summary.rows.find(row=>row.label===termsPresentationText('es','depositDue'))!.value,termsPresentationText('es','regularSchedule'));
-  record.selection.materials=true;
+  assert.equal(summary.rows[0].value,termsPresentationText('es','monthlyPending'));
+  record.payment.billingMode='monthly';record.payment.totalDueCents=67500;record.payment.billingPeriod={start:'2026-12-01',end:'2026-12-31',visits:5};
   summary=bookingTermsPresentation('es',{booking:record});
-  assert.equal(summary.rows.find(row=>row.label===termsPresentationText('es','materials'))!.value,termsPresentationText('es','materialsKraken'));
-  record.selection=defaultSelection('windows');
-  assert.equal(bookingTermsPresentation('es',{booking:record}).rows.find(row=>row.label===termsPresentationText('es','materials'))!.value,termsPresentationText('es','materialsPending'));
+  assert.match(summary.rows[0].value,/675/);
+  assert.equal(summary.rows[3].value,termsPresentationText('es','guaranteeNone'));
 });
 
 test('old contracts show their recorded version archive and are never assigned the new payment clauses',()=>{
@@ -83,7 +84,7 @@ test('old contracts show their recorded version archive and are never assigned t
   assert.match(html,/target="_blank"/);assert.match(html,/noopener noreferrer/);
 });
 
-test('both real email render paths retain all six locales and include recorded dates, materials, accepted version and amount',()=>{
+test('both real email render paths retain all six locales and include recorded dates, accepted version and full amount',()=>{
   for(const language of ['de','en','es','pt','it','fr']) {
     const record=fixture(language),before=asText(record);
     const legacy=renderBookingEmail(record,'request','https://kraken.example','synthetic-token');
@@ -94,7 +95,7 @@ test('both real email render paths retain all six locales and include recorded d
     const envelope=prepareCustomerEnvelope(notification,{primary:'https://kraken.example/offerte#access=synthetic',secondary:'https://kraken.example/kontakt'},'https://kraken.example');
     assert.ok(envelope.text.includes(CURRENT_TERMS_VERSION));
     assert.ok(envelope.text.includes(`/legal/terms/${CURRENT_TERMS_VERSION}/${language}.pdf`));
-    assert.ok(envelope.text.includes(termsPresentationText(language,'materialsPending')));
+    assert.ok(envelope.text.includes(bookingTermsPresentation(language,{booking:record}).rows[0].value));
     assert.match(envelope.html,new RegExp('<html lang="'+language+'"'));
     assert.equal(asText(record),before,'rendering never mutates the financial or contractual snapshot');
     assert.equal(notification.renderData.termsSummary.language,language);

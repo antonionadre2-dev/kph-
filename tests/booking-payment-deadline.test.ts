@@ -1,3 +1,4 @@
+import {seedStoredV2} from './helpers/legacy-booking.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createBookingService, BOOKING_TERMS_VERSION} from '../server/booking.ts';
@@ -18,7 +19,7 @@ function fixture(provider:any={}){
   const payment={async create(record:any,token:string,validity:number){calls++;minutes.push(validity);return provider.create?provider.create(record,token,validity):{id:42,link:'https://synthetic.payrexx.com/one-gateway'};},async verify(record:any){return provider.verify?provider.verify(record):{status:'pending',transactionId:null};}};
   const service=createBookingService({store,origin:'https://kraken.example',tokenSecret:'synthetic-server-secret-over-32-characters',mode:'test',payment,clock:()=>now});
   async function create(date='2026-12-10',time='10:00'){
-    const selection=defaultSelection('endOfTenancy');return service.create({selection,requestedDate:date,requestedTime:time,language:'es',customer:{name:'Synthetic Customer',email:'client@example.test',phone:'+41770000000',address:'Testweg 1',postalCode:'8203',city:'Schaffhausen'},notes:'',termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,pricingVersion:PRICING_VERSION,acceptedTotalCents:calculatePrice(selection).totalCents,idempotencyKey:'synthetic_deadline_request_123456'});
+    const selection=defaultSelection('endOfTenancy');const booking=await service.create({selection,requestedDate:date,requestedTime:time,language:'es',customer:{name:'Synthetic Customer',email:'client@example.test',phone:'+41770000000',address:'Testweg 1',postalCode:'8203',city:'Schaffhausen'},notes:'',termsAccepted:true,termsVersion:BOOKING_TERMS_VERSION,pricingVersion:PRICING_VERSION,acceptedTotalCents:calculatePrice(selection).totalCents,idempotencyKey:'synthetic_deadline_request_123456'});seedStoredV2(records.get(booking.bookingId));return service.view(records.get(booking.bookingId),true);
   }
   const checkout=(booking:any)=>service.checkout(booking.bookingId,booking.publicToken,{termsAccepted:true,termsVersion:records.get(booking.bookingId).termsVersion,acceptedQuoteRevision:1,language:'es'});
   return{service,store,records,mail,create,checkout,minutes,setTime:(value:number)=>{now=value;},get calls(){return calls;}};
@@ -37,7 +38,7 @@ test('three Zurich calendar days preserve local time across DST and stop before 
   assert.throws(()=>depositPaymentDeadline(initial,initial),RangeError);
 });
 
-test('current terms use one server-owned three-day deadline despite a short client hold and preserve financial snapshot',async()=>{
+test('persisted v2 terms use one server-owned three-day deadline despite a short client hold and preserve financial snapshot',async()=>{
   const f=fixture(),booking=await f.create(),before=clone(f.records.get(booking.bookingId));
   const confirmed=await f.service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator',holdExpiresAt:new Date(initial+30*60000).toISOString()});
   const due=initial+3*day;
@@ -53,15 +54,15 @@ test('current terms use one server-owned three-day deadline despite a short clie
   assert.equal(f.records.get(booking.bookingId).status,'confirmed');assert.equal(f.records.get(booking.bookingId).scheduling.status,'held','expiry never releases an appointment without a staff reminder/review');
 });
 
-test('payment deadline is capped before early work and the same recorded timestamp appears in confirmations',async()=>{
+test('persisted v2 early-work deadline remains unchanged and its presentation links the accepted archive',async()=>{
   const f=fixture(),booking=await f.create('2026-11-28','09:00');
   const confirmed=await f.service.confirmAppointment(booking.bookingId,{operatorId:'synthetic-operator'});
   assert.equal(confirmed.payment.depositDueAt,'2026-11-28T08:00:00.000Z');
   await f.checkout(booking);assert.deepEqual(f.minutes,[1320]);
   const summary=bookingTermsPresentation('es',{booking:confirmed});
-  assert.match(summary.rows.find(row=>row.label===termsPresentationText('es','depositDue'))!.value,/28 de noviembre de 2026.*9:00.*Europe\/Zurich/);
+  assert.equal(summary.legacy,true);assert.ok(summary.links.some(link=>link.href.includes('kraken-agb-2026-11-26-v2')));assert.equal(summary.sections.length,0);
   const record=f.records.get(booking.bookingId);record.selection=defaultSelection('regular');
-  assert.match(bookingTermsPresentation('es',{booking:record}).rows.find(row=>row.label===termsPresentationText('es','depositDue'))!.value,/28 de noviembre de 2026.*9:00/,'a real regular-cleaning confirmation date is shown instead of an invented generic schedule');
+  assert.equal(record.payment.depositDueAt,'2026-11-28T08:00:00.000Z');assert.equal(bookingTermsPresentation('es',{booking:record}).legacy,true,'an old regular-cleaning contract never acquires the current monthly payment schedule');
 });
 
 test('an existing historical contract keeps its accepted hold, amount and original checkout without a second gateway',async()=>{

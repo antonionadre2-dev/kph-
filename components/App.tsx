@@ -43,6 +43,7 @@ const CustomerAccessRoute = lazyWithRetry(() => import('./calculator/CustomerAcc
 const SeoServiceCityPage = lazyWithRetry(() => import('./SeoServiceCityPage'));
 const AboutPage = lazyWithRetry(() => import('./about/ApprovedAbout'));
 const ApprovedServices = lazyWithRetry(() => import('./services/ApprovedServices'));
+const MovingServicesPage = lazyWithRetry(() => import('./home/MovingServicesPage'));
 const LoginPage = lazyWithRetry(() => import('./LoginPage'));
 const RegisterPage = lazyWithRetry(() => import('./RegisterPage'));
 const Dashboard = lazyWithRetry(() => import('./Dashboard'));
@@ -50,7 +51,6 @@ const GDPRPage = lazyWithRetry(() => import('./GDPRPage'));
 const TermsPage = lazyWithRetry(() => import('./TermsPage'));
 const ImpressumPage = lazyWithRetry(() => import('./ImpressumPage'));
 const KontaktPage = lazyWithRetry(() => import('./KontaktPage'));
-const CommercialQuotePage = lazyWithRetry(() => import('./CommercialQuotePage'));
 const ReviewInvitePage = lazyWithRetry(() => import('./ReviewInvitePage'));
 const RegionHubPage = lazyWithRetry(() => import('./RegionHubPage').then(m => ({ default: m.RegionHubPage })));
 const CoverageHubPage = lazyWithRetry(() => import('./CoverageHubPage'));
@@ -135,6 +135,7 @@ const PATH_TO_PAGE_MAP: Record<string, string> = {
   '/ueber-kraken': 'about',
   '/services': 'services-page',
   '/leistungen': 'approved-services',
+  '/kleine-umzuege': 'moving-services',
   '/commercial': 'commercial-services',
   '/careers': 'careers',
   '/sustainability': 'sustainability-page',
@@ -153,7 +154,6 @@ const PATH_TO_PAGE_MAP: Record<string, string> = {
   '/login': 'login',
   '/register': 'register',
   '/dashboard': 'dashboard',
-  '/commercial-quote': 'commercial-quote',
   '/review-invite': 'review-invite',
   '/reviews': 'review-invite',
   '/reviewsvip': 'review-invite',
@@ -168,6 +168,7 @@ const PAGE_TO_PATH_MAP: Record<string, string> = {
   'about': '/about',
   'services-page': '/services',
   'approved-services': '/leistungen',
+  'moving-services': '/kleine-umzuege',
   'commercial-services': '/commercial',
   'careers': '/careers',
   'sustainability-page': '/sustainability',
@@ -183,7 +184,6 @@ const PAGE_TO_PATH_MAP: Record<string, string> = {
   'login': '/login',
   'register': '/register',
   'dashboard': '/dashboard',
-  'commercial-quote': '/commercial-quote',
   'review-invite': '/reviews',
 };
 
@@ -358,8 +358,8 @@ const App: React.FC = () => {
               return <AboutPage onNavigate={handleNavigate} />;
             case 'approved-services':
               return <ApprovedServices onNavigate={handleNavigate} />;
-            case 'commercial-quote':
-              return <CommercialQuotePage onNavigate={handleNavigate} />;
+            case 'moving-services':
+              return <MovingServicesPage onNavigate={handleNavigate} />;
             case 'review-invite':
               return <ReviewInvitePage onNavigate={handleNavigate} />;
             case 'redirecting':
@@ -433,7 +433,7 @@ const App: React.FC = () => {
 
   const isReviewPage = page === 'review-invite';
   const isLocalSeo = ['region-hub', 'municipality-page', 'coverage-hub', 'seo-landing'].includes(page);
-  const isApprovedHome = isLocalSeo || ['home', 'approved-services', 'about', 'kontakt', 'consultation', 'calculator-demo', 'customer-access'].includes(page);
+  const isApprovedHome = isLocalSeo || ['home', 'approved-services', 'moving-services', 'about', 'kontakt', 'consultation', 'calculator-demo', 'customer-access'].includes(page);
 
   return (
     <div className="bg-slate-50 text-gray-800 relative">

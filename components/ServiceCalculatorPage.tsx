@@ -29,6 +29,14 @@ import { bookingMailStatusKey } from '../src/booking/emailAvailability';
 import { clearPrivateDrafts } from '../src/booking/privateStorage';
 import { buildQuoteWhatsAppHref, frictionText, CONFIRMATION_WINDOW_COPY } from '../src/booking/calculatorFriction';
 import { publicHref } from '../src/routing/site-paths';
+import { requestKaiOpen } from '../src/kai/open';
+import { bookingAreaReview } from '../src/booking/serviceArea';
+import { BUSINESS_HOURS } from '../src/config/business-hours.mjs';
+import { monthlyBillingPeriod, isMonthlySelection } from '../src/booking/fullPrepayment';
+import { priceSummaryPeriod, type PriceSummaryBilling } from '../src/booking/priceSummary';
+import { operatorCopy } from '../src/booking/operatorCopy';
+import { safeOperatorPaymentLink } from '../src/booking/operatorUi';
+import type { ResolvedPostcodeLocality } from '../src/booking/postcodeLocation';
 import CalculatorPostcodeCheck from './CalculatorPostcodeCheck';
 import CustomerReviews from './home/CustomerReviews';
 import { checkoutErrorKey, paymentUiState } from '../src/booking/paymentUi';
@@ -50,7 +58,7 @@ interface Customer {
 interface RecoveryAccess { id: string; accessToken: string }
 interface BookingConfig {
   available: boolean; paymentReady: boolean; emailReady: boolean; mode: 'test' | 'live' | 'unconfigured';
-  termsVersion: string; depositPercent?: number; termsDocuments?: Record<string,TermsMetadata>;
+  termsVersion: string; paymentModel?: 'full_prepayment'; termsDocuments?: Record<string,TermsMetadata>;
 }
 interface BookingView {
   bookingId: string; reference: string; publicToken?: string; status: string;
@@ -58,7 +66,7 @@ interface BookingView {
   quote: PriceQuote; quoteRevision: number; canCheckout?: boolean;
   customer?: Customer; scopeNotes?: string; notes?: string; termsVersion?: string; termsAcceptance?:TermsAcceptance; confirmedAt?:number; selection?:BookingSelection;
   scheduling: { status: 'requested' | 'held' | 'confirmed' | 'needs_reschedule'; date: string; time: string; endTime?: string; timeZone: string; holdExpiresAt?: string };
-  payment: { status: string; amountPaidCents: number; amountDueNowCents?: number; remainingBalanceCents?: number; depositPercent?: number; checkoutExpiresAt?: string };
+  payment: { status: string; model?: 'full_prepayment'; billingMode?: 'single' | 'monthly'; totalDueCents?: number | null; outstandingCents?: number; paymentDueAt?: string; amountPaidCents: number; amountDueNowCents?: number; remainingBalanceCents?: number; depositPercent?: number; checkoutExpiresAt?: string; checkoutAvailableUntil?: string; billingPeriod?: { start: string; end: string; visits: number; totalCents?: number }; extraPayment?: { status: string; amountCents: number; dueAt: string; link?: string } };
   email?: { request?: 'queued' | 'sending' | 'sent' | 'failed' | 'delivery_unknown'; receipt?: 'queued' | 'sending' | 'sent' | 'failed' | 'delivery_unknown' };
 }
 type ServiceChoice = BookingService | 'deep';
@@ -80,7 +88,7 @@ const communicationCopy = {
 };
 
 function localToday(instant = new Date()): string {
-  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Zurich', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(instant);
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: BUSINESS_HOURS.timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(instant);
   const part = (type: string) => parts.find(item => item.type === type)?.value || '';
   return `${part('year')}-${part('month')}-${part('day')}`;
 }
@@ -253,24 +261,28 @@ export function MovingCalculatorFields({ selection, onChange, text, language, mo
   </div>;
 }
 
-function PriceSummary({ quote, text, language, money, hasSelection = false }: { quote: PriceQuote | null; text: Text; language: string; money: (cents: number) => string; hasSelection?: boolean }) {
+function PriceSummary({ quote, text, language, money, hasSelection = false, billing }: { quote: PriceQuote | null; text: Text; language: string; money: (cents: number) => string; hasSelection?: boolean; billing?:PriceSummaryBilling }) {
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const manual = Boolean(quote?.manualReviewReasons.length || quote?.totalCents === null);
   const estimated = quote?.priceType === 'estimate';
   const from = quote?.priceType === 'from' && typeof quote.fromPriceCents === 'number';
-  const priceLabel = from ? pricingUiText(language, 'fromLabel') : estimated ? pricingUiText(language, 'estimate') : text(manual ? 'individual' : 'priceLive');
-  const shownTotal = from ? pricingUiText(language, 'fromPrice', { price: money(quote.fromPriceCents!) }) : manual ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—';
-  const shownAmount = from ? quote.fromPriceCents! : manual ? null : quote?.totalCents ?? null;
+  const period = priceSummaryPeriod(quote,billing);
+  const periodLabel = period.scope === 'month' ? text('monthlyTotal') : period.scope === 'visit' ? text('perVisitPrice') : null;
+  const priceLabel = periodLabel || (from ? pricingUiText(language, 'fromLabel') : estimated ? pricingUiText(language, 'estimate') : text(manual ? 'individual' : 'priceLive'));
+  const shownTotal = from ? pricingUiText(language, 'fromPrice', { price: money(quote.fromPriceCents!) }) : manual ? text('individual') : typeof period.totalCents === 'number' ? money(period.totalCents) : '—';
+  const shownAmount = from ? quote.fromPriceCents! : manual ? null : period.totalCents;
   return <>
     <p className="kr-calc-summary-label">{priceLabel}</p>
     <CalculatorPriceSurface className="kr-calc-total" amount={shownAmount}>
-      <span>{estimated ? pricingUiText(language, 'estimate') : text(manual ? 'manualPrice' : 'currentTotal')}</span>
+      <span>{periodLabel || (estimated ? pricingUiText(language, 'estimate') : text(manual ? 'manualPrice' : 'currentTotal'))}</span>
       <strong>{shownTotal}</strong>
     </CalculatorPriceSurface>
+    {period.scope === 'month' && period.visits && typeof period.perVisitCents === 'number' && <p className="kr-calc-price-note">{text('monthlyPriceBasis',{visits:period.visits,price:money(period.perVisitCents)})}</p>}
     {quote && <p className="kr-calc-final-price">{pricingUiText(language, 'finalPrice')}</p>}
     {!quote && <p className="kr-calc-empty"><ClipboardList aria-hidden="true" />{text(hasSelection ? 'checkRequired' : 'selectToStart')}</p>}
     {quote && <p className="kr-calc-price-note"><Info aria-hidden="true" />{from ? pricingUiText(language, 'fromHint') : estimated ? pricingUiText(language, 'estimateHint') : text(manual ? 'manualPrice' : 'fixedForScope')}</p>}
     {!!quote?.lines.length && <details className="kr-calc-summary-details" open={breakdownOpen} onToggle={event => setBreakdownOpen(event.currentTarget.open)}><summary>{text(breakdownOpen ? 'hideBreakdown' : 'showBreakdown')}<ChevronDown aria-hidden="true" /></summary><ul className="kr-calc-lines" aria-label={text('selectedExtras')}>
+      {billing && <li><strong>{text('perVisitBreakdown')}</strong></li>}
       {quote.lines.map(line => <li key={line.id}>
         <span>{bookingLineLabel(language, line)}
           {line.quantity !== 1 && <small>{line.params?.capped ? pricingUiText(language, 'eotAreaCap', { cap: money(Number(line.params.capCents)) }) : <>{line.quantity.toLocaleString(bookingLanguage(language))} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : line.unit === 'm3' ? 'm³' : '×'} · {money(line.unitPriceCents)}</>}</small>}
@@ -278,7 +290,7 @@ function PriceSummary({ quote, text, language, money, hasSelection = false }: { 
       </li>)}
     </ul></details>}
     {quote && !manual && <div className="kr-calc-breakdown">
-      <div><span>{text('subtotal')}</span><b>{money(quote.subtotalCents)}</b></div>
+      <div><span>{billing ? text('perVisitPrice') : text('subtotal')}</span><b>{money(quote.subtotalCents)}</b></div>
     </div>}
   </>;
 }
@@ -306,7 +318,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const legacyCart = Array.isArray(cart) ? cart : [];
   const [customer, setCustomer] = useState<Customer>(() => ({ ...emptyCustomer, ...restoredDraft?.customer }));
   const [requestedDate, setRequestedDate] = useState(restoredDraft?.requestedDate || '');
-  const [requestedTime, setRequestedTime] = useState(restoredDraft?.requestedTime || '09:00');
+  const [requestedTime, setRequestedTime] = useState(restoredDraft?.requestedTime || BUSINESS_HOURS.opens);
   const [notes, setNotes] = useState(restoredDraft?.notes || '');
   const [kaiSummary, setKaiSummary] = useState<KaiDraft | null>(null);
   const [kaiConflicts, setKaiConflicts] = useState<string[]>([]);
@@ -354,6 +366,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const [paymentClock, setPaymentClock] = useState(() => Date.now());
   const [demoEnabled, setDemoEnabled] = useState(false);
   const [demoOutcome, setDemoOutcome] = useState<DemoPaymentOutcome>('paid');
+  const [demoPeriod, setDemoPeriod] = useState({start:'',end:'',visits:''});
   const [journeyPhase, setJourneyPhase] = useState<JourneyPhase | null>(null);
   const [journeyEmail, setJourneyEmail] = useState<'request' | 'receipt' | null>(null);
     const [guidePreferences,setGuidePreferences] = useState<GuidePreferences>(() => guidePreferencesFromQuery(window.location.search));
@@ -362,8 +375,14 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const verifyingPayment = useRef('');
   const idempotency = useRef<CalculatorSubmission | null>(null);
   const submissionGate=useRef(createCalculatorSubmissionGate());
-  const submittedResult = useRef<HTMLElement>(null);
+  const submittedResult = useRef<HTMLHeadingElement>(null);
+  const resultFocusPending = useRef(false);
+  const autofilledLocality = useRef<ResolvedPostcodeLocality | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    document.body.classList.add('kr-calculator-active');
+    return () => { document.body.classList.remove('kr-calculator-active'); };
+  }, []);
   const stepPanelRef = useRef<HTMLElement>(null);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   const finalConsentRef = useRef<HTMLInputElement>(null);
@@ -651,7 +670,35 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     setSelection(current => current ? { ...current, ...changes } as BookingSelection : current);
     setTermsAccepted(false); setError('');
   };
-  const updateCustomer = (key: keyof Customer, value: string) => { setCustomer(current => ({ ...current, [key]: value })); setTermsAccepted(false); setError(''); };
+  const updateCustomer = (key: keyof Customer, value: string) => {
+    const previousAuto = autofilledLocality.current;
+    if (key === 'city' || key === 'postalCode') autofilledLocality.current = null;
+    setCustomer(current => ({ ...current, [key]: value, ...(key === 'postalCode' && previousAuto?.locality === current.city ? { city: '' } : {}) }));
+    setTermsAccepted(false); setError('');
+  };
+  const acceptPostcodeLocality = (place: ResolvedPostcodeLocality) => {
+    const previousAuto = autofilledLocality.current;
+    setCustomer(current => {
+      if (current.postalCode !== place.postalCode || current.city.trim() && current.city !== previousAuto?.locality) return current;
+      autofilledLocality.current = place;
+      return { ...current, city: place.locality };
+    });
+    setTermsAccepted(false);
+  };
+  const focusSubmittedResult = () => { resultFocusPending.current = true; };
+  useEffect(() => {
+    if (!booking || journeyPhase || !resultFocusPending.current) return;
+    let secondFrame = 0;
+    // The submitting dialog closes first; its focus restoration must finish before the result receives focus.
+    const firstFrame = window.requestAnimationFrame(() => { secondFrame = window.requestAnimationFrame(() => {
+      const heading = submittedResult.current;
+      if (!heading) return;
+      resultFocusPending.current = false;
+      heading.focus({ preventScroll: true });
+      heading.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }); });
+    return () => { window.cancelAnimationFrame(firstFrame); window.cancelAnimationFrame(secondFrame); };
+  }, [booking?.bookingId, journeyPhase]);
   const acceptRecoveryAccess = (access: RecoveryAccess) => {
     if (preview || !safeId.test(access.id) || !safeToken.test(access.accessToken)) return;
     setRecoveryAccess(access);
@@ -684,8 +731,8 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
       let ancestor = target.parentElement;
       while (ancestor) { if (ancestor instanceof HTMLDetailsElement) ancestor.open = true; ancestor = ancestor.parentElement; }
       target.focus({ preventScroll: true });
-      const scrollTarget = fieldId ? target : stepPanelRef.current || target;
-      scrollTarget.scrollIntoView({ block: fieldId ? 'center' : 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      const scrollTarget = target;
+      scrollTarget.scrollIntoView({ block: fieldId ? 'center' : 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
       // Inline errors use the selected site language instead of native browser popovers.
     });
   }
@@ -711,9 +758,9 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email.trim())) return { step: 1, message: text('invalidContact'), fieldId: 'kr-calc-email' };
       if (!/^[+\d\s()./-]+$/.test(customer.phone.trim())) return { step: 1, message: text('invalidContact'), fieldId: 'kr-calc-phone' };
       const day = new Date(`${requestedDate}T12:00:00Z`);
-      const currentTime = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Zurich', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date());
+      const currentTime = new Intl.DateTimeFormat('en-GB', { timeZone: BUSINESS_HOURS.timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date());
       if (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) || !Number.isFinite(day.getTime()) || day.toISOString().slice(0, 10) !== requestedDate || requestedDate < localToday() || requestedDate > localToday(new Date(Date.now() + 366 * 86400000))) return { step: 1, message: text('invalidDate'), fieldId: 'kr-calc-date' };
-      if (!/^\d{2}:\d{2}$/.test(requestedTime) || requestedTime < '09:00' || requestedTime > '19:00' || Number(requestedTime.slice(3)) % 15 !== 0 || (requestedDate === localToday() && requestedTime <= currentTime)) return { step: 1, message: text('invalidDate'), fieldId: 'kr-calc-time' };
+      if (!/^\d{2}:\d{2}$/.test(requestedTime) || requestedTime < BUSINESS_HOURS.opens || requestedTime > BUSINESS_HOURS.closes || Number(requestedTime.slice(3)) % 15 !== 0 || (requestedDate === localToday() && requestedTime <= currentTime)) return { step: 1, message: text('invalidDate'), fieldId: 'kr-calc-time' };
       if (notes.length > 3000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(notes)) return { step: 1, message: text('checkRequired'), fieldId: 'kr-calc-notes' };
     }
     return null;
@@ -766,13 +813,13 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
       setError(''); setSubmitting(true); setJourneyPhase('request');
       demoTimer.current=setTimeout(() => {
         setBooking(snapshot); setSubmitting(false); setJourneyPhase(null); release();
-        window.requestAnimationFrame(() => submittedResult.current?.focus());
+        focusSubmittedResult();
       },1800);
       return;
     }
     if (preview || !selection || !quote || submitting || !config?.available) return;
     setError('');
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) || requestedDate < localToday() || !/^\d{2}:\d{2}$/.test(requestedTime) || requestedTime < '09:00' || requestedTime > '19:00') {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) || requestedDate < localToday() || !/^\d{2}:\d{2}$/.test(requestedTime) || requestedTime < BUSINESS_HOURS.opens || requestedTime > BUSINESS_HOURS.closes) {
       setError(text('invalidDate')); return;
     }
     const payload = {
@@ -802,7 +849,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
       const url = new URL(window.location.href);
       url.searchParams.set('booking', result.bookingId); url.searchParams.delete('payment'); url.searchParams.delete('draft'); url.hash = '';
       window.history.replaceState(window.history.state, '', url.pathname + url.search);
-      window.requestAnimationFrame(() => submittedResult.current?.focus());
+      focusSubmittedResult();
     } catch (cause) {
       const fieldByCode: Record<string, string> = { INVALID_NAME: 'name', INVALID_EMAIL: 'email', INVALID_PHONE: 'phone', INVALID_ADDRESS: 'address', INVALID_POSTAL_CODE: 'postal', INVALID_CITY: 'city', INVALID_DATE: 'date', INVALID_TIME: 'time', INVALID_DATE_TIME: 'date', DATE_OUT_OF_RANGE: 'date' };
       if (cause instanceof BookingApiError && fieldByCode[cause.code]) revealIssue({ step: 1, message: text(cause.code.includes('DATE') || cause.code.includes('TIME') ? 'invalidDate' : 'invalidContact'), fieldId: `kr-calc-${fieldByCode[cause.code]}` });
@@ -837,7 +884,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     try {
       const result = await api<{ link: string }>(`/api/booking/requests/${encodeURIComponent(bookingAccess.id)}/checkout`, {
         method: 'POST', headers: { Authorization: `Bearer ${bookingAccess.token}` },
-        body: JSON.stringify({ acceptedQuoteRevision: booking.quoteRevision, termsAccepted: true, termsVersion: booking.termsVersion || config?.termsVersion || TERMS_VERSION, language: bookingRequestLanguage(language, window.location.href) }),
+        body: JSON.stringify({ acceptedQuoteRevision: booking.quoteRevision, ...(booking.payment.model === 'full_prepayment' ? { acceptedTotalDueCents: booking.payment.totalDueCents } : {}), termsAccepted: true, termsVersion: booking.termsVersion || config?.termsVersion || TERMS_VERSION, language: bookingRequestLanguage(language, window.location.href) }),
       });
       const paymentUrl = new URL(result.link);
       if (paymentUrl.protocol !== 'https:') throw new BookingApiError('INVALID_PAYMENT_LINK', 502);
@@ -859,7 +906,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     verifiedSuccess.current='';verifyingPayment.current='';
     setBookingAccess(null); setBooking(null); setReturnMissing(false); setChoice('endOfTenancy'); setSelection(defaultSelection('endOfTenancy'));
     setTermsAccepted(false); setPayConsent(false); setError(''); setCustomer({ ...emptyCustomer });
-    setRequestedDate(''); setRequestedTime('09:00'); setNotes('');
+    setRequestedDate(''); setRequestedTime(BUSINESS_HOURS.opens); setNotes('');
     setKaiSummary(null); setKaiConflicts([]); touchedSelection.current.clear(); interruptedSelections.current.clear();
     setWizardStep(0);
     setRecoveryAccess(null); setRecoveryEmailLanguage(null);setEmailLanguageNotice(null);setRecoveryRestored(false); setRecoveryLoading(false);
@@ -873,13 +920,13 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
     if(!preview) return;
     reset();setDemoEnabled(true);setChoice('endOfTenancy');setSelection(defaultSelection('endOfTenancy'));
     setCustomer({name:'Demo Kraken',email:'preview@example.com',phone:'+41790000000',address:'Musterstrasse 1',postalCode:'8000',city:'Zürich'});
-    setRequestedDate(localToday(new Date(Date.now()+7*86400000)));setRequestedTime('09:00');
-    setTermsAccepted(false);setDemoOutcome('paid');
+    setRequestedDate(localToday(new Date(Date.now()+7*86400000)));setRequestedTime(BUSINESS_HOURS.opens);
+    setTermsAccepted(false);setDemoOutcome('paid');setDemoPeriod({start:'',end:'',visits:''});
     focusStep();
   };
   const confirmDemo = () => {
     if(!preview || !booking?.demo) return;
-    setBooking(confirmDemoAppointment(booking as DemoBooking));setPayConsent(false);setError('');
+    setBooking(confirmDemoAppointment(booking as DemoBooking,{...demoPeriod,visits:Number(demoPeriod.visits)}));setPayConsent(false);setError('');
   };
   const completePendingDemo = () => {
     if(!preview || !booking?.demo || booking.payment.status!=='pending') return;
@@ -971,18 +1018,27 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   }
 
   const services: ServiceChoice[] = ['endOfTenancy', 'windows', 'regular', 'deep', 'moving', 'construction'];
-  const emailState = booking?.payment.status === 'paid' ? booking?.email?.receipt : booking?.email?.request;
-  const paid = booking?.payment.status === 'paid';
+  const emailState = ['paid','test_paid'].includes(booking?.payment.status || '') ? booking?.email?.receipt : booking?.email?.request;
+  const paid = ['paid', 'test_paid'].includes(booking?.payment.status || '');
+  const fullPrepayment = booking?.payment.model === 'full_prepayment' || booking?.termsVersion === BOOKING_TERMS_VERSION;
+  const cancelled = booking?.status === 'cancelled';
+  const outsideArea = bookingAreaReview(booking?.customer?.postalCode || customer.postalCode, booking?.customer?.city || customer.city) === 'outside';
+  const areaReviewPanel = outsideArea ? <div className="kr-calc-area-review" role="status"><p><strong>{text('coverageOutside')}</strong></p><p>{text('coverageReview')}</p><div className="kr-calc-area-contacts"><a href="tel:+41774505705"><Phone aria-hidden="true" />+41 77 450 57 05</a><a href="https://wa.me/41774505705" target="_blank" rel="noopener noreferrer">WhatsApp</a><a href="mailto:kai@krakenpfm.ch"><Mail aria-hidden="true" />kai@krakenpfm.ch</a></div></div> : null;
   const emailStatusKey = bookingMailStatusKey(emailState, paid, preview || config?.emailReady === true);
   const testPaid = booking?.payment.status === 'test_paid';
-  const held = booking?.scheduling.status === 'held';
+  const held = booking?.scheduling.status === 'held' || Boolean(booking?.scheduling.status === 'confirmed' && !paid && !cancelled);
   const needsReschedule = booking?.scheduling.status === 'needs_reschedule';
   const pending = booking?.payment.status === 'pending';
   const changedPayment = Boolean(booking && ['refunded', 'partially_refunded', 'partially-refunded', 'chargeback', 'disputed', 'reconciliation_required'].includes(booking.payment.status));
   const dueNow = booking?.payment.amountDueNowCents;
-  const depositPercent = booking?.payment.depositPercent ?? config?.depositPercent ?? 15;
-  const finalTotal = booking?.quote.totalCents;
-  const finalBalance = booking?.payment.remainingBalanceCents;
+  const depositPercent = fullPrepayment || !booking ? 100 : booking.payment.depositPercent ?? 15;
+  const finalTotal = fullPrepayment ? booking?.payment.totalDueCents ?? booking?.quote.totalCents : booking?.quote.totalCents;
+  const extraPaymentLink = safeOperatorPaymentLink(booking?.payment.extraPayment?.link);
+  const monthly = booking?.payment.billingMode === 'monthly';
+  const periodCopy = operatorCopy(locale);
+  let demoPeriodReady = !monthly;
+  if (booking?.demo && monthly && booking.quote.totalCents !== null) { try { monthlyBillingPeriod({...demoPeriod,visits:Number(demoPeriod.visits)},booking.quote.totalCents,booking.scheduling.date); demoPeriodReady = true; } catch { /* Explicit valid period is required. */ } }
+  const finalBalance = fullPrepayment ? booking?.payment.outstandingCents : booking?.payment.remainingBalanceCents;
   const balanceAfterDeposit = typeof finalTotal === 'number' && typeof dueNow === 'number' ? Math.max(0, finalTotal - dueNow) : null;
   const stepKeys = ['stepService', 'stepSchedule', 'stepReview'] as const;
   const stepHintKeys = ['configureHint', 'stepScheduleHint', 'stepReviewHint'] as const;
@@ -990,9 +1046,9 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
   const nextLabel = ['continueSchedule', 'continueReview'][wizardStep] || 'stepReview';
   const liveTotal = quote?.priceType === 'from' && typeof quote.fromPriceCents === 'number' ? pricingText('fromPrice', { price: money(quote.fromPriceCents) }) : manualReview ? text('individual') : quote && typeof quote.totalCents === 'number' ? money(quote.totalCents) : '—';
   const liveAmount=quote?.priceType==='from' && typeof quote.fromPriceCents==='number' ? quote.fromPriceCents : manualReview ? null : quote?.totalCents??null;
-  const reviewDate = requestedDate && Number.isFinite(Date.parse(`${requestedDate}T12:00:00Z`)) ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: 'Europe/Zurich' }).format(new Date(`${requestedDate}T12:00:00Z`)) : '—';
+  const reviewDate = requestedDate && Number.isFinite(Date.parse(`${requestedDate}T12:00:00Z`)) ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: BUSINESS_HOURS.timeZone }).format(new Date(`${requestedDate}T12:00:00Z`)) : '—';
   const focusConsent = () => {
-    finalConsentRef.current?.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    finalConsentRef.current?.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
     finalConsentRef.current?.focus({ preventScroll: true });
   };
 
@@ -1052,21 +1108,23 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
         {legacyImported && <p className="kr-calc-inline-note" style={{ marginBottom: 24 }} role="status"><Info aria-hidden="true" />{text('legacyImported')}</p>}
       </>}
 
-      {booking ? <section ref={submittedResult} tabIndex={-1} className="kr-calc-result" aria-labelledby="kr-calc-result-title">
+      {booking ? <section className="kr-calc-result" aria-labelledby="kr-calc-result-title">
         <div className="kr-calc-result-heading">
           <span className="kr-calc-result-icon">{paid || booking.scheduling.status==='requested' && !pending && !changedPayment && !needsReschedule ? <CalculatorCompletionCheck /> : held ? <CalendarDays aria-hidden="true" /> : <ClipboardList aria-hidden="true" />}</span>
-          <div><p className="kr-calc-eyebrow">{text('reference')} · {booking.reference || booking.bookingId}</p><h2 id="kr-calc-result-title">{text(testPaid ? 'testTitle' : changedPayment ? 'paymentChangedTitle' : needsReschedule ? 'rescheduleTitle' : paid ? (depositPercent < 100 ? 'depositPaidTitle' : 'paidTitle') : pending ? 'pendingTitle' : holdHasExpired ? 'holdExpiredTitle' : held ? 'heldTitle' : 'receivedTitle')}</h2>
-            <p>{text(testPaid ? 'testBody' : changedPayment ? 'inactiveReceipt' : needsReschedule ? 'rescheduleBody' : paid ? 'paidBody' : pending ? 'pendingBody' : holdHasExpired ? 'holdExpiredBody' : held ? 'heldBody' : 'receivedBody')}</p>
+          <div><p className="kr-calc-eyebrow">{text('reference')} · {booking.reference || booking.bookingId}</p><h2 id="kr-calc-result-title" ref={submittedResult} tabIndex={-1}>{text(cancelled ? 'cancelledTitle' : testPaid ? 'testTitle' : changedPayment ? 'paymentChangedTitle' : needsReschedule ? 'rescheduleTitle' : paid ? (depositPercent < 100 ? 'depositPaidTitle' : 'paidTitle') : pending ? 'pendingTitle' : holdHasExpired ? 'holdExpiredTitle' : held ? 'heldTitle' : 'receivedTitle')}</h2>
+            <p>{text(cancelled ? 'cancelledBody' : testPaid ? 'testBody' : changedPayment ? 'inactiveReceipt' : needsReschedule ? 'rescheduleBody' : paid ? 'paidBody' : pending ? 'pendingBody' : holdHasExpired ? 'holdExpiredBody' : held ? 'heldBody' : 'receivedBody')}</p>
             {!preview && booking.scheduling.status === 'requested' && !paid && !testPaid && !changedPayment && <p>{text('paymentNextStep')}</p>}</div>
         </div>
-        {preview && booking.demo && <section className="kr-journey-demo-booking"><span>{journey.demoNote}</span><div><button type="button" className="kr-calc-secondary" onClick={()=>setJourneyEmail(paid?'receipt':'request')}>{paid?journey.receiptEmail:journey.requestEmail}</button>{booking.scheduling.status==='requested' && <button type="button" className="kr-calc-primary" disabled={booking.quote.totalCents===null || Boolean(booking.quote.manualReviewReasons.length)} onClick={confirmDemo}>{journey.demoConfirm}</button>}{pending && <button type="button" className="kr-calc-primary" onClick={completePendingDemo}>{journey.verifyDemo}</button>}</div>{booking.scheduling.status==='requested' && <p>{booking.quote.totalCents===null?journey.demoManual:journey.demoConfirmHint}</p>}</section>}
+        {preview && booking.demo && monthly && booking.scheduling.status === 'requested' && <fieldset className="kr-calc-demo-period"><legend>{periodCopy.monthly}</legend><p>{text('monthlyPaymentNote')}</p><div className="kr-calc-fields"><label>{periodCopy.periodStart}<input type="date" value={demoPeriod.start} onChange={event=>setDemoPeriod(current=>({...current,start:event.target.value}))} /></label><label>{periodCopy.periodEnd}<input type="date" value={demoPeriod.end} onChange={event=>setDemoPeriod(current=>({...current,end:event.target.value}))} /></label><label>{periodCopy.visits}<input type="number" min={1} max={31} step={1} value={demoPeriod.visits} onChange={event=>setDemoPeriod(current=>({...current,visits:event.target.value}))} /></label></div></fieldset>}
+        {preview && booking.demo && <section className="kr-journey-demo-booking"><span>{journey.demoNote}</span><div><button type="button" className="kr-calc-secondary" onClick={()=>setJourneyEmail(paid?'receipt':'request')}>{paid?journey.receiptEmail:journey.requestEmail}</button>{booking.scheduling.status==='requested' && <button type="button" className="kr-calc-primary" disabled={booking.quote.totalCents===null || Boolean(booking.quote.manualReviewReasons.length) || !demoPeriodReady} onClick={confirmDemo}>{journey.demoConfirm}</button>}{pending && <button type="button" className="kr-calc-primary" onClick={completePendingDemo}>{journey.verifyDemo}</button>}</div>{booking.scheduling.status==='requested' && <p>{booking.quote.totalCents===null?journey.demoManual:journey.demoConfirmHint}</p>}</section>}
+        {areaReviewPanel}
         {checkoutHasExpired && <div className="kr-calc-alert" role="alert"><p style={{ margin: '0 0 12px' }}>{text('checkoutExpired')}</p><a href="tel:+41774505705">+41 77 450 57 05</a><span aria-hidden="true"> · </span><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></div>}
         {holdHasExpired && <div className="kr-calc-alert" role="status"><a href="tel:+41774505705">+41 77 450 57 05</a><span aria-hidden="true"> · </span><a href="mailto:kai@krakenpfm.ch">kai@krakenpfm.ch</a></div>}
         <div className="kr-calc-layout kr-calc-booking-layout">
           <div className="kr-calc-stack">
             <section className="kr-calc-card">
               <div className="kr-calc-section-title"><CalendarDays aria-hidden="true" /><h3>{text(needsReschedule ? 'appointmentReschedule' : holdHasExpired ? 'holdExpiredTitle' : booking.scheduling.status === 'confirmed' ? 'appointmentConfirmed' : held ? 'appointmentHeld' : 'appointmentRequested')}</h3></div>
-              {!needsReschedule && <div className="kr-calc-appointment"><strong>{booking.scheduling.date ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: 'Europe/Zurich' }).format(new Date(`${booking.scheduling.date}T12:00:00Z`)) : '—'}</strong><span>{booking.scheduling.time || '—'}{booking.scheduling.endTime ? `–${booking.scheduling.endTime}` : ''} · {text('swissTime')}</span></div>}
+              {!needsReschedule && <div className="kr-calc-appointment"><strong>{booking.scheduling.date ? new Intl.DateTimeFormat(locale === 'de' ? 'de-CH' : locale, { dateStyle: 'full', timeZone: BUSINESS_HOURS.timeZone }).format(new Date(`${booking.scheduling.date}T12:00:00Z`)) : '—'}</strong><span>{booking.scheduling.time || '—'}{booking.scheduling.endTime ? `–${booking.scheduling.endTime}` : ''} · {text('swissTime')}</span></div>}
               {booking.scopeNotes && <div className="kr-calc-scope-notes"><h4>{text('selectedExtras')}</h4><p>{booking.scopeNotes}</p></div>}
               {(booking.customer || customer.address) && <div className="kr-calc-address"><MapPin aria-hidden="true" /><div><h4>{text('serviceAddress')}</h4><p>{booking.customer?.address || customer.address}<br />{booking.customer?.postalCode || customer.postalCode} {booking.customer?.city || customer.city}</p></div></div>}
               {emailStatusKey && <p className="kr-calc-email-state" role="status"><Mail aria-hidden="true" />{text(emailStatusKey)}</p>}
@@ -1075,21 +1133,24 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
             {canOpenCheckout && <section className="kr-calc-card kr-calc-payment-card">
               <div className="kr-calc-section-title"><CreditCard aria-hidden="true" /><h3>{text('paymentSummary')}</h3></div>
               <dl className="kr-calc-payment-details">
-                <div><dt>{booking.quote.priceType === 'estimate' ? pricingText('estimate') : text('total')}</dt><dd>{typeof finalTotal === 'number' ? money(finalTotal) : text('individual')}</dd></div>
+                <div><dt>{monthly ? text('monthlyTotal') : booking.quote.priceType === 'estimate' ? pricingText('estimate') : text('total')}</dt><dd>{typeof finalTotal === 'number' ? money(finalTotal) : text('individual')}</dd></div>
                 <div className="kr-calc-due"><dt>{depositPercent < 100 ? text('depositDue', { percent: depositPercent }) : text('fullDue')}</dt><dd>{typeof dueNow === 'number' ? money(dueNow) : '—'}</dd></div>
-                {typeof balanceAfterDeposit === 'number' && <div><dt>{text('remaining')}</dt><dd>{money(balanceAfterDeposit)}</dd></div>}
+                {!fullPrepayment && typeof balanceAfterDeposit === 'number' && <div><dt>{text('remaining')}</dt><dd>{money(balanceAfterDeposit)}</dd></div>}
               </dl>
               <p className="kr-calc-final-price">{pricingText('finalPrice')}</p>
+              {monthly && booking.payment.billingPeriod && <p>{booking.payment.billingPeriod.start} – {booking.payment.billingPeriod.end} · {booking.payment.billingPeriod.visits} {periodCopy.visits.toLowerCase()}</p>}
               {preview && booking.demo && <label className="kr-journey-demo-result">{journey.demoResult}<select value={demoOutcome} onChange={event=>setDemoOutcome(event.target.value as DemoPaymentOutcome)} disabled={openingPayment}><option value="paid">{journey.resultPaid}</option><option value="pending">{journey.resultPending}</option><option value="failed">{journey.resultFailed}</option></select></label>}
               {!preview && <p>{text('paymentReadyStep')}</p>}
               <label className="kr-calc-consent"><input type="checkbox" checked={payConsent} onChange={event => setPayConsent(event.target.checked)} /><span>{preview&&booking.demo?journey.demoConsent:booking.termsVersion&&booking.termsVersion!==BOOKING_TERMS_VERSION?text('payConsentExisting'):<>{text('payConsent')} <a href={publicHref('/terms', locale)} target="_blank" rel="noopener noreferrer">{text('terms')}</a></>}</span></label>
               <button type="button" className="kr-calc-primary" disabled={!payConsent || openingPayment || typeof dueNow !== 'number' || dueNow <= 0} onClick={() => { void startPayment(); }}>{openingPayment ? <LoaderCircle className="kr-calc-spin" aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}{preview&&booking.demo?journey.demoPay:text(openingPayment ? 'openingPayment' : depositPercent < 100 ? 'payDeposit' : 'pay')}</button>
+              {fullPrepayment && <><p className="kr-calc-payment-policy-note">{text('paymentCancellation')}</p><p className="kr-calc-payment-policy-note">{text('securePayrexx')}</p></>}
             </section>}
-            {paid && <section className="kr-calc-card kr-calc-payment-card"><div className="kr-calc-section-title"><CheckCircle2 aria-hidden="true" /><h3>{text('paidAmount')}</h3></div><strong className="kr-calc-paid-amount">{money(booking.payment.amountPaidCents)}</strong>{typeof finalBalance === 'number' && <p className="kr-calc-balance">{text('remaining')}: <strong>{money(finalBalance)}</strong></p>}</section>}
+            {paid && <section className="kr-calc-card kr-calc-payment-card"><div className="kr-calc-section-title"><CheckCircle2 aria-hidden="true" /><h3>{text('paidAmount')}</h3></div><strong className="kr-calc-paid-amount">{money(booking.payment.amountPaidCents)}</strong>{!fullPrepayment && typeof finalBalance === 'number' && <p className="kr-calc-balance">{text('remaining')}: <strong>{money(finalBalance)}</strong></p>}</section>}
+            {!cancelled && extraPaymentLink && booking.payment.extraPayment && (booking.payment.outstandingCents || 0) > 0 && !['paid','test_paid'].includes(booking.payment.extraPayment.status) && <section className="kr-calc-card kr-calc-payment-card"><h3>{text('extraPayment')}</h3><p>{money(booking.payment.extraPayment.amountCents)}</p><a className="kr-calc-primary" href={extraPaymentLink} target="_blank" rel="noopener noreferrer">{periodCopy.openExtra}</a><p>{text('securePayrexx')}</p></section>}
             {guide()}
             <button type="button" className="kr-calc-secondary kr-calc-new-request" onClick={reset}>{text('newRequest')}</button>
           </div>
-          <aside className="kr-calc-summary kr-calc-card"><h2>{text('summary')}</h2><PriceSummary quote={booking.quote} text={text} language={locale} money={money} /><BookingTermsSummary language={locale} booking={booking} selection={booking.selection} /></aside>
+          <aside className="kr-calc-summary kr-calc-card"><h2>{text('summary')}</h2><PriceSummary quote={booking.quote} text={text} language={locale} money={money} billing={monthly ? {mode:'monthly',totalCents:booking.payment.totalDueCents,visits:booking.payment.billingPeriod?.visits} : undefined} /><button type="button" className="kr-calc-secondary kr-calc-inline-kai" aria-haspopup="dialog" aria-controls="kai-assistant" onClick={event => requestKaiOpen(booking.quote.service === 'endOfTenancy' ? 'end' : booking.quote.service === 'construction' ? null : booking.selection?.service === 'regular' && booking.selection.cleaningKind === 'deep' ? 'deep' : booking.quote.service, event.currentTarget)}>{text('askKai')}</button><BookingTermsSummary language={locale} booking={booking} selection={booking.selection} quote={booking.quote} compact /></aside>
         </div>
       </section> : !bookingAccess && !bookingEntryPending && !returnMissing && !recoveryLoading && <>
         <form onInputCapture={event => { const id = (event.target as HTMLElement).id; if (fieldErrors[id]) setFieldErrors(current => { const next = { ...current }; delete next[id]; return next; }); }} ref={formRef} className="kr-calc-layout" noValidate onSubmit={submitRequest}>
@@ -1103,7 +1164,7 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
               <header className="kr-calc-step-header"><p className="kr-calc-step-progress">{text('stepProgress', { current: wizardStep + 1, total: 3 })}</p><div className="kr-calc-section-title">{wizardStep === 1 && <KrakenServiceIcon name="appointment" size={42} />}<h2 id="kr-calc-step-title" ref={stepHeadingRef} tabIndex={-1}>{text(stepTitleKeys[wizardStep])}</h2></div><p className="kr-calc-section-hint">{text(stepHintKeys[wizardStep])}</p></header>
               {demoEnabled && <p className="kr-journey-sample-note">{journey.demoData}</p>}
               {wizardStep === 0 && <fieldset className="kr-calc-fields-group" disabled={submitting}><legend className="kr-calc-sr-only">{text('configureTitle')}</legend>
-                <CalculatorPostcodeCheck value={customer.postalCode} onChange={value => updateCustomer('postalCode', value)} language={locale} error={fieldErrors['kr-calc-postal'] ? text(fieldErrors['kr-calc-postal']) : undefined} />
+                <CalculatorPostcodeCheck value={customer.postalCode} onChange={value => updateCustomer('postalCode', value)} onResolved={acceptPostcodeLocality} language={locale} error={fieldErrors['kr-calc-postal'] ? text(fieldErrors['kr-calc-postal']) : undefined} />
                 <div className="kr-calc-services kr-calc-services-compact" aria-label={text('serviceTitle')}>{services.map(id => <button key={id} type="button" className={`kr-calc-service ${choice === id ? 'is-selected' : ''}`} aria-pressed={choice === id} aria-controls="kr-calc-configuration" onClick={() => chooseService(id)}>
                   <span className="kr-calc-service-icon"><KrakenServiceIcon name={id} size={48} /></span><span className="kr-calc-service-copy"><strong>{text(id)}</strong></span>{choice === id && <><Check className="kr-calc-selected-mark" aria-hidden="true" /><span className="kr-calc-sr-only">{text('selectedLabel')}</span></>}
                 </button>)}</div>
@@ -1123,8 +1184,8 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
                     <div className="kr-calc-field"><label htmlFor="kr-calc-postal">{text('postalCode')}</label><input id="kr-calc-postal" {...fieldAttributes('kr-calc-postal')} name="postal-code" autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{4}" required maxLength={4} value={customer.postalCode} onChange={event => updateCustomer('postalCode', event.target.value)} />{inlineFieldError('kr-calc-postal')}</div>
                     <div className="kr-calc-field"><label htmlFor="kr-calc-city">{text('city')}</label><input id="kr-calc-city" {...fieldAttributes('kr-calc-city')} name="address-level2" autoComplete="address-level2" required minLength={2} maxLength={100} value={customer.city} onChange={event => updateCustomer('city', event.target.value)} />{inlineFieldError('kr-calc-city')}</div>
                     <div className="kr-calc-field"><label htmlFor="kr-calc-date">{text('requestedDate')}</label><input id="kr-calc-date" {...fieldAttributes('kr-calc-date')} name="requestedDate" type="date" required min={today} max={localToday(new Date(Date.now() + 366 * 86400000))} value={requestedDate} onChange={event => { setRequestedDate(event.target.value); setTermsAccepted(false); setError(''); }} />{inlineFieldError('kr-calc-date')}</div>
-                    <div className="kr-calc-field"><label htmlFor="kr-calc-time">{text('requestedTime')}</label><input id="kr-calc-time" {...fieldAttributes('kr-calc-time')} name="requestedTime" type="time" required min="09:00" max="19:00" step={900} value={requestedTime} onChange={event => { setRequestedTime(event.target.value); setTermsAccepted(false); setError(''); }} />{inlineFieldError('kr-calc-time')}</div>
-                  </div><p className="kr-calc-inline-note"><CalendarDays aria-hidden="true" />{text('dateHint')}</p>
+                    <div className="kr-calc-field"><label htmlFor="kr-calc-time">{text('requestedTime')}</label><input id="kr-calc-time" {...fieldAttributes('kr-calc-time')} name="requestedTime" type="time" required min={BUSINESS_HOURS.opens} max={BUSINESS_HOURS.closes} step={900} value={requestedTime} onChange={event => { setRequestedTime(event.target.value); setTermsAccepted(false); setError(''); }} />{inlineFieldError('kr-calc-time')}</div>
+                  </div>{areaReviewPanel}<p className="kr-calc-inline-note"><CalendarDays aria-hidden="true" />{text('dateHint')}</p>
                 </fieldset>
                 <fieldset className="kr-calc-fields-group kr-calc-contact-group" disabled={submitting}><legend className="kr-calc-sr-only">{text('contactTitle')}</legend><div className="kr-calc-section-title"><KrakenServiceIcon name="mail" size={38} /><h3>{text('contactTitle')}</h3></div>
                   <div className="kr-calc-fields">
@@ -1136,17 +1197,26 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
                 </fieldset>
               </>}
               {wizardStep === 2 && <div className="kr-calc-review-blocks">
-                <BookingTermsSummary language={locale} selection={selection} />
-                <article className="kr-calc-review-block"><header><h3><KrakenServiceIcon name={choice || 'regular'} size={36} />{text('summaryService')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('summaryService')}`} onClick={() => navigateStep(0)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header>
+                <div className="kr-calc-review-summary-grid">
+                <article className="kr-calc-review-block"><header><h3><KrakenServiceIcon name={choice || 'regular'} size={36} />{text('summaryService')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('summaryService')}`} onClick={() => navigateStep(0)}><Pencil aria-hidden="true" /><span className="kr-calc-sr-only">{text('editSelection')}</span></button></header>
                   <p className="kr-calc-review-service">{choice ? text(choice) : ''}{selection?.service === 'regular' && <span> · {text(selection.frequency)}</span>}</p>
-                  <ul className="kr-calc-review-lines">{quote?.lines.map(line => <li key={line.id}><span>{bookingLineLabel(locale, line)}<small>{line.quantity.toLocaleString(locale)} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : line.unit === 'm3' ? 'm³' : '×'}</small></span><strong>{money(line.totalCents)}</strong></li>)}</ul>
+                  <details className="kr-calc-review-price-lines"><summary>{text('showBreakdown')}</summary><ul className="kr-calc-review-lines">{quote?.lines.map(line => <li key={line.id}><span>{bookingLineLabel(locale, line)}<small>{line.quantity.toLocaleString(locale)} {line.unit === 'hour' ? 'h' : line.unit === 'm2' ? 'm²' : line.unit === 'm3' ? 'm³' : '×'}</small></span><strong>{money(line.totalCents)}</strong></li>)}</ul>
                   {selection?.service === 'moving' && selection.details && <p className="kr-calc-review-notes">{selection.details}</p>}
                   {quote?.notices.map(notice => <p key={notice.code} className="kr-calc-hint">{text(`notice.${notice.code}`)}</p>)}
                   {quote?.manualReviewReasons.map(notice => <p key={notice.code} className="kr-calc-hint">{text(`notice.${notice.code}`)}</p>)}
-                  <p className="kr-calc-hint">{quote?.priceType === 'estimate' ? pricingText('estimateHint') : quote?.priceType === 'from' ? pricingText('fromHint') : text(manualReview ? 'manualPrice' : 'scopeFixed')}</p>
+                  <p className="kr-calc-hint">{quote?.priceType === 'estimate' ? pricingText('estimateHint') : quote?.priceType === 'from' ? pricingText('fromHint') : text(manualReview ? 'manualPrice' : 'scopeFixed')}</p></details>
                 </article>
-                <article className="kr-calc-review-block"><header><h3><MapPin aria-hidden="true" />{text('reviewAppointment')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('reviewAppointment')}`} onClick={() => navigateStep(1)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header><p>{customer.address}<br />{customer.postalCode} {customer.city}</p><p><strong>{reviewDate}</strong><br />{requestedTime} · {text('swissTime')}</p><span className="kr-calc-review-status">{text('appointmentRequested')}</span></article>
-                <article className="kr-calc-review-block"><header><h3><Mail aria-hidden="true" />{text('reviewContact')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('reviewContact')}`} onClick={() => navigateStep(1)}><Pencil aria-hidden="true" />{text('editSelection')}</button></header><p><strong>{customer.name}</strong><br />{customer.email}<br />{customer.phone}</p>{notes.trim() && <p className="kr-calc-review-notes">{notes}</p>}</article>
+                <article className="kr-calc-review-block"><header><h3><MapPin aria-hidden="true" />{text('reviewAppointment')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('reviewAppointment')}`} onClick={() => navigateStep(1)}><Pencil aria-hidden="true" /><span className="kr-calc-sr-only">{text('editSelection')}</span></button></header><p>{customer.address}<br />{customer.postalCode} {customer.city}</p><p><strong>{reviewDate}</strong><br />{requestedTime} · {text('swissTime')}</p><span className="kr-calc-review-status">{text('appointmentRequested')}</span></article>
+                <article className="kr-calc-review-block"><header><h3><Mail aria-hidden="true" />{text('reviewContact')}</h3><button type="button" className="kr-calc-text-button kr-calc-edit-button" aria-label={`${text('editSelection')}: ${text('reviewContact')}`} onClick={() => navigateStep(1)}><Pencil aria-hidden="true" /><span className="kr-calc-sr-only">{text('editSelection')}</span></button></header><p><strong>{customer.name}</strong><br />{customer.email}<br />{customer.phone}</p>{notes.trim() && <details><summary>{text('notes')}</summary><p className="kr-calc-review-notes">{notes}</p></details>}</article>
+                </div>
+                {areaReviewPanel}
+                <BookingTermsSummary language={locale} selection={selection} quote={quote || undefined} compact />
+                <div className="kr-calc-main-submit">
+                <label className="kr-calc-consent"><input id="kr-calc-final-consent" ref={finalConsentRef} type="checkbox" required checked={termsAccepted} disabled={submitting} onChange={event => acceptTerms(event.target.checked)} /><span>{preview&&demoEnabled?journey.demoConsent:<>{text('termsPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/terms', locale)}`} target="_blank" rel="noopener noreferrer">{text('terms')}</a> {text('privacyPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/gdpr', locale)}`} target="_blank" rel="noopener noreferrer">{text('privacy')}</a> {text('readSuffix')}</>}</span></label>
+                <CalculatorSubmitButton busy={submitting} disabled={(preview?!demoEnabled:!config?.available) || !quote || !termsAccepted} label={preview&&demoEnabled?journey.demoSubmit:text(manualReview?'manualSubmit':'requestSubmit')} busyLabel={text('submitting')} />
+                <p className="kr-calc-request-note">{preview?journey.demoNote:text('requestNote')}</p>
+                {!preview && (configLoading ? <p className="kr-calc-status-note" role="status">{text('loadingConfig')}</p> : !config?.available && <div className="kr-calc-unavailable" role="status"><p>{text('unavailable')}</p><button type="button" className="kr-calc-text-button" onClick={() => setConfigAttempt(value => value + 1)}>{text('retry')}</button></div>)}
+                </div>
               </div>}
               <footer className="kr-calc-step-actions">
                 <div className="kr-calc-step-actions-context"><button type="button" className="kr-calc-secondary kr-calc-back-button" disabled={submitting} onClick={() => wizardStep>0?navigateStep((wizardStep - 1) as WizardStep):onNavigate('home')}>{wizardStep>0?text('previousStep'):journey.backHome}</button></div>
@@ -1157,17 +1227,13 @@ export default function ServiceCalculatorPage({ onNavigate, cart, setCart, previ
           <div className="kr-calc-aside-stack">
             <aside className="kr-calc-summary kr-calc-card" aria-labelledby="kr-calc-summary-title"><h2 id="kr-calc-summary-title">{text('summary')}</h2>
               {choice && <div className="kr-calc-summary-selection"><KrakenServiceIcon name={choice || 'regular'} size={36} /><span>{text(choice)}</span></div>}
-              <PriceSummary quote={quote} text={text} language={locale} money={money} hasSelection={Boolean(selection)} />
-              {quote?.priceType === 'estimate' && typeof quote.depositBasisCents === 'number' && <p className="kr-calc-deposit-preview">{pricingText(quote.service === 'moving' ? 'depositMinimum' : 'cleaningDepositMinimum', { percent: depositPercent })}<strong>{pricingText('depositPreview', { amount: money(Math.round(quote.depositBasisCents * depositPercent / 100)) })}</strong></p>}
+              <PriceSummary quote={quote} text={text} language={locale} money={money} hasSelection={Boolean(selection)} billing={isMonthlySelection(selection) ? {mode:'monthly'} : undefined} />
               <CustomerReviews language={locale} />
-              {!preview && config?.paymentReady && <p className="kr-calc-payment-method-note">{frictionText(locale, 'paymentReady')}{quote?.priceType !== 'estimate' && typeof config.depositPercent === 'number' && config.depositPercent > 0 && config.depositPercent <= 100 && <span>{frictionText(locale, 'deposit', { percent: String(config.depositPercent) })}</span>}</p>}
+              {quote && <p className="kr-calc-payment-method-note">{text('paymentBeforeService')}</p>}
+              {selection?.service === 'regular' && selection.cleaningKind !== 'deep' && selection.frequency !== 'once' && <p className="kr-calc-payment-method-note">{text('monthlyPaymentNote')}</p>}
+              <button type="button" className="kr-calc-secondary kr-calc-inline-kai" aria-haspopup="dialog" aria-controls="kai-assistant" onClick={event => requestKaiOpen(choice === 'endOfTenancy' ? 'end' : choice === 'construction' ? null : choice, event.currentTarget)}>{text('askKai')}</button>
               {CONFIRMATION_WINDOW_COPY[locale] && <p className="kr-calc-request-note">{CONFIRMATION_WINDOW_COPY[locale]}</p>}
-              {wizardStep < 2 ? <><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} onClick={nextStep}>{text(nextLabel)}</button><p className="kr-calc-request-note">{text('bookingJourney')}</p></> : <>
-                <label className="kr-calc-consent"><input id="kr-calc-final-consent" ref={finalConsentRef} type="checkbox" required checked={termsAccepted} disabled={submitting} onChange={event => acceptTerms(event.target.checked)} /><span>{preview&&demoEnabled?journey.demoConsent:<>{text('termsPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/terms', locale)}`} target="_blank" rel="noopener noreferrer">{text('terms')}</a> {text('privacyPrefix')} <a href={`${preview ? 'https://krakenpfm.ch' : ''}${publicHref('/gdpr', locale)}`} target="_blank" rel="noopener noreferrer">{text('privacy')}</a> {text('readSuffix')}</>}</span></label>
-                <CalculatorSubmitButton busy={submitting} disabled={(preview?!demoEnabled:!config?.available) || !quote || !termsAccepted} label={preview&&demoEnabled?journey.demoSubmit:text(manualReview?'manualSubmit':'requestSubmit')} busyLabel={text('submitting')} />
-                <p className="kr-calc-request-note">{preview?journey.demoNote:text('requestNote')}</p>
-                {!preview && (configLoading ? <p className="kr-calc-status-note" role="status">{text('loadingConfig')}</p> : !config?.available && <div className="kr-calc-unavailable" role="status"><p>{text('unavailable')}</p><button type="button" className="kr-calc-text-button" onClick={() => setConfigAttempt(value => value + 1)}>{text('retry')}</button></div>)}
-              </>}
+              {wizardStep < 2 && <><button type="button" className="kr-calc-primary" disabled={submitting || (wizardStep === 0 && !selection)} onClick={nextStep}>{text(nextLabel)}</button><p className="kr-calc-request-note">{text('bookingJourney')}</p></>}
             </aside>
             <details className="kr-calc-secondary-tools"><summary>{frictionText(locale, 'secondary')}</summary>
             {selection && quote && <QuoteRecoveryCard preview={preview} language={locale} selection={selection} selectedService={choice} email={customer.email} onEmailAccepted={email => updateCustomer('email', email)} onDraftSaved={acceptRecoveryAccess} onContinueSaved={()=>focusStep()} guide={guide('button')} guidePreferences={guidePreferences} />}

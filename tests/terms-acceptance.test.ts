@@ -21,7 +21,7 @@ test('reading an older booking preserves its version and acceptance time without
  const result=await service.read(booking.bookingId,booking.publicToken);assert.equal(result.termsVersion,'kraken-2026-11-24');assert.equal(result.termsAcceptance,undefined);assert.equal(records.get(booking.bookingId).termsAcceptedAt,123456);assert.ok(termsMetadata(result.termsVersion,'es')?.pdfUrl.includes('/kraken-2026-11-24/es.pdf'));
 });
 test('all accepted document metadata hashes match the canonical public source, including archived versions',async()=>{
- const versions=['kraken-2026-11-24','kraken-2026-11-25-fixed-scope','kraken-2026-11-26-pricing-moving',BOOKING_TERMS_VERSION];
+ const versions=['kraken-2026-11-24','kraken-2026-11-25-fixed-scope','kraken-2026-11-26-pricing-moving','kraken-agb-2026-11-26-v2',BOOKING_TERMS_VERSION];
  for(const version of versions)for(const language of ['de','en','es','pt','it','fr']){
   const metadata=termsMetadata(version,language)!;const document=JSON.parse(await readFile(new URL('../public'+metadata.documentUrl,import.meta.url),'utf8'));const {sha256,...canonical}=document;assert.equal(createHash('sha256').update(JSON.stringify(canonical)).digest('hex'),metadata.sha256);assert.equal(sha256,metadata.sha256);assert.equal(document.sections.length,17);
  }

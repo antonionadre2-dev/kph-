@@ -1,5 +1,5 @@
 {
-  "currentVersion": "kraken-agb-2026-11-26-v2",
+  "currentVersion": "kraken-agb-2026-11-28-v3",
   "algorithm": "sha256",
   "versions": {
     "kraken-2026-11-24": {
@@ -224,6 +224,62 @@
         "sha256": "27fa84e4a03f7b39a0dd55bdbcb05c72de05c580029f90a2c2dbfc546ceb812a",
         "documentUrl": "/legal/terms/kraken-agb-2026-11-26-v2/fr.json",
         "pdfUrl": "/legal/terms/kraken-agb-2026-11-26-v2/fr.pdf"
+      }
+    },
+    "kraken-agb-2026-11-28-v3": {
+      "de": {
+        "version": "kraken-agb-2026-11-28-v3",
+        "language": "de",
+        "sourceLanguage": "de",
+        "date": "2026-11-28",
+        "sha256": "d5ea673db65c8fd7e95a907b3032dfe71ebfa9a06613ba5cdd3591281ab5e381",
+        "documentUrl": "/legal/terms/kraken-agb-2026-11-28-v3/de.json",
+        "pdfUrl": "/legal/terms/kraken-agb-2026-11-28-v3/de.pdf"
+      },
+      "en": {
+        "version": "kraken-agb-2026-11-28-v3",
+        "language": "en",
+        "sourceLanguage": "en",
+        "date": "2026-11-28",
+        "sha256": "5b943de62cf470482bbcdee5ae10625878696e3acfaa50bcc7209aaa2ed4086d",
+        "documentUrl": "/legal/terms/kraken-agb-2026-11-28-v3/en.json",
+        "pdfUrl": "/legal/terms/kraken-agb-2026-11-28-v3/en.pdf"
+      },
+      "es": {
+        "version": "kraken-agb-2026-11-28-v3",
+        "language": "es",
+        "sourceLanguage": "es",
+        "date": "2026-11-28",
+        "sha256": "dc00f93e638faccaa3f57159350c619d6241c50154720b4e9b41021ec2f42b80",
+        "documentUrl": "/legal/terms/kraken-agb-2026-11-28-v3/es.json",
+        "pdfUrl": "/legal/terms/kraken-agb-2026-11-28-v3/es.pdf"
+      },
+      "pt": {
+        "version": "kraken-agb-2026-11-28-v3",
+        "language": "pt",
+        "sourceLanguage": "pt",
+        "date": "2026-11-28",
+        "sha256": "313b9d65f9520bf16c537116c30a6f1f8d1eabe535d16509fe2229617f65435d",
+        "documentUrl": "/legal/terms/kraken-agb-2026-11-28-v3/pt.json",
+        "pdfUrl": "/legal/terms/kraken-agb-2026-11-28-v3/pt.pdf"
+      },
+      "it": {
+        "version": "kraken-agb-2026-11-28-v3",
+        "language": "it",
+        "sourceLanguage": "it",
+        "date": "2026-11-28",
+        "sha256": "a6df0c89e2213e401c489a8db61799e701a8aaafe92398950496eaae7cda92e6",
+        "documentUrl": "/legal/terms/kraken-agb-2026-11-28-v3/it.json",
+        "pdfUrl": "/legal/terms/kraken-agb-2026-11-28-v3/it.pdf"
+      },
+      "fr": {
+        "version": "kraken-agb-2026-11-28-v3",
+        "language": "fr",
+        "sourceLanguage": "fr",
+        "date": "2026-11-28",
+        "sha256": "511428369069679f995c633a031ebcbd631a15358f86484ef1d2922f66b759d5",
+        "documentUrl": "/legal/terms/kraken-agb-2026-11-28-v3/fr.json",
+        "pdfUrl": "/legal/terms/kraken-agb-2026-11-28-v3/fr.pdf"
       }
     }
   }

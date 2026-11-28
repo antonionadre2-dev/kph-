@@ -4,7 +4,6 @@ import { openHomeCalculator, type HomeService } from '../../src/home/calculator'
 import { homeLanguages, homeText, normalizeHomeLanguage } from './homeTranslations';
 import ApprovedHeader from './ApprovedHeader';
 import KrakenServiceIcon from '../KrakenServiceIcon';
-import TransitSection from './TransitSection';
 import WhyKrakenSection from './WhyKrakenSection';
 import PublicPriceGuide from '../PublicPriceGuide';
 import { publicEndRoomScope } from '../../src/booking/publicPricingCopy';
@@ -23,7 +22,6 @@ import { initDeferredHomeEnhancements } from './deferred-enhancements';
 import { whyTranslations } from './whyTranslations';
 import { initApprovedHome } from './app';
 import { initApartmentScene } from './scene';
-import { initTransit } from './van';
 import { initServicePreview, servicePreviewLabels } from './service-idle';
 import './service-idle.css';
 import './approved-home.css';
@@ -63,7 +61,7 @@ function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
       initDeferredHomeEnhancements(root, {
         scene: () => initApartmentScene(root, { t: translate, getLocale: () => localeRef.current }),
         services: () => initServicePreview(root, { getLanguage: () => localeRef.current }),
-        transit: () => initTransit(root, translate),
+        transit: () => {},
       }),
     ];
     let hashFrame = 0;
@@ -118,12 +116,11 @@ function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
         <div className="hero-copy">
           <p className="eyebrow">{t("Reinigungsfirma für Privathaushalte")}</p>
           <h1 id="hero-title">{t("Umzugsreinigung Zürich")}</h1>
-          <p className="hero-description">{t("Ihr Zuhause in guten Armen.")}</p>
+          <p className="hero-description">{t("Für Ihr Zuhause in Schaffhausen, Winterthur und Zürich.")}</p>
           <FeaturedMoveoutOffer language={homeLanguage} />
           <a className="button button-navy hero-primary-action kr-button kr-button--primary" href={serviceHref('end')} data-service="end" data-calculator="">{t('Umzugsreinigung berechnen')}</a>
           <p className="hero-guarantee"><strong>{t('Abnahmegarantie beim Pauschalpaket')}</strong><span>{policy.guaranteeScope}{' '}<a href={publicHref('/terms#agb-9', language)}>{t('AGB ansehen')}</a></span></p>
           <a className="hero-service-details kr-button kr-button--quiet" href={publicHref('/umzugsreinigung/zuerich', language)}>{t('Umzugsreinigung in Zürich entdecken')}</a>
-          <CustomerReviews language={homeLanguage} />
           <div className="hero-scene-controls">
           <button className="scene-open" id="sceneOpen" type="button" aria-haspopup="dialog" aria-controls="sceneDialog">
             <span className="scene-open-weather" aria-hidden="true"><svg id="sceneWeatherIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg></span>
@@ -189,7 +186,7 @@ function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
         </div>
         <dialog className="scene-dialog" id="sceneDialog" aria-labelledby="sceneDialogTitle" aria-describedby="scenePreviewExplanation">
           <div className="scene-dialog-inner">
-            <div className="scene-dialog-heading"><div><p className="eyebrow">{t("Ein Zuhause, das mitfühlt")}</p><h2 id="sceneDialogTitle">{t("Eine Szene. Vier Jahreszeiten.")}</h2></div><button type="button" className="scene-close" data-scene-close="" aria-label={t("Szeneneinstellungen schliessen")}>{t("×")}</button></div>
+            <div className="scene-dialog-heading"><div><p className="eyebrow">{t("Ein Zuhause, das mitfühlt")}</p><h2 id="sceneDialogTitle" className="sr-only">{t("Szeneneinstellungen")}</h2></div><button type="button" className="scene-close" data-scene-close="" aria-label={t("Szeneneinstellungen schliessen")}>{t("×")}</button></div>
             <p className="scene-dialog-intro" id="scenePreviewExplanation">{t("Die Jahreszeit, die Festtage und die Uhrzeit verändern dieses Zuhause. Probieren Sie selbst aus, wie es sich anfühlt.")}</p>
             <p className="scene-mode-badge" id="sceneMode" role="status">{t("Automatisch · passend zu Zürich")}</p>
             <div className="scene-controls">
@@ -229,7 +226,7 @@ function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
     </section>
 
     <section className="services-section section container" id="leistungen" aria-labelledby="services-title">
-      <div className="section-heading"><div><p className="eyebrow">{t("So viel Hilfe, wie Sie brauchen")}</p><h2 id="services-title">{t("Reinigung und kleine Umzüge für Ihr Zuhause")}</h2></div><p>{t("Ein einzelnes Fenster, die ganze Wohnung oder Ihr nächster Umzug. Wir schauen gemeinsam, was für Sie passt.")}</p></div>
+      <div className="section-heading"><div><p className="eyebrow">{t("So viel Hilfe, wie Sie brauchen")}</p><h2 id="services-title">{t("Leistungen und Preise für Ihr Zuhause")}</h2></div><p>{t("Ein einzelnes Fenster, die ganze Wohnung oder Ihr nächster Umzug. Wir schauen gemeinsam, was für Sie passt.")}</p></div>
       <div className="service-preview-controls is-paused" id="servicePreviewControls" data-service-preview-control=""><span id="servicePreviewStatus" aria-live="polite">{previewCopy.paused}</span><div className="service-preview-actions"><button type="button" id="servicePreviewPrevious" aria-label={previewCopy.previous} title={previewCopy.previous} disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7" /></svg></button><button type="button" id="servicePreviewToggle" aria-label={previewCopy.play} title={previewCopy.play} aria-pressed="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path className="service-preview-pause" d="M8 5v14M16 5v14" /><path className="service-preview-play" d="m9 5 10 7-10 7Z" /></svg></button><button type="button" id="servicePreviewNext" aria-label={previewCopy.next} title={previewCopy.next} disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5 7 7-7 7" /></svg></button></div></div>
       <div className="service-cards">
         <article className="service-card end-card"><div className="card-art atlas-panel panel-apartment" role="img" aria-label={t("Illustration einer leeren Wohnung mit Schlüsseln")}></div><div className="card-shade"></div><div className="card-content"><span className="card-kicker">{t("Ein Kapitel endet. Ein neues beginnt.")}</span><h3>{t("Bereit für die")}<br />{t("Wohnungsabgabe.")}</h3><p>{t("Wir kümmern uns um die Reinigung.")}<br />{t("Sie um das Ankommen.")}</p><a className="end-card-details" href={publicHref('/umzugsreinigung/zuerich', language)}>{t("Endreinigung, Preise und Wohnungsabgabe")}</a><a className="button button-mint" data-service="end" href={serviceHref('end')} data-calculator="">{t("Umzugsreinigung berechnen")}</a></div></article>
@@ -239,11 +236,10 @@ function ApprovedHome({ onNavigate }: { onNavigate: (page: string) => void }) {
       <PublicPriceGuide language={homeLanguage} id="home-prices" />
     </section>
 
-    <TransitSection t={t} quoteHref={serviceHref('moving')} />
-
-    <BeforeAfterComparison cases={beforeAfterCases} language={homeLanguage} />
-
     <WhyKrakenSection t={t} quoteHref={quoteHref} language={homeLanguage} />
+
+    <CustomerReviews language={homeLanguage} />
+    <BeforeAfterComparison cases={beforeAfterCases} language={homeLanguage} />
 
     <section className="faq-section section container" aria-labelledby="faq-title"><div className="faq-intro"><p className="eyebrow">{t("Gut zu wissen")}</p><h2 id="faq-title">{t("Fragen zu Reinigung und kleinen Umzügen")}</h2><p>{t("Wir sind auch persönlich für Sie da.")}</p><a href="mailto:kai@krakenpfm.ch" className="text-link">kai@krakenpfm.ch</a></div><div className="faq-list">
       {getHomeFaqs(homeLanguage).map((faq, index) => <details key={faq.question}><summary>{faq.question}<svg className="icon" aria-hidden="true"><use href="#i-plus"></use></svg></summary><p>{faq.answer}{faq.termsSection && <>{' '}<a href={publicHref(`/terms#agb-${faq.termsSection}`,homeLanguage)}>{t("AGB ansehen")}</a></>}{index === 1 && <>{' '}<a href={quoteHref} data-calculator="">{t("Offerte berechnen")}</a></>}</p></details>)}

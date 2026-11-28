@@ -1,8 +1,9 @@
 import { homeText, normalizeHomeLanguage, type HomeLanguage } from '../../components/home/homeTranslations.ts';
 import { publicPolicyContent, END_OF_TENANCY_INCLUDED } from './policyContent.ts';
 import type { KaiService } from './types.ts';
+import { kaiPolicySummary } from './policy-summaries.ts';
 
-/** Public facts only. Legal paragraphs are shared verbatim with the document rendered by /agb. */
+/** Public facts and approved brief answers, linked to the versioned legal document. */
 export const KAI_CONTACT = Object.freeze({
   phone: '+41 77 450 57 05', telephone: 'tel:+41774505705',
   whatsapp: 'https://wa.me/41774505705', email: 'kai@krakenpfm.ch',
@@ -82,22 +83,22 @@ export function getKaiFact(topic: KaiFactTopic, language: unknown, service?: Kai
   switch (topic) {
     case 'guarantee': return { answer: policy.guarantee, contact: false };
     case 'regions': return { answer: localized(regions, locale), contact: false };
-    case 'payment': return { answer: `${policy.payment} ${policy.deposit}`, contact: false };
+    case 'payment': return { answer: kaiPolicySummary('payment', locale), contact: false };
     case 'vat': return { answer: localized(vat, locale), contact: false };
     case 'included': return { answer: service === 'end' ? END_OF_TENANCY_INCLUDED[locale] : localized(included[service || 'unspecified'], locale), contact: false };
     case 'team': return { answer: `${policy.team} ${localized(personal, locale)}`, contact: true };
     case 'availability':
     case 'duration': return { answer: localized(personal, locale), contact: true };
-    case 'cancellation': return { answer: `${policy.cancellation} ${policy.rescheduling}`, contact: false };
+    case 'cancellation': return { answer: kaiPolicySummary('cancellation', locale), contact: false };
     case 'preparation': return { answer: policy.preparation, contact: false };
-    case 'insurance': return { answer: policy.insurance, contact: true };
+    case 'insurance': return { answer: localized(personal, locale), contact: true };
   }
 }
 
 const questions: Record<KaiFactTopic, Row> = {
   guarantee: ['Welche Abnahmegarantie gilt?', 'What handover guarantee applies?', '¿Qué garantía de entrega se aplica?', 'Que garantia de entrega se aplica?', 'Quale garanzia di consegna si applica?', 'Quelle garantie de remise s’applique ?'],
   regions: ['In welchen Regionen ist Kraken tätig?', 'Which areas does Kraken serve?', '¿En qué zonas trabaja Kraken?', 'Em que regiões trabalha a Kraken?', 'In quali regioni opera Kraken?', 'Dans quelles régions Kraken intervient-il ?'],
-  payment: ['Wie bezahle ich und wie funktioniert die Anzahlung?', 'How do payment and the deposit work?', '¿Cómo funcionan el pago y el anticipo?', 'Como funcionam o pagamento e o sinal?', 'Come funzionano pagamento e acconto?', 'Comment fonctionnent le paiement et l’acompte ?'],
+  payment: ['Muss ich im Voraus bezahlen?', 'Do I need to pay in advance?', '¿Tengo que pagar por adelantado?', 'Tenho de pagar antecipadamente?', 'Devo pagare in anticipo?', 'Dois-je payer à l’avance ?'],
   vat: ['Wird Mehrwertsteuer verrechnet?', 'Is VAT charged?', '¿Se cobra IVA?', 'É cobrado IVA?', 'Viene addebitata IVA?', 'La TVA est-elle facturée ?'],
   included: ['Was ist enthalten?', 'What is included?', '¿Qué está incluido?', 'O que está incluído?', 'Che cosa è incluso?', 'Qu’est-ce qui est compris ?'],
   team: ['Wer kommt zu mir nach Hause?', 'Who comes to my home?', '¿Quién viene a mi casa?', 'Quem vai a minha casa?', 'Chi viene a casa mia?', 'Qui vient chez moi ?'],
@@ -114,11 +115,12 @@ export function getKaiFaqs(language: unknown, topics: readonly KaiFactTopic[] = 
 
 const HOME_FAQS = [
   ['Übernehmen Sie auch kleine Aufträge?', 'Ja. Wir konzentrieren uns auf Privathaushalte, Wohnungen bis 5.5 Zimmer und kleine Umzüge. Auch eine einzelne Fensterreinigung oder eine einmalige Grundreinigung können Sie anfragen.'],
-  ['Wie plane ich meinen Auftrag?', 'Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an.'],
+  ['Wie plane ich meinen Auftrag?', "Wählen Sie im Rechner die gewünschte Leistung und geben Sie die Details zu Ihrer Wohnung oder Ihrem Umzug an. Halten Sie Adresse, Zimmerzahl oder benötigte Stunden und Ihren Wunschtermin bereit. Wählen Sie nur die Extras, die Sie tatsächlich benötigen. Besondere Zugänge und offene Fragen gehören in die Nachricht. Prüfen Sie vor dem Absenden Ihre Angaben, den angezeigten Preis und die Bedingungen. Kraken bestätigt anschliessend den Termin; beim Absenden wird noch nichts belastet."],
   ['Welches Fahrzeug nutzen Sie für kleine Umzüge?', 'Wir nutzen einen Ford Transit. Teilen Sie uns mit, welche Möbel und Kartons transportiert werden sollen und wie die Zugänge aussehen. So können wir Fahrzeug, Helfer und benötigte Fahrten passend abstimmen.'],
 ];
 /** Public FAQ content shared by visible Home and deferred SEO, without an SEO graph dependency. */
 export function getHomeFaqs(language: string): {question:string;answer:string;termsSection?:number}[] {
   const basics = HOME_FAQS.map(([question,answer]) => ({question:homeText(language,question),answer:homeText(language,answer)}));
-  return [...basics.slice(0, 2), ...getKaiFaqs(language, KAI_FACT_TOPICS.filter(topic => topic !== 'insurance')).map(({question, answer, termsSection}) => ({question, answer, termsSection})), ...basics.slice(2)];
+  const policy = publicPolicyContent(normalizeHomeLanguage(language));
+  return [...basics.slice(0, 2), ...getKaiFaqs(language, ['payment', 'cancellation', 'guarantee']).map(({question, answer, termsSection}) => ({question, answer: termsSection === 9 ? policy.guaranteeScope : answer, termsSection}))];
 }

@@ -375,3 +375,53 @@ p.kr-calc-hint{margin-top:10px}
 @media(prefers-reduced-motion:reduce){
   :root .kr-service-calculator :is(button,.kr-calc-primary,.kr-calc-secondary,.kr-calc-text-button){transition:none!important;transform:none!important}
 }
+/* Keep the final decision in the main flow; short review details remain available. */
+.kr-calc-main-submit{padding-top:4px}
+.kr-calc-main-submit>.kr-calc-primary{width:100%;margin-top:0;background:var(--kr-mint);color:#123e3c;border-color:#a9dfc4}
+.kr-calc-main-submit>.kr-calc-request-note{margin:9px 0 0}
+.kr-calc-review-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+.kr-calc-review-summary-grid>.kr-calc-review-block{height:100%;padding:13px}
+.kr-calc-review-summary-grid .kr-calc-review-block>header{align-items:flex-start;gap:7px;margin-bottom:4px}
+.kr-calc-review-summary-grid .kr-calc-review-block h3{font-size:.8125rem;line-height:1.4}
+.kr-calc-review-summary-grid .kr-calc-edit-button{flex:0 0 44px;width:44px;padding:0;font-size:0;justify-content:center}
+.kr-calc-review-summary-grid .kr-calc-edit-button svg{width:16px;height:16px}
+.kr-calc-review-summary-grid .kr-calc-review-block p{font-size:.8125rem;line-height:1.5}
+.kr-calc-review-summary-grid .kr-calc-review-service{margin-bottom:2px}
+.kr-calc-review-price-lines>summary,.kr-calc-review-summary-grid details>summary{display:flex;align-items:center;min-height:44px;color:var(--kr-navy);font-size:.8125rem;font-weight:650;cursor:pointer}
+.kr-calc-review-price-lines[open]{grid-column:1/-1}
+.kr-calc-step-panel[data-step="2"] .kr-calc-stepper{padding-bottom:10px;margin-bottom:12px}
+.kr-calc-step-panel[data-step="2"] .kr-calc-step-progress,.kr-calc-step-panel[data-step="2"] .kr-calc-section-hint{display:none}
+.kr-calc-step-panel[data-step="2"] .kr-calc-step-header{margin-bottom:12px}
+.kr-calc-result-heading h2{scroll-margin-top:110px}
+.kr-calc-result-heading h2:focus{outline:none}
+.kr-service-calculator .kr-calc-consent{min-height:44px;align-items:center;padding:4px 0;gap:7px}
+.kr-service-calculator .kr-calc-consent input{appearance:none;position:relative;display:grid;place-content:center;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;margin:0;border:0;background:transparent;cursor:pointer}
+.kr-service-calculator .kr-calc-consent input::before{content:"";width:24px;height:24px;border:1px solid #7b96a7;border-radius:5px;background:white}
+.kr-service-calculator .kr-calc-consent input:checked::before{background:#237c5d;border-color:#237c5d}
+.kr-service-calculator .kr-calc-consent input:checked::after{content:"";position:absolute;left:15px;top:15px;width:14px;height:8px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg)}
+.kr-service-calculator .kr-calc-help a,.kr-service-calculator .kr-calc-review-block .kr-calc-text-button,.kr-service-calculator .kr-calc-summary-details>summary{min-height:44px}
+.kr-service-calculator :is(a[href^="tel:"],a[href^="mailto:"],.kr-calc-whatsapp>a,.kr-moving-guide-inline){display:inline-flex;align-items:center;min-height:44px}
+.kr-service-calculator .kr-moving-guide-card button{min-height:44px}
+.kr-service-calculator .kr-calc-payment-policy-note{font-size:.8125rem;line-height:1.5;color:var(--kr-muted);margin:8px 0 0}
+.kr-service-calculator .kr-calc-inline-kai{width:100%;min-height:44px;margin-top:8px}
+body.kr-calculator-active .kai-assistant-launcher{display:none!important}
+.kr-calc-area-review{margin:14px 0;padding:12px 15px;border:1px solid #d4e3ed;border-radius:13px;background:#f3f8fc;color:#34566f}
+.kr-calc-area-review p{margin:0;font-size:.875rem;line-height:1.6}
+.kr-calc-area-review p+p{margin-top:5px}
+.kr-calc-area-contacts{display:flex;flex-wrap:wrap;gap:0 15px;margin-top:4px}
+.kr-calc-area-contacts a{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:.8125rem;font-weight:650}
+.kr-calc-area-contacts svg{width:16px;height:16px}
+.kr-calc-locality-choice{margin-top:15px}
+@media(max-width:1100px){.kr-calc-review-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kr-calc-review-summary-grid>.kr-calc-review-block:first-child{grid-column:1/-1}}
+@media(max-width:540px){.kr-calc-review-summary-grid{grid-template-columns:1fr}.kr-calc-review-summary-grid>.kr-calc-review-block:first-child{grid-column:auto}}
+.kr-service-calculator .kr-booking-terms-summary.is-compact{padding:10px 12px}
+.kr-service-calculator .kr-booking-terms-summary.is-compact dl{margin:0;font-size:.875rem;line-height:1.4}
+.kr-service-calculator .kr-booking-terms-summary.is-compact dl>div{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;margin:4px 0}
+.kr-service-calculator .kr-booking-terms-summary.is-compact dd{margin:0!important}
+.kr-service-calculator .kr-booking-terms-summary.is-compact a{display:inline-flex;align-items:center;min-height:44px}
+
+.kr-calc-step-header h2{scroll-margin-top:110px}
+.kr-calc-demo-period{margin:16px 0;padding:16px;border:1px solid var(--kr-border);border-radius:14px}
+.kr-calc-demo-period legend{font-weight:700}
+.kr-calc-demo-period p{font-size:.875rem;line-height:1.5}
+.kr-calc-demo-period input{display:block;width:100%;min-height:44px;padding:8px;border:1px solid #bdcedb;border-radius:8px;background:white}

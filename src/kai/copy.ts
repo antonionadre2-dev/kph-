@@ -5,6 +5,7 @@ import {
   type HomeTextParams,
 } from '../../components/home/homeTranslations.ts';
 import type { KaiField, KaiService } from './types.ts';
+import { serviceName } from '../booking/serviceNames.ts';
 
 const de = {
   title: 'Kai',
@@ -411,5 +412,5 @@ export function kaiFieldLabel(language: unknown, field: KaiField): string {
 
 export function kaiServiceLabel(language: unknown, service: KaiService | null | undefined): string {
   return service && Object.prototype.hasOwnProperty.call(serviceSources, service)
-    ? homeText(language, serviceSources[service]) : kaiText(language, 'noService');
+    ? serviceName(language, service) : kaiText(language, 'noService');
 }

@@ -13,9 +13,7 @@ Disallow: /login
 Disallow: /register
 Disallow: /auth
 Disallow: /customer-access
-Disallow: /recovery
 Disallow: /quote-demo
-Disallow: /commercial-quote
 Disallow: /review-invite
 Disallow: /reviews
 Disallow: /reviewsvip
@@ -27,9 +25,7 @@ Disallow: /en/login
 Disallow: /en/register
 Disallow: /en/auth
 Disallow: /en/customer-access
-Disallow: /en/recovery
 Disallow: /en/quote-demo
-Disallow: /en/commercial-quote
 Disallow: /en/review-invite
 Disallow: /en/reviews
 Disallow: /en/reviewsvip
@@ -41,9 +37,7 @@ Disallow: /es/login
 Disallow: /es/register
 Disallow: /es/auth
 Disallow: /es/customer-access
-Disallow: /es/recovery
 Disallow: /es/quote-demo
-Disallow: /es/commercial-quote
 Disallow: /es/review-invite
 Disallow: /es/reviews
 Disallow: /es/reviewsvip
@@ -55,9 +49,7 @@ Disallow: /pt/login
 Disallow: /pt/register
 Disallow: /pt/auth
 Disallow: /pt/customer-access
-Disallow: /pt/recovery
 Disallow: /pt/quote-demo
-Disallow: /pt/commercial-quote
 Disallow: /pt/review-invite
 Disallow: /pt/reviews
 Disallow: /pt/reviewsvip
@@ -69,9 +61,7 @@ Disallow: /it/login
 Disallow: /it/register
 Disallow: /it/auth
 Disallow: /it/customer-access
-Disallow: /it/recovery
 Disallow: /it/quote-demo
-Disallow: /it/commercial-quote
 Disallow: /it/review-invite
 Disallow: /it/reviews
 Disallow: /it/reviewsvip
@@ -83,9 +73,7 @@ Disallow: /fr/login
 Disallow: /fr/register
 Disallow: /fr/auth
 Disallow: /fr/customer-access
-Disallow: /fr/recovery
 Disallow: /fr/quote-demo
-Disallow: /fr/commercial-quote
 Disallow: /fr/review-invite
 Disallow: /fr/reviews
 Disallow: /fr/reviewsvip

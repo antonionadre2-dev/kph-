@@ -38,7 +38,11 @@ function fixture() {
   for (const name of trackedPublicFiles) write(name, name);
   trackedPublicFiles.push('public/.env.production', 'public/archive.zip', 'public/error.log', 'public/stats.html', 'public/server.cjs');
   trackedPublicFiles.push('public/seo-page-home-de.html', 'public/seo-shell-de.html', 'public/about-content-de.html');
-  return { root, write, trackedPublicFiles };
+  // Minimal accepted archive plus its two public downloads. The full app has six locales per version.
+  const termsManifest = {currentVersion:'fixture-v2',versions:{'fixture-v2':{de:{documentUrl:'/legal/terms/fixture-v2/de.json',pdfUrl:'/legal/terms/fixture-v2/de.pdf'}}}};
+  write('src/legal/terms-manifest.json',JSON.stringify(termsManifest));
+  for(const extension of ['json','pdf']){const filename=`public/legal/terms/fixture-v2/de.${extension}`;write(filename,`TERMS_${extension}`);trackedPublicFiles.push(filename);}
+  return { root, write, trackedPublicFiles, termsManifest };
 }
 
 test('prebuilt preparation repairs absent generated bundles, validates hashes and leaves the Express function and HTML unchanged', () => {
@@ -51,11 +55,13 @@ test('prebuilt preparation repairs absent generated bundles, validates hashes an
     assert.equal(result.homeAssets, 20);
     assert.equal(result.htmlBundleReferences, 2);
     assert.equal(result.generatedBundles, 2);
-    assert.equal(result.sha256Verified, 22);
-    assert.equal(result.seoPageFragments, 144);
+    assert.equal(result.sha256Verified, 24);
+    assert.equal(result.legalTermsFilesVerified, 2);
+    assert.equal(readFileSync(path.join(root,'.vercel/output/static/legal/terms/fixture-v2/de.pdf'),'utf8'),'TERMS_pdf');
+    assert.equal(result.seoPageFragments, 150);
     assert.equal(result.legalDocumentFragments, 18);
     assert.equal(result.seoShellFragments, 6);
-    assert.equal(result.runtimeHtmlFilesVerified, 193);
+    assert.equal(result.runtimeHtmlFilesVerified, 199);
     assert.equal(result.missing, 0);
     assert.equal(readFileSync(path.join(root, '.vercel/output/static/assets/index-a1b2.js'), 'utf8'), 'BUILT_JS');
     for (const filename of ['untracked-private.json', '.env.production', 'archive.zip', 'error.log', 'stats.html', 'server.cjs', 'assets/index-a1b2.js.map', 'seo-page-home-de.html', 'seo-shell-de.html', 'about-content-de.html']) {
@@ -170,4 +176,41 @@ test('the verified frontend manifest cannot be omitted or changed after packagin
     assert.throws(()=>prepareVercelOutput(root,{trackedPublicFiles,verifyOnly:true}),/changed frontend asset manifest/);
     rmSync(filename);assert.throws(()=>prepareVercelOutput(root,{trackedPublicFiles,verifyOnly:true}),/changed frontend asset manifest/);
   }finally{rmSync(root,{recursive:true,force:true});}
+});
+
+test('new untracked terms downloads fail before any static or function output mutation',()=>{
+ const {root,write,trackedPublicFiles,termsManifest}=fixture();
+ try{
+  termsManifest.currentVersion='fixture-v3';termsManifest.versions['fixture-v3']={es:{documentUrl:'/legal/terms/fixture-v3/es.json',pdfUrl:'/legal/terms/fixture-v3/es.pdf'}};
+  write('src/legal/terms-manifest.json',JSON.stringify(termsManifest));
+  write('public/legal/terms/fixture-v3/es.json','NEW_UNTRACKED_DOCUMENT');write('public/legal/terms/fixture-v3/es.pdf','NEW_UNTRACKED_PDF');
+  write('.vercel/output/static/existing.txt','KEEP_EXISTING_STATIC');
+  const bundled=path.join(root,'.vercel/output/functions/index.func/dist/index.html');
+  assert.equal(existsSync(bundled),false);
+  for(const verifyOnly of [false,true])assert.throws(()=>prepareVercelOutput(root,{trackedPublicFiles,verifyOnly}),/unpublished legal file: \/legal\/terms\/fixture-v3\/es\.json/);
+  assert.equal(readFileSync(path.join(root,'.vercel/output/static/existing.txt'),'utf8'),'KEEP_EXISTING_STATIC');assert.equal(existsSync(bundled),false);assert.equal(existsSync(path.join(root,'.vercel/output/frontend-asset-manifest.json')),false);
+  // Tracking only one half still cannot publish a broken PDF link.
+  const partial=[...trackedPublicFiles,'public/legal/terms/fixture-v3/es.json'];
+  assert.throws(()=>prepareVercelOutput(root,{trackedPublicFiles:partial}),/unpublished legal file: \/legal\/terms\/fixture-v3\/es\.pdf/);
+  const complete=[...partial,'public/legal/terms/fixture-v3/es.pdf'];
+  assert.equal(prepareVercelOutput(root,{trackedPublicFiles:complete}).legalTermsFilesVerified,4);
+  assert.equal(readFileSync(path.join(root,'.vercel/output/static/legal/terms/fixture-v3/es.pdf'),'utf8'),'NEW_UNTRACKED_PDF');
+ }finally{rmSync(root,{recursive:true,force:true});}
+});
+
+test('every manifest download needs a real source and a canonical publishable terms path',()=>{
+ for(const extension of ['json','pdf']){
+  const {root,write,trackedPublicFiles}=fixture();
+  try{
+   write('.vercel/output/static/existing.txt','KEEP_EXISTING_STATIC');
+   rmSync(path.join(root,`public/legal/terms/fixture-v2/de.${extension}`));
+   assert.throws(()=>prepareVercelOutput(root,{trackedPublicFiles}),new RegExp(`Missing or invalid terms source: /legal/terms/fixture-v2/de\\.${extension}`));
+   assert.equal(readFileSync(path.join(root,'.vercel/output/static/existing.txt'),'utf8'),'KEEP_EXISTING_STATIC');
+  }finally{rmSync(root,{recursive:true,force:true});}
+ }
+ const {root,write,trackedPublicFiles,termsManifest}=fixture();
+ try{
+  termsManifest.versions['fixture-v2'].de.pdfUrl='/legal/terms/../private.pdf';write('src/legal/terms-manifest.json',JSON.stringify(termsManifest));
+  assert.throws(()=>prepareVercelOutput(root,{trackedPublicFiles}),/Invalid terms manifest pdfUrl/);
+ }finally{rmSync(root,{recursive:true,force:true});}
 });

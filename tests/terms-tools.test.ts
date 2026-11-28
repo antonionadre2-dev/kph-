@@ -1,14 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { TERMS_EFFECTIVE_DATE } from '../src/legal/terms-version.ts';
 import {getTermsUiCopy,searchTermsSections,termsPdfHref,type SearchableTermsSection} from '../src/legal/terms-tools.ts';
 const sections:SearchableTermsSection[]=[
- {number:4,title:'4. Anzahlung und Zahlung',blocks:[{type:'paragraph',text:'4.1 Die Anzahlung beträgt 15 % und ist innert 3 Tagen zahlbar.'}]},
+ {number:4,title:'4. Zahlung vor dem Einsatz',blocks:[{type:'paragraph',text:'4.1 Der gesamte Preis ist vor dem Einsatz zu bezahlen; zahlbar innert 3 Tagen nach der Bestätigung.'}]},
  {number:7,title:'7. Stornierung und Verschiebung',blocks:[{type:'paragraph',text:'7.2 Es gelten die folgenden Fristen:'},{type:'list',items:['bis 48 Stunden: kostenlos;','weniger als 48 und bis 12 Stunden: 50 %;','weniger als 12 Stunden: 100 %.']}]},
  {number:9,title:'9. Umzugsreinigung mit Abnahmegarantie',blocks:[{type:'paragraph',text:'Übergabe innert 72 Stunden. Eigentümer müssen Zugang gewähren.'}]},
 ];
 test('terms search covers headings, paragraphs and list items without changing the document',()=>{
  const original=JSON.stringify(sections);
- assert.deepEqual(searchTermsSections(sections,'Anzahlung').map(row=>row.number),[4]);
+ assert.deepEqual(searchTermsSections(sections,'vor dem Einsatz').map(row=>row.number),[4]);
  assert.deepEqual(searchTermsSections(sections,'50 %').map(row=>row.id),['agb-7']);
  assert.deepEqual(searchTermsSections(sections,'ubergabe').map(row=>row.number),[9]);
  assert.equal(searchTermsSections(sections,'48   Stunden').length,1);
@@ -33,4 +34,24 @@ test('PDF links always name an immutable version and a supported locale',()=>{
  assert.equal(termsPdfHref('kraken-2026-11-24','bad'),'/legal/terms/kraken-2026-11-24/de.pdf');
  assert.throws(()=>termsPdfHref('../../private','es'));
  assert.throws(()=>termsPdfHref('version?token=x','es'));
+});
+
+test('payment shortcuts and SEO dates match the current full-prepayment terms in all six languages',()=>{
+ const expected={
+  de:['Zahlung vor dem Einsatz','28. November 2026'],
+  en:['Payment before the service','28 November 2026'],
+  es:['Pago antes del servicio','28 de noviembre de 2026'],
+  pt:['Pagamento antes do serviço','28 de novembro de 2026'],
+  it:['Pagamento prima dell’intervento','28 novembre 2026'],
+  fr:['Paiement avant l’intervention','28 novembre 2026'],
+ };
+ assert.equal(TERMS_EFFECTIVE_DATE,'2026-11-28');
+ for(const [language,[payment,date]] of Object.entries(expected)){
+  const copy=getTermsUiCopy(language);
+  assert.equal(copy.quickPayment,payment,language);
+  assert.doesNotMatch(copy.quickPayment,/Anzahlung|Deposit|Anticipo|Sinal|Acconto|Acompte/i,language);
+  assert.ok(copy.seoDescription.endsWith(date+'.'),language);
+  assert.doesNotMatch(copy.seoDescription,/26\.? (?:November|novembre|de noviembre|de novembro)|\{date\}/,language);
+  assert.deepEqual(getTermsUiCopy(language==='de'?'de-CH':language),copy);
+ }
 });

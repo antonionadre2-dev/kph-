@@ -1,6 +1,8 @@
 import generated from './terms-policy.generated.json' with { type: 'json' };
 
 export interface TermsPolicy {
+  prepayment: string;
+  /** Compatibility key for existing consumers; current text describes full payment. */
   deposit: string;
   payment: string;
   cancellation: string;

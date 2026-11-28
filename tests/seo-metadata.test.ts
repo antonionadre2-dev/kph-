@@ -11,7 +11,7 @@ import { LocalBusinessSchema, ServiceSchema } from '../components/SchemaComponen
 import { getLocalSeoDescriptor } from '../src/seo/local-content.ts';
 
 test('reviewed public routes have stable metadata, one business identity and canonical graph links', () => {
-  assert.equal(INDEXABLE_PATHS.length, 24);
+  assert.equal(INDEXABLE_PATHS.length, 25);
   for (const pathname of INDEXABLE_PATHS) {
     const meta = getPageSeo(pathname);
     assert.equal(meta.canonical, SITE_IDENTITY.origin + pathname);

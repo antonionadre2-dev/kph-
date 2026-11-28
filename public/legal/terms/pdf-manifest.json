@@ -216,6 +216,60 @@
       "bytes": 14268,
       "documentSha256": "27fa84e4a03f7b39a0dd55bdbcb05c72de05c580029f90a2c2dbfc546ceb812a",
       "pdfSha256": "6c261ad593022ac50b0118a4ef75c46841f04ba61f7e822d68f1383d5002d3b9"
+    },
+    {
+      "version": "kraken-agb-2026-11-28-v3",
+      "language": "de",
+      "path": "/legal/terms/kraken-agb-2026-11-28-v3/de.pdf",
+      "pages": 6,
+      "bytes": 13754,
+      "documentSha256": "d5ea673db65c8fd7e95a907b3032dfe71ebfa9a06613ba5cdd3591281ab5e381",
+      "pdfSha256": "28e28d0d4ad72ab4e1b0c5c4392e6d8eb1bbf3c5262492a5bc9d7b3a9ee0cb89"
+    },
+    {
+      "version": "kraken-agb-2026-11-28-v3",
+      "language": "en",
+      "path": "/legal/terms/kraken-agb-2026-11-28-v3/en.pdf",
+      "pages": 6,
+      "bytes": 13579,
+      "documentSha256": "5b943de62cf470482bbcdee5ae10625878696e3acfaa50bcc7209aaa2ed4086d",
+      "pdfSha256": "aa0d0fd8166a98cb39f9e2bbbed4c235c16e2a7bd99ac00097671628fefc84ad"
+    },
+    {
+      "version": "kraken-agb-2026-11-28-v3",
+      "language": "es",
+      "path": "/legal/terms/kraken-agb-2026-11-28-v3/es.pdf",
+      "pages": 6,
+      "bytes": 14424,
+      "documentSha256": "dc00f93e638faccaa3f57159350c619d6241c50154720b4e9b41021ec2f42b80",
+      "pdfSha256": "a4b2ce8706dd0817a4ed965dae4c3e859f7a962337e8a5fbacd45231ef6381b5"
+    },
+    {
+      "version": "kraken-agb-2026-11-28-v3",
+      "language": "pt",
+      "path": "/legal/terms/kraken-agb-2026-11-28-v3/pt.pdf",
+      "pages": 6,
+      "bytes": 14298,
+      "documentSha256": "313b9d65f9520bf16c537116c30a6f1f8d1eabe535d16509fe2229617f65435d",
+      "pdfSha256": "428fb2669154612dda2f1efcc552ce4e1016a8d9813e5b168fae512ab79fb5d3"
+    },
+    {
+      "version": "kraken-agb-2026-11-28-v3",
+      "language": "it",
+      "path": "/legal/terms/kraken-agb-2026-11-28-v3/it.pdf",
+      "pages": 6,
+      "bytes": 14165,
+      "documentSha256": "a6df0c89e2213e401c489a8db61799e701a8aaafe92398950496eaae7cda92e6",
+      "pdfSha256": "91adfde9584a429cdf75612eb936ef1f426d90ffd9658e9c775b664ecbef511c"
+    },
+    {
+      "version": "kraken-agb-2026-11-28-v3",
+      "language": "fr",
+      "path": "/legal/terms/kraken-agb-2026-11-28-v3/fr.pdf",
+      "pages": 6,
+      "bytes": 14602,
+      "documentSha256": "511428369069679f995c633a031ebcbd631a15358f86484ef1d2922f66b759d5",
+      "pdfSha256": "4bde6bb316a26aa048258be4bc02be1668e7c507c0c9cbbe2ee835eab0ceb296"
     }
   ]
 }

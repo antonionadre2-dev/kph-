@@ -180,7 +180,7 @@ export function getPageSeo(pathOrUrl: string, language?: string): PageSeo {
             schema[schema.length - 1].offers = [
               ...tariffs.hourly.map(row => ({ ...common, name: `${publicPriceText(locale, row.team === 1 ? 'oneMover' : 'twoMovers')} · ${publicPriceText(locale, 'hours', { hours: String(row.minimumHours) })}`,
                 price: (row.quote.totalCents! / 100).toFixed(2),
-                description: `${publicPriceText(locale, 'hours', { hours: String(row.minimumHours) })}; ${publicPriceText(locale, 'hourlyRules', { travel: publicMoney(tariffs.travelCents), minutes: String(tariffs.billingMinutes), deposit: '15' })} ${publicPriceText(locale, 'vat')}`,
+                description: `${publicPriceText(locale, 'hours', { hours: String(row.minimumHours) })}; ${publicPriceText(locale, 'hourlyRules', { travel: publicMoney(tariffs.travelCents), minutes: String(tariffs.billingMinutes) })} ${publicPriceText(locale, 'vat')}`,
                 priceSpecification: { '@type': 'UnitPriceSpecification', price: (row.hourlyRateCents / 100).toFixed(2), priceCurrency: 'CHF', unitCode: 'HUR' },
                 eligibleDuration: { '@type': 'QuantitativeValue', minValue: row.minimumHours, unitCode: 'HUR' } })),
               // A provisional "from" price is not a binding offer or an immediate payment amount.

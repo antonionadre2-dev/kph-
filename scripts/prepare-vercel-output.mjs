@@ -33,6 +33,29 @@ function filesWithin(directory, prefix = '') {
   });
 }
 
+/** Every accepted terms version must remain downloadable, including newly added versions. */
+function requiredTermsFiles(root) {
+  const manifest = JSON.parse(readFileSync(path.join(root, 'src/legal/terms-manifest.json'), 'utf8'));
+  if (!manifest.versions || typeof manifest.versions !== 'object' || Array.isArray(manifest.versions)
+    || !Object.hasOwn(manifest.versions, manifest.currentVersion)) throw new Error('Invalid terms manifest versions.');
+  const required = new Map();
+  for (const [version, localized] of Object.entries(manifest.versions)) {
+    if (!/^[A-Za-z0-9_-]+$/.test(version) || !localized || typeof localized !== 'object' || Array.isArray(localized)
+      || !Object.keys(localized).length) throw new Error('Invalid terms manifest version.');
+    for (const [language, document] of Object.entries(localized)) {
+      if (!languages.includes(language) || !document || typeof document !== 'object' || Array.isArray(document)) throw new Error('Invalid terms manifest document.');
+      for (const [field, extension] of [['documentUrl', 'json'], ['pdfUrl', 'pdf']]) {
+        const url = `/legal/terms/${version}/${language}.${extension}`;
+        if (document[field] !== url) throw new Error(`Invalid terms manifest ${field}: ${version}/${language}`);
+        const relative = url.slice(1), source = path.join(root, 'public', relative);
+        if (!existsSync(source) || !lstatSync(source).isFile()) throw new Error(`Missing or invalid terms source: ${url}`);
+        required.set(relative, source);
+      }
+    }
+  }
+  return required;
+}
+
 function validateRuntime(root) {
   const output = path.join(root, '.vercel/output');
   const configuration = JSON.parse(readFileSync(path.join(output, 'config.json'), 'utf8'));
@@ -69,6 +92,7 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
     if (!existsSync(source) || !lstatSync(source).isFile()) throw new Error(`Missing or invalid built HTML: ${name}`);
     return { name, source };
   });
+  const termsFiles = requiredTermsFiles(root);
   // Only Git-tracked public originals and freshly built Vite bundles may be
   // published. Untracked archives, credentials and diagnostics are excluded.
   const tracked = trackedPublicFiles ?? execFileSync('git', ['ls-files', '-z', '--', 'public'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean);
@@ -80,6 +104,9 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
     const filename = path.join(root, source);
     if (!lstatSync(filename).isFile()) throw new Error(`Public source must be a regular file: ${source}`);
     files.set(relative, filename);
+  }
+  for (const [relative, source] of termsFiles) if (files.get(relative) !== source) {
+    throw new Error(`Terms manifest references an unpublished legal file: /${relative}. Add every referenced document and PDF to Git before packaging.`);
   }
   const generated = path.join(root, 'public/assets');
   if (!existsSync(generated)) throw new Error('Missing generated public/assets. Run npm run build:vercel first.');
@@ -147,6 +174,7 @@ export function prepareVercelOutput(root, { trackedPublicFiles, verifyOnly = fal
     frontendDependenciesVerified: frontendManifest.assets.length,
     seoPageFragments: seoPages.length,
     legalDocumentFragments: legalPages.length,
+    legalTermsFilesVerified: termsFiles.size,
     seoShellFragments: seoShells.length,
     runtimeHtmlFilesVerified: runtimeHtml.length,
     sha256Verified: files.size,

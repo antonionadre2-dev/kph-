@@ -44,10 +44,11 @@ test('search crawlers can access public pages and assets while private workflows
     for (const route of [...INDEXABLE_PATHS, '/quote?lang=en', '/assets/app.js', '/kraken-og-1200x630.jpg']) {
       assert.equal(crawlAllowed(robots, agent, route), true, `${agent}: ${route}`);
     }
-    for (const route of ['/api/booking/create', '/api/customer/config', '/api/recovery/drafts/abc', '/login', '/dashboard', '/admin', '/register', '/auth/callback', '/quote-demo', '/customer-access?lang=de', '/recovery/unsubscribe?draft=abc', '/commercial-quote', '/reviews', '/review-invite', '/reviewsvip', '/dejar-opinion', '/quote?booking=abc', '/quote?lang=en&draft=abc', '/quote?payment=success', '/quote?guide=saved', '/?lang=de&access=secret']) {
+    for (const route of ['/api/booking/create', '/api/customer/config', '/api/recovery/drafts/abc', '/login', '/dashboard', '/admin', '/register', '/auth/callback', '/quote-demo', '/customer-access?lang=de', '/recovery/unsubscribe?draft=abc', '/reviews', '/review-invite', '/reviewsvip', '/dejar-opinion', '/quote?booking=abc', '/quote?lang=en&draft=abc', '/quote?payment=success', '/quote?guide=saved', '/?lang=de&access=secret']) {
       assert.equal(crawlAllowed(robots, agent, route), false, `${agent}: ${route}`);
     }
   }
+  assert.doesNotMatch(robots, /^Disallow: \/(?:en\/|es\/|pt\/|it\/|fr\/)?(?:commercial-quote|recovery)/m);
   assert.match(robots, /User-agent: OAI-SearchBot\n/);
   assert.doesNotMatch(robots, /^User-agent: GPTBot\s*$/m);
   assert.equal((robots.match(/^Sitemap: /gm) || []).length, 1);
@@ -70,7 +71,7 @@ test('the public calculator introduction and private capability URLs have distin
 
 test('the sitemap contains unique reviewed canonical routes that agree with response metadata', () => {
   const urls = getSitemapUrls();
-  assert.equal(urls.length, 144);
+  assert.equal(urls.length, 150);
   assert.equal(new Set(urls).size, urls.length);
   assert.equal(urls.filter(url => toLegacyPath(url).startsWith('/services/')).length, 90);
   for (const url of urls) {
@@ -91,7 +92,7 @@ test('the sitemap contains unique reviewed canonical routes that agree with resp
   assert.doesNotMatch(xml, /lastmod|priority|changefreq|\/quote-demo|\/services\/neuhausen\//);
   assert.match(xml, /xmlns:xhtml="http:\/\/www.w3.org\/1999\/xhtml"/);
   const entries = [...xml.matchAll(/<url><loc>([^<]+)<\/loc>([\s\S]*?)<\/url>/g)];
-  assert.equal(entries.length, 144);
+  assert.equal(entries.length, 150);
   for (const [, url, body] of entries) {
     const links = [...body.matchAll(/<xhtml:link rel="alternate" hreflang="([^"]+)" href="([^"]+)"\/>/g)].map(([, lang, href]) => ({ lang, href }));
     assert.deepEqual(links, getPageSeo(url).hreflangs, url);

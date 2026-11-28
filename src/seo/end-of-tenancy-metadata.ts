@@ -45,23 +45,29 @@ const CITY_FAQS: Record<EndOfTenancyCity, { question: Row; answer: Row }[]> = {
     { question: ['Wann sollten die Möbel vor der Endreinigung entfernt werden?', 'When should furniture be removed before the final clean?', '¿Cuándo hay que retirar los muebles antes de la limpieza final?', 'Quando devem os móveis ser retirados antes da limpeza final?', 'Quando vanno rimossi i mobili prima della pulizia finale?', 'Quand faut-il retirer les meubles avant le nettoyage final ?'], answer: ['Planen Sie den Transport vor der vereinbarten Endreinigung. Küche, Bad, Fenster und Böden müssen für die gebuchten Arbeiten zugänglich sein. Teilen Sie mit, falls Gegenstände zurückbleiben oder Abholtermine mit Reinigung und Abgabe koordiniert werden müssen.', 'Plan transport before the agreed final clean. The kitchen, bathroom, windows and floors must be accessible for the booked work. Tell us if items will remain or collection dates need coordinating with cleaning and handover.', 'Planifique el transporte antes de la limpieza final acordada. Cocina, baño, ventanas y suelos deben estar accesibles para los trabajos reservados. Avise si quedan objetos o hay que coordinar recogidas con la limpieza y la entrega.', 'Planeie o transporte antes da limpeza final acordada. Cozinha, casa de banho, janelas e pavimentos devem estar acessíveis para os trabalhos reservados. Informe se ficam objetos ou se é preciso coordenar recolhas com limpeza e entrega.', 'Pianifichi il trasporto prima della pulizia finale concordata. Cucina, bagno, finestre e pavimenti devono essere accessibili per i lavori prenotati. Ci avvisi se restano oggetti o se occorre coordinare ritiri, pulizia e riconsegna.', 'Prévoyez le transport avant le nettoyage final convenu. Cuisine, salle de bains, fenêtres et sols doivent être accessibles pour les travaux réservés. Prévenez-nous si des objets restent ou si les enlèvements doivent être coordonnés avec le nettoyage et la remise.'] },
   ],
 };
-const TITLES: Record<EndOfTenancyCity, Row> = {
-  zuerich: ['Umzugsreinigung Zürich: Preise & Wohnungsabgabe | Kraken', 'End-of-tenancy cleaning Zurich: prices & handover | Kraken', 'Limpieza de fin de alquiler Zúrich: precios y entrega | Kraken', 'Limpeza de fim de arrendamento Zurique: preços e entrega | Kraken', 'Pulizie di fine locazione Zurigo: prezzi e riconsegna | Kraken', 'Nettoyage de fin de bail Zurich : prix et remise | Kraken'],
-  schaffhausen: ['Umzugsreinigung Schaffhausen: persönlich planen | Kraken', 'End-of-tenancy cleaning Schaffhausen: plan personally | Kraken', 'Limpieza de fin de alquiler Schaffhausen: atención personal | Kraken', 'Limpeza de fim de arrendamento Schaffhausen: apoio pessoal | Kraken', 'Pulizie di fine locazione Sciaffusa: contatto personale | Kraken', 'Nettoyage de fin de bail Schaffhouse : contact personnel | Kraken'],
-  winterthur: ['Umzugsreinigung Winterthur: Endreinigung planen | Kraken', 'End-of-tenancy cleaning Winterthur: plan your final clean | Kraken', 'Limpieza de fin de alquiler Winterthur: planifique la entrega | Kraken', 'Limpeza de fim de arrendamento Winterthur: planeie a entrega | Kraken', 'Pulizie di fine locazione Winterthur: pianificare la riconsegna | Kraken', 'Nettoyage de fin de bail Winterthour : préparer la remise | Kraken'],
-};
-const H1: Record<EndOfTenancyCity, Row> = {
-  zuerich: ['Umzugsreinigung Zürich. Ihre Wohnungsabgabe klar geplant.', 'End-of-tenancy cleaning in Zurich. A clearly planned handover.', 'Limpieza de fin de alquiler en Zúrich. Su entrega bien planificada.', 'Limpeza de fim de arrendamento em Zurique. A sua entrega bem planeada.', 'Pulizie di fine locazione a Zurigo. La sua riconsegna ben pianificata.', 'Nettoyage de fin de bail à Zurich. Une remise bien préparée.'],
-  schaffhausen: ['Umzugsreinigung Schaffhausen. Persönlich bis zum vereinbarten Ergebnis.', 'End-of-tenancy cleaning in Schaffhausen. Personal help for the agreed result.', 'Limpieza de fin de alquiler en Schaffhausen. Atención personal para el trabajo acordado.', 'Limpeza de fim de arrendamento em Schaffhausen. Apoio pessoal para o resultado acordado.', 'Pulizie di fine locazione a Sciaffusa. Un aiuto personale per il risultato concordato.', 'Nettoyage de fin de bail à Schaffhouse. Un contact personnel pour le résultat convenu.'],
-  winterthur: ['Umzugsreinigung Winterthur. Vom Ausräumen zur Wohnungsabgabe.', 'End-of-tenancy cleaning in Winterthur. From clearing out to handing over.', 'Limpieza de fin de alquiler en Winterthur. De vaciar el piso a entregarlo.', 'Limpeza de fim de arrendamento em Winterthur. De esvaziar a casa à entrega.', 'Pulizie di fine locazione a Winterthur. Dallo sgombero alla riconsegna.', 'Nettoyage de fin de bail à Winterthour. Du déménagement à la remise.'],
-};
+const PRICE_TITLES: Row = [
+  'Umzugsreinigung {city} Preise: Festpreise nach Zimmern | Kraken',
+  'End-of-tenancy cleaning {city} prices: fixed rates by rooms | Kraken',
+  'Precios de limpieza de fin de alquiler en {city}: por habitaciones | Kraken',
+  'Preços de limpeza de fim de arrendamento em {city}: por divisões | Kraken',
+  'Prezzi pulizia di fine locazione a {city}: tariffe per locali | Kraken',
+  'Prix du nettoyage de fin de bail à {city} : forfaits par pièces | Kraken',
+];
+const PRICE_HEADINGS: Row = [
+  'Was kostet eine Umzugsreinigung in {city}?',
+  'How much does end-of-tenancy cleaning in {city} cost?',
+  '¿Cuánto cuesta una limpieza de fin de alquiler en {city}?',
+  'Quanto custa uma limpeza de fim de arrendamento em {city}?',
+  'Quanto costa la pulizia di fine locazione a {city}?',
+  'Combien coûte un nettoyage de fin de bail à {city} ?',
+];
 export function getEndOfTenancyMetadata(city: string, language: string) {
   const id = endOfTenancyCityId(city);
   if (!id) return null;
   const name = endOfTenancyCityName(id, language);
   const first = END_OF_TENANCY_TIERS[0];
   const description = publicPriceText(language, 'endMeta', { city: name, price: 'CHF ' + (first.priceCents / 100), vat: publicPriceText(language, 'vat') });
-  return { title: text(TITLES[id], language), description, h1: text(H1[id], language), faqs: [...CITY_FAQS[id], ...COMMON_FAQS].map(faq => ({ question: text(faq.question, language), answer: typeof faq.answer === 'function' ? faq.answer(language) : text(faq.answer, language), termsSection: typeof faq.answer==='function'?(faq.answer===publicEndPriceRules?3:9):6 })).concat(getKaiFaqs(language,['payment','cancellation','preparation']).map(({question,answer,termsSection})=>({question,answer,termsSection}))) };
+  return { title: text(PRICE_TITLES, language).replace('{city}', name), description, h1: text(PRICE_HEADINGS, language).replace('{city}', name), faqs: [...CITY_FAQS[id], ...COMMON_FAQS].map(faq => ({ question: text(faq.question, language), answer: typeof faq.answer === 'function' ? faq.answer(language) : text(faq.answer, language), termsSection: typeof faq.answer==='function'?(faq.answer===publicEndPriceRules?3:9):6 })).concat(getKaiFaqs(language,['payment','cancellation','preparation']).map(({question,answer,termsSection})=>({question,answer,termsSection}))) };
 }
 
 /** The calculator is the only monetary source. No independently maintained tariff. */

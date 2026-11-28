@@ -26,6 +26,7 @@ export const PAGE_TO_PATH_MAP: Record<string, string> = {
   "about": "/about",
   "services-page": "/services",
   "approved-services": "/leistungen",
+  "moving-services": "/kleine-umzuege",
   "commercial-services": "/commercial",
   "careers": "/careers",
   "sustainability-page": "/sustainability",

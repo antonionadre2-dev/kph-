@@ -3,9 +3,9 @@ import { getRouteDisposition } from './route-policy.ts';
 
 export const PATH_TO_PAGE_MAP: Record<string,string> = {
   '/':'home','/quote':'consultation','/quote-demo':'calculator-demo','/customer-access':'customer-access',
-  '/about':'about','/leistungen':'approved-services','/kontakt':'kontakt','/einsatzgebiete':'coverage-hub',
+  '/about':'about','/leistungen':'approved-services','/kleine-umzuege':'moving-services','/kontakt':'kontakt','/einsatzgebiete':'coverage-hub',
   '/impressum':'impressum','/gdpr':'gdpr','/terms':'terms','/login':'login','/register':'register','/dashboard':'dashboard',
-  '/commercial-quote':'commercial-quote','/review-invite':'review-invite','/reviews':'review-invite','/reviewsvip':'review-invite','/dejar-opinion':'review-invite',
+  '/review-invite':'review-invite','/reviews':'review-invite','/reviewsvip':'review-invite','/dejar-opinion':'review-invite',
 };
 export function isRouteValid(path: string): boolean {
   try { return [200,301].includes(getRouteDisposition(path).status); } catch { return false; }

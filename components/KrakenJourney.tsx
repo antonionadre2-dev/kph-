@@ -1,5 +1,6 @@
 import React, { useEffect, useId, useRef, useState, type ReactNode } from 'react';
-import type { PriceQuote } from '../src/booking/pricing';
+import { serviceName } from '../src/booking/serviceNames';
+import type { BookingSelection, PriceQuote } from '../src/booking/pricing';
 import { bookingLanguage, bookingLineLabel, bookingText } from '../src/booking/uiCopy';
 import { journeyCopy, LANGUAGE_NAMES } from '../src/booking/journeyCopy';
 import {CalculatorCompletionCheck} from './CalculatorFeedback';
@@ -11,7 +12,8 @@ export interface JourneyBooking {
   customer?: { name: string; email: string; address: string; postalCode: string; city: string };
   scheduling: { date: string; time: string; status: string };
   quote: PriceQuote;
-  payment: { amountPaidCents: number; remainingBalanceCents?: number; depositPercent?: number };
+  selection?: BookingSelection;
+  payment: { amountPaidCents: number; remainingBalanceCents?: number; depositPercent?: number; model?:'full_prepayment'; billingMode?:'single'|'monthly'; totalDueCents?:number|null };
 }
 export type JourneyPhase = 'request' | 'checkout' | 'verification' | 'success';
 interface KrakenJourneyProps {
@@ -137,8 +139,7 @@ function formatDate(date: string, language: string) {
   return parsed && Number.isFinite(parsed.getTime()) ? new Intl.DateTimeFormat(`${bookingLanguage(language)}-CH`, { timeZone: 'Europe/Zurich', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(parsed) : date || '—';
 }
 function serviceLabel(booking: JourneyBooking, language: string) {
-  const deep = booking.quote.service === 'regular' && booking.quote.lines.some(line => line.id === 'regular-labour' && line.params?.frequency === 'once');
-  return bookingText(language, deep ? 'deep' : booking.quote.service);
+  return serviceName(language, booking.selection || booking.quote.service);
 }
 function NextSteps({ language }: { language: string }) {
   const copy = journeyCopy(language);
@@ -149,13 +150,14 @@ function NextSteps({ language }: { language: string }) {
 function BookingDetails({ booking, language, paid }: { booking: JourneyBooking; language: string; paid: boolean }) {
   const copy = journeyCopy(language);
   const confirmed = booking.scheduling.status === 'confirmed';
-  const remainder = booking.payment.remainingBalanceCents;
+  const remainder = booking.payment.model === 'full_prepayment' ? undefined : booking.payment.remainingBalanceCents;
+  const total = booking.payment.model === 'full_prepayment' ? booking.payment.totalDueCents : booking.quote.totalCents;
   return <div className="kr-journey-booking">
     <div className="kr-journey-booking-top"><strong>{serviceLabel(booking, language)}</strong><span>{copy.reference}: {booking.reference}</span></div>
     <div className="kr-journey-date"><img src="/calculator-approved/assets/kraken-emoji-appointment.svg" alt="" width="40" height="40" /><div><span>{paid && confirmed ? copy.emailConfirmed : copy.emailPending}</span><strong>{formatDate(booking.scheduling.date, language)}</strong><p>{booking.scheduling.time || '—'} · {bookingText(language, 'swissTime')}</p></div></div>
     {booking.customer?.address && <address>{booking.customer.address}<br />{booking.customer.postalCode} {booking.customer.city}</address>}
     <dl className="kr-journey-amounts">
-      <div><dt>{copy.total}</dt><dd>{booking.quote.totalCents === null ? bookingText(language, 'individual') : formatMoney(booking.quote.totalCents, language)}</dd></div>
+      <div><dt>{booking.payment.billingMode === 'monthly' ? bookingText(language, 'monthlyTotal') : copy.total}</dt><dd>{typeof total === 'number' ? formatMoney(total, language) : bookingText(language, 'individual')}</dd></div>
       {paid && <div className="kr-journey-paid"><dt>{copy.amountPaid}</dt><dd>{formatMoney(booking.payment.amountPaidCents, language)}</dd></div>}
       {paid && typeof remainder === 'number' && remainder > 0 && <div><dt>{copy.remaining}</dt><dd>{formatMoney(remainder, language)}</dd></div>}
     </dl>
